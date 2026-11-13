@@ -1,4 +1,4 @@
-{"cc":"ae","at":"2026-10-10T10:33:30Z","base":"2026-10-10T10:31:51Z","m":[
+{"cc":"ae","at":"2026-11-13T11:54:55Z","base":"2026-11-13T11:53:21Z","m":[
 ["n10033795722",24.52627,54.40697,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10033812570",24.53827,54.40245,{"communication:mobile_phone":"yes","man_made":"mast","tower:type":"communication"}],
 ["n10063828884",24.43158,54.97696,{"man_made":"mast","tower:type":"communication"}],
@@ -270,6 +270,8 @@
 ["n13990191455",25.35735,55.23156,{"man_made":"tower","tower:type":"communication"}],
 ["n14111216250",25.31608,55.85416,{"man_made":"tower","tower:type":"communication"}],
 ["n14157530202",24.61245,55.30489,{"man_made":"communications_tower","name":"Radio Tower Line"}],
+["n14339158689",25.05155,55.20267,{"communication:mobile_phone":"yes","height":"21","man_made":"mast","tower:construction":"pole","tower:type":"communication"}],
+["n14351253810",25.06065,55.20676,{"communication:mobile_phone":"yes","height":"21","man_made":"mast","tower:construction":"mast","tower:type":"communication"}],
 ["n1482568211",24.83295,56.04092,{"man_made":"mast","tower:construction":"lattice","tower:type":"communication"}],
 ["n1580001685",25.35626,55.85439,{"man_made":"tower","tower:type":"communication"}],
 ["n1580771165",25.64384,55.78397,{"man_made":"tower","operator":"Etisalat","tower:type":"communication"}],
