@@ -1,6 +1,6 @@
 // Headless check of the Reports menu (assets/osap-reports.js, opened from assets/osap-tidy.js) on a desktop and a phone.
 // Checks: the menu lists every report OSAP makes, in groups; ready ones open the same thing their own button does (Country
-// brief, Country report, Timeline report, Daily summary in Today, the weather brief and detailed report, Situation report);
+// brief, Country report, Timeline report, Daily summary in Today, the one-tap Daily brief PDF, the weather brief and detailed report, Situation report);
 // reports that need something first are greyed with what to do (the Medical plan needs nothing: it opens on the map centre),
 // Area summary becomes ready once an area is drawn and then opens; on a conflict tab (Deep South) the report list print and the tab summary are ready; an open
 // event offers its event report and the share PDF; the menu fits the screen on a phone; and the page throws nothing.
@@ -23,7 +23,7 @@ const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
-const IDS = ["brief", "report", "intelbrief", "osir", "daily", "wxeasy", "wxbrief", "wxchart", "wxreport", "illum", "timeline", "topic", "cflist", "event", "share", "areasum", "areareport", "medplan", "hospital", "seatransit", "route", "routesearch", "sitrep"];
+const IDS = ["brief", "report", "intelbrief", "osir", "daily", "dailybrief", "wxeasy", "wxbrief", "wxchart", "wxreport", "illum", "timeline", "topic", "cflist", "event", "share", "areasum", "areareport", "medplan", "hospital", "seatransit", "route", "routesearch", "sitrep"];
 
 async function open(hash, opts) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
@@ -85,6 +85,12 @@ async function closeBrief(p) { await p.evaluate(() => { const b = document.getEl
   m = await menu(p); await pick(p, "daily"); await p.waitForTimeout(600);
   ok(await p.evaluate(() => window.OSAP_TODAY.isOpen() && !!document.getElementById("td-daily")), "Daily summary opens Today at the daily summary");
   await p.evaluate(() => document.querySelector(".tdmap").click()); await p.waitForTimeout(400);
+  // one tap: Daily brief goes straight to Export PDF for the open country, without opening Today
+  await p.evaluate(() => { window.__pdfInfo = null; window.__pdfHold = (info) => { window.__pdfInfo = info; return new Promise((r) => (window.__pdfRelease = r)); }; });
+  m = await menu(p); await pick(p, "dailybrief");
+  const dbi = await p.waitForFunction(() => window.__pdfInfo, null, { timeout: 15000 }).then(() => p.evaluate(() => ({ title: window.__pdfInfo.title, today: window.OSAP_TODAY.isOpen() })), () => null);
+  ok(!!dbi && /Thailand: daily brief/.test(dbi.title) && !dbi.today, "Daily brief (PDF) exports the open country's daily brief in one tap, Today stays shut" + (dbi ? " (" + dbi.title + ")" : ""));
+  await p.evaluate(() => { if (window.__pdfRelease) window.__pdfRelease(); window.__pdfHold = null; }); await p.waitForTimeout(300);
 
   ok(!item(m, "Medical plan").off, "Medical plan is ready without a drawn area (it opens on the map centre)");
   // a greyed area report starts Draw area

@@ -8,7 +8,10 @@
    - "Automatic" summaries are built by rules with no AI. An AI draft carries the small "AI generated" tag (full wording in its
      tooltip) and every sentence cites numbered sources; each number links to the original.
    - Print gives a one-page summary with every source link and the summary's SHA-256 fingerprint.
-   - The file is fetched only when Today is shown for the country; the last 7 days are kept and can be picked. */
+   - The file is fetched only when Today is shown for the country; the last 7 days are kept and can be picked.
+   - One tap (Reports > Daily brief, PDF; window.OSAP_DAILYQ.brief()): the latest summary of the open country goes straight to
+     Export PDF, without opening Today. A key event whose source has a report digest (data/live/digest.js, an AI draft written on the
+     Actions runner from the article, which is never stored) carries that digest's one-line "what", tagged AI generated. */
 (function () {
   "use strict";
   var D = document, W = window, CC = "", NAME = "", el = null, sel = 0, state = 0, kevOpen = null;
@@ -21,6 +24,21 @@
     return isFinite(ms) ? T.dualT(ms, { date: date !== false }) : String(s || "");
   }
   function day() { var d = W.OSAP_DAILY && W.OSAP_DAILY[CC]; return d && d.days && d.days[sel] || null; }
+  /* the first report digest (assets/osap-digest.js's file) among an event's sources; only read once that file is loaded */
+  var DG_FILE = "data/live/digest.js", dgState = 0, dgWait = [];
+  function dgLoad(cb) {
+    if (W.OSAP_DIGEST || dgState === 2) return cb && cb();
+    if (cb) dgWait.push(cb); if (dgState) return; dgState = 1;
+    var s = D.createElement("script"); s.src = DG_FILE + "?t=" + Math.floor(Date.now() / 6e5);
+    s.onload = s.onerror = function () { dgState = 2; var l = dgWait; dgWait = []; l.forEach(function (f) { try { f(); } catch (e) {} }); render(); };
+    D.head.appendChild(s);
+  }
+  function digestOf(e, d) {
+    var G = W.OSAP_DIGEST && W.OSAP_DIGEST.items; if (!G) return null;
+    for (var i = 0; i < (e.refs || []).length; i++) { var r = d.refs[e.refs[i] - 1], g = r && G[r.url]; if (g && g.what) return { g: g, n: e.refs[i], label: W.OSAP_DIGEST.label }; }
+    return null;
+  }
+  function dgTitle(x) { return (x.label || "Draft, AI-generated, not analyst-approved") + ". Digest of source [" + x.n + "] by " + (x.g.model || "an open model") + "; the article itself is not stored."; }
 
   /* own class, not .tdday: osap-today.js styles .tdday as a centred weather-day tile, which squeezed the whole summary into a narrow
      centred column on a wide screen (Shane 2026-10-05) */
@@ -31,7 +49,7 @@
       /* Key events folded: its column shrinks to the heading, so What to watch fills the width instead of leaving half blank */
       "@media (min-width:761px){.dlcols:has(>div>details.dlkev:not([open])){grid-template-columns:max-content minmax(0,1fr)}}" +
     ".dlev,.dlw{list-style:none;margin:0;padding:0}.dlev li,.dlw li{padding:6px 0;border-top:1px solid var(--line-soft,var(--line));font-size:13.5px;line-height:1.4;overflow-wrap:anywhere}" +
-    ".dlev li:first-child,.dlw li:first-child{border-top:0}.dlev b{font-weight:600}.dlmeta{display:block;font-size:12px;color:var(--muted)}" +
+    ".dlev li:first-child,.dlw li:first-child{border-top:0}.dlev b{font-weight:600}.dldg{display:block;font-size:12.5px;margin-top:2px}.dlmeta{display:block;font-size:12px;color:var(--muted)}" +
     ".dlref{font-size:11px;font-weight:600;text-decoration:none;margin-left:2px;vertical-align:1px}.dlref:hover{text-decoration:underline}" +
     ".dlwbtn{all:unset;box-sizing:border-box;display:block;width:100%;cursor:pointer;border-radius:4px;padding:2px 22px 2px 2px;margin:-2px;position:relative}.dlwbtn:hover{background:var(--surface2,rgba(127,127,127,.09))}" +
     ".dlwbtn:focus-visible{outline:2px solid var(--accent,#1f5f99);outline-offset:1px}.dlwarr{position:absolute;right:4px;top:2px;color:var(--accent,#1f5f99);font-weight:700}" +
@@ -41,7 +59,7 @@
     ".dlfoot button{min-height:30px;padding:2px 12px;font-weight:600}.dlauto{display:inline-block;font:500 10.5px/1.5 inherit;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 7px;cursor:help}" +
     "#dl-print{display:none}@media print{html.dlprinting body>*:not(#dl-print){display:none!important}html.dlprinting #dl-print{display:block!important;font:10.5pt/1.4 system-ui,sans-serif;color:#000;background:#fff}" +
     "html.dlprinting #dl-print h1{font-size:16pt;margin:0 0 2px}html.dlprinting #dl-print h2{font-size:12pt;margin:12px 0 4px}html.dlprinting #dl-print li{margin:0 0 5px;break-inside:avoid}" +
-    "html.dlprinting #dl-print .pm{font-size:8.5pt;color:#333;word-break:break-all}html.dlprinting #dl-print .bl{border-left:3px solid #000;padding-left:8px}}";
+    "html.dlprinting #dl-print .pm{font-size:8.5pt;color:#333;word-break:break-all}html.dlprinting #dl-print .bl{border-left:3px solid #000;padding-left:8px}html.dlprinting #dl-print .dg{font-size:9.5pt;margin-top:2px}}";
 
   function refs(rs, d) {
     return (rs || []).map(function (n) {
@@ -124,6 +142,10 @@
       var nb = el && el.querySelector('[data-dlw="' + i + '"]'); if (nb) nb.focus();
     }
   }
+  function dgHtml(e, d) {
+    var x = digestOf(e, d); if (!x) return "";
+    return '<span class="dldg"><span class="aitag" tabindex="0" title="' + esc(dgTitle(x)) + '">AI generated</span> ' + esc(x.g.what) + (x.g.where ? " (" + esc(x.g.where) + ")" : "") + "</span>";
+  }
   function render() {
     if (!el) return;
     var all = W.OSAP_DAILY && W.OSAP_DAILY[CC], d = day();
@@ -138,7 +160,7 @@
     if (kevOpen == null) kevOpen = !!(W.matchMedia && W.matchMedia("(min-width:761px)").matches);
     h += '<div class="dlcols"><div>' + (nev ? '<details class="dlkev"' + (kevOpen ? " open" : "") + '><summary class="dllbl">Key events (' + nev + ")</summary>" : '<p class="dllbl">Key events</p>') + (nev ? '<ul class="dlev">' + d.events.map(function (e) {
       return "<li><b>" + esc(e.text) + "</b>" + refs(e.refs, d) + '<span class="dlmeta">' + (e.n > 1 ? e.n + " outlets: " : "") + esc(e.outlets.join(", ")) + " · " + esc(when(e.when, false)) +
-        (e.claim ? " · state media or official, a claim" : e.some_state ? " · includes state media" : "") + (e.mt ? " · machine translated" : "") + (e.conflict ? " · " + esc(e.conflict) : "") + "</span></li>";
+        (e.claim ? " · state media or official, a claim" : e.some_state ? " · includes state media" : "") + (e.mt ? " · machine translated" : "") + (e.conflict ? " · " + esc(e.conflict) : "") + "</span>" + dgHtml(e, d) + "</li>";
     }).join("") + "</ul></details>" : '<p class="dlsub">No analyst-relevant reports in the window.</p>') + "</div>";
     h += '<div><p class="dllbl">What to watch</p><ul class="dlw">' + (watchList(d) || '<li class="dlsub">Nothing flagged.</li>') + "</ul></div></div>";
     h += '<div class="dlfoot"><span>From ' + (b.reports || 0) + " report" + (b.reports === 1 ? "" : "s") + " by " + (b.outlets || 0) + " outlet" + (b.outlets === 1 ? "" : "s") +
@@ -152,27 +174,47 @@
     var p = D.getElementById("dl-print"); if (!p) { p = D.createElement("div"); p.id = "dl-print"; D.body.appendChild(p); }
     var ai = d.method === "ai", b = d.basis || {};
     var cite = function (rs) { return (rs || []).length ? " [" + rs.join("][") + "]" : ""; };
-    p.innerHTML = "<h1>" + esc(d.name) + ": daily summary</h1>" +
+    p.innerHTML = "<h1>" + esc(d.name) + ": daily brief</h1>" +
       '<p class="pm">AXIOM OSAP · ' + esc(d.window.hours) + " hours to " + esc(when(d.window.to)) + " · built " + esc(when(d.made)) + " · printed " + esc(W.OSAP_TIME ? W.OSAP_TIME.dualT(Date.now(), { date: true }) : new Date().toISOString()) +
       " · " + (ai ? esc(d.label || "Draft, AI-generated, not analyst-approved") + " (" + esc(d.model || "") + ")" : "Automatic: built by rules, no AI") + "</p>" +
       ((d.bluf || []).length ? "<h2>" + (ai ? "BLUF" : "Top lines") + '</h2><div class="bl">' + d.bluf.map(function (s) { return "<p>" + esc(s.text) + cite(s.refs) + "</p>"; }).join("") + "</div>" : "") +
-      "<h2>Key events</h2><ol>" + (d.events || []).map(function (e) { return "<li><b>" + esc(e.text) + "</b>" + cite(e.refs) + '<div class="pm">' + esc(e.outlets.join(", ")) + " · " + esc(when(e.when)) + (e.claim ? " · state media or official, a claim" : e.some_state ? " · includes state media" : "") + (e.mt ? " · machine translated" : "") + "</div></li>"; }).join("") + "</ol>" +
+      "<h2>Key events</h2><ol>" + (d.events || []).map(function (e) { return "<li><b>" + esc(e.text) + "</b>" + cite(e.refs) + '<div class="pm">' + esc(e.outlets.join(", ")) + " · " + esc(when(e.when)) + (e.claim ? " · state media or official, a claim" : e.some_state ? " · includes state media" : "") + (e.mt ? " · machine translated" : "") + "</div>" +
+        (function (x) { return x ? '<div class="dg">(AI generated digest of [' + x.n + "], draft, not analyst-approved) " + esc(x.g.what) + (x.g.where ? " (" + esc(x.g.where) + ")" : "") + "</div>" : ""; })(digestOf(e, d)) + "</li>"; }).join("") + "</ol>" +
       "<h2>What to watch</h2><ul>" + (d.ai_watch || []).map(function (w) { return "<li>(AI generated) " + esc(w.text) + cite(w.refs) + "</li>"; }).join("") +
       (d.watch || []).map(function (w) { return "<li>" + esc((FROM[w.from] ? FROM[w.from] + (w.from === "brief" && w.asof ? " of " + w.asof + ", AI draft" : "") + ": " : "") + w.text) + cite(w.refs) + "</li>"; }).join("") + "</ul>" +
       "<h2>Sources</h2><ol>" + d.refs.map(function (r) { return '<li class="pm">' + esc(r.outlet) + ", " + esc(when(r.date)) + ": " + esc(r.title) + (/g/.test(r.flags || "") ? " (official or state media: a claim)" : "") + (/m/.test(r.flags || "") ? " (machine translated)" : "") + " · " + esc(r.url) + "</li>"; }).join("") + "</ol>" +
       '<p class="pm">From ' + (b.reports || 0) + " reports by " + (b.outlets || 0) + " outlets. Situational awareness only: reports are the sources' claims and are not verified; statements by any government, including figures, are its claims. " +
       ((d.gaps || []).length ? "Gaps: " + esc(d.gaps.join(" ")) + " " : "") + "SHA-256 " + esc(d.fp || "") + "</p>";
     D.documentElement.classList.add("dlprinting");
-    W.OSAP_PDF.print({ title: d.name + ": daily summary", root: p, ai: ai || !!(d.ai_watch || []).length }).then(function () { D.documentElement.classList.remove("dlprinting"); });
+    var dg = (d.events || []).some(function (e) { return !!digestOf(e, d); });
+    W.OSAP_PDF.print({ title: d.name + ": daily brief", root: p, ai: ai || dg || !!(d.ai_watch || []).length }).then(function () { D.documentElement.classList.remove("dlprinting"); });
   }
-  function load() {
+  function load(cb) {
+    if (state === 2) return cb && cb();
+    if (cb) waiting.push(cb);
     if (state) return; state = 1;
     var s = D.createElement("script");
     s.src = "data/live/daily/" + encodeURIComponent(CC) + ".js?t=" + Math.floor(Date.now() / 6e5);
-    s.onload = s.onerror = function () { state = 2; render(); };
+    s.onload = s.onerror = function () { state = 2; render(); var l = waiting; waiting = []; l.forEach(function (f) { try { f(); } catch (e) {} }); };
     D.head.appendChild(s);
+    dgLoad();
+  }
+  var waiting = [];
+  /* one tap: the latest summary of the open country straight to Export PDF (Reports > Daily brief). The digests are waited for at
+     most 3 seconds. Answers false when there is no summary to export (Today then shows why). */
+  function brief(cb) {
+    var cc = CC || (W.TSAP && W.TSAP.country) || "";
+    if (!cc) return cb && cb(false);
+    if (!CC) { CC = cc; NAME = cc; }
+    sel = 0;
+    load(function () {
+      if (!day()) { if (cb) cb(false); return; }
+      var done = false, go = function () { if (done) return; done = true; printIt(); if (cb) cb(true); };
+      dgLoad(go); setTimeout(go, 3000);
+    });
   }
   function mount(box, cc, name) {
+    if (CC && CC !== cc) { state = 0; sel = 0; }
     el = box; CC = cc; NAME = name || cc; el.classList.add("tddaily"); el.hidden = true;
     if (!D.getElementById("dl-css")) { var st = D.createElement("style"); st.id = "dl-css"; st.textContent = CSS; D.head.appendChild(st); }
     el.addEventListener("click", function (e) {
@@ -181,7 +223,7 @@
     });
     el.addEventListener("toggle", function (e) { if (e.target.classList && e.target.classList.contains("dlkev")) kevOpen = e.target.open; }, true);
     el.addEventListener("change", function (e) { if (e.target.hasAttribute("data-dlday")) { sel = +e.target.value || 0; openW = {}; render(); } });
-    load();
+    load(); if (state === 2) render();
   }
-  W.OSAP_DAILYQ = { mount: mount, print: printIt };
+  W.OSAP_DAILYQ = { mount: mount, print: printIt, brief: brief, has: function () { var x = W.OSAP_DAILY && W.OSAP_DAILY[CC || (W.TSAP && W.TSAP.country)]; return state !== 2 || !!(x && x.days && x.days.length); } };
 })();
