@@ -23,7 +23,7 @@ const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
-const IDS = ["brief", "report", "intelbrief", "osir", "daily", "dailybrief", "wxeasy", "wxbrief", "wxchart", "wxreport", "illum", "timeline", "topic", "cflist", "event", "share", "areasum", "areareport", "medplan", "hospital", "seatransit", "route", "routesearch", "sitrep"];
+const IDS = ["brief", "report", "intelbrief", "osir", "daily", "dailybrief", "wxeasy", "wxbrief", "wxchart", "wxreport", "illum", "timeline", "topic", "cflist", "event", "share", "areasum", "areareport", "areabrief", "medplan", "hospital", "seatransit", "route", "routesearch", "sitrep"];
 
 async function open(hash, opts) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
@@ -106,6 +106,13 @@ async function closeBrief(p) { await p.evaluate(() => { const b = document.getEl
   m = await menu(p); ok(!item(m, "Area report with maps").off, "Area report ready once an area is drawn");
   await pick(p, "areareport"); await p.waitForTimeout(800);
   ok(await p.evaluate(() => { const b = document.getElementById("brief"); return b && !b.hidden && !!b.querySelector(".arp .arpmap"); }), "Area report opens with its maps");
+  await p.evaluate(() => window.OSAP_AREAREPORT.close());
+  // one tap: Area brief exports the last 24 hours in the drawn area as a PDF
+  await p.evaluate(() => { window.__pdfInfo = null; window.__pdfHold = (info) => { window.__pdfInfo = info; return new Promise((r) => (window.__pdfRelease = r)); }; });
+  m = await menu(p); ok(!item(m, "Area brief (PDF)").off, "Area brief ready once an area is drawn"); await pick(p, "areabrief");
+  const abi = await p.waitForFunction(() => window.__pdfInfo, null, { timeout: 20000 }).then(() => p.evaluate(() => ({ title: window.__pdfInfo.title, per: /24 hours/i.test(document.querySelector("#brief .arp") ? document.querySelector("#brief .arp").textContent : "") })), () => null);
+  ok(!!abi && /Area brief: last 24 hours/.test(abi.title) && abi.per, "Area brief (PDF) exports the last 24 hours in the drawn area in one tap" + (abi ? " (" + abi.title + ")" : ""));
+  await p.evaluate(() => { if (window.__pdfRelease) window.__pdfRelease(); window.__pdfHold = null; }); await p.waitForTimeout(1200);
   await p.evaluate(() => window.OSAP_AREAREPORT.close());
   m = await menu(p); await pick(p, "medplan");
   ok(await p.evaluate(() => window.__calls.med === 1), "Medical plan opens");
