@@ -409,10 +409,10 @@ jobs:
       # source grading: picker with Save, per-source default only pre-fills, badges, exports carry the grade
       - run: node tests/grade_smoke.mjs
   carry-webkit:
-    # The hand-off of saved work from the old github.io address (assets/osap-carry.js) in WebKit, Safari's engine: the iPhone
+    # Also the phone-layout checks in WebKit (below). The hand-off of saved work from the old github.io address (assets/osap-carry.js) in WebKit, Safari's engine: the iPhone
     # is where most saved work sits, and Safari is the browser that decides how long an address may be.
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -433,3 +433,7 @@ jobs:
           done
           exit 1
       - run: BROWSER=webkit node tests/carry_smoke.mjs
+      # the phone layout in WebKit, the engine every iPhone browser uses: map, toolbar and bottom sheet fit the screen, also where
+      # 100svh is taller than the page (the iPhone cut-off fixed by PR #712), and the sheet never scrolls sideways
+      - run: BROWSER=webkit node tests/phone_fit_smoke.mjs
+      - run: BROWSER=webkit node tests/phone_sheet_sideways_smoke.mjs

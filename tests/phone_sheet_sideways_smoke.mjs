@@ -7,7 +7,7 @@
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
-import { chromium } from "playwright";
+import { chromium, webkit } from "playwright";
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
 const root = process.cwd();
 const server = createServer(async (req, res) => {
@@ -17,7 +17,8 @@ const server = createServer(async (req, res) => {
 }).listen(0, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
 const base = `http://127.0.0.1:${server.address().port}/`;
-const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
+/* BROWSER=webkit runs it in WebKit, the engine of every iPhone browser (check-index.yml carry-webkit job) */
+const browser = process.env.BROWSER === "webkit" ? await webkit.launch() : await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
