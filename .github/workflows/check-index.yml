@@ -65,6 +65,7 @@ jobs:
       - run: node tests/incidents.test.mjs
       - run: node tests/decisions.test.mjs
       - run: node tests/cf_decisions.test.mjs
+      - run: node tests/cf_match.test.mjs
       - run: node tests/cf_code.test.mjs
       - run: node tests/coded_protests.test.mjs
       - run: node tests/coded_polecat.test.mjs

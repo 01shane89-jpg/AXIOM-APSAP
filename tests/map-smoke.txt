@@ -63,6 +63,7 @@ tests/deepsouth_border_smoke.mjs
 tests/dspat_smoke.mjs
 tests/ds_review_smoke.mjs
 tests/cf_verify_smoke.mjs
+tests/cf_match_smoke.mjs
 tests/cf_layout_smoke.mjs
 tests/cf_history_range_smoke.mjs
 tests/cf_datasets_smoke.mjs
