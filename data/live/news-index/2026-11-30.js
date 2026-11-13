@@ -1,0 +1,1 @@
+window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-11-30"]=[["ao","2026-11-30T11:00","To mark 51 years of independence under the sign of union","Assinalar 51 anos de independência sob o signo da união","Expansão","http://expansao.co.ao/weekend/agenda/detalhe/assinalar-51-anos-de-independencia-sob-o-signo-da-uniao-76051.html","","m","",""]];
