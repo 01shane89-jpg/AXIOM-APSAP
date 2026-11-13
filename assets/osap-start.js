@@ -52,7 +52,9 @@
     if (sessionStorage.getItem("osap-today") === "1") {
       var hn = (location.hash || "").replace("#", "").split("/"), tcc = hn.length > 1 && /^[a-z]{2,3}$/.test(hn[0]) ? hn[0] : "th", tq = "?t=" + Math.floor(Date.now() / 6e5);
       ["data/live/daily/", "data/live/stories/"].forEach(function (d) {
-        var l = document.createElement("link"); l.rel = "preload"; l.as = "script"; l.href = d + tcc + ".js" + tq; document.head.appendChild(l);
+        /* only files the signed-in plan opens (assets/osap-datagate.js): the daily summary is Full, the story list Mid */
+        var u = d + tcc + ".js" + tq; if (window.OSAP_DATA && !window.OSAP_DATA.ok(u)) return;
+        var l = document.createElement("link"); l.rel = "preload"; l.as = "script"; l.href = u; document.head.appendChild(l);
       });
     }
   } catch (e) {}
