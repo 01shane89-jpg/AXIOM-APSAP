@@ -200,7 +200,10 @@ const GEO = { latitude: 13.7563, longitude: 100.5018, accuracy: 6 };
   await p.setInputFiles('#pt-snap input[data-ps="cam"]', { name: "a.jpg", mimeType: "image/jpeg", buffer: await jpeg(p) }); await p.waitForTimeout(900);
   const pt = (await pts(p))[0];
   ok(pt && pt.src === "photo" && pt.az === undefined && pt.acc === undefined, "no GPS: saved at the map centre with no heading");
-  const g = pt && (await photos(p, pt.id))[0].geo;
+  /* the point is written first and its photo (hashed, then stored) a moment later: wait for the photo, not a fixed time */
+  let ph0 = [];
+  for (let i = 0; pt && i < 50 && !ph0.length; i++) { ph0 = await photos(p, pt.id); if (!ph0.length) await p.waitForTimeout(200); }
+  const g = ph0[0] && ph0[0].geo;
   ok(g && /map center/.test(g.pos.src) && g.pos.acc === null && g.heading === null, "no GPS: the photo records that the place was the map centre, and no heading");
   ok(await p.evaluate(() => !document.querySelector(".atk-pt .atk-az")), "no heading: no wedge on the map");
   ok(errors.length === 0, "desktop: no page errors " + errors.join(" | "));

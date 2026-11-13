@@ -8077,7 +8077,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      the tag's note still shows on hover and focus */
   document.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest(".aitag"); if (t && !t.closest("label")) { e.preventDefault(); e.stopPropagation(); t.classList.toggle("open"); } }, true);
   document.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.classList && e.target.classList.contains("aitag")) e.target.classList.toggle("open"); });
-  if (window.ResizeObserver) new ResizeObserver(function () { if (hdr.offsetHeight + "px" !== document.documentElement.style.getPropertyValue("--hdr-h")) sizeToHeader(); }).observe(hdr);
+  /* resized on the next frame, not inside the observer: resizing the map there made WebKit (every iPhone browser) report
+     "ResizeObserver loop completed with undelivered notifications" on narrow phones, where the header wraps (320 px, 13 Nov 2026) */
+  var hdrRaf = 0;
+  if (window.ResizeObserver) new ResizeObserver(function () {
+    if (hdrRaf) return;
+    hdrRaf = requestAnimationFrame(function () { hdrRaf = 0; if (hdr.offsetHeight + "px" !== document.documentElement.style.getPropertyValue("--hdr-h")) sizeToHeader(); });
+  }).observe(hdr);
 
   renderRules(); evaluate(); badge();
   window.TSAP_liveRefreshed = function () {
