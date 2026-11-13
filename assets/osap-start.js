@@ -52,17 +52,21 @@
         elements) is not drawn (content-visibility: hidden), so the phone draws Today first; its sizes are still worked out
         when asked, so the map opens where it would have. It is drawn again a moment after Today is on screen, so the map is
         ready by the time it is opened (assets/osap-today.js), or at once when Today closes; never later than the page load
-        when Today did not open, or 20 seconds (tests/speed_budget.mjs) */
+        when Today did not open, or 20 seconds (tests/speed_budget.mjs). OSAP_WHEN_MAP(fn) holds map-only work (Thailand's flood
+        layers, index.html) until then; it runs fn at once when the map is not held. */
   try {
     if (sessionStorage.getItem("osap-today") === "1") {
       var hd = document.documentElement, hst = document.createElement("style");
       hst.textContent = "html.td-boot #map{visibility:hidden}";
       hd.appendChild(hst); hd.classList.add("td-boot");
+      var later = [];
       var unboot = function () {
         if (!hd.classList.contains("td-boot")) return;
         hd.classList.remove("td-boot");
         try { window.dispatchEvent(new Event("resize")); } catch (e) {}
+        later.splice(0).forEach(function (fn) { try { fn(); } catch (e) { setTimeout(function () { throw e; }); } });
       };
+      window.OSAP_WHEN_MAP = function (fn) { if (hd.classList.contains("td-boot")) later.push(fn); else fn(); };
       window.OSAP_UNBOOT = unboot;
       window.addEventListener("load", function () { if (!(window.OSAP_TODAY && window.OSAP_TODAY.isOpen())) unboot(); });
       setTimeout(unboot, 20000);

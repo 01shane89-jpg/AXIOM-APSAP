@@ -2683,7 +2683,14 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   refresh(true);          /* one probe on load: goes live, or says it cannot */
   schedule();
   }
-  if (window.OSAP_TH !== false) buildFlood();
+  /* Thailand's flood layers are map-only work (about 0.5 s on a phone, with their restyle and drawing): when the app opens on
+     Today they are built once the map behind it is drawn (assets/osap-start.js OSAP_WHEN_MAP), at once otherwise. Opening
+     the flood view first builds them then (FW.show). A build that comes after the view was set takes its layers off again,
+     as the view switch did for the earlier build: anything that wanted them shown would have built them already. */
+  if (window.OSAP_TH !== false) {
+    if (!window.OSAP_WHEN_MAP) buildFlood();
+    else window.OSAP_WHEN_MAP(function () { if (floodBuilt) return; buildFlood(); if (window.FW) window.FW.hide(); });
+  }
 
   /* ---------- theme and basemap brightness ----------
      The page follows the viewer's theme by default; these let you override it,
