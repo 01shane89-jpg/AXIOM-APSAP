@@ -63,6 +63,7 @@ tests/deepsouth_border_smoke.mjs
 tests/dspat_smoke.mjs
 tests/ds_review_smoke.mjs
 tests/cf_verify_smoke.mjs
+tests/cf_match_smoke.mjs
 tests/cf_layout_smoke.mjs
 tests/cf_history_range_smoke.mjs
 tests/cf_datasets_smoke.mjs
@@ -202,6 +203,8 @@ tests/wxbrief_area_smoke.mjs
 tests/wxeasy_smoke.mjs
 tests/illum_smoke.mjs
 tests/watch_links_smoke.mjs
+# change alerts by area: watch round a city or a typed grid, Draw a box from the Watch dialog, Alert me here, on to Push to phone
+tests/area_alert_smoke.mjs
 tests/today_width_smoke.mjs
 tests/press_smoke.mjs
 # the phone bottom sheet scrolls up and down only, never sideways (index.html phone layout)

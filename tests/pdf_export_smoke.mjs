@@ -167,6 +167,7 @@ const click = (p, sel, timeout) => p.waitForSelector(sel, { state: "attached", t
   await p.evaluate(() => { const b = document.getElementById("tlr-close"); if (b) b.click(); });
   await check("daily", "Daily summary", p, async () => { await p.evaluate(() => window.OSAP_TODAY.show()); await click(p, "[data-dlprint]"); });
   await p.evaluate(() => { if (window.OSAP_TODAY.isOpen()) document.querySelector(".tdmap").click(); });
+  await check("dailybrief", "Daily brief, one tap", p, async () => { await p.evaluate(() => window.OSAP_REPORTS.run("dailybrief")); });
   await check("wxbrief", "Weather brief", p, async () => { await p.evaluate(() => window.OSAP_WX.brief()); await click(p, "#brief #wxb-page", 60000); await click(p, '#brief [data-wxb="print"]'); });
   await check("wxreport", "Detailed weather report", p, async () => { await p.evaluate(() => window.OSAP_WX.report()); await click(p, "#brief #wxr-page", 60000); await click(p, '#brief [data-wxb="print"]'); });
   await check("wxchart", "5-day weather chart", p, async () => { await p.evaluate(() => window.OSAP_WX.chart()); await click(p, "#brief #wxc-page", 60000); await click(p, '#brief [data-wxb="print"]'); });

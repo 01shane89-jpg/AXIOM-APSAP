@@ -35,6 +35,10 @@
     ["daily", "Country", "Daily summary", "Key events of the last 24 hours with every source, in Today",
       function () { return !!(W.OSAP_TODAY && W.OSAP_DAILYQ) || "Not available for this view"; },
       function () { W.OSAP_TODAY.show(); setTimeout(function () { var d = D.getElementById("td-daily"); if (d && d.scrollIntoView) d.scrollIntoView({ block: "start" }); }, 120); }],
+    /* one tap: the daily summary straight to PDF, without opening Today; with no summary built yet, Today shows why */
+    ["dailybrief", "Country", "Daily brief (PDF)", "One tap: today's summary of the open country as a PDF, AI-drafted top lines where the day has them, key events and every source link",
+      function () { return !!(W.OSAP_DAILYQ && W.OSAP_DAILYQ.brief) || "Not available for this view"; },
+      function () { W.OSAP_DAILYQ.brief(function (ok) { if (!ok && W.OSAP_TODAY) { W.OSAP_TODAY.show(); setTimeout(function () { var d = D.getElementById("td-daily"); if (d && d.scrollIntoView) d.scrollIntoView({ block: "start" }); }, 120); } }); }],
     ["wxeasy", "Country", "Weather, easy read", "Pictures by day, a plain-language summary and Good / Marginal / No-go for flying, driving and boats; one page",
       function () { return !!(W.OSAP_WX && W.OSAP_WX.easy) || "Weather is still loading"; }, function () { W.OSAP_WX.easy(); }],
     ["wxbrief", "Country", "Weather brief", "One page: observed now, impacts, forecast, upper winds, light and warnings for the country, the drawn area or a chosen spot",

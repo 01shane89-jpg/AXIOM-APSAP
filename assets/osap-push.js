@@ -263,5 +263,7 @@
       "#watchdlg .pushbox a.refresh.primary{background:var(--accent);color:var(--on-accent,#fff);border-color:var(--accent);font-weight:600;font-size:13px;padding:8px 16px}#watchdlg .wbtns button.on{border-color:var(--accent);color:var(--accent)}";
     document.head.appendChild(st);
   }
+  /* the Watch dialog's "Then set up alerts to this phone" (2026-11-13): straight on to this panel for the watch just saved */
+  window.OSAP_PUSH = { open: function (id) { if (!byId(id)) return; webSub(false).then(function () { loadList(function () { panel(id); }); }); } };
   if (!/[?&]watchscan=1(&|$)/.test(location.search)) { if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", hook); else hook(); }
 })();

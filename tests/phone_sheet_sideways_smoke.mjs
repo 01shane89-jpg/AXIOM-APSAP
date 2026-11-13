@@ -7,7 +7,7 @@
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
-import { chromium } from "playwright";
+import { chromium, webkit } from "playwright";
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
 const root = process.cwd();
 const server = createServer(async (req, res) => {
@@ -17,7 +17,8 @@ const server = createServer(async (req, res) => {
 }).listen(0, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
 const base = `http://127.0.0.1:${server.address().port}/`;
-const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
+/* BROWSER=webkit runs it in WebKit, the engine of every iPhone browser (check-index.yml carry-webkit job) */
+const browser = process.env.BROWSER === "webkit" ? await webkit.launch() : await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
@@ -51,10 +52,13 @@ await p.waitForTimeout(300);
 const back = await p.evaluate(async () => {
   const rail = document.querySelector(".rail"), sp = document.createElement("div");
   sp.style.width = "900px"; sp.style.height = "1px"; rail.appendChild(sp);   // force something wide, then scroll sideways from script
-  rail.scrollLeft = 120; await new Promise((r) => setTimeout(r, 100));
-  const sl = rail.scrollLeft; sp.remove(); return sl;
+  /* WebKit fires scroll events at its next rendering update, which a busy headless run can hold past a fixed 100 ms (it
+     read 120 once in two runs, 13 Nov 2026), so wait for the reset, up to one second, and say how long it took */
+  rail.scrollLeft = 120; const t0 = performance.now();
+  while (rail.scrollLeft && performance.now() - t0 < 1000) await new Promise((r) => setTimeout(r, 20));
+  const sl = rail.scrollLeft, ms = Math.round(performance.now() - t0); sp.remove(); return { sl, ms };
 });
-ok(back === 0, `a sideways scroll is put straight back (scrollLeft ${back})`);
+ok(back.sl === 0, `a sideways scroll is put straight back (scrollLeft ${back.sl} after ${back.ms} ms)`);
 // a mostly vertical swipe with some sideways drift moves the list down, never across (Today, which opens over the page on
 // start, is closed first so the finger lands on the sheet)
 await p.evaluate(() => { if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) window.OSAP_TODAY.hide(); document.querySelector(".rail").scrollTop = 0; });
@@ -62,13 +66,18 @@ await p.waitForTimeout(300);
 const sw = await p.evaluate(() => { const b = document.querySelector(".rail").getBoundingClientRect(), x = Math.round(b.left + b.width / 2), y = Math.round(b.top + b.height * 0.8);
   return { x, y, onSheet: document.querySelector(".rail").contains(document.elementFromPoint(x, y)) }; });
 ok(sw.onSheet, "the swipe starts on the sheet");
-const cdp = await ctx.newCDPSession(p);
-await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: sw.x, y: sw.y }] });
-for (let i = 1; i <= 12; i++) await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: sw.x - 80 * i / 12, y: sw.y - 300 * i / 12 }] });
-await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-await p.waitForTimeout(500);
-const after = await p.evaluate(() => { const rail = document.querySelector(".rail"); return { top: rail.scrollTop, left: rail.scrollLeft }; });
-ok(after.top > 50 && after.left === 0, `a slanted swipe scrolls the list down, not sideways (down ${Math.round(after.top)} px, across ${after.left} px)`);
+/* a real finger swipe needs Chrome's DevTools touch events; WebKit has none in Playwright, so there the CSS that makes the
+   sheet pan up and down only (checked above) stands in for it, and the Chromium run checks the swipe itself */
+if (process.env.BROWSER === "webkit") console.log("NOTE the finger-swipe check runs in the Chromium run only (no touch-event driver for WebKit)");
+else {
+  const cdp = await ctx.newCDPSession(p);
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: sw.x, y: sw.y }] });
+  for (let i = 1; i <= 12; i++) await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: sw.x - 80 * i / 12, y: sw.y - 300 * i / 12 }] });
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await p.waitForTimeout(500);
+  const after = await p.evaluate(() => { const rail = document.querySelector(".rail"); return { top: rail.scrollTop, left: rail.scrollLeft }; });
+  ok(after.top > 50 && after.left === 0, `a slanted swipe scrolls the list down, not sideways (down ${Math.round(after.top)} px, across ${after.left} px)`);
+}
 if (process.env.SHOTS) await p.screenshot({ path: process.env.SHOTS + "/phone-sheet.png" });
 ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
 await browser.close(); server.close();

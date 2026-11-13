@@ -211,3 +211,4 @@ window.OSAP_RISK.intoBrief(briefEl, CC, C.name)
 <script src="assets/osap-milref.js"></script>
 <script src="assets/osap-milmap.js"></script>
 <script src="assets/osap-protect.js"></script>
+openNear: function (pl, km) {

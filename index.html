@@ -7473,6 +7473,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      The shape is the analyst's own filter, kept on this device per country. Map markers outside it are hidden and the report list
      counts only what is inside. Nothing about the records changes. */
   var AREA = null, areaLayer = null, areaDraw = null, AREA_KEY = "asap-area-" + CC;
+  /* set by the Watch dialog's Draw a box / Draw a circle: run once when that drawing ends (finished or cancelled) */
+  var wAfterDraw = null;
   try { var a0 = JSON.parse(localStorage.getItem(AREA_KEY) || "null"); if (Array.isArray(a0) && a0.length >= 3) AREA = a0; } catch (e) {}
   /* the analyst's look for the drawn area (fill colour, fill opacity, outline colour) and what the shape was drawn as (kind) and
      how far it has been turned (rot, radians on screen), so resizing a turned square keeps it square. Kept on this device */
@@ -7625,6 +7627,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     map.dragging.enable(); map.doubleClickZoom.enable(); if (map.touchZoom) map.touchZoom.enable(); if (map.boxZoom) map.boxZoom.enable();
     mapEl.classList.remove("area-drawing");
     if (!cancel && P.length >= 3) { areaSet(P, mode === "circle" || mode === "rect" ? mode : ""); editStart(); } else areaUi();
+    if (wAfterDraw) { var wf = wAfterDraw; wAfterDraw = null; editEnd(); areaUi(); setTimeout(function () { wf(!cancel && P.length >= 3); }, 0); }
   }
   function drawShow() {
     var P = areaDraw.pts, S = areaDraw.mode === "circle" || areaDraw.mode === "rect", E = S && P.length ? P.concat([P[0]]) : P;
@@ -8074,7 +8077,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      the tag's note still shows on hover and focus */
   document.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest(".aitag"); if (t && !t.closest("label")) { e.preventDefault(); e.stopPropagation(); t.classList.toggle("open"); } }, true);
   document.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.classList && e.target.classList.contains("aitag")) e.target.classList.toggle("open"); });
-  if (window.ResizeObserver) new ResizeObserver(function () { if (hdr.offsetHeight + "px" !== document.documentElement.style.getPropertyValue("--hdr-h")) sizeToHeader(); }).observe(hdr);
+  /* resized on the next frame, not inside the observer: resizing the map there made WebKit (every iPhone browser) report
+     "ResizeObserver loop completed with undelivered notifications" on narrow phones, where the header wraps (320 px, 13 Nov 2026) */
+  var hdrRaf = 0;
+  if (window.ResizeObserver) new ResizeObserver(function () {
+    if (hdrRaf) return;
+    hdrRaf = requestAnimationFrame(function () { hdrRaf = 0; if (hdr.offsetHeight + "px" !== document.documentElement.style.getPropertyValue("--hdr-h")) sizeToHeader(); });
+  }).observe(hdr);
 
   renderRules(); evaluate(); badge();
   window.TSAP_liveRefreshed = function () {
@@ -8696,6 +8705,34 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return ["ask", "Off. New hits are listed here and in the Watch button only."];
   }
   function lvlName(n) { return ["", "Any severity", "Medium or high", "High only"][n || 1]; }
+  /* "Around a city or place" (2026-11-13, change alerts by area): the place comes from the same searches as the toolbar's Search
+     (Photon on OpenStreetMap, then Open-Meteo's GeoNames town list), from a grid typed here (read on this device, no network), or
+     from this device's own location. The watch keeps a circle of the chosen distance round it as an ordinary area (circlePts), so
+     the in-app check and the push check (tools/push_watches.mjs, through OSAP_WATCH.matches) need nothing new. What is typed goes
+     to the place search and nowhere else. A place found is a place name, never a report. */
+  var W_KMS = [2, 5, 10, 25, 50, 100], WPLACE = null, WPLACE_KM = 10, wPre = "";
+  function wPlaceName() { return (WPLACE.name.slice(0, 50) + " " + WPLACE_KM + " km").slice(0, 60); }
+  function wPlaceLabel() { return WPLACE_KM + " km around " + WPLACE.name.slice(0, 60); }
+  function wPlaceArea() { return circlePts([WPLACE.lat, WPLACE.lon], WPLACE_KM * 1000).map(function (p) { return [Math.round(p[0] * 1e5) / 1e5, Math.round(p[1] * 1e5) / 1e5]; }); }
+  function wGrid(lat, lon) { var G = window.OSAP_GEO; return (G && G.mgrs && G.mgrs(lat, lon, 4)) || lat.toFixed(4) + ", " + lon.toFixed(4); }
+  function wPlaceFind(q) {
+    var G = window.OSAP_GEO, g = null;
+    try { g = G && G.parse ? G.parse(q) : null; } catch (e) {}
+    if (g && isFinite(g.lat) && isFinite(g.lon) && Math.abs(g.lat) <= 90) return Promise.resolve([{ name: wGrid(g.lat, g.lon), sub: "Typed grid", lat: g.lat, lon: g.lon, src: "typed grid" }]);
+    var c = map.getCenter(), ctl = window.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ctl) ctl.abort(); }, 10000);
+    function get(u, sig) { return fetch(u, { signal: sig }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }); }
+    return get("https://photon.komoot.io/api/?q=" + encodeURIComponent(q) + "&limit=6&lang=en&lat=" + c.lat.toFixed(3) + "&lon=" + L.Util.wrapNum(c.lng, [-180, 180], true).toFixed(3) + "&location_bias_scale=0.3", ctl ? ctl.signal : undefined).then(function (j) {
+      return (j && j.features || []).map(function (f) {
+        var p = f.properties || {}, xy = f.geometry && f.geometry.coordinates || [], k = String(p.osm_value || "").replace(/_/g, " ");
+        return { name: String(p.name || p.city || ""), sub: [k && k !== "yes" ? k[0].toUpperCase() + k.slice(1) : "", p.state, p.country].filter(Boolean).join(", "), lat: +xy[1], lon: +xy[0], src: "OpenStreetMap via Photon" };
+      });
+    }).catch(function () {
+      return get("https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(q) + "&count=6&language=en&format=json").then(function (j) {
+        return (j && j.results || []).map(function (g) { return { name: String(g.name || ""), sub: [g.admin1, g.country].filter(Boolean).join(", "), lat: +g.latitude, lon: +g.longitude, src: "GeoNames via Open-Meteo" }; });
+      });
+    }).then(function (r) { clearTimeout(t); return r.filter(function (x) { return x.name && isFinite(x.lat) && isFinite(x.lon) && Math.abs(x.lat) <= 90; }).slice(0, 6); },
+      function (e) { clearTimeout(t); throw e; });
+  }
   function wOpen(e) {
     if (e && e.preventDefault) e.preventDefault();
     wLoad();
@@ -8714,10 +8751,16 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<h3>New watch in ' + esc(C.name) + "</h3>" +
       (ADDED.length ? '<p class="note">Also watches ' + ADDED.map(function (cc) { return flagOf(cc) + " " + esc(cName(cc)); }).join(", ") + ", the countries added to this map, each as its own watch.</p>" : "") +
       (CC === "th" && LBY.insurgency ? '<p class="wpreset"><b>Ready-made:</b> <button type="button" class="refresh" data-w-preset="ds-ied">Deep South IED watch</button> <span class="obs">Bombs, found devices, EOD work and bomb warnings in the Deep South, only when an official source reports them or two outlets agree. Lone local posts are not sent.</span></p>' : "") +
-      '<form id="wform" class="wform"><label>Name <input type="text" id="w-name" class="mini" maxlength="60" value="' + esc(AREA ? C.name + " drawn area" : C.name) + '"></label>' +
-        '<fieldset><legend>Area</legend><label><input type="radio" name="w-area" value="drawn"' + (AREA ? " checked" : " disabled") + "> <span>The area drawn on the map" + (AREA ? "" : ' <span class="obs">(use Draw area on the map first)</span>') + "</span></label>" +
+      '<form id="wform" class="wform"><label>Name <input type="text" id="w-name" class="mini" maxlength="60" value="' + esc(wPre === "place" && WPLACE ? wPlaceName() : AREA ? C.name + " drawn area" : C.name) + '"></label>' +
+        '<fieldset><legend>Area</legend><label><input type="radio" name="w-area" value="drawn"' + (AREA ? (wPre === "place" ? "" : " checked") : " disabled") + "> <span>The area drawn on the map" + (AREA ? "" : ' <span class="obs">(draw one with the buttons below)</span>') + "</span></label>" +
         (window.OSAP_AOI ? window.OSAP_AOI.list(CC).map(function (a) { return '<label><input type="radio" name="w-area" value="aoi:' + esc(a.id) + '" data-w-aname="' + esc(window.OSAP_AOI.label(a)) + '"> <span><span class="chip aoichip aoi-' + a.type.toLowerCase() + '">' + a.type + "</span> " + esc(a.name) + ' <span class="obs">(saved area)</span></span></label>'; }).join("") : "") +
-        '<label><input type="radio" name="w-area" value="country"' + (AREA ? "" : " checked") + "> <span>All of " + esc(C.name) + ' <span class="obs">(includes reports with no map location)</span></span></label></fieldset>' +
+        '<label><input type="radio" name="w-area" value="place"' + (wPre === "place" ? " checked" : "") + "> <span>Around a city or place</span></label>" +
+        '<div class="wplace" id="w-place"><div class="wqrow"><input type="search" id="w-pq" class="mini" maxlength="120" autocomplete="off" placeholder="City, town, base, or a grid" aria-label="City or place to watch around" value="' + esc(WPLACE ? WPLACE.name : "") + '">' +
+          '<button type="button" class="refresh" data-w-pfind>Find</button><button type="button" class="refresh" data-w-pme>My location</button>' +
+          '<label class="wprad">Within <select id="w-pkm" class="mini" aria-label="Distance around the place">' + W_KMS.map(function (k) { return '<option value="' + k + '"' + (k === WPLACE_KM ? " selected" : "") + ">" + k + " km</option>"; }).join("") + "</select></label></div>" +
+          '<div id="w-plist" class="wplist" role="group" aria-label="Places found"></div><div id="w-pmsg" class="obs" aria-live="polite"></div></div>' +
+        '<p class="wdraw"><button type="button" class="refresh" data-w-draw="rect">Draw a box</button><button type="button" class="refresh" data-w-draw="circle">Draw a circle</button> <span class="obs">on the map, then come back here</span></p>' +
+        '<label><input type="radio" name="w-area" value="country"' + (AREA || wPre === "place" ? "" : " checked") + "> <span>All of " + esc(C.name) + ' <span class="obs">(includes reports with no map location)</span></span></label></fieldset>' +
         '<fieldset><legend>Categories</legend><label><input type="checkbox" id="w-anycat" checked> Any category</label><div class="wcats">' + cats.map(function (l) {
           return '<label><input type="checkbox" name="w-cat" value="' + esc(l.id) + '"> ' + esc(l.name) + "</label>"; }).join("") + "</div></fieldset>" +
         '<fieldset class="wwords"><legend>Words <span class="obs">(optional)</span></legend>' +
@@ -8735,6 +8778,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
             "<li>Draft Boolean builds a search from your description with OSAP's word rules, not an AI model. Check it before saving.</li></ul></details></fieldset>" +
         '<label>Severity <select id="w-sev" class="mini"><option value="1">Any severity</option><option value="2">Medium or high</option><option value="3">High only</option></select></label>' +
         '<p class="obs">Counts reports dated in the last ' + W_RECENT_DAYS + " days. What is already there when you save is noted, not announced; only later arrivals are hits.</p>" +
+        (window.OSAP_PUSH ? '<label class="wpushnext"><input type="checkbox" id="w-pushnext"' + (lsGet("osap-w-pushnext", true) === false ? "" : " checked") + '> <span>Then set up alerts to this phone <span class="obs">(push alerts reach a closed app or a locked phone; Mid and Full plans)</span></span></label>' : "") +
         '<button type="submit" class="refresh primary">Save watch</button></form>' +
       "<h3>Your watches</h3>" + (WATCHES.length ? '<div class="wlist">' + WATCHES.map(function (w) {
         var cn = (CBY[w.cc] || {}).name || w.cc, nNew = hitsLoad().filter(function (h) { return h.w === w.id && !h.read; }).length;
@@ -8752,7 +8796,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
           '<span class="tlm">' + chip("rule", h.wn + " · " + cn) + chip("sev" + (h.sev || 1), ["", "Low", "Medium", "High"][h.sev || 1]) + (h.grp ? chip("evauto", h.grp + " reports, grouped") : chip("t-x", h.st || "")) + '<span class="tls">' + esc(h.src) + "</span></span></button>";
       }).join("") + '</div><p><button type="button" class="refresh" data-w-read>Mark all read</button> <button type="button" class="refresh" data-w-clear>Clear the list</button></p>' : '<p class="obs">Nothing new yet.</p>') +
       "</div>";
-    wEl.hidden = false;
+    wEl.hidden = false; wPre = "";
     var any = wEl.querySelector("#w-anycat");
     any.addEventListener("change", function () { if (any.checked) Array.prototype.forEach.call(wEl.querySelectorAll('[name="w-cat"]'), function (c) { c.checked = false; }); });
     Array.prototype.forEach.call(wEl.querySelectorAll('[name="w-cat"]'), function (c) { c.addEventListener("change", function () { if (c.checked) any.checked = false; }); });
@@ -8761,7 +8805,57 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     wName.addEventListener("input", function () { wNameTyped = true; });
     Array.prototype.forEach.call(wEl.querySelectorAll('[name="w-area"]'), function (r) { r.addEventListener("change", function () {
       if (wNameTyped || !r.checked) return;
-      wName.value = r.hasAttribute("data-w-aname") ? C.name + " " + r.getAttribute("data-w-aname") : r.value === "drawn" ? C.name + " drawn area" : C.name; }); });
+      wName.value = r.hasAttribute("data-w-aname") ? C.name + " " + r.getAttribute("data-w-aname") : r.value === "drawn" ? C.name + " drawn area" : r.value === "place" && WPLACE ? wPlaceName() : C.name; }); });
+    /* Around a city or place: Find (or Enter), pick one of the places found, or My location; the distance can change after */
+    var wPq = wEl.querySelector("#w-pq"), wPlist = wEl.querySelector("#w-plist"), wPmsg = wEl.querySelector("#w-pmsg"), wPkm = wEl.querySelector("#w-pkm"), wPseq = 0, wPfound = [];
+    function wPradio() { return wEl.querySelector('[name="w-area"][value="place"]'); }
+    function wPshow() {
+      if (!WPLACE) { wPmsg.textContent = "Type a city, town or grid and press Find, or use My location."; return; }
+      var n = 0; try { n = wMatches({ area: wPlaceArea(), layers: [], kw: [], minSev: 1 }).length; } catch (e) {}
+      var gr = wGrid(WPLACE.lat, WPLACE.lon);
+      wPmsg.textContent = "Chosen: " + wPlaceLabel() + " (" + (WPLACE.name.indexOf(gr) < 0 ? gr + ", " : "") + WPLACE.src + "). " + n + " report" + (n === 1 ? "" : "s") + " on this map from the last " + W_RECENT_DAYS +
+        " days fall inside it now; those are noted, not announced. Only " + C.name + " reports are checked: near a border, add the neighbor to this map first.";
+    }
+    function wPset(r) { WPLACE = r; wPradio().checked = true; if (!wNameTyped) wName.value = wPlaceName(); wPlist.innerHTML = ""; wPshow(); wQsoon(); }
+    function wPfind() {
+      var q = wPq.value.trim().slice(0, 120);
+      wPradio().checked = true;
+      if (q.length < 2) { wPmsg.textContent = "Type at least two letters, or a grid."; return; }
+      var n = ++wPseq; wPmsg.textContent = "Searching…"; wPlist.innerHTML = "";
+      wPlaceFind(q).then(function (r) {
+        if (n !== wPseq) return; wPfound = r;
+        if (!r.length) { wPmsg.textContent = 'No places found for "' + q + '". Try another spelling, or type a grid.'; return; }
+        if (r[0].src === "typed grid") { wPset(r[0]); return; }
+        wPlist.innerHTML = r.map(function (x, i) { return '<button type="button" class="refresh wpick" data-w-pick="' + i + '"><b>' + esc(x.name) + "</b>" + (x.sub ? ' <span class="obs">' + esc(x.sub) + "</span>" : "") + "</button>"; }).join("");
+        wPmsg.textContent = "Pick the place you mean (" + r[0].src + ").";
+      }, function () { if (n !== wPseq) return; wPmsg.textContent = "The place search did not answer. Check the connection, or type a grid such as 47N PJ 12345 67890 or 7.0, 100.47 (grids work offline)."; });
+    }
+    wPq.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); wPfind(); } });
+    wPq.addEventListener("input", function () { wPradio().checked = true; });
+    wPkm.addEventListener("change", function () { WPLACE_KM = +wPkm.value || 10; wPradio().checked = true; if (WPLACE) { if (!wNameTyped) wName.value = wPlaceName(); wPshow(); } });
+    if (WPLACE) wPshow();
+    wEl.querySelector("#wform").addEventListener("click", function (e) {
+      var b = e.target.closest && e.target.closest("[data-w-pfind],[data-w-pme],[data-w-pick],[data-w-draw]"); if (!b) return;
+      if (b.hasAttribute("data-w-pfind")) { wPfind(); return; }
+      if (b.hasAttribute("data-w-pick")) { var r = wPfound[+b.getAttribute("data-w-pick")]; if (r) wPset(r); return; }
+      if (b.hasAttribute("data-w-pme")) {
+        var h = window.OSAP_LOC && window.OSAP_LOC.here && window.OSAP_LOC.here();
+        var mine = function (lat, lon) { wPset({ name: "Position " + wGrid(lat, lon), lat: lat, lon: lon, src: "this device's location" }); };
+        if (h && isFinite(h.lat) && isFinite(h.lon)) { mine(h.lat, h.lon); return; }
+        if (!navigator.geolocation) { wPmsg.textContent = "This browser cannot give a location. Type a place or a grid instead."; return; }
+        wPmsg.textContent = "Finding this device’s location…";
+        navigator.geolocation.getCurrentPosition(function (p) { mine(p.coords.latitude, p.coords.longitude); },
+          function () { wPmsg.textContent = "Location not available (not allowed, or no fix). Type a place or a grid instead."; }, { timeout: 15000, maximumAge: 300000 });
+        return;
+      }
+      if (b.hasAttribute("data-w-draw")) {
+        /* draw on the map, then this dialog opens again with the new shape chosen */
+        var mode = b.getAttribute("data-w-draw");
+        wClose();
+        wAfterDraw = function (ok) { wOpen(); if (!ok) { var m = wEl.querySelector("#w-pmsg"); if (m) m.textContent = ""; } };
+        drawStart(mode === "circle" ? "circle" : "rect");
+      }
+    });
     /* Words: a plain comma list stays the old any-of list (w.kw); Boolean syntax is kept as w.q with its words in w.kw for display */
     var wKwEl = wEl.querySelector("#w-kw"), wQmsg = wEl.querySelector("#w-qmsg"), wDrafted = "", wQt = 0;
     function wWordsOf() {
@@ -8773,7 +8867,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     }
     function wFormWatch(words) {
       var a = wEl.querySelector('[name="w-area"]:checked'), ao = a && a.value.indexOf("aoi:") === 0 && window.OSAP_AOI ? window.OSAP_AOI.get(a.value.slice(4)) : null;
-      return { area: ao ? ao.pts : a && a.value === "drawn" && AREA ? AREA : null, layers: any.checked ? [] : Array.prototype.map.call(wEl.querySelectorAll('[name="w-cat"]:checked'), function (c) { return c.value; }),
+      return { area: ao ? ao.pts : a && a.value === "drawn" && AREA ? AREA : a && a.value === "place" && WPLACE ? wPlaceArea() : null, layers: any.checked ? [] : Array.prototype.map.call(wEl.querySelectorAll('[name="w-cat"]:checked'), function (c) { return c.value; }),
         kw: words.kw || [], q: words.q || null, minSev: +wEl.querySelector("#w-sev").value || 1, conf: null };
     }
     /* as the words change: say how they are read, and how many recent reports on this map the watch would match now */
@@ -8812,12 +8906,20 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var a = wEl.querySelector('[name="w-area"]:checked'), cats2 = Array.prototype.map.call(wEl.querySelectorAll('[name="w-cat"]:checked'), function (c) { return c.value; });
       /* a saved area: the watch keeps its own copy of the shape, so editing or deleting the area later leaves the watch as it was */
       var ao = a && a.value.indexOf("aoi:") === 0 && window.OSAP_AOI ? window.OSAP_AOI.get(a.value.slice(4)) : null;
+      var pl = a && a.value === "place";
+      if (pl && !WPLACE) { wPmsg.textContent = "Choose a place first: type a city, town or grid and press Find, or use My location."; wPq.focus(); return; }
       var w = { id: "w" + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), name: (wName.value || C.name).trim().slice(0, 60), cc: CC,
-        area: ao ? ao.pts.slice() : a && a.value === "drawn" && AREA ? AREA.slice() : null, aoi: ao ? { id: ao.id, type: ao.type, label: window.OSAP_AOI.label(ao) } : undefined,
+        area: ao ? ao.pts.slice() : pl ? wPlaceArea() : a && a.value === "drawn" && AREA ? AREA.slice() : null,
+        aoi: ao ? { id: ao.id, type: ao.type, label: window.OSAP_AOI.label(ao) } : pl ? { type: "Place", label: wPlaceLabel(), c: [+WPLACE.lat.toFixed(5), +WPLACE.lon.toFixed(5)], km: WPLACE_KM } : undefined,
         layers: any.checked ? [] : cats2, kw: words.kw, q: words.q || undefined, minSev: +wEl.querySelector("#w-sev").value || 1, on: true, created: Date.now() };
       wLoad(); WATCHES.push(w);
       ADDED.forEach(function (cc) { var w2 = {}; Object.keys(w).forEach(function (k) { w2[k] = w[k]; }); w2.id = w.id + "-" + cc; w2.cc = cc; w2.name = (w.name.indexOf(C.name) === 0 ? cName(cc) + w.name.slice(C.name.length) : w.name + " (" + cName(cc) + ")").slice(0, 60); w2.layers = w.layers.slice(); w2.kw = w.kw.slice(); WATCHES.push(w2); });
+      var pushNext = wEl.querySelector("#w-pushnext"), pushIt = !!(pushNext && pushNext.checked && window.OSAP_PUSH);
+      if (pushNext) lsSet("osap-w-pushnext", !!pushNext.checked);   /* the last choice is kept on this device */
+      if (pl) WPLACE = null;
       wSave(); wRun(); wBadge(); wOpen(); wSchedule(true);
+      /* one step from a new area to alerts on a locked phone: straight on to Push to phone for the new watch */
+      if (pushIt) window.OSAP_PUSH.open(w.id);
     });
     wEl.querySelector(".chead .x").addEventListener("click", wClose);
     wEl.querySelector(".chead .x").focus();
@@ -8928,7 +9030,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* the push check (tools/push_watches.mjs) opens this page headless and asks it which reports a watch matches, so pushes and the
      in-app Watch follow the same rules; assets/osap-push.js adds Push to phone to the Watch dialog */
   window.OSAP_WATCH = { country: CC, matches: function (w) { return wMatches({ area: w.area || null, layers: w.layers || [], kw: w.kw || [], q: w.q || null, minSev: w.minSev || 1, conf: w.conf || null }); }, words: wKwList,
-    open: function () { wOpen(); }, list: function () { return wLoad(); }, countryName: cName };
+    open: function () { wOpen(); }, list: function () { return wLoad(); }, countryName: cName,
+    /* a new watch round a place picked elsewhere (Search's "Alert me here"): { name, lat, lon, src }, distance in km */
+    openNear: function (pl, km) {
+      if (!pl || !isFinite(pl.lat) || !isFinite(pl.lon)) return;
+      WPLACE = { name: String(pl.name || "Place").slice(0, 80), lat: +pl.lat, lon: +pl.lon, src: String(pl.src || "place search").slice(0, 60) };
+      if (W_KMS.indexOf(+km) >= 0) WPLACE_KM = +km;
+      wPre = "place"; wOpen();
+    } };
   if (document.readyState === "complete") setTimeout(wStart, 1500); else window.addEventListener("load", function () { setTimeout(wStart, 1500); });
   (function () {
     var st = document.createElement("style");
@@ -8947,6 +9056,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       ".wform legend{font-weight:600;font-size:12px}.wcats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:2px 10px}.wform label{display:flex;gap:6px;align-items:center}" +
       ".wform button[type=submit]{align-self:flex-start}.wform .wwords{gap:6px}.wform .wwords legend .obs{font-weight:400}.wqrow{display:flex;flex-wrap:wrap;gap:6px}.wqrow select{flex:0 1 200px;min-width:0}.wqrow input{flex:1 1 220px;min-width:0}" +
       ".wform textarea{width:100%;box-sizing:border-box;font:inherit;resize:vertical;min-height:44px}.wqmsg:empty{display:none}.wqerr{color:var(--hot,#c62828)}.chip.wqauto{text-transform:none;letter-spacing:0;font-size:10.5px}.wqhelp summary{cursor:pointer;color:var(--muted)}.wqhelp ul{font-size:12px}" +
+      ".wplace{margin:0 0 4px 24px;display:flex;flex-direction:column;gap:4px}.wplace .wqrow input{flex:1 1 160px}.wplace .wprad{display:inline-flex;gap:4px;align-items:center;white-space:nowrap}" +
+      ".wplist{display:flex;flex-direction:column;gap:4px}.wplist:empty{display:none}.wplist .wpick{text-align:left;display:block;width:100%;min-height:40px}.wplist .wpick .obs{font-size:11.5px}" +
+      ".wdraw{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:2px 0}.wpushnext{align-items:flex-start!important}" +
       ".wpreset{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}.wrow{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line-soft)}" +
       ".wbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.whits{display:flex;flex-direction:column}.tlrow.new .tln{font-weight:600}" +
       ".wctl button .abadge{margin-left:4px}#wtoast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:99999;max-width:min(560px,calc(100vw - 32px));" +
@@ -9213,7 +9325,19 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       return { id: v.id, title: v.head.title, countries: [CC].concat(v.xcc), crossBorder: v.xcc.length > 0, lat: v.loc ? v.loc.lat : null, lon: v.loc ? v.loc.lon : null,
         from: v.t0.ms, to: v.t1.ms, sev: v.sev, layer: v.layer, reports: v.m.map(function (r) { return { key: rk(r), cc: r.xcc || CC, title: r.title, source: r.src.name, url: r.url, ts: r.issued || r.ts, status: (STATE[r.type] || [r.type])[0] }; }) }; });
   } };
-  renderHeld(); evRefresh();
+  /* the list is drawn once, here; when the app opens on Today (assets/osap-start.js set this tab's "osap-today" to "1"), the
+     list is hidden behind Today, so it is drawn just after Today is on screen rather than before (about 1.2 s on a phone,
+     tests/speed_budget.mjs), or at once when Today closes (window.OSAP_LISTUP, assets/osap-today.js hide) */
+  var listUp = (function () { var did = false; return function () { if (did) return; did = true; renderHeld(); evRefresh(); }; })();
+  window.OSAP_LISTUP = listUp;
+  var todayFirst = false;
+  try { todayFirst = !SCAN && !/[?&](watchscan|wopen)=/.test(location.search) && sessionStorage.getItem("osap-today") === "1"; } catch (e) {}
+  if (!todayFirst) listUp();
+  else (function wait(n) {
+    if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) requestAnimationFrame(function () { setTimeout(listUp, 250); });
+    else if (n < 160) setTimeout(function () { wait(n + 1); }, 50);
+    else listUp();
+  })(0);
   /* the open country's map and lists are built: take the loading screen away once the map has drawn its first frame */
   requestAnimationFrame(function () { setTimeout(function () { if (window.OSAP_BOOT) window.OSAP_BOOT.done(); }, 80); });
   window.TSAP = { country: CC, records: R, sources: SOURCES, setView: setView, select: select, fingerprint: fingerprint, canon: canon, fingerprints: FP, storyDedup: storyDedup,

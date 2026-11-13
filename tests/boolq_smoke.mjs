@@ -20,7 +20,7 @@ let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
 await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
-await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
+await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("osap-w-pushnext", "false"); } catch (e) {} });
 const p = await ctx.newPage(), errors = []; p.on("pageerror", (e) => errors.push(e.message));
 await p.goto(base, { waitUntil: "domcontentloaded" });
 await p.waitForFunction(() => window.TSAP && window.OSAP_WATCH && window.OSAP_BOOLQ, null, { timeout: 60000 });

@@ -241,7 +241,9 @@
   W.addEventListener("resize", function () { top(); LIST.forEach(decorate); });
   setTimeout(top, 0); W.addEventListener("load", top);
   /* the map changes size with the layout (Map only, Map and list): keep the panel and the toolbar lined up */
-  (function wait(n) { var m = W.__asapMap; if (m && W.ResizeObserver) new ResizeObserver(function () { top(); }).observe(m.getContainer()); else if (n < 80) setTimeout(function () { wait(n + 1); }, 250); })(0);
+  /* on the next frame, not inside the observer (WebKit reported a ResizeObserver loop on narrow phones, 13 Nov 2026) */
+  var topRaf = 0;
+  (function wait(n) { var m = W.__asapMap; if (m && W.ResizeObserver) new ResizeObserver(function () { if (!topRaf) topRaf = (W.requestAnimationFrame || setTimeout)(function () { topRaf = 0; top(); }); }).observe(m.getContainer()); else if (n < 80) setTimeout(function () { wait(n + 1); }, 250); })(0);
   /* windows built by other scripts: pick them up when they appear */
   var IDS = [["watchdlg", ".chead"], ["aoidlg", ".chead"]];
   function scan() { IDS.forEach(function (x) { var e = D.getElementById(x[0]); if (e) add(e, x[1]); }); }

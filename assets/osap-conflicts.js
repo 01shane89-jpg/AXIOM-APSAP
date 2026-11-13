@@ -80,6 +80,8 @@
     "#cf-rail .cfrv{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:5px 0 0}#cf-rail .cfrv button,#cf-rail .cfrv select{font:inherit;font-size:12px;padding:3px 9px;min-height:28px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink);cursor:pointer}" +
     "#cf-rail .cfrv button[data-cfcode]{border-color:#1F8A4C;color:#1F8A4C;font-weight:600}#cf-rail .cfrv button[data-cfv=reject_incident]{border-color:var(--bad,#C0392B);color:var(--bad,#C0392B)}",
     // the incident record: the coded line of a confirmed incident, and the per-field coding form of the review queue
+    "#cf-rail .cfmt{margin:4px 0 0;font-size:12px;line-height:1.45}#cf-rail .cfmt summary{cursor:pointer;color:var(--muted,#555);font-size:12px;font-weight:400}#cf-rail .cfmt .mt{margin:3px 0 0;padding:4px 7px;border-left:3px dashed #8a8f98}" +
+    "#cf-rail .cfmt .mt button{font-size:11px;margin:2px 4px 0 0}#cf-rail .cflnk{margin:4px 0 0;padding:4px 7px;border-left:3px solid #1F8A4C;font-size:12px;line-height:1.45}" +
     "#cf-rail .cfrec{margin:4px 0 0;padding:4px 7px;border-left:3px solid #1F8A4C;background:var(--surface-2,rgba(31,138,76,.06));font-size:12px;line-height:1.45}" +
     "#cf-rail .cfcf{margin:6px 0 2px;padding:7px 8px;border:1px solid #1F8A4C;border-radius:5px;font-size:12px}#cf-rail .cfcf h4{margin:0 0 4px;font-size:12px}" +
     "#cf-rail .cfcf .r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 6px;align-items:center;padding:5px 0;border-top:1px solid var(--line-soft)}#cf-rail .cfcf .r>.c{grid-column:1/-1}" +
@@ -230,12 +232,13 @@
   // the projection, read again when a tab opens (a decision recorded meanwhile shows without a reload); a missing file is no decisions
   // with it: the incident record's field rules (assets/osap-cf-code.js, once) and the AI suggestions (data/live/conflicts/suggest.js);
   // either missing only leaves the coding form without those suggestions
-  var codeP = null;
+  var codeP = null, matchP = null;
   function loadVerified() {
     if (Date.now() - vLoaded < 60000) return Promise.resolve();
     var m = Math.floor(Date.now() / 60000);
     if (!codeP) codeP = W.OSAP_CF_CODE ? Promise.resolve() : load("assets/osap-cf-code.js").catch(function () { codeP = null; });
-    return Promise.all([load("data/live/conflicts/verified.js?m=" + m).catch(function () {}), load("data/live/conflicts/suggest.js?m=" + m).catch(function () {}), codeP])
+    if (!matchP) matchP = W.OSAP_CF_MATCH ? Promise.resolve() : load("assets/osap-cf-match.js").catch(function () { matchP = null; });
+    return Promise.all([load("data/live/conflicts/verified.js?m=" + m).catch(function () {}), load("data/live/conflicts/suggest.js?m=" + m).catch(function () {}), codeP, matchP])
       .then(function () { vLoaded = Date.now(); });
   }
   function vrec(i) { var v = W.OSAP_CF_VERIFIED, m = v && v.by && active && v.by[active]; return m && i && i.fp ? m[i.fp] || null : null; }
@@ -438,6 +441,70 @@
     var k = +b.getAttribute("data-k"), g = (D.getElementById("cf-list")._groups || [])[k]; if (!g) return;
     var w = D.querySelector('#cf-rail select[data-cfvwhy="' + k + '"]');
     decide(b.getAttribute("data-cfv"), g, w && w.value);
+  });
+
+  /* ---------- the same event in UCDP's coded record: proposals the analyst decides (assets/osap-cf-match.js) ----------
+     For each incident, the UCDP events the tab holds that are close to its reports in place and time (rules match-v1). A proposal
+     is not a link: "Same event" or "Not the same" opens a decision issue like Confirm (tools/cf_decision_lib.mjs link_coded /
+     reject_link), and the job checks the event against its own files before it records anything. A recorded link shows on the
+     incident; it makes no figure, side or claim in either record true. */
+  var UTYPE = { 1: "State-based fighting", 2: "Fighting between armed groups", 3: "Violence against civilians" };
+  function lrec(fps) {
+    var v = W.OSAP_CF_VERIFIED, m = v && v.links && active && v.links[active], out = {};
+    if (m) fps.forEach(function (fp) { (m[fp] || []).forEach(function (x) { if (!out[x.id] || out[x.id].at < x.at) out[x.id] = x; }); });
+    return out;
+  }
+  function uTxt(e) {
+    return day(e.date) + (e.end && e.end !== e.date ? " to " + day(e.end) : "") + " · " + esc(UTYPE[e.type] || "UCDP event") + " · " + esc(e.sideA || "") + (e.sideB ? " vs " + esc(e.sideB) : "") +
+      " · " + (e.best == null ? "deaths not given" : num(e.best) + " deaths (UCDP best estimate" + (e.low != null && e.high != null && (e.low !== e.best || e.high !== e.best) ? ", " + num(e.low) + " to " + num(e.high) : "") + ")") +
+      (e.where ? '<br><span class="cfm">' + esc(e.where) + "</span>" : "");
+  }
+  function matchHtml(g, k) {
+    var M = W.OSAP_CF_MATCH, d = cur.data; if (!M || !d || !g.all.every(reviewable)) return "";
+    var fps = uniq(g.all.map(function (x) { return x.fp; })), done = lrec(fps), ev = {}, h = [];
+    (d.ucdp || []).forEach(function (e) { ev[String(e.id)] = e; });
+    Object.keys(done).forEach(function (id) {
+      var x = done[id], e = ev[id];
+      if (x.s === "same_event") h.push('<div class="cflnk" title="' + esc("An analyst judged these reports describe the same event UCDP coded (" + day(x.at) + (x.r ? ": " + x.r : "") + "). Figures and sides stay as each source gives them.") + '"><b>Same event as UCDP event ' + esc(id) + "</b> (analyst)" +
+        (e ? "<br>" + uTxt(e) : "") + ' <button type="button" data-cflk="unlink_coded" data-k="' + k + '" data-u="' + esc(id) + '" title="Take this link back. Opens a GitHub issue to add your reason and submit">Take back</button></div>');
+    });
+    var sentM = sent(), props = M.propose(g.all, d.ucdp || []).filter(function (p) { return !done[p.ev.id]; });
+    var ruled = Object.keys(done).filter(function (id) { return done[id].s === "not_same"; });
+    if (!props.length && !ruled.length) return h.join("");
+    var rows = props.map(function (p) {
+      var e = p.ev, s = sentM[active + ":u" + e.id + ":" + fps[0]], isSent = s && Date.now() - s.t < 864e5;
+      return '<div class="mt">' + uTxt(e) + '<br><span class="cfm">' + (p.km < 1 ? "under 1 km" : num(Math.round(p.km)) + " km") + " from the closest report, " + (p.days ? p.days + (p.days === 1 ? " day" : " days") + " apart" : "within UCDP's dates") +
+        (p.hints.length ? "; " + esc(p.hints.join("; ")) : "") + "</span><br>" +
+        (isSent ? '<span class="tag vsent">Decision sent</span>' : '<button type="button" data-cflk="link_coded" data-k="' + k + '" data-u="' + esc(e.id) + '" title="These reports describe the same event UCDP coded. Opens a GitHub issue to add your reason and submit">Same event</button>' +
+          '<button type="button" data-cflk="reject_link" data-k="' + k + '" data-u="' + esc(e.id) + '" title="Not the same event: this proposal is not shown again. Opens a GitHub issue to add your reason and submit">Not the same</button>') + "</div>";
+    }).concat(ruled.map(function (id) {
+      return '<div class="mt"><span class="cfm">Ruled out by the analyst: UCDP event ' + esc(id) + (done[id].r ? " (" + esc(done[id].r) + ")" : "") + '</span> <button type="button" data-cflk="unlink_coded" data-k="' + k + '" data-u="' + esc(id) + '">Take back</button></div>';
+    }));
+    h.push('<details class="cfmt"><summary title="UCDP events close to these reports in place and time (rules ' + esc(M.RULES) + '). A machine proposal: nothing is linked until an analyst decides.">' +
+      (props.length ? "Possibly the same event in UCDP’s coded record (" + props.length + ")" : "UCDP proposals ruled out (" + ruled.length + ")") + "</summary>" + rows.join("") + "</details>");
+    return h.join("");
+  }
+  var LWORD = { link_coded: "Same event as UCDP", reject_link: "Not the same as UCDP", unlink_coded: "Take back link to UCDP" };
+  function decideLink(act, g, uid) {
+    var c = byId(active), i = g.lead, fps = uniq(g.all.map(function (x) { return x.fp; })).sort(), e = ((cur.data && cur.data.ucdp) || []).filter(function (x) { return String(x.id) === uid; })[0];
+    if (!e) return;
+    var block = { osap_decision: 1, action: act, conflict: active, reports: fps, coded: { dataset: "ucdp", id: String(e.id), fp: e.fp } };
+    var what = (act === "link_coded" ? "The incident “" + (i.title_en || i.title || "") + "” (" + fps.length + " report" + (fps.length > 1 ? "s" : "") + ") on the " + (c ? c.name : active) + " tab is the same event as UCDP event " + e.id + ". Figures and sides stay as each source gives them."
+      : act === "reject_link" ? "The incident “" + (i.title_en || i.title || "") + "” is not the same event as UCDP event " + e.id + "."
+      : "Take back the earlier decision about UCDP event " + e.id + " and the incident “" + (i.title_en || i.title || "") + "”.") +
+      "\n\nUCDP event " + e.id + ": " + String(e.date || "") + ", " + (UTYPE[e.type] || "") + ", " + (e.sideA || "") + (e.sideB ? " vs " + e.sideB : "") + ", " + (e.where || "");
+    var body = "Reason: \n\nWrite why on the Reason line above, then press Submit. OSAP records this decision within a few minutes, then answers and closes this issue. " +
+      "Only issues opened by the app's owner count; anyone else's are ignored.\n\nWhat this decides: " + what + "\n\n```json\n" + JSON.stringify(block, null, 1) + "\n```\n";
+    W.open(REPO + "/issues/new?title=" + encodeURIComponent((VTITLE + " " + LWORD[act] + " " + e.id + ": " + (i.title_en || i.title || "")).slice(0, 120)) + "&body=" + encodeURIComponent(body), "_blank", "noopener,noreferrer");
+    try { var s0 = sent(), now = Date.now(); Object.keys(s0).forEach(function (q) { if (now - s0[q].t > 864e5) delete s0[q]; }); s0[active + ":u" + e.id + ":" + fps[0]] = { t: now, a: act }; localStorage.setItem(SENTK, JSON.stringify(s0)); } catch (x) {}
+    sentC = null;
+    vLoaded = 0; setTimeout(function () { loadVerified().then(function () { if (active) list(); }); }, 120000);
+    list();
+  }
+  D.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("#cf-rail [data-cflk]"); if (!b) return;
+    var g = (D.getElementById("cf-list")._groups || [])[+b.getAttribute("data-k")]; if (!g) return;
+    decideLink(b.getAttribute("data-cflk"), g, b.getAttribute("data-u"));
   });
 
   /* ---------- tab buttons (desktop row and phone menu) and the Conflicts menu ---------- */
@@ -905,7 +972,7 @@
       if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Export PDF (' + num(gs.length) + ")</button>" +
         (F.vs === "confirmed" && codedN() ? ' <button type="button" class="refresh" data-cfcsv="1" title="Download the coded incident records of this tab (CSV, ACLED-like columns). Fatalities are as reported; actors are as attributed.">Download incident record (' + num(codedN()) + ")</button>" : "") + "</p>");
       if (!it.length) h.push('<p class="cfm">No reports in this period with these filters.</p>');
-      h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + vsHtml(g) + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + reviewHtml(g, k) + "</li>"; }).join("") + "</ol>");
+      h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + vsHtml(g) + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + reviewHtml(g, k) + matchHtml(g, k) + "</li>"; }).join("") + "</ol>");
       if (gs.length > lim) h.push('<button type="button" class="refresh more" data-cfmore="1">Show ' + Math.min(60, gs.length - lim) + " more</button>");
       else if (F.days > 90 && needOlder() && cur.data.older.items) h.push(cur.data._olderP ? '<p class="cfm">Loading older reports…</p>' :
         (cur.data._olderFail ? '<p class="cfbad">Older reports could not be loaded.</p>' : "") +

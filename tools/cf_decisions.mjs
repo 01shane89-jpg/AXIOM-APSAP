@@ -7,7 +7,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { plan, inForce, TITLE } from "./cf_decision_lib.mjs";
+import { plan, inForce, linksInForce, TITLE } from "./cf_decision_lib.mjs";
 import { readIndex, write } from "./capture_lib.mjs";
 
 const CF_DIR = "data/live/conflicts", DEC_DIR = "data/decisions/conflicts", OUT = path.join(CF_DIR, "verified.js");
@@ -18,7 +18,8 @@ function readJs(f) { const t = fs.readFileSync(f, "utf8"); return JSON.parse(t.s
 
 // Map conflict id -> Map fp -> report, from every conflict's current and older file. parties (when given) is filled with each
 // conflict's party names from its current file.
-export function knownReports(dir = CF_DIR, parties = null) {
+// ucdp (when given) is filled with each conflict's UCDP events: { conflict: Map id -> event }, from its current and older files.
+export function knownReports(dir = CF_DIR, parties = null, ucdp = null) {
   const known = new Map();
   if (!fs.existsSync(dir)) return known;
   for (const f of fs.readdirSync(dir).sort()) {
@@ -28,6 +29,7 @@ export function knownReports(dir = CF_DIR, parties = null) {
     if (!known.has(m[1])) known.set(m[1], new Map());
     if (parties && !m[2] && Array.isArray(o.parties)) parties[m[1]] = o.parties.map(String);
     for (const i of o.items || []) if (i && /^[0-9a-f]{64}$/.test(i.fp || "")) known.get(m[1]).set(i.fp, i);
+    if (ucdp) { const u = ucdp[m[1]] || (ucdp[m[1]] = new Map()); for (const e of o.ucdp || []) if (e && e.id != null && /^[0-9a-f]{64}$/.test(e.fp || "") && !u.has(String(e.id))) u.set(String(e.id), e); }
   }
   return known;
 }
@@ -46,7 +48,7 @@ export function readDecisions(dir = DEC_DIR) {
 
 export function projection(decisions, asof) {
   const p = inForce(decisions);
-  return "window.OSAP_CF_VERIFIED=" + JSON.stringify({ schema: "osap-incident-verified/1", asof, decisions: p.count, by: p.by, incidents: p.incidents }).replace(/<\//g, "<\\/") + ";\n";
+  return "window.OSAP_CF_VERIFIED=" + JSON.stringify({ schema: "osap-incident-verified/1", asof, decisions: p.count, by: p.by, incidents: p.incidents, links: linksInForce(decisions) }).replace(/<\//g, "<\\/") + ";\n";
 }
 
 async function main() {
@@ -57,8 +59,8 @@ async function main() {
     const res = await fetch(url, { headers: { authorization: "Bearer " + token, accept: "application/vnd.github+json", "user-agent": "osap-refresh" }, signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error("issues HTTP " + res.status);
     const issues = (await res.json()).filter((i) => String(i.title || "").startsWith(TITLE));
-    const parties = {}, known = knownReports(CF_DIR, parties);
-    const d = plan(issues, owner, known, readIndex(DEC_DIR), recorded, { parties, suggest: readSuggest() });
+    const parties = {}, ucdp = {}, known = knownReports(CF_DIR, parties, ucdp);
+    const d = plan(issues, owner, known, readIndex(DEC_DIR), recorded, { parties, ucdp, suggest: readSuggest() });
     write(DEC_DIR, d.records, d.index, { collected: recorded });
     fs.writeFileSync(REPLIES, JSON.stringify(d.replies));
     console.log(`incident decisions: ${issues.length} decision issues open, ${d.records.length} recorded, ${d.replies.filter((r) => !r.recorded).length} refused`);

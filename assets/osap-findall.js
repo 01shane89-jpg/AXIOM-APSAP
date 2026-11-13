@@ -33,7 +33,7 @@
     lines: "mgrs,grid lines,utm,grid squares", cross: "crosshair,centre,center,reticle",
     "3d": "terrain,tilt,elevation,three d", comms: "radio,communications,pace,signal,phone coverage,mast,tower,network",
     "rep-osir": "osir,open source intelligence report,intel report", "rep-intelbrief": "powerpoint,pptx,slides,deck,intel brief,briefing",
-    "rep-sitrep": "sitrep,situation report", "rep-areabrief": "area brief,selected area brief,box brief,circle brief,radius brief", "rep-brief": "country brief,country profile", "rep-report": "pmesii,threat assessment,country report",
+    "rep-sitrep": "sitrep,situation report", "rep-areabrief": "area brief,selected area brief,box brief,circle brief,radius brief", "rep-dailybrief": "daily brief,morning brief,daily pdf,one tap brief,ai brief", "rep-brief": "country brief,country profile", "rep-report": "pmesii,threat assessment,country report",
     hosp: "hospital,trauma level,trauma centre,trauma center,hospital assessment,er,emergency room", sea: "ship,boat,voyage,maritime,at sea,sea transit,vessel,medevac at sea",
     flight: "airborne,jump,drop,aircraft,flight plan,airdrop,parachute,c-130,fly", dzso: "drop zone,dz,dzso,parachute,airborne,jump",
     survey: "site survey,hlz,dz,airfield,landing strip,survey", terrain: "viewshed,line of sight,los,terrain analysis,elevation profile,dead ground,observation",

@@ -312,6 +312,8 @@
       ul(["Save a country so OSAP opens and works with no signal: the Offline map, the country's layers, brief, news, history and the medical plan's hospitals.",
         "Pick " + b("Whole country") + " or " + b("What the map shows now") + ", choose the detail, and press " + b("Download for offline") + ". Pressing again later fetches only what is missing.",
         "The Offline map is satellite imagery without street names. " + b("Download terrain") + " saves elevation for viewshed and line of sight.",
+        "The download also saves the country's connected stories, posts and event history, and OSAP itself; it only says " + b("Saved") + " once all of it is on the device. Tick the 7-day news search box to add every country's headlines from the last week (about 70 MB).",
+        "With no signal, an " + b("Offline") + " tag on the map says when the country was saved and how old that is; it turns orange after 3 days. Tap it to update.",
         "Live weather, road routing, satellite fire and flood layers, Refresh now and AI summaries still need signal."]) +
       "<h3>Move to another device</h3>" +
       ul(["No account is needed. Your saved data goes into one file locked with a passphrase you choose.",
