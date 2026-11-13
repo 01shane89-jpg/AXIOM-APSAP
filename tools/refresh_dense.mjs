@@ -9,6 +9,7 @@ import { COMMERCIAL } from "./nc_strip.mjs";
 import { get, unhtml, isoMin, ageDays, csvRows, csvObjects, rssItems, feed, run, runAll, writeAll, sleep, FEEDS } from "./dense_lib.mjs";
 import "./thinktanks.mjs";
 import "./dense_nov8.mjs";
+import { ukSanctionsItems } from "./uk_sanctions.mjs";
 import { COUNTRIES, ccsAt, ccFromName, ccFromA2, ccFromA3, ccsInText, withOki } from "./geo_cc.mjs";
 
 const IDS = COUNTRIES.map((c) => c.id);
@@ -642,19 +643,13 @@ run("un-sanctions", async (g) => {
   return { items, figures };
 });
 
-feed("uk-sanctions", { name: "UK consolidated sanctions list (OFSI)", org: "HM Treasury, Office of Financial Sanctions Implementation", cat: "Sanctions", lic: "Open Government Licence v3", url: "https://www.gov.uk/government/publications/financial-sanctions-consolidated-list-of-targets", everyHours: 12 });
+// The OFSI consolidated list (ofsistorage blob, 2022format/ConList.csv) closed to the public (HTTP 409 "PublicAccessNotPermitted"
+// from 26 Oct 2026): the UK now publishes one UK Sanctions List from the FCDO. Same Open Government Licence, one row per name or
+// address of each designation, grouped here by its Unique ID. Checked from GitHub Actions 13 Nov 2026 (about 50 MB, 58,900 lines).
+feed("uk-sanctions", { name: "UK Sanctions List (FCDO)", org: "Foreign, Commonwealth & Development Office (UK Sanctions List; includes OFSI financial sanctions)", cat: "Sanctions", lic: "Open Government Licence v3", url: "https://www.gov.uk/government/publications/the-uk-sanctions-list", everyHours: 12 });
 run("uk-sanctions", async (g) => {
-  const t = await get("https://ofsistorage.blob.core.windows.net/publishlive/2022format/ConList.csv", "text", { timeout: 120000 });
-  const rows = csvRows(t), h = rows[1], ix = (k) => h.indexOf(k), by = new Map();
-  for (const r of rows.slice(2)) { const id = r[ix("Group ID")]; if (!id) continue; const e = by.get(id) || { names: [], places: new Set() };
-    const nm = [r[ix("Name 1")], r[ix("Name 2")], r[ix("Name 3")], r[ix("Name 4")], r[ix("Name 5")], r[ix("Name 6")]].filter(Boolean).join(" ");
-    if (r[ix("Alias Type")] === "Primary name" || !e.names.length) e.names.unshift(nm);
-    for (const k of ["Country", "Nationality", "Country of birth"]) if (r[ix(k)]) String(r[ix(k)]).split(/[,;]|\(\d\)/).forEach((p) => p.trim() && e.places.add(p.trim()));
-    e.type = r[ix("Group Type")]; e.regime = r[ix("Regime")]; e.listed = r[ix("Listed On")]; by.set(id, e); }
-  const items = [...by.entries()].map(([id, e]) => { const d = String(e.listed || "").split("/"); const ccs = [...new Set([...e.places].map(ccFromName).filter(Boolean))];
-    return { title: "UK-sanctioned " + String(e.type || "").toLowerCase() + ": " + e.names[0], detail: e.regime + " regime · group " + id + ([...e.places].length ? " · linked to " + [...e.places].slice(0, 4).join(", ") : ""),
-      date: d.length === 3 ? d[2] + "-" + d[1] + "-" + d[0] : "", url: "https://sanctionssearchapp.ofsi.hmtreasury.gov.uk/", sev: 1, kind: "UK sanctions listing", ccs: withOki(ccs) }; });
-  return { items };
+  const items = ukSanctionsItems(await get("https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.csv", "text", { timeout: 180000 }));
+  return { items, note: items.length + " designations" };
 });
 
 feed("ca-sanctions", { name: "Canada consolidated autonomous sanctions list", org: "Global Affairs Canada", cat: "Sanctions", lic: "Open Government Licence - Canada", url: "https://www.international.gc.ca/world-monde/international_relations-relations_internationales/sanctions/consolidated-consolide.aspx", everyHours: 12 });

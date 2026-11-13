@@ -2,10 +2,12 @@
 // one feed read with a timeout, the robots.txt check every news search goes through, and Bing's click-through unwrapping.
 const FEED_TIMEOUT = 20000;
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36 (AXIOM-ASAP hourly refresh)";
-export async function getFeed(url) {
+// plainUa: a few outlets (FAZ, 13 Nov 2026) send a browser-like client to a consent redirect and answer OSAP's plain name with the feed
+const PLAIN_UA = "AXIOM-OSAP/1.0 (open-source situational awareness; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
+export async function getFeed(url, plainUa = false) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), FEED_TIMEOUT);
   try {
-    const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": UA, accept: "application/rss+xml, application/xml, text/xml, */*" } });
+    const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": plainUa ? PLAIN_UA : UA, accept: "application/rss+xml, application/xml, text/xml, */*" } });
     if (!r.ok) throw new Error("HTTP " + r.status);
     return await r.text();
   } finally { clearTimeout(t); }

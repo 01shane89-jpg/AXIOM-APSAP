@@ -35,7 +35,7 @@ const TT = [
   ["ecfr", "ECFR", "https://ecfr.eu/", ["https://ecfr.eu/feed/"]],
   ["sipri", "SIPRI", "https://www.sipri.org/", ["https://www.sipri.org/rss/combined.xml", "https://www.sipri.org/rss.xml"]],
   ["wilson", "Wilson Center", "https://www.wilsoncenter.org/", ["https://www.wilsoncenter.org/rss.xml", "https://www.wilsoncenter.org/feed"]],
-  ["usip", "US Institute of Peace", "https://www.usip.org/", ["https://www.usip.org/rss.xml", "https://www.usip.org/publications/rss.xml"]],
+  // usip retired 13 Nov 2026: usip.org stopped publishing (newest post in its own sitemap 7 Jul 2026, home page a holding page)
   ["rusi", "RUSI", "https://www.rusi.org/", ["https://www.rusi.org/rss.xml", "https://www.rusi.org/explore-our-research/rss.xml"]],
   ["hudson", "Hudson Institute", "https://www.hudson.org/", ["https://www.hudson.org/rss.xml", "https://www.hudson.org/feed"]],
   ["jamestown", "Jamestown Foundation", "https://jamestown.org/", ["https://jamestown.org/feed/"]],
@@ -261,6 +261,15 @@ function placeIn(gz, text, ccs) {
 // Institutes that switched their feeds off still publish a sitemap. Headlines then come from the page address, and the date is
 // when the page last changed (not necessarily when it was first published); both are said so on each item.
 const NOT_ARTICLE = /\/(events?|experts?|people|person|staff|author|authors|about|careers?|jobs|tags?|topics?|regions?|programs?|projects?|category|categories|search|donate|contact|press-releases?|podcasts?|video|videos|media|newsletters?)(\/|$)/i;
+// Which child sitemaps to read: articles before everything else, then the most recently changed, then the highest page number
+// (Belfer's 16 pages all carry the same date and list oldest first, so its newest pages are on the last one).
+const SKIP_MAP = /(page|event|person|people|expert|author|staff|tag|categor|image|video|attachment|topic|region|program|project|taxonom|newsletter|collection)/i;
+const ARTICLE_MAP = /(research|publication|article|commentary|analysis|post|news|emissary|politika|paper|report|insight|blog)/i;
+export function pickSitemaps(kids, n = 2) {
+  const num = (l) => +((/(?:page=|-)(\d+)(?:\.xml)?(?:$|&)/.exec(l) || [])[1] || 0);
+  return kids.filter((k) => k.loc && !SKIP_MAP.test(k.loc.replace(/sitemap\.xml\?page=\d+$/, "sitemap.xml")))
+    .sort((a, b) => (ARTICLE_MAP.test(b.loc) - ARTICLE_MAP.test(a.loc)) || (b.mod || "").slice(0, 10).localeCompare((a.mod || "").slice(0, 10)) || num(b.loc) - num(a.loc)).slice(0, n);
+}
 async function fromSitemap(g, home) {
   const origin = new URL(home).origin;
   let maps = [];
@@ -270,10 +279,13 @@ async function fromSitemap(g, home) {
   for (const sm of maps.slice(0, 2)) {
     let x; try { x = await g(sm, "text", { timeout: 20e3 }); } catch (e) { continue; }
     let urls = locs(x, "url");
-    if (!urls.length) { // a sitemap index: read the one or two article sitemaps changed most recently
-      const kids = locs(x, "sitemap").filter((k) => k.loc && !/(page|event|person|people|expert|author|staff|tag|categor|image|video|attachment|topic|region|program|project|taxonom)/i.test(k.loc))
-        .sort((a, b) => (b.mod || "").localeCompare(a.mod || "")).slice(0, 2);
-      for (const k of kids) { try { urls = urls.concat(locs(await g(k.loc, "text", { timeout: 20e3 }), "url")); } catch (e) {} }
+    // a sitemap index (or a urlset that lists sitemaps, as Carnegie's does): go down at most two levels to the article sitemaps
+    for (let depth = 0; depth < 2; depth++) {
+      const kids = urls.length && urls.every((u) => /\.xml(\?|$)|\/sitemaps?\//i.test(u.loc)) ? urls : !urls.length ? locs(x, "sitemap") : [];
+      if (!kids.length) break;
+      urls = [];
+      for (const k of pickSitemaps(kids)) { try { const y = await g(k.loc, "text", { timeout: 20e3 }); const u = locs(y, "url"), s = locs(y, "sitemap"); urls = urls.concat(u.length ? u : s.map((q) => ({ ...q }))); } catch (e) {} }
+      x = "";
     }
     const out = urls.filter((u) => u.loc && u.mod && ageDays(u.mod) <= 30 && !NOT_ARTICLE.test(new URL(u.loc).pathname) && new URL(u.loc).pathname.split("/").filter(Boolean).length >= 1)
       .sort((a, b) => b.mod.localeCompare(a.mod)).slice(0, 60).map((u) => {

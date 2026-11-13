@@ -95,7 +95,7 @@ const bodies = {}, failed = new Set();   // one fetch per address a run (a regio
 async function readFeed(f) {
   try {
     if (f.search && !(await robotsAllow(f.url))) throw new Error("robots.txt does not allow this search");
-    const body = await (bodies[f.url] = bodies[f.url] || getFeed(f.url));
+    const body = await (bodies[f.url] = bodies[f.url] || getFeed(f.url, !!f.plainUa));
     // html: an agency's news list on a web page (links matching f.match), read like a feed
     const list = (f.html ? parseList(body, f.url, f.match) : parseFeed(body)).slice(0, f.max || 25).map((i) => {
       const link = f.search ? unwrap(i.link) : i.link;
