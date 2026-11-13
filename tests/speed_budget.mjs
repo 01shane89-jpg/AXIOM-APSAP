@@ -6,7 +6,7 @@
 // Files are sent compressed, as Netlify sends them (13 Nov 2026: measured uncompressed the map took 4.2-4.5 s, compressed 2.4-2.6 s).
 // Today (the screen a fresh open lands on, assets/osap-today.js) must be on screen, cover gone, within TODAY ms, and its daily
 // summary drawn soon after (13 Nov 2026: 7.1 s before the list behind Today waited for it, 6.3 s after; 5.7-5.9 s on this machine
-// once Today's top stories and about 100 tool scripts wait for Today's first picture, index.html #osap-tail; CI runs about 1 s faster).
+// once Today's top stories wait for its first picture; CI runs about 1 s faster).
 // Fails when a change makes the first map or Today slower than the budget. Run from the repo root: node tests/speed_budget.mjs
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";

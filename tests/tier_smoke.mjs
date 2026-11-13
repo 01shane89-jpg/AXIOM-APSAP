@@ -340,11 +340,8 @@ const auth = (p) => p.evaluate(() => localStorage.getItem("osap-auth"));
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   await ctx.addInitScript({ content: "if(!sessionStorage.getItem('t-seeded')){sessionStorage.setItem('t-seeded','1');localStorage.setItem('osap-auth',JSON.stringify({access_token:'tok-full',refresh_token:'tok-full',until:Date.now()-7200e3}))}" });
   const p = await ctx.newPage(), loads = [], health = [];
-  /* a page open counts whether or not it reached its "load" event before the renewal reloaded it: the tools load after the
-     first screen (index.html #osap-tail), so "load" can now come after the renewal. The quake feed is read while the page is
-     read, before the renewal (the feed health file is asked for by a tool, after it) */
-  p.on("request", (r) => { if (r.isNavigationRequest() && r.frame() === p.mainFrame()) loads.push(Date.now()); });
-  p.on("response", (r) => { if (/\/data\/live\/quakes\.js/.test(r.url())) health.push(r.status()); });
+  p.on("load", () => loads.push(Date.now()));
+  p.on("response", (r) => { if (/\/data\/live\/health\.json/.test(r.url())) health.push(r.status()); });
   await p.goto(base); await p.waitForTimeout(9000);
   ok(loads.length === 2, "sign-in ran out while closed: the page loads once more after renewing (" + loads.length + " loads)");
   ok(health.includes(401) && health[health.length - 1] === 200, "sign-in ran out while closed: data refused at first, then served (" + health.join(",") + ")");
