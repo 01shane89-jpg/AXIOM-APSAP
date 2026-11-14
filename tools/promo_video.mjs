@@ -299,6 +299,35 @@ const SCENES = [
     if (await k.click("#td-daily [data-dlprint]")) await k.pdf("daily-brief.pdf");
     await k.wait(1200);
   }],
+  ["imagery", { z: 13, at: [25.117, 55.135], settle: 9000 }, async ({ k, p }) => {
+    k.caption("The newest satellite pictures of any place", "Every free source at once, newest first.");
+    await k.wait(1800);
+    await k.tool("overlays"); await k.wait(1500);
+    if (!(await k.press("Find newest imagery"))) await p.evaluate(() => window.OSAP_NEWIMG.open());
+    await k.wait(1500);
+    if (!(await p.evaluate(() => window.OSAP_NEWIMG.isOpen()))) await p.evaluate(() => window.OSAP_NEWIMG.open());
+    try { await p.waitForSelector("[data-nimg-show]", { timeout: 30000 }); } catch { console.log("  no imagery rows"); }
+    await k.wait(2500);
+    k.caption("Each one shows its date, sensor and cloud", "So an old picture is never mistaken for today's.");
+    await k.wait(3000);
+    const pick = await p.evaluate(() => {
+      const L = (window.OSAP_NEWIMG.list && window.OSAP_NEWIMG.list()) || [];
+      const ok = (r) => r && r.cloud != null && r.cloud <= 15 && /sentinel/i.test(JSON.stringify(r));
+      const r = L.filter(ok)[0] || L.filter((x) => x && x.cloud != null && x.cloud <= 30)[0] || L[0];
+      return { id: r ? r.id : "", n: L.length, keys: r ? Object.keys(r).join(",") : "" };
+    });
+    console.log("  imagery pick", JSON.stringify(pick));
+    k.caption("Tap one and it goes on the map", "With a date badge on it.");
+    const sel = pick.id ? `[data-nimg-show="${pick.id.replace(/"/g, '\\"')}"]` : "[data-nimg-show]";
+    await p.evaluate((sel) => { const e = document.querySelector(sel); if (e) e.scrollIntoView({ behavior: "smooth", block: "center" }); }, sel); await k.wait(1200);
+    await k.click(sel);
+    await k.wait(2500);
+    await k.press("Map"); await k.wait(5500);
+    k.caption("Compare two dates with a swipe", "Sentinel-2 before and after, any place in the world.");
+    await p.evaluate(() => { window.OSAP_NEWIMG.close && window.OSAP_NEWIMG.close(); window.OSAP_SAT.mode("swipe"); window.OSAP_SAT.open(); });
+    await k.wait(7000);
+    await k.press("Map"); await k.wait(5000);
+  }],
 ];
 
 let fails = 0, n = 0;
