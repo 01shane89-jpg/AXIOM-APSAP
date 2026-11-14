@@ -55,17 +55,27 @@ console.log(`facts: ${want.length} hosts to look up`);
 // 1. which Wikidata items have each host as their official website
 const itemOf = new Map();
 const B = 60;
-for (let i = 0; i < want.length; i += B) {
-  const part = want.slice(i, i + B), vals = part.flatMap((h) => siteForms(h).map((u) => "<" + u + ">")).join(" ");
-  const q = `SELECT ?item ?site WHERE { VALUES ?site { ${vals} } ?item wdt:P856 ?site . }`;
-  const j = await get("https://query.wikidata.org/sparql", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/sparql-results+json" }, body: "query=" + encodeURIComponent(q) });
-  for (const b of (j && j.results && j.results.bindings) || []) {
-    const h = hostOf(b.site.value), id = b.item.value.split("/").pop();
-    if (!itemOf.has(h)) itemOf.set(h, new Set());
-    itemOf.get(h).add(id);
+async function sites(list) {
+  const found = new Map();
+  for (let i = 0; i < list.length; i += B) {
+    const part = list.slice(i, i + B), vals = part.flatMap((h) => siteForms(h).map((u) => "<" + u + ">")).join(" ");
+    const q = `SELECT ?item ?site WHERE { VALUES ?site { ${vals} } ?item wdt:P856 ?site . }`;
+    const j = await get("https://query.wikidata.org/sparql", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/sparql-results+json" }, body: "query=" + encodeURIComponent(q) });
+    for (const b of (j && j.results && j.results.bindings) || []) {
+      const h = hostOf(b.site.value), id = b.item.value.split("/").pop();
+      if (!found.has(h)) found.set(h, new Set());
+      found.get(h).add(id);
+    }
+    await sleep(1200);
   }
-  await sleep(1200);
+  return found;
 }
+for (const [h, s] of await sites(want)) itemOf.set(h, s);
+// a language or section host with no record of its own (english.news.cn, en.irna.ir) takes its parent site's record
+const parentOf = new Map();
+for (const h of want) if (!itemOf.has(h) && h.split(".").length >= 3) parentOf.set(h, h.slice(h.indexOf(".") + 1));
+const viaParent = await sites([...new Set(parentOf.values())]);
+for (const [h, p] of parentOf) if (viaParent.has(p)) itemOf.set(h, viaParent.get(p));
 console.log(`facts: ${itemOf.size} hosts have a Wikidata record`);
 
 // 2. the records, then the labels (and ISO codes) of the items they name
