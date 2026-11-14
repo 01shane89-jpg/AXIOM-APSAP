@@ -13,7 +13,7 @@
 // tools/push_lib.mjs before using it. Nothing is logged but the action and a watch id.
 import { getStore } from "@netlify/blobs";
 import { admin } from "@netlify/identity";
-import { isOwner, planOf } from "../../tools/owner.mjs";
+import { earlyAccess, isOwner, planOf } from "../../tools/owner.mjs";
 import { tierOfRoles, PUSH, PUSH_TOTAL } from "../../tools/tiers.mjs";
 import { verifyActionsToken } from "../../tools/gh_oidc.mjs";
 import { subOk } from "../../tools/webpush.mjs";
@@ -43,7 +43,7 @@ async function everyone(store) {
   try {
     for (let page = 1; page <= 100; page++) {
       const batch = await listUsers({ page, perPage: 100 });
-      for (const u of batch) if (u && u.id) plans.set(String(u.id), planOf(u, owners, tierOfRoles));
+      for (const u of batch) if (u && u.id) plans.set(String(u.id), planOf(u, owners, tierOfRoles, earlyAccess((k) => Netlify.env.get(k))));
       if (batch.length < 100) break;
     }
   } catch (e) { console.log("osap push: account list unreadable"); return null; }
@@ -77,7 +77,7 @@ export default async (req) => {
   const r = await fetch(new URL("/.netlify/identity/user", req.url), { headers: { authorization: auth } }).catch(() => null);
   const me = r && r.ok ? await r.json().catch(() => null) : null;
   if (!me) return out({ error: "sign in" }, 401);
-  const owners = Netlify.env.get("OSAP_OWNERS"), owner = isOwner(me, owners), plan = planOf(me, owners, tierOfRoles), max = limitOf(plan);
+  const owners = Netlify.env.get("OSAP_OWNERS"), owner = isOwner(me, owners), plan = planOf(me, owners, tierOfRoles, earlyAccess((k) => Netlify.env.get(k))), max = limitOf(plan);
   if (!owner && !uidOk(me.id)) return out({ error: "sign in" }, 401);
   const key = owner ? OWNER_KEY : keyOf(me.id);
 

@@ -43,7 +43,7 @@ const server = createServer(async (req, res) => {
 }).listen(0, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
 base = `http://127.0.0.1:${server.address().port}/`;
-const env = { OSAP_DATA_ORIGIN: base + "AXIOM-APSAP" };
+const env = { OSAP_DATA_ORIGIN: base + "AXIOM-APSAP", OSAP_EARLY_ACCESS: "off" }; // early access (tools/owner.mjs) off: these checks are about the paid plans
 globalThis.Netlify = { env: { get: (k) => env[k] } };
 const GATE = (await import("../netlify/edge-functions/osap-data.js")).default;
 const ACCOUNT = (await import("../netlify/functions/osap-account.mjs")).default;

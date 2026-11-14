@@ -177,13 +177,23 @@
   }
   function buy(t) {
     if (!CFG.signedIn) { UI.after = t; UI.mode = "signin"; say("Sign in or create an account first, so the plan is yours on every device."); return; }
-    if (!CFG.paddle || !CFG.paddle.prices[t]) { say("Payments are not switched on yet."); return; }
+    if (!payOn(t)) { say(SOON); return; }
     UI.busy = true; say("Opening checkout…");
     onPaid = null;
     paddle().then(function (P) {
       UI.busy = false; say("");
       P.Checkout.open({ items: [{ priceId: CFG.paddle.prices[t], quantity: 1 }], customer: CFG.email ? { email: CFG.email } : undefined, customData: { osap_uid: CFG.uid } });
     }, function (err) { UI.busy = false; say(String(err && err.message || err)); });
+  }
+
+  /* Before Paddle is set up (no client token or price on the server) nobody can be charged: the plans still show their prices,
+     but each buy button says it opens soon, and the page says so plainly instead of offering a trial it cannot start. */
+  var SOON = "Paid plans open soon. No payment can be taken yet, so nobody is charged. Everything on the Free plan works now.";
+  var ASK = "support@axiom-intelligence-systems.com";
+  function payOn(t) { return !!(CFG.paddle && CFG.paddle.prices && CFG.paddle.prices[t]); }
+  function soonHtml(what) {
+    return '<p class="trsoon" role="note"><b>' + esc(what) + " open soon.</b> No payment can be taken yet, so nobody is charged. " +
+      'To hear when they open, email <a href="mailto:' + ASK + '?subject=' + encodeURIComponent("OSAP paid plans") + '">' + ASK + "</a>.</p>";
   }
 
   /* ---------- Settings > Plan and sign-in ---------- */
@@ -222,19 +232,24 @@
         (UI.recover ? "" : '<button type="button" class="refresh" data-tr="plans">Back</button>') + "</div></form>";
     } else {
       h += CFG.signedIn ? '<p>Signed in as <b>' + esc(CFG.email || "") + "</b>. Your plan: <b>" + esc(name(me)) + "</b>" +
-          (CFG.owner ? " (owner)" : CFG.beta ? " (beta tester code" + (CFG.beta.until ? ", until " + esc(String(CFG.beta.until).slice(0, 10)) : "") + ")" : "") + ".</p>"
+          (CFG.owner ? " (owner)" : CFG.early ? " (early access)" : CFG.beta ? " (beta tester code" + (CFG.beta.until ? ", until " + esc(String(CFG.beta.until).slice(0, 10)) : "") + ")" : "") + ".</p>"
         : '<p class="obs">You are using the Free plan. Sign in to use a plan you have paid for.</p>';
-      var trial = CFG.rules.trialDays || 0;
+      /* early access (tools/owner.mjs earlyAccess): every account has Full until paid plans open */
+      if (CFG.signedIn && CFG.early && !CFG.owner) h += '<p class="trsoon" role="note"><b>Early access: Full is free for every account until paid plans open.</b> When they open, you can keep Full by choosing a plan, or carry on with Free.</p>';
+      var trial = CFG.rules.trialDays || 0, soon = TIERS.some(function (t) { return rank(t) > rank(me) && !payOn(t); });
+      if (soon) h += soonHtml("Paid plans");
       h += '<div class="trplans">' + TIERS.map(function (t) {
         var cur = t === me, up = rank(t) > rank(me);
+        if (up && !payOn(t)) return '<div class="trplan"><h3>' + esc(name(t)) + "</h3>" + (CFG.rules.prices && CFG.rules.prices[t] ? '<p class="trprice">' + esc(CFG.rules.prices[t]) + "</p>" : "") + "<p>" + esc(WHAT[t]) + "</p>" +
+          '<button type="button" class="refresh" disabled>Opens soon</button></div>';
         return '<div class="trplan' + (cur ? " cur" : "") + '"><h3>' + esc(name(t)) + (cur ? " <i>your plan</i>" : "") + "</h3>" + (CFG.rules.prices && CFG.rules.prices[t] ? '<p class="trprice">' + esc(CFG.rules.prices[t]) + "</p>" : "") + "<p>" + esc(WHAT[t]) + "</p>" +
           (up ? '<button type="button" class="refresh primary" data-tr-buy="' + t + '"' + dis + ">" + (trial ? "Try " + esc(name(t)) + " " + trial + " days free" : "Choose " + esc(name(t))) + "</button>" : "") + "</div>";
       }).join("") + "</div>";
-      if (trial && me === "free") h += '<p class="obs">Paid plans start with ' + trial + " days free. Cancel before then and you pay nothing. The price at checkout is set for the country of your billing address.</p>";
+      if (trial && me === "free" && !soon) h += '<p class="obs">Paid plans start with ' + trial + " days free. Cancel before then and you pay nothing. The price at checkout is set for the country of your billing address.</p>";
       h += '<div class="trbtns">' + (CFG.signedIn ? '<button type="button" class="refresh" data-tr="newpw"' + dis + ">Change password</button>" +
           '<button type="button" class="refresh" data-tr="signout"' + dis + ">Sign out</button>"
         : '<button type="button" class="refresh primary" data-tr="signin">Sign in</button><button type="button" class="refresh" data-tr="signup">Create an account</button>') + "</div>";
-      if (CFG.signedIn && me !== "free" && !CFG.owner && !CFG.beta) h += '<p class="obs">To change or cancel your plan, use the link in your Paddle receipt email.</p>';
+      if (CFG.signedIn && me !== "free" && !CFG.owner && !CFG.beta && !CFG.early) h += '<p class="obs">To change or cancel your plan, use the link in your Paddle receipt email.</p>';
       h += teamPlansHtml();
       /* a beta tester code from the owner (tools/codes.mjs) */
       if (CFG.signedIn && me !== "full") h += '<form data-tr-form="code" class="trcode"><label>Beta tester code<input name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="OSAP-XXXX-XXXX-XXXX" required></label>' +
@@ -363,6 +378,8 @@
     if (!CFG.signedIn) return "<p>Sign in first: a team belongs to the account that sets it up.</p>" + '<div class="trbtns"><button type="button" class="refresh primary" data-tr="signin">Sign in</button><button type="button" class="refresh" data-tr="plans">Back</button></div>';
     if (!d) return '<p class="obs">Loading your team…</p>';
     var h = "";
+    var off = !d.payments;
+    if (off) h += soonHtml("Team and organization plans");
     if (d.payments && d.payments.sandbox) h += '<p class="trtest">Test payments: checkout uses Paddle\'s sandbox. No real card is charged.</p>';
     (d.invites || []).forEach(function (v) {
       h += '<div class="trnewcode"><p>You are invited to the team <b>' + esc(v.name) + "</b>. Joining gives you a seat with Full while the team has paid.</p>" +
@@ -380,7 +397,7 @@
         (p.plan === "pilot" ? "" : '<label>Seats<input type="number" name="seats" min="' + B[p.plan].minSeats + '" max="' + B[p.plan].maxSeats + '" value="' + esc(p.seats) + '" required></label>') +
         ((L.plans || []).indexOf(p.plan) >= 0 && d.launchLeft > 0 ? '<label class="trcheck"><input type="checkbox" name="launch"' + (p.launch ? " checked" : "") + "> Launch offer: " + L.percent + "% off the first year for one of the first " + L.customers + " customers (" + d.launchLeft + " left), in return for a short testimonial we may quote.</label>" : "") +
         '<p class="trprice" data-tm-price>' + esc(tmPriceLine(p.plan, p.plan === "team" ? p.interval : p.plan === "org" ? "year" : "once", p.seats, p.launch && d.launchLeft > 0)) + "</p>" +
-        '<div class="trbtns"><button type="submit" class="refresh primary"' + dis + ">Set up the team</button><button type=\"button\" class=\"refresh\" data-tr=\"plans\">Back</button></div></form>" +
+        '<div class="trbtns"><button type="submit" class="refresh primary"' + (off ? " disabled" : dis) + ">" + (off ? "Opens soon" : "Set up the team") + "</button><button type=\"button\" class=\"refresh\" data-tr=\"plans\">Back</button></div></form>" +
         '<p class="obs">Prices are in US dollars, before any sales tax. Paddle handles payment and sends the receipts.</p>';
       return h;
     }
@@ -392,7 +409,7 @@
     if (admin) {
       if (t.quote && (t.status === "unpaid" || t.status === "ended" || (t.plan === "org" && t.pilot && t.pilot.credit))) {
         h += '<p class="trprice">To pay: ' + usd(t.quote.total) + (t.quote.discount ? " (" + usd(t.quote.subtotal) + " less " + usd(t.quote.discount.cents) + (t.quote.discount.recurIntervals > 1 ? " each month for 12 months" : "") + ")" : "") + "</p>" +
-          '<div class="trbtns"><button type="button" class="refresh primary" data-tm="pay"' + dis + ">Pay for the team</button></div>";
+          '<div class="trbtns"><button type="button" class="refresh primary" data-tm="pay"' + (off ? " disabled" : dis) + ">" + (off ? "Payment opens soon" : "Pay for the team") + "</button></div>";
       }
       if (t.plan === "pilot" && t.pilot) h += '<form data-tr-form="tmorg"><label>Move to Organization: seats<input type="number" name="seats" min="25" max="500" value="' + Math.max(25, t.used) + '" required></label><div class="trbtns"><button type="submit" class="refresh"' + dis + ">Choose Organization</button></div></form>";
       if ((t.status === "active" || t.status === "past_due") && t.plan !== "pilot") h += '<form data-tr-form="tmseats"><label>Seats (Paddle charges or credits the difference now)<input type="number" name="seats" min="' + Math.max(t.used, (CFG.rules.business[t.plan] || {}).minSeats || 1) + '" max="500" value="' + t.seats + '" required></label><div class="trbtns"><button type="submit" class="refresh"' + dis + ">Change seats</button></div></form>";
@@ -677,6 +694,7 @@
       "#tierdlg td i{font-size:11px;color:var(--muted)}#tierdlg h3{margin:16px 0 4px;font-size:15px}#tierdlg td .refresh{min-height:32px;font-size:12px}" +
       "#tierdlg .trnewcode{border:1px solid #1c7ed6;border-radius:6px;padding:4px 10px;margin:8px 0}#tierdlg .trnewcode code{font-size:16px;font-weight:700;user-select:all}" +
       "#tierdlg select{font:inherit;font-size:16px;padding:8px;min-height:44px}#tierdlg label.trcheck{flex-direction:row;align-items:flex-start;gap:8px;font-weight:400}#tierdlg label.trcheck input{width:auto;min-height:0;margin-top:3px}" +
+      "#tierdlg .trsoon{border-left:4px solid #1c7ed6;background:var(--chip,rgba(28,126,214,.1));border-radius:4px;padding:6px 10px;margin:8px 0}#tierdlg .trsoon a{word-break:break-all}" +
       "#tierdlg .trtest{background:#fff3bf;color:#5c3c00;border-radius:4px;padding:4px 8px;font-weight:600}#tierdlg p.trprice{font-weight:700}#tierdlg .cbox:has([data-tr-form=tminvite]){max-width:760px}" +
       "#tierdlg form.trcode{margin-top:12px}#tierdlg .trlegal{margin:12px 0 0;font-size:12px;color:var(--muted)}";
     D.head.appendChild(s);

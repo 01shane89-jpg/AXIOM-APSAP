@@ -17,6 +17,7 @@ const users = {
   "tok-free": { id: uid(1), email: "free@test", roles: [] }, "tok-mid": { id: uid(2), email: "mid@test", roles: ["mid"] },
   "tok-full": { id: uid(3), email: "full@test", roles: ["full"] }, "tok-owner": { id: uid(4), email: "owner@test", roles: ["owner"] },
   "tok-boss": { id: uid(5), email: "boss@test", roles: [] }, // the owner named in OSAP_OWNERS, with no role (as Shane's account is)
+  "tok-early": { id: uid(6), email: "early@test", roles: [] }, // a Free account, seen only while early access is on
 };
 const PASSWORDS = { "mid@test": "tok-mid", "full@test": "tok-full", "free@test": "tok-free" };
 const PW = { "mid@test": "password1", "full@test": "password1", "free@test": "password1" }; // each account's password
@@ -93,7 +94,8 @@ const server = createServer(async (req, res) => {
 }).listen(0, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
 base = `http://127.0.0.1:${server.address().port}/`;
-const env = { OSAP_DATA_ORIGIN: base + "AXIOM-APSAP", OSAP_OWNERS: "boss@test" };
+// early access (tools/owner.mjs) is off for every step but the last, which turns it on
+const env = { OSAP_DATA_ORIGIN: base + "AXIOM-APSAP", OSAP_OWNERS: "boss@test", OSAP_EARLY_ACCESS: "off" };
 globalThis.Netlify = { env: { get: (k) => env[k] } };
 globalThis.netlifyIdentityContext = { url: base + ".netlify/identity", token: "op-token" };
 const GATE = (await import("../netlify/edge-functions/osap-data.js")).default;
@@ -191,7 +193,12 @@ gate = true;
   ok((await get(p, "data/live/news.js")) === 200 && (await get(p, "data/live/ucdp.js")) === 402, "Free: news 200, conflict events 402");
   await p.evaluate(() => document.querySelector('#atk-tools [data-atk="overlays"]').click()); await p.waitForTimeout(400);
   const dlg = await wall(p);
-  ok(dlg && /needs the Mid plan/.test(dlg.text) && /US\$50 a year/.test(dlg.text) && /14 days free/.test(dlg.text), "Free: a locked tool opens the plans with prices and the free trial");
+  ok(dlg && /needs the Mid plan/.test(dlg.text) && /US\$50 a year/.test(dlg.text) && /Paid plans open soon/.test(dlg.text) && /nobody is charged/.test(dlg.text) && !/14 days free/.test(dlg.text),
+    "Free, no payments set up: a locked tool opens the plans with prices and says paid plans open soon, with no trial offered");
+  const btns = await p.evaluate(() => [...document.querySelectorAll("#tierdlg .trplan button")].map((b) => b.textContent + (b.disabled ? ":off" : "") + (b.hasAttribute("data-tr-buy") ? ":buy" : "")));
+  ok(btns.length === 2 && btns.every((b) => b === "Opens soon:off"), "Free, no payments set up: Mid and Full show a turned-off Opens soon button, not a buy button " + JSON.stringify(btns));
+  ok(await p.evaluate(() => !!document.querySelector('#tierdlg .trsoon a[href^="mailto:support@axiom-intelligence-systems.com"]')), "Free, no payments set up: an email link to hear when paid plans open");
+  ok(!(await p.evaluate(() => !!document.querySelector("script[src*='cdn.paddle.com']"))), "Free, no payments set up: Paddle's checkout script is never loaded");
   const om = await p.evaluate(() => { const o = document.getElementById("atk-om"); return !!(o && !o.hidden && o.offsetParent); });
   ok(!om, "the locked Overlays panel did not open");
   await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/tier-plans.png" : "/dev/null" }).catch(() => {});
@@ -220,7 +227,7 @@ gate = true;
   ok(item, "owner: Settings has Users");
   await p.evaluate(() => document.querySelector('[data-tp="@users"]').click()); await p.waitForTimeout(800);
   const u = await p.evaluate(() => { const d = document.getElementById("tierdlg"); return d && !d.hidden ? { h: d.querySelector("h2").textContent, rows: d.querySelectorAll("tbody tr").length, text: d.textContent } : null; });
-  ok(u && u.h === "Users" && u.rows === 5 && /5 accounts/.test(u.text) && /boss@test owner/.test(u.text) && /mid@test/.test(u.text) && /owner@test owner/.test(u.text), "owner: Users lists every account " + JSON.stringify(u && { h: u.h, rows: u.rows }));
+  ok(u && u.h === "Users" && u.rows === 6 && /6 accounts/.test(u.text) && /boss@test owner/.test(u.text) && /mid@test/.test(u.text) && /owner@test owner/.test(u.text), "owner: Users lists every account " + JSON.stringify(u && { h: u.h, rows: u.rows }));
   ok(u && !/0000-4000/.test(u.text) && !/tok-/.test(u.text), "owner: the list shows no ids or tokens");
   await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/tier-users.png" : "/dev/null" }).catch(() => {});
   ok(errors.length === 0, "owner: no page errors " + errors.join(" | "));
@@ -486,6 +493,34 @@ for (const [label, viewport] of [["phone", { width: 390, height: 700 }]]) {
   await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/reviews-phone.png" : "/dev/null" }).catch(() => {});
   await ctx.close();
 }
+// early access on (no live payments): a Free account has Full in the page and at the gate, with the early access note;
+// signed out, nothing more opens; with PADDLE_ENV=live it ends by itself
+delete env.OSAP_EARLY_ACCESS;
+{
+  const { ctx, p, errors } = await open("tok-early");
+  const s = await state(p);
+  ok(!(await wall(p)) && s.tier === "full" && !s.locked.length, "early access: a Free account has Full, nothing locked " + JSON.stringify(s));
+  ok((await get(p, "data/live/ucdp.js")) === 200 && (await get(p, "data/live/evsum.js")) === 200, "early access: Mid and Full data open at the gate");
+  await p.evaluate(() => window.OSAP_TIER.open && window.OSAP_TIER.open()); await p.waitForTimeout(600);
+  const ed = await wall(p);
+  ok(ed && /Early access: Full is free for every account until paid plans open/.test(ed.text) && /\(early access\)/.test(ed.text) && !/Paddle receipt/.test(ed.text), "early access: Plan and sign-in says so, with no Paddle receipt line");
+  await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/tier-early.png" : "/dev/null" }).catch(() => {});
+  const acct = await p.evaluate(() => fetch("api/osap-account", { headers: { authorization: "Bearer tok-early" } }).then((r) => r.json()));
+  ok(acct.tier === "full" && acct.early === true && acct.owner === false, "early access: the account answer says Full, early, not owner " + JSON.stringify({ t: acct.tier, e: acct.early }));
+  ok(errors.length === 0, "early access: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+{
+  const { ctx, p } = await open();
+  ok(!!(await wall(p)) && (await get(p, "data/live/ucdp.js")) !== 200 && (await get(p, "data/live/news.js")) !== 200, "early access: signed out, the sign-in screen still comes first and data is refused");
+  await ctx.close();
+}
+env.PADDLE_ENV = "live";
+{
+  const r = await (await ACCOUNT(new Request(base + "api/osap-account", { headers: { authorization: "Bearer tok-early" } }))).json();
+  ok(r.tier === "free" && r.early === false, "early access ends by itself once payments are live (PADDLE_ENV=live) " + JSON.stringify({ t: r.tier, e: r.early }));
+}
+delete env.PADDLE_ENV; env.OSAP_EARLY_ACCESS = "off";
 await browser.close(); server.close();
 console.log(fails ? fails + " FAILED" : "all passed");
 process.exit(fails ? 1 : 0);

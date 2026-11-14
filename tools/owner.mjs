@@ -15,11 +15,23 @@ export function isOwner(u, ownersCsv) {
   const list = String(ownersCsv || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
   return !!(u.email && (u.confirmed_at || u.confirmedAt) && list.includes(String(u.email).toLowerCase()));
 }
+/** Early access (Shane 2026-11-14, "Early access: Full free"): until paid plans open, every signed-in account has Full.
+    It ends by itself when the site takes live payments (PADDLE_ENV=live, the go-live switch in tools/paddle.mjs), or at
+    once with OSAP_EARLY_ACCESS=off in the Netlify environment, or by setting EARLY_ACCESS to false here. Signed-out
+    visitors get nothing more: the sign-in screen still comes first. `get` reads one environment variable. */
+export const EARLY_ACCESS = true;
+export function earlyAccess(get) {
+  if (!EARLY_ACCESS || typeof get !== "function") return false;
+  if (String(get("OSAP_EARLY_ACCESS") || "").trim().toLowerCase() === "off") return false;
+  return String(get("PADDLE_ENV") || "").trim().toLowerCase() !== "live";
+}
 /** The plan an account has: the owner always has everything (Shane 2026-10-18: "I want my account 01shane89@gmail.com to be
-    unlocked fully"), whether the owner is set by role or by OSAP_OWNERS; everyone else has what their roles give. */
-export function planOf(u, ownersCsv, tierOfRoles) {
+    unlocked fully"), whether the owner is set by role or by OSAP_OWNERS; everyone else has what their roles give, or Full
+    while early access is on (`early`, from earlyAccess()). */
+export function planOf(u, ownersCsv, tierOfRoles, early = false) {
   if (!u) return "free";
   if (isOwner(u, ownersCsv)) return "full";
+  if (early) return "full";
   const m = u.app_metadata || u.appMetadata || {};
   if (betaActive(m)) return "full"; // a beta tester code (tools/codes.mjs)
   if (seatActive(m)) return "full"; // a seat on a paid Team, Organisation or pilot (tools/teams.mjs)
