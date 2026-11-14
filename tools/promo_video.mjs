@@ -234,7 +234,7 @@ const SCENES = [
     await p.evaluate(() => { try { localStorage.setItem("osap-w-pushnext", "false"); } catch (e) {} });
     // the reports load after the map: wait until the watch check can see Bangkok's (a 25 km circle, as the place search makes)
     await p.waitForFunction(() => { const c = [13.7563, 100.5018], pts = []; for (let i = 0; i < 48; i++) { const a = i / 48 * 2 * Math.PI; pts.push([c[0] + 25 / 111 * Math.cos(a), c[1] + 25 / (111 * Math.cos(c[0] * Math.PI / 180)) * Math.sin(a)]); }
-      return window.OSAP_WATCH && window.OSAP_WATCH.matches({ area: pts }).length > 5; }, null, { timeout: 90000, polling: 1000 }).catch(() => console.log("  reports not loaded"));
+      return window.OSAP_WATCH && window.OSAP_WATCH.matches({ area: pts }).length > 5; }, null, { timeout: 30000, polling: 1000 }).catch(() => console.log("  reports not loaded"));
   } }, async ({ k, p }) => {
     k.caption("Know when something happens in your city", "Watch any place, in any country.");
     await k.tool("watch"); await k.wait(2500);
@@ -255,19 +255,28 @@ const SCENES = [
     // demo: the watch is treated as saved 24 hours ago, so the reports that really arrived inside the circle since then are its hits;
     // the page is then opened again (cut from the video), which checks every watch on opening
     const from = (Date.now() - k.t0) / 1000;
-    const n = await p.evaluate(() => {
-      const ws = JSON.parse(localStorage.getItem("asap-watches") || "[]"), w = ws[ws.length - 1]; if (!w || !window.OSAP_WATCH) return -1;
-      // everything this watch matches is marked as already seen except the three newest reports, which then arrive as its hits
-      const seen = JSON.parse(localStorage.getItem("asap-watch-seen") || "{}"), sw = {}, now = Date.now();
+    // 1) open the page again as a first check of the watch: it notes everything already inside the circle, announcing nothing
+    const id = await p.evaluate(() => {
+      const ws = JSON.parse(localStorage.getItem("asap-watches") || "[]"), w = ws[ws.length - 1]; if (!w) return "";
+      delete w.base; localStorage.setItem("asap-watches", JSON.stringify(ws));
+      const seen = JSON.parse(localStorage.getItem("asap-watch-seen") || "{}"); delete seen[w.id]; localStorage.setItem("asap-watch-seen", JSON.stringify(seen));
+      localStorage.setItem("asap-watch-hits", "[]"); return w.id;
+    });
+    await p.reload();
+    await p.waitForFunction((id) => { const w = (JSON.parse(localStorage.getItem("asap-watches") || "[]")).filter((x) => x.id === id)[0]; return w && w.base; }, id, { timeout: 90000, polling: 500 }).catch(() => console.log("  first check not done"));
+    await p.waitForFunction((id) => { const w = (JSON.parse(localStorage.getItem("asap-watches") || "[]")).filter((x) => x.id === id)[0]; return w && window.OSAP_WATCH && window.OSAP_WATCH.matches(w).length > 3; }, id, { timeout: 60000, polling: 1000 }).catch(() => console.log("  matches still empty"));
+    // 2) then the three newest reports inside it are taken off the noted list, so the next check finds them as new
+    const n = await p.evaluate((id) => {
+      const ws = JSON.parse(localStorage.getItem("asap-watches") || "[]"), w = ws.filter((x) => x.id === id)[0]; if (!w || !window.OSAP_WATCH) return -1;
+      const seen = JSON.parse(localStorage.getItem("asap-watch-seen") || "{}"), sw = seen[id] || {};
       const ms = window.OSAP_WATCH.matches(w).map((m) => Object.assign({ _t: m.t0 || Date.parse(m.ts) || 0 }, m)).sort((a, b) => b._t - a._t);
       const keep = {}; let n = 0; ms.forEach((m) => { if (n < 3 && !keep[m.gk]) { keep[m.gk] = 1; n++; } });
-      ms.forEach((m) => { if (keep[m.gk]) return; sw[m.k] = now; if (m.sk) sw["s:" + m.sk] = now; });
       ms.forEach((m) => { if (keep[m.gk]) { delete sw[m.k]; if (m.sk) delete sw["s:" + m.sk]; } });
-      w.base = now - 864e5; localStorage.setItem("asap-watches", JSON.stringify(ws));
-      seen[w.id] = sw; localStorage.setItem("asap-watch-seen", JSON.stringify(seen)); return { n, all: ms.length, pts: (w.area || []).length, id: w.id };
-    });
+      seen[id] = sw; localStorage.setItem("asap-watch-seen", JSON.stringify(seen)); localStorage.setItem("asap-watch-hits", "[]");
+      return { n, all: ms.length, seen: Object.keys(sw).length };
+    }, id);
     console.log("  recent matches", JSON.stringify(n));
-    await p.goto(base + "?wshow=" + encodeURIComponent(n.id) + "#th/timeline");
+    await p.goto(base + "?wshow=" + encodeURIComponent(id) + "#th/timeline");
     await p.waitForFunction(() => window.__asapMap && window.OSAP_ATAK, null, { timeout: 60000 });
     await p.evaluate(() => { const b = document.querySelector('button[data-rv-mode="map"]'); if (b) b.click(); });
     try { await p.waitForFunction(() => { const t = document.getElementById("wtoast"); return t && !t.hidden; }, null, { timeout: 30000 }); } catch { console.log("  no alert toast"); }
