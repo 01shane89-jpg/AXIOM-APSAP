@@ -35,6 +35,8 @@
 ["n13978285037",9.03443,7.59341,"ng",{"name":"City Specialist Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["n14079128855",8.95272,7.67247,"ng",{"name":"Legacy Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["n14130641801",8.95139,7.47337,"ng",{"name":"African Medical Centre of Excellence","amenity":"hospital","healthcare":"hospital","phone":"+2347073940063","website":"http://amce.net","addr:housenumber":"32","addr:street":"Cadastral Zone C22, Apo-Kabusa","opening_hours":"24/7"}],
+["n14297113276",9.06839,7.5044,"ng",{"aeroway":"helipad"}],
+["n14324894901",8.94094,7.0873,"ng",{"name":"Gwagwalada Town Clinic","amenity":"clinic"}],
 ["n4239597167",9.06491,7.42466,"ng",{"name":"Bridge Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["n7598923599",9.20906,7.1675,"ng",{"amenity":"hospital","healthcare":"hospital"}],
 ["n7780898985",9.08254,7.40791,"ng",{"name":"EHA Clinics","amenity":"clinic"}],

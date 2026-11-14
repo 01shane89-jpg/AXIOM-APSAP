@@ -7,7 +7,9 @@
 ["n4449969995",46.92639,26.37381,"ro",{"name":"Centru de Transfuzie si Donare","healthcare":"blood_donation","addr:housenumber":"5","addr:street":"Bulevardul Traian","addr:city":"Piatra-Neamț"}],
 ["w109556399",45.73717,21.23997,"ro",{"name":"Centrul de Transfuzie Sanguină","healthcare":"blood_donation","website":"https://www.ctstimisoara.ro/","addr:housenumber":"1","addr:street":"Strada Martir Marius Ciopec","addr:city":"Timișoara","addr:postcode":"300737"}],
 ["w1184236232",46.35391,25.80944,"ro",{"name":"Hargita Megyei Vérközpont","name:en":"Hargita County Blood Center","healthcare":"blood_donation","addr:housenumber":"1","addr:street":"Aleea Avântului","addr:city":"Miercurea Ciuc","addr:postcode":"530181"}],
+["w1372663495",45.29058,21.88609,"ro",{"name":"Centrul de Transfuzie Sanguină","healthcare":"blood_donation"}],
 ["w276472316",46.77588,23.59793,"ro",{"name":"Centru de transfuzie sanguină","healthcare":"blood_donation","addr:housenumber":"11","addr:street":"Strada Paris","addr:city":"Cluj-Napoca","addr:postcode":"400161"}],
 ["w312720097",47.7419,26.66146,"ro",{"name":"Centrul de Transfuzie Sanguină","healthcare":"blood_donation","addr:housenumber":"91","addr:street":"Strada Arhimandrit Marchian","addr:city":"Botoșani"}],
 ["w331455729",46.9264,26.37378,"ro",{"healthcare":"blood_donation"}],
+["w423398603",47.06438,21.94754,"ro",{"name":"Centrul de Donare Sanguina","healthcare":"blood_donation"}],
 ["w644897002",47.78332,22.86059,"ro",{"name":"Centrul De Transfuzie Sanguină Satu Mare","healthcare":"blood_donation","operator":"Ministerul Sănătății"}]]
