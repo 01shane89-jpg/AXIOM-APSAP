@@ -11,11 +11,12 @@ jobs:
     steps:
       - name: Poll the address (up to 60 min)
         run: |
+          set +e
           U=https://osap.axiom-intelligence-systems.com/
           for i in $(seq 1 30); do
             echo "ADDR $(date -u +%H:%M:%SZ) dns=$(getent hosts osap.axiom-intelligence-systems.com | awk '{print $1}' | tr '\n' ' ')"
             echo "ADDR cname=$(dig +short CNAME osap.axiom-intelligence-systems.com | tr '\n' ' ')"
-            code=$(curl -s -o /tmp/b -w '%{http_code} %{ssl_verify_result} %{url_effective}' -L -m 20 "$U" 2>/tmp/e); err=$(head -c 200 /tmp/e)
+            code=$(curl -s -o /tmp/b -w '%{http_code} %{ssl_verify_result} %{url_effective}' -L -m 20 "$U" 2>/tmp/e) || true; err=$(head -c 200 /tmp/e)
             title=$(grep -o '<title>[^<]*' /tmp/b | head -1)
             echo "ADDR http=$code title=$title err=$err"
             if echo "$title" | grep -q "AXIOM OSAP"; then echo "ADDR LIVE"; exit 0; fi
