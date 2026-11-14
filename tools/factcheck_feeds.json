@@ -1,0 +1,405 @@
+{
+  "note": "Fact-checking outlets' own free feeds (no key, no account), read by tools/refresh_factchecks.mjs for Go deeper > Check it. Dedicated fact-check desks and outlets, most of them signatories of the IFCN Code of Principles (ifcncodeofprinciples.poynter.org). Each check is shown as theirs, with its link, and only as 'may relate'; OSAP never gives a verdict of its own. alt: other addresses tried in turn when the first fails.",
+  "feeds": [
+    {
+      "id": "politifact",
+      "name": "PolitiFact",
+      "home": "https://www.politifact.com",
+      "cc": "us",
+      "lang": "en",
+      "url": "https://www.politifact.com/rss/factchecks/"
+    },
+    {
+      "id": "factcheckorg",
+      "name": "FactCheck.org",
+      "home": "https://www.factcheck.org",
+      "cc": "us",
+      "lang": "en",
+      "url": "https://www.factcheck.org/feed/"
+    },
+    {
+      "id": "leadstories",
+      "name": "Lead Stories",
+      "home": "https://leadstories.com",
+      "cc": "us",
+      "lang": "en",
+      "url": "https://leadstories.com/atom.xml",
+      "alt": [
+        "https://leadstories.com/rss.xml",
+        "https://leadstories.com/feed"
+      ]
+    },
+    {
+      "id": "checkyourfact",
+      "name": "Check Your Fact",
+      "home": "https://checkyourfact.com",
+      "cc": "us",
+      "lang": "en",
+      "url": "https://checkyourfact.com/feed/"
+    },
+    {
+      "id": "sciencefeedback",
+      "name": "Science Feedback",
+      "home": "https://science.feedback.org",
+      "cc": "fr",
+      "lang": "en",
+      "url": "https://science.feedback.org/feed/",
+      "alt": [
+        "https://healthfeedback.org/feed/"
+      ]
+    },
+    {
+      "id": "fullfact",
+      "name": "Full Fact",
+      "home": "https://fullfact.org",
+      "cc": "gb",
+      "lang": "en",
+      "url": "https://fullfact.org/feed/all/",
+      "alt": [
+        "https://fullfact.org/feed/"
+      ]
+    },
+    {
+      "id": "afp",
+      "name": "AFP Fact Check",
+      "home": "https://factcheck.afp.com",
+      "cc": "fr",
+      "lang": "en",
+      "url": "https://factcheck.afp.com/rss.xml",
+      "alt": [
+        "https://factcheck.afp.com/feed",
+        "https://factcheck.afp.com/list/all/all/rss.xml"
+      ]
+    },
+    {
+      "id": "aap",
+      "name": "AAP FactCheck",
+      "home": "https://www.aap.com.au/factcheck",
+      "cc": "au",
+      "lang": "en",
+      "url": "https://www.aap.com.au/factcheck/feed/",
+      "alt": [
+        "https://www.aap.com.au/category/factcheck/feed/"
+      ]
+    },
+    {
+      "id": "africacheck",
+      "name": "Africa Check",
+      "home": "https://africacheck.org",
+      "cc": "za",
+      "lang": "en",
+      "url": "https://africacheck.org/rss.xml",
+      "alt": [
+        "https://africacheck.org/feed",
+        "https://africacheck.org/fact-checks/feed"
+      ]
+    },
+    {
+      "id": "pesacheck",
+      "name": "PesaCheck",
+      "home": "https://pesacheck.org",
+      "cc": "ke",
+      "lang": "en",
+      "url": "https://pesacheck.org/feed"
+    },
+    {
+      "id": "dubawa",
+      "name": "Dubawa",
+      "home": "https://dubawa.org",
+      "cc": "ng",
+      "lang": "en",
+      "url": "https://dubawa.org/feed/"
+    },
+    {
+      "id": "rappler",
+      "name": "Rappler Fact Check",
+      "home": "https://www.rappler.com/newsbreak/fact-check",
+      "cc": "ph",
+      "lang": "en",
+      "url": "https://www.rappler.com/newsbreak/fact-check/feed/",
+      "alt": [
+        "https://www.rappler.com/feed/?post_type=post&category_name=fact-check"
+      ]
+    },
+    {
+      "id": "verafiles",
+      "name": "VERA Files",
+      "home": "https://verafiles.org",
+      "cc": "ph",
+      "lang": "en",
+      "url": "https://verafiles.org/feed",
+      "alt": [
+        "https://verafiles.org/rss"
+      ]
+    },
+    {
+      "id": "boom",
+      "name": "BOOM",
+      "home": "https://www.boomlive.in",
+      "cc": "in",
+      "lang": "en",
+      "url": "https://www.boomlive.in/fact-check/feeds/rss.xml",
+      "alt": [
+        "https://www.boomlive.in/feeds/rss.xml",
+        "https://www.boomlive.in/rss"
+      ]
+    },
+    {
+      "id": "altnews",
+      "name": "Alt News",
+      "home": "https://www.altnews.in",
+      "cc": "in",
+      "lang": "en",
+      "url": "https://www.altnews.in/feed/"
+    },
+    {
+      "id": "factly",
+      "name": "Factly",
+      "home": "https://factly.in",
+      "cc": "in",
+      "lang": "en",
+      "url": "https://factly.in/feed/"
+    },
+    {
+      "id": "newschecker",
+      "name": "Newschecker",
+      "home": "https://newschecker.in",
+      "cc": "in",
+      "lang": "en",
+      "url": "https://newschecker.in/feed",
+      "alt": [
+        "https://newschecker.in/rss"
+      ]
+    },
+    {
+      "id": "vishvas",
+      "name": "Vishvas News",
+      "home": "https://www.vishvasnews.com/english",
+      "cc": "in",
+      "lang": "en",
+      "url": "https://www.vishvasnews.com/english/feed/"
+    },
+    {
+      "id": "factcrescendo",
+      "name": "Fact Crescendo",
+      "home": "https://english.factcrescendo.com",
+      "cc": "in",
+      "lang": "en",
+      "url": "https://english.factcrescendo.com/feed/"
+    },
+    {
+      "id": "newsmobile",
+      "name": "NewsMobile Fact Checker",
+      "home": "https://www.newsmobile.in/nm-fact-checker",
+      "cc": "in",
+      "lang": "en",
+      "url": "https://www.newsmobile.in/nm-fact-checker/feed/"
+    },
+    {
+      "id": "annielab",
+      "name": "Annie Lab",
+      "home": "https://annielab.org",
+      "cc": "hk",
+      "lang": "en",
+      "url": "https://annielab.org/feed",
+      "alt": [
+        "https://annielab.org/rss.xml"
+      ]
+    },
+    {
+      "id": "tfc",
+      "name": "Taiwan FactCheck Center",
+      "home": "https://en.tfc-taiwan.org.tw",
+      "cc": "tw",
+      "lang": "en",
+      "url": "https://en.tfc-taiwan.org.tw/rss.xml",
+      "alt": [
+        "https://en.tfc-taiwan.org.tw/feed"
+      ]
+    },
+    {
+      "id": "mygopen",
+      "name": "MyGoPen",
+      "home": "https://www.mygopen.com",
+      "cc": "tw",
+      "lang": "zh",
+      "url": "https://www.mygopen.com/feeds/posts/default?alt=rss"
+    },
+    {
+      "id": "turnbackhoax",
+      "name": "Mafindo TurnBackHoax",
+      "home": "https://turnbackhoax.id",
+      "cc": "id",
+      "lang": "id",
+      "url": "https://turnbackhoax.id/feed/"
+    },
+    {
+      "id": "tempocek",
+      "name": "Tempo Cek Fakta",
+      "home": "https://cekfakta.tempo.co",
+      "cc": "id",
+      "lang": "id",
+      "url": "https://cekfakta.tempo.co/rss",
+      "alt": [
+        "https://rss.tempo.co/cekfakta"
+      ]
+    },
+    {
+      "id": "stopfake",
+      "name": "StopFake",
+      "home": "https://www.stopfake.org/en",
+      "cc": "ua",
+      "lang": "en",
+      "url": "https://www.stopfake.org/en/feed/"
+    },
+    {
+      "id": "voxcheck",
+      "name": "VoxCheck",
+      "home": "https://voxukraine.org/en/category/voxcheck",
+      "cc": "ua",
+      "lang": "en",
+      "url": "https://voxukraine.org/en/category/voxcheck/feed/",
+      "alt": [
+        "https://voxukraine.org/en/feed/"
+      ]
+    },
+    {
+      "id": "mythdetector",
+      "name": "Myth Detector",
+      "home": "https://mythdetector.com/en",
+      "cc": "ge",
+      "lang": "en",
+      "url": "https://mythdetector.com/en/feed/"
+    },
+    {
+      "id": "teyit",
+      "name": "Teyit",
+      "home": "https://teyit.org",
+      "cc": "tr",
+      "lang": "tr",
+      "url": "https://teyit.org/feed"
+    },
+    {
+      "id": "misbar",
+      "name": "Misbar",
+      "home": "https://misbar.com/en",
+      "cc": "qa",
+      "lang": "en",
+      "url": "https://misbar.com/en/rss",
+      "alt": [
+        "https://misbar.com/en/feed"
+      ]
+    },
+    {
+      "id": "fatabyyano",
+      "name": "Fatabyyano",
+      "home": "https://fatabyyano.net",
+      "cc": "jo",
+      "lang": "ar",
+      "url": "https://fatabyyano.net/feed/"
+    },
+    {
+      "id": "correctiv",
+      "name": "CORRECTIV.Faktencheck",
+      "home": "https://correctiv.org/faktencheck",
+      "cc": "de",
+      "lang": "de",
+      "url": "https://correctiv.org/faktencheck/feed/"
+    },
+    {
+      "id": "maldita",
+      "name": "Maldita.es",
+      "home": "https://maldita.es",
+      "cc": "es",
+      "lang": "es",
+      "url": "https://maldita.es/feed/",
+      "alt": [
+        "https://maldita.es/rss"
+      ]
+    },
+    {
+      "id": "newtral",
+      "name": "Newtral",
+      "home": "https://www.newtral.es",
+      "cc": "es",
+      "lang": "es",
+      "url": "https://www.newtral.es/feed/"
+    },
+    {
+      "id": "demagog",
+      "name": "Demagog",
+      "home": "https://demagog.org.pl",
+      "cc": "pl",
+      "lang": "pl",
+      "url": "https://demagog.org.pl/feed/"
+    },
+    {
+      "id": "pagella",
+      "name": "Pagella Politica",
+      "home": "https://pagellapolitica.it",
+      "cc": "it",
+      "lang": "it",
+      "url": "https://pagellapolitica.it/feed",
+      "alt": [
+        "https://pagellapolitica.it/rss"
+      ]
+    },
+    {
+      "id": "chequeado",
+      "name": "Chequeado",
+      "home": "https://chequeado.com",
+      "cc": "ar",
+      "lang": "es",
+      "url": "https://chequeado.com/feed/"
+    },
+    {
+      "id": "aosfatos",
+      "name": "Aos Fatos",
+      "home": "https://www.aosfatos.org",
+      "cc": "br",
+      "lang": "pt",
+      "url": "https://www.aosfatos.org/noticias/feed/"
+    },
+    {
+      "id": "lupa",
+      "name": "Agência Lupa",
+      "home": "https://lupa.uol.com.br",
+      "cc": "br",
+      "lang": "pt",
+      "url": "https://lupa.uol.com.br/feed"
+    },
+    {
+      "id": "colombiacheck",
+      "name": "ColombiaCheck",
+      "home": "https://colombiacheck.com",
+      "cc": "co",
+      "lang": "es",
+      "url": "https://colombiacheck.com/rss.xml",
+      "alt": [
+        "https://colombiacheck.com/feed"
+      ]
+    },
+    {
+      "id": "factuel",
+      "name": "AFP Factuel",
+      "home": "https://factuel.afp.com",
+      "cc": "fr",
+      "lang": "fr",
+      "url": "https://factuel.afp.com/rss.xml",
+      "alt": [
+        "https://factuel.afp.com/feed"
+      ]
+    },
+    {
+      "id": "snopes",
+      "name": "Snopes",
+      "home": "https://www.snopes.com",
+      "cc": "us",
+      "lang": "en",
+      "url": "https://www.snopes.com/fact-check/feed/",
+      "alt": [
+        "https://www.snopes.com/feed/"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+name: Refresh fact-checks
+
+# Every 3 hours (tools/refresh_factchecks.mjs): the newest published checks from the fact-checking outlets in
+# tools/factcheck_feeds.json (their own free feeds, no key, no account) into data/live/factchecks.js, which the news job matches
+# to the story threads for Go deeper > Check it. A run on any branch other than main parks its output on
+# claude/fact-check-preview-data instead of committing.
+on:
+  schedule:
+    - cron: "23 */3 * * *"
+  push:
+    branches: [claude/fact-check*]
+    paths: [tools/refresh_factchecks.mjs, tools/factcheck_lib.mjs, tools/factcheck_feeds.json, .github/workflows/refresh-factchecks.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-factchecks-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - name: Read the fact-checkers' feeds
+        timeout-minutes: 8
+        run: node tools/refresh_factchecks.mjs
+      - name: Park test output on a preview-data branch
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git checkout -q --orphan fact-check-preview-data
+          git rm -rqf --cached .
+          git add -f data/live/factchecks.js
+          git commit -qm "Test output (fact-checks) $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin HEAD:refs/heads/claude/fact-check-preview-data
+      - name: Commit if the checks changed
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git add -N data/live/factchecks.js
+          if git diff --quiet data/live/factchecks.js; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/live/factchecks.js
+          git commit -m "Refresh fact-checks $(date -u +'%Y-%m-%d %H:%MZ')"
+          for i in 1 2 3 4; do git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0; sleep $((i * 10)); done
+          exit 1

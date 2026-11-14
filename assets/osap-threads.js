@@ -11,6 +11,10 @@
    mentions, each with the other headlines (any country) that name them. A connection to a story OSAP has threaded opens that
    story here, one layer deeper, with a trail back. The reader can mark a connection Linked or Not linked: a note kept on this
    device only (localStorage "osap-thread-links", each with what, when and who), never sent anywhere and never shown as fact.
+   Check it (Shane 2026-11-14: "Can we add a fact check to news reports?"): what a reader needs to check the story for themselves,
+   never OSAP's own true or false: who carried it (only state media? one country?), the figures reports give differently
+   (thread.fig, tools/factcheck_lib.mjs figures), officials' lines as claims, and published fact-checks by fact-checking outlets
+   whose words overlap the story (thread.fc, from tools/refresh_factchecks.mjs), each the fact-checker's own finding, "may relate".
    Everything is word matching by machine, not AI and not an analyst, and the page says so. Officials' lines are their claims.
    Read-only: it never changes a record. */
 (function () {
@@ -123,7 +127,11 @@
     "#thv .thact button[aria-pressed=true]{background:var(--accent-soft,#D6E3EE);border-color:var(--accent,#1D5A86);font-weight:600}#thv .thact .thgo{font-weight:700;color:var(--accent,#1f5f99)}" +
     "#thv .thnote{font-size:12px;color:var(--muted,#555);margin:4px 0 10px;padding:8px 10px;border-radius:6px;background:var(--surface2,#f2f2f2)}" +
     "#thv .thfoot{margin-top:12px;font-size:12px;color:var(--muted,#555)}#thv code{font-size:11.5px;overflow-wrap:anywhere}" +
-    "@media (max-width:560px){#thv .thtop{padding:8px 12px 6px}#thv .thbody{padding:8px 12px 24px}#thv h2{font-size:16px}#thv .thtabs button{font-size:12.5px;padding:4px 3px}}";
+    "#thv .thck{border:1px solid var(--line,#ccc);border-radius:6px;margin:0 0 10px;padding:8px 12px}#thv .thck h3{margin:0 0 4px;font-size:14.5px}" +
+    "#thv .thck ul{margin:4px 0 0;padding:0 0 0 18px}#thv .thck li{margin:3px 0;overflow-wrap:anywhere}#thv .thck ul.ths{padding:0;list-style:none}" +
+    "#thv .thsig-warn{font-weight:600;color:#9a3412}#thv .thtabs .thsh{display:none}#thv .thfig{font-size:15px;font-weight:700;margin:2px 0}" +
+    ":root[data-theme=dark] #thv .thsig-warn{color:#fdba74}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) #thv .thsig-warn{color:#fdba74}}" +
+    "@media (max-width:560px){#thv .thtop{padding:8px 12px 6px}#thv .thbody{padding:8px 12px 24px}#thv h2{font-size:16px}#thv .thtabs button{font-size:12.5px;padding:4px 3px}#thv .thtabs .thl{display:none}#thv .thtabs .thsh{display:inline}}";
 
   /* who owns and pays for the outlet (assets/osap-outletfacts.js, its Wikidata record), when that file is in */
   function about(link) { var Q = W.OSAP_OUTLETFACTSQ; return Q && Q.of(link) ? Q.html(link) : ""; }
@@ -188,6 +196,52 @@
       t.rows.map(function (r) { var u = safeUrl(r[5]); return "<li>" + (u ? '<a class="tht" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(txt(r[6])) + "</a>" : esc(txt(r[6]))) +
         '<span class="tho">' + esc(r[0]) + " · " + esc(KIND[r[1]] || "") + (r[1] === "state" ? " (a claim)" : "") + " · based in " + esc(r[3] ? cName(r[3]) : "country not known") + " · " + esc(when(r[4])) + (r[7] ? " · machine translated" : "") + "</span>" + about(r[5]) + "</li>"; }).join("") + "</ul>";
   }
+  function checkHtml(t, cc) {
+    var k = t.k || {}, o = t.o || {}, n = t.n || 0, H = "";
+    var ctry = {}, mt = 0; t.rows.forEach(function (r) { if (r[3]) ctry[r[3]] = 1; if (r[7]) mt++; });
+    var nc = Object.keys(ctry).length, sig = [];
+    // who carried it: plain signals from the thread's own counts (OSAP's outlet list), never a verdict
+    if (k.state && k.state >= n) sig.push(["warn", "Only state media carried this. It is that government's account until other outlets report it."]);
+    else if (k.state) sig.push(["", plural(k.state, "state media outlet") + " and " + plural(n - k.state, "other outlet") + " carried this. State media give their government's line."]);
+    if (nc === 1 && n >= 2) sig.push(["warn", "Every outlet that carried it is based in one country (" + esc(cName(Object.keys(ctry)[0])) + ")."]);
+    else if (nc > 1) sig.push(["", "Outlets based in " + plural(nc, "country", "countries") + " carried it" + (o.dom ? ", " + o.dom + " of them in " + esc(cName(cc)) : "") + "."]);
+    if (mt) sig.push(["", plural(mt, "headline") + " here " + (mt === 1 ? "is" : "are") + " machine translated: a word can be wrong."]);
+    H += '<section class="thck"><h3>Who carried it</h3><p><b>' + plural(n, "outlet") + "</b>, " + plural(t.r, "report") + ".</p><ul>" +
+      sig.map(function (x) { return '<li class="thsig' + (x[0] ? " thsig-" + x[0] : "") + '">' + x[1] + "</li>"; }).join("") +
+      '</ul><p class="tho">Many outlets repeat one news agency\'s report, so more outlets is not more evidence. See who owns each one under All reports.</p></section>';
+    // figures the reports give differently
+    var F = t.fig || [];
+    if (F.length) {
+      H += '<section class="thck"><h3>Figures differ between reports</h3><p class="tho">Early counts often change as an event goes on, and a report joined to this story by mistake can carry another event\'s numbers. Check the newest count from an official or on-scene source.</p>' +
+        F.map(function (f) {
+          var vals = f[2].map(function (x) { return x[0]; }), lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals), last = f[2][f[2].length - 1];
+          return '<p class="thfig">' + esc(f[1].charAt(0).toUpperCase() + f[1].slice(1)) + ": " + (lo === hi ? lo : lo.toLocaleString() + " to " + hi.toLocaleString()) + "</p>" +
+            '<p class="tho">The newest report OSAP holds gives ' + last[0].toLocaleString() + " (" + esc(t.rows[last[1]][0]) + ", " + esc(when(t.rows[last[1]][4])) + ').</p><details class="threp"><summary>Each report\'s figure</summary><ul>' +
+            f[2].map(function (x) { var r = t.rows[x[1]], u = safeUrl(r[5]); return "<li><b>" + x[0].toLocaleString() + "</b> · " + esc(r[0]) + " · " + esc(when(r[4])) + "<br>" +
+              (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(txt(r[6])) + "</a>" : esc(txt(r[6]))) + "</li>"; }).join("") + "</ul></details>";
+        }).join("") + "</section>";
+    }
+    // officials' lines
+    var said = 0; (t.parts || []).forEach(function (p) { if (p[0] === "said") p[1].forEach(function (x) { said += x[0].length; }); });
+    if (said) H += '<section class="thck"><h3>What officials say</h3><p>' + plural(said, "report") + " carry statements by officials or agencies. They are claims: an official account can be wrong, partial or self-serving. " +
+      '<button type="button" class="thgo" data-thtab="parts" style="font:inherit;background:none;border:0;padding:0;color:var(--accent,#1f5f99);text-decoration:underline;cursor:pointer">Read them under The story</button>.</p></section>';
+    // published fact-checks
+    var C = t.fc || [];
+    H += '<section class="thck"><h3>Published fact-checks that may relate</h3>' + (C.length
+      ? '<p class="tho">Checks by fact-checking outlets that share this story\'s words or names. Matched by machine, not by an analyst: a check can be about a different claim. Each finding is the fact-checker\'s own; read it in full.</p><ul class="ths">' +
+        C.map(function (c) {
+          /* [fact-checker, its site, date, its headline, link, its summary, names shared with the story] */
+          var u = safeUrl(c[4]), h = safeUrl(c[1]);
+          return "<li>" + (u ? '<a class="tht" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(txt(c[3])) + "</a>" : '<span class="tht">' + esc(txt(c[3])) + "</span>") +
+            '<span class="tho">Fact-checked by ' + (h ? '<a href="' + esc(h) + '" target="_blank" rel="noopener noreferrer">' + esc(c[0]) + "</a>" : esc(c[0])) + " · " + esc(when(c[2])) +
+            (c[6] && c[6].length ? " · shares " + esc(c[6].join(", ")) : "") + "</span>" + (c[5] ? '<span class="tho">' + esc(txt(c[5])) + "</span>" : "") + "</li>";
+        }).join("") + "</ul>"
+      : "<p>No published fact-check OSAP reads shares this story's words. Most stories are never fact-checked: that says nothing about whether it is true.</p>") + "</section>";
+    H += '<section class="thck"><h3>Check it yourself</h3><ul><li>Open the earliest report under Timeline: is the first source named, and was it there?</li>' +
+      "<li>Look for the official or on-scene source the reports quote, and read it yourself.</li><li>Compare outlets from different owners and countries under All reports.</li>" +
+      "<li>A photo or video can be old or from somewhere else: search for where it first appeared.</li></ul></section>";
+    return '<p class="thnote">What you need to judge this story yourself. OSAP does not rate a story true or false: these are signals and other people\'s published checks, matched by machine.</p>' + H;
+  }
   function render() {
     if (!box) return;
     var top = trail[trail.length - 1], t = top && find(top.cc, top.id), f = top && get(top.cc);
@@ -197,6 +251,7 @@
     } else if (tab === "parts") body = partsHtml(t);
     else if (tab === "dev") body = devHtml(t);
     else if (tab === "conn") body = connHtml(t, top.cc);
+    else if (tab === "check") body = checkHtml(t, top.cc);
     else body = allHtml(t);
     var crumbs = trail.map(function (x, i) {
       var tt = find(x.cc, x.id), lab = (tt ? txt(tt.t) : "Story").slice(0, 48) + (tt && txt(tt.t).length > 48 ? "…" : "");
@@ -209,8 +264,8 @@
         '<p class="thm"><b>' + plural(t.n, "outlet") + "</b>, " + plural(t.r, "report") + " · " + esc(cName(top.cc)) + " · " + esc(when(t.d0)) + " to " + esc(when(t.d)) + "</p>" +
         '<p class="thm">' + [k.state ? k.state + " state media" : "", k.public ? k.public + " public" : "", k.other ? k.other + " private or independent" : ""].filter(Boolean).join(", ") +
           " · " + [o.dom ? o.dom + " based in " + esc(cName(top.cc)) : "", o.out ? o.out + " elsewhere" : ""].filter(Boolean).join(", ") + "</p>" +
-        '<div class="thtabs" role="tablist">' + [["parts", "The story"], ["dev", "Timeline"], ["conn", "Connections"], ["all", "All reports"]].map(function (b) {
-          return '<button type="button" role="tab" data-thtab="' + b[0] + '" aria-selected="' + (tab === b[0]) + '">' + esc(b[1]) + "</button>"; }).join("") + "</div>" : "") +
+        '<div class="thtabs" role="tablist">' + [["parts", "The story", "Story"], ["dev", "Timeline", "Timeline"], ["check", "Check it", "Check it"], ["conn", "Connections", "Links"], ["all", "All reports", "Reports"]].map(function (b) {
+          return '<button type="button" role="tab" data-thtab="' + b[0] + '" aria-selected="' + (tab === b[0]) + '" aria-label="' + esc(b[1]) + '"><span class="thl">' + esc(b[1]) + '</span><span class="thsh">' + esc(b[2]) + "</span></button>"; }).join("") + "</div>" : "") +
       '</div><div class="thbody">' + body +
       (t ? '<div class="thfoot"><p>' + esc(f && f.method || "") + "</p><p>Record fingerprint (SHA-256 of every report link in this story): <code>" + esc(t.fp || "") + "</code></p>" +
         "<p>Built " + esc(when(String(f && f.asof || "").replace(" ", "T"))) + " from the last " + esc(f && f.hours || 72) + " hours of headlines.</p></div>" : "") + "</div>";
