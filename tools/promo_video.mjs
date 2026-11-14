@@ -504,6 +504,60 @@ const SCENES = [
     k.caption("Every country, one map", "Every item dated and linked to its source.");
     await k.wait(3500);
   }],
+  ["iranwar", { hash: "#ir/map", at: [27.5, 53.5], z: 5, settle: 9000, prep: async (p) => {
+      await p.evaluate(() => window.OSAP_CONFLICT_TABS.open("iran-war", "ir"));
+      await p.waitForTimeout(5000);
+      // a clean map: no site or event symbols, only the war's zones and placed reports
+      for (const s of ["input[data-cfs=on]", "input[data-cfi=places]", "input[data-cfshow=ucdp]"]) await p.evaluate((s) => { const e = document.querySelector(s); if (e && e.checked) e.click(); }, s);
+      await p.evaluate(() => { window.__asapMap.setView([27.5, 53.5], 5, { animate: false }); });
+    } }, async ({ k, p }) => {
+    const n7 = await p.evaluate(() => { const c = window.OSAP_CF && window.OSAP_CF["iran-war"]; return c && c.stats && c.stats.reports ? c.stats.reports.d7 : 0; });
+    console.log("  reports 7d", n7, "asof", await p.evaluate(() => (window.OSAP_CF["iran-war"] || {}).asof));
+    const sheet = async (want) => { // phone: the list sheet (bar, half, full); a tap on its handle steps it
+      if (!PHONE) return;
+      for (let i = 0; i < 3; i++) {
+        if ((await p.evaluate(() => document.documentElement.getAttribute("data-sheet"))) === want) return;
+        const h = await k.el("#rail-handle .grab"); const b = h && await h.boundingBox(); if (b) await p.mouse.move(b.x + b.width / 2, b.y + 20, { steps: 14 });
+        await p.evaluate(() => { const g = document.querySelector("#rail-handle .grab"); if (g) g.click(); }); await k.wait(650);
+      }
+    };
+    const kind = async (v) => {
+      await k.into("#cf-reps"); await k.wait(400);
+      const sel = await k.el('select[data-cff="kind"]'); if (sel) await k.glide(sel);
+      await p.evaluate((v) => { const s = document.querySelector('select[data-cff="kind"]'); if (s && [...s.options].some((o) => o.value === v)) { s.value = v; s.dispatchEvent(new Event("change", { bubbles: true })); } }, v);
+      await p.keyboard.press("Escape").catch(() => {}); await k.wait(1200);
+    };
+    const item = async (re) => { // scroll the newest report whose headline matches to the middle of the list, and ring it
+      const t = await p.evaluate((src) => { const R = new RegExp(src, "i"); const li = [...document.querySelectorAll("#cf-list li")].find((x) => R.test((x.querySelector(".cft") || x).textContent));
+        if (!li) return ""; li.scrollIntoView({ behavior: "smooth", block: "center" }); li.style.outline = "3px solid #3d9bff"; li.style.outlineOffset = "2px"; li.style.borderRadius = "6px"; return li.querySelector(".cft").textContent; }, re);
+      console.log("  item", re, "->", JSON.stringify(t.slice(0, 120))); await k.wait(1200); return !!t;
+    };
+    k.caption("Iran war: where it stands", `Week to 14 Nov 2026, from ${n7 ? n7.toLocaleString("en-US") + " " : ""}reports in OSAP. Every report links to its source.`);
+    await k.wait(4500);
+    k.caption("No ceasefire agreement", "UN, 13 Nov: talks have not produced a deal. Shaded: reported strike and shipping zones, each with its source.");
+    await k.view([26.6, 55.6], 7, true); await k.wait(4500);
+    k.caption("Hormuz: Iran says 3 tankers hit mines", "A claim by Iran's navy and IRGC, 13 to 14 Nov (IRNA, Mehr). Not independently confirmed.");
+    await sheet("full"); await kind("maritime"); await item("tanker.*mine|mine.*tanker"); await k.wait(2600);
+    k.caption("UN: 25 seafarers killed since February", "The IMO's count for in and around the strait, reported 14 Nov.");
+    if (!(await item("25 seafarer"))) await k.wheel(260, 2, 1200, 0.5, 0.6);
+    await k.wait(2600);
+    k.caption("Claims from both sides", "IRGC: it downed a US MQ-1 and hit a US radar in Bahrain. CENTCOM denies the radar claim.");
+    await kind(""); await item("MQ-1"); await k.wait(1800); await item("CENTCOM|denies"); await k.wait(2200);
+    k.caption("Go deeper: one story, every outlet", "Iran's claim it hit a US radar in Bahrain, and every outlet that carried it.");
+    const tid = await p.evaluate(() => new Promise((r) => window.OSAP_THREADSQ.load("ir", () => { const T = window.OSAP_THREADSQ.get ? window.OSAP_THREADSQ.get("ir") : window.OSAP_THREADS; const L = (T && T.threads) || []; const t = L.find((x) => /radar/i.test(x.t) && /bahrain/i.test(x.t)) || L[0]; r(t ? t.id + " " + t.t : ""); })));
+    console.log("  thread", tid);
+    await p.evaluate((id) => window.OSAP_THREADSQ.open("ir", id), tid.split(" ")[0]); await k.wait(4000);
+    k.caption("Check it: who carried it", "State media or independent, and from which countries. OSAP never rates a story true or false.");
+    await k.click('#thv .thtabs button[data-thtab="check"]'); await k.wait(2200); await k.scrollIn("#thv .thbody", 220, 1, 1400); await k.wait(1000);
+    await k.click("#thv .thx"); await p.evaluate(() => window.OSAP_THREADSQ.close()); await k.wait(800);
+    k.caption("Talks: no deal yet", "Reuters, 13 Nov: sources say Trump may hold off on new strikes unless Iran provokes the US.");
+    await item("hold off"); await k.wait(3200);
+    k.caption("UN Security Council meets on Hormuz", "13 Nov, at Bahrain's request. Gulf states told it Iran fired over 7,000 missiles and drones at them: their figure.");
+    if (!(await item("7,?000"))) await k.wheel(260, 2, 1200, 0.5, 0.6);
+    await k.wait(3400);
+    k.caption("Reported, not verified", "Every side's statements are claims. Every item is dated and linked to its source.");
+    await sheet("bar"); await k.view([27.5, 53.5], 5, true); await k.wait(3800);
+  }],
 ];
 
 let fails = 0, n = 0;
