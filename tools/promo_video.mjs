@@ -396,7 +396,7 @@ const SCENES = [
     k.caption("The right hospital for the injury", plan.name ? `Ranked by what each can treat. Here: ${plan.name}, ${plan.min} min by road.` : "Ranked by what each one can treat, with the drive time.");
     await k.wait(5500);
     k.caption("Choose the injury and the plan follows", "Trauma, head injury, burns or limb injuries.");
-    const head = async (t) => { const h = await p.evaluateHandle((t) => [...document.querySelectorAll("#medplan .osheet-h button, #medplan [class*=osheet] > * button")].find((b) => b.textContent.trim() === t && b.offsetParent && b.getBoundingClientRect().top < 80) || null, t);
+    const head = async (t) => { const h = await p.evaluateHandle((t) => [...document.querySelectorAll("#medplan .osheet-h button")].find((b) => b.textContent.trim() === t && b.offsetParent) || null, t);
       if (!(await k.glide(h.asElement()))) console.log("  missing head", t); };
     const cat = async (id, ms) => tap(`#medplan [data-mp-cat="${id}"]`, ms);
     const tap = async (sel, ms) => {
