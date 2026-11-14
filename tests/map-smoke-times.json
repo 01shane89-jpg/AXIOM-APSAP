@@ -62,6 +62,7 @@
 "tests/newimg_smoke.mjs": 27,
 "tests/keydates_smoke.mjs": 8,
 "tests/coverage_smoke.mjs": 5,
+"tests/threads_smoke.mjs": 25,
 "tests/maploading_smoke.mjs": 15,
 "tests/streets_english_smoke.mjs": 38,
 "tests/sw_data_smoke.mjs": 8,
