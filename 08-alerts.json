@@ -1,0 +1,43 @@
+{
+ "name": "alerts",
+ "view": "phone",
+ "w": 1080,
+ "h": 1620,
+ "frames": 609,
+ "start": 11.701,
+ "end": 54.169,
+ "caps": [
+  {
+   "t": 11.701,
+   "text": "Know when something happens in your city",
+   "sub": "Watch any place, in any country."
+  },
+  {
+   "t": 16.325,
+   "text": "Type a city and pick a distance",
+   "sub": "OSAP draws the circle for you."
+  },
+  {
+   "t": 26.056,
+   "text": "Save it, and OSAP keeps checking",
+   "sub": "Within minutes of new data, day and night."
+  },
+  {
+   "t": 42.529,
+   "text": "Something new inside it? You get an alert",
+   "sub": "On screen, or as a push alert on your phone."
+  },
+  {
+   "t": 47.031,
+   "text": "Every alert opens the report and its source",
+   "sub": ""
+  }
+ ],
+ "skips": [
+  [
+   29.175,
+   42.029
+  ]
+ ],
+ "pdfs": []
+}
