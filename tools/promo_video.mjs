@@ -415,7 +415,7 @@ const SCENES = [
     await head("Full"); await k.wait(1200);
     k.caption("A printable page for each hospital", "Emergency care, surgery, imaging and contacts, with \"Not known\" on every gap.");
     await tap("#medplan [data-mp-assess]", 2500);
-    await k.scrollIn("#brief", 260, 4, 1300);
+    await k.wheel(260, 4, 1300, 0.5, 0.6);
     k.caption("Built from open data, every source linked", "A draft to confirm with the hospital, never a guarantee.");
     await k.wait(4000);
   }],
