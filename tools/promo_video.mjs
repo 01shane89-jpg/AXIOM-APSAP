@@ -345,12 +345,17 @@ const SCENES = [
     console.log("  flood", JSON.stringify(top));
     const dist = (a) => String(a || "").replace(/ District$/, "");
     k.caption("Thailand's floods, as they're reported", "Live river gauges from official telemetry, on one map.");
-    await k.wait(4000);
+    await k.wait(1500);
+    if (!(await k.click("[data-dsshow]"))) await p.evaluate(() => { const b = document.querySelector("[data-dsshow]"); if (b) b.click(); });
+    await k.wait(2800);
     k.caption(`${top.n} gauges over their bank right now`, `In ${top.np} provinces. Red means the river is over its bank.`);
     await k.view([top.g.lat, top.g.lon], 11, true); await k.wait(3800);
     // tap the gauge itself
     const pt = await p.evaluate(([a, b]) => { const m = window.__asapMap, c = m.latLngToContainerPoint([a, b]), r = document.getElementById("map").getBoundingClientRect(); return [r.left + c.x, r.top + c.y]; }, [top.g.lat, top.g.lon]);
-    await p.mouse.move(pt[0], pt[1], { steps: 22 }); await k.wait(300); await p.mouse.click(pt[0], pt[1]);
+    const mk = await p.evaluateHandle(([x, y]) => { let best = null, bd = 40;
+      document.querySelectorAll(".leaflet-marker-icon, .leaflet-interactive").forEach((m) => { const b = m.getBoundingClientRect(), d = Math.hypot(b.left + b.width / 2 - x, b.top + b.height / 2 - y); if (d < bd) { bd = d; best = m; } });
+      return best; }, pt);
+    if (!(await k.glide(mk.asElement()))) { console.log("  gauge by point"); await p.mouse.move(pt[0], pt[1], { steps: 22 }); await k.wait(300); await p.mouse.click(pt[0], pt[1]); }
     await k.wait(900);
     if (!(await p.evaluate(() => !!document.querySelector(".leaflet-popup")))) console.log("  no gauge popup");
     k.caption(`${top.g.d.toFixed(2)} m over the bank at ${dist(top.g.a)}`, `${top.g.p}. Hydro-Informatics Institute reading, ${top.g.t.slice(11)} local time.`);
