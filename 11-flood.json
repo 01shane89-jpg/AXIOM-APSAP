@@ -1,0 +1,43 @@
+{
+ "name": "flood",
+ "view": "phone",
+ "w": 1080,
+ "h": 1620,
+ "frames": 360,
+ "start": 13.017,
+ "end": 49.622,
+ "caps": [
+  {
+   "t": 13.024,
+   "text": "Thailand's floods, as they're reported",
+   "sub": "Live river gauges from official telemetry, on one map."
+  },
+  {
+   "t": 18.48,
+   "text": "12 gauges over their bank right now",
+   "sub": "In 5 provinces. Red means the river is over its bank."
+  },
+  {
+   "t": 27.828,
+   "text": "1.06 m over the bank at Bang Len",
+   "sub": "Nakhon Pathom. Hydro-Informatics Institute reading, 11:00 local time."
+  },
+  {
+   "t": 34.456,
+   "text": "Flood water seen from orbit",
+   "sub": "NASA's satellite flood map from the last three days."
+  },
+  {
+   "t": 39.966,
+   "text": "219 mm of rain in 24 hours",
+   "sub": "At Takua Pa, Phangnga, the heaviest of any station."
+  },
+  {
+   "t": 45.019,
+   "text": "Every reading dated and sourced",
+   "sub": "So you can see what's happening, and where it came from."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}
