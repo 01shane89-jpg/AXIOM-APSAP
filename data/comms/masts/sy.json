@@ -1,4 +1,4 @@
-{"cc":"sy","at":"2026-10-11T10:19:43Z","base":"2026-10-11T10:17:57Z","m":[
+{"cc":"sy","at":"2026-11-14T10:57:07Z","base":"2026-11-14T10:55:36Z","m":[
 ["n10307933162",33.53272,36.27384,{"communication:television":"yes","man_made":"tower","name":"بث التلفزيون","tower:construction":"lattice","tower:type":"communication"}],
 ["n10307933166",33.53123,36.31996,{"communication:mobile_phone":"yes","man_made":"tower","tower:construction":"concealed","tower:type":"communication"}],
 ["n10307999720",33.51741,36.26896,{"communication:mobile_phone":"yes","man_made":"tower","tower:type":"communication"}],
@@ -64,8 +64,7 @@
 ["n13755294442",36.22394,37.13949,{"man_made":"tower","tower:type":"communication"}],
 ["n13796661511",33.82143,36.51291,{"man_made":"tower","tower:type":"communication"}],
 ["n13845625272",33.5715,36.39559,{"man_made":"tower","tower:type":"communication"}],
-["n13898456002",35.8116,36.32321,{"man_made":"communications_tower","name":"اتصالات سوريا","operator":"اتصالات سوريا"}],
-["n13898458701",35.81536,36.31998,{"man_made":"communications_tower","name":"مركز ديرك نت"}],
+["n13898456002",35.8116,36.32321,{"man_made":"communications_tower","name":"اتصالات سوريا","name:en":"Syria Telecommunications","operator":"اتصالات سوريا"}],
 ["n13925781787",33.86366,36.69828,{"communication:television":"yes","man_made":"mast","tower:type":"communication"}],
 ["n13954648923",33.28633,36.19544,{"man_made":"tower","tower:type":"communication"}],
 ["n13959101101",36.21737,37.11048,{"man_made":"communications_tower"}],
