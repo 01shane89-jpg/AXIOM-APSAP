@@ -1,0 +1,78 @@
+name: Public pulse
+
+# Public pulse for the Social media view (tools/social_pulse.mjs): listens to a sample of the public Bluesky stream (Jetstream)
+# and the public Mastodon timelines for a few minutes and keeps only per-country counts (no names, handles, links or post text),
+# written to data/live/pulse/<cc>.js and data/live/pulse.js. Keyless. Free while the repository is public.
+# About every half hour: the schedule below, and refresh-keeper.yml starts a run when GitHub skips it. A run that finds the last
+# sample under 25 minutes old ends at once (unless started with force: yes, or a test push). On a branch other than main the output is parked on claude/pulse-preview-data.
+on:
+  schedule:
+    - cron: "11,41 * * * *"
+  # a test from a feature branch: push it to claude/pulse-probe (workflow_dispatch needs the workflow on main first)
+  push:
+    branches: [claude/pulse-probe]
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: "Minutes to listen (1-8)"
+        required: false
+        default: "4"
+      force:
+        description: "yes = sample even if the last sample is under 25 minutes old"
+        required: false
+        default: "no"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-pulse-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  pulse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.ref == 'refs/heads/main' && 'main' || github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          # 22: the built-in WebSocket client the Jetstream reader uses
+          node-version: 22
+      - name: Sample the public streams
+        id: sample
+        timeout-minutes: 11
+        env:
+          MINUTES: ${{ inputs.minutes || '4' }}
+          FORCE: ${{ github.event_name == 'push' && 'yes' || inputs.force || 'no' }}
+        run: |
+          if [ "$FORCE" != "yes" ] && node -e 'const m=/"asof":"([^"]+)"/.exec(require("fs").readFileSync("data/live/pulse.js","utf8"));const t=m&&Date.parse(m[1].replace(" ","T").replace(/Z?$/,"Z"));process.exit(t&&Date.now()-t<25*60e3?0:1)' 2>/dev/null; then
+            echo "Last sample is under 25 minutes old; skipping"; echo "skip=1" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          m=$(node -e 'const v=Math.round(+process.argv[1]);console.log(v>=1&&v<=8?v:4)' "$MINUTES")
+          PULSE_SAMPLE_MS=$(( m * 60000 )) node tools/social_pulse.mjs
+      - name: Park test output on a preview-data branch
+        if: ${{ github.ref != 'refs/heads/main' && steps.sample.outputs.skip != '1' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan pulse-preview-data
+          git rm -rqf --cached .
+          for p in data/live/pulse.js data/live/pulse; do git add -f "$p" 2>/dev/null || true; done
+          git commit -qm "Test output (pulse) $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin HEAD:refs/heads/claude/pulse-preview-data
+      - name: Commit if the pulse changed
+        if: ${{ github.ref == 'refs/heads/main' && steps.sample.outputs.skip != '1' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git add -N data/live/pulse.js data/live/pulse 2>/dev/null || true
+          if git diff --quiet -- data/live/pulse.js data/live/pulse; then echo "no change"; exit 0; fi
+          git config user.name "asap-flood-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          node tools/seal_hidden.mjs --check
+          git add data/live/pulse.js data/live/pulse
+          git commit -qm "Public pulse $(date -u +'%Y-%m-%d %H:%MZ')"
+          bash tools/push_rebase.sh main theirs 5

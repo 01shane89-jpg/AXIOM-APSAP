@@ -85,7 +85,8 @@ jobs:
             # while another is going waits in that workflow's queue and begins the moment it ends, so the sweeps run back to back.
             # Only runs from the last 2 hours count (a ghost run left "queued" for good must not stop the starts).
             since=$(date -u -d '2 hours ago' +%Y-%m-%dT%H:%M:%SZ)
-            for wf in refresh-air.yml refresh-drones.yml; do
+            # The public pulse (refresh-pulse.yml, about 6 min a run) rides the same rounds; it skips itself when its last sample is under 25 min old.
+            for wf in refresh-air.yml refresh-drones.yml refresh-pulse.yml; do
               lw=$(( $(gh run list --workflow $wf --branch main --status queued --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 1) + $(gh run list --workflow $wf --branch main --status pending --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 1) ))
               if [ "$lw" = "0" ]; then
                 gh workflow run $wf --ref main && echo "$(date -u +%H:%MZ) started $wf" || echo "$(date -u +%H:%MZ) could not start $wf"
