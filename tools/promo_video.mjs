@@ -364,6 +364,8 @@ const SCENES = [
     if (!(await p.evaluate(() => !!document.querySelector(".leaflet-popup")))) console.log("  no gauge popup");
     k.caption(`${top.g.d.toFixed(2)} m over the bank at ${dist(top.g.a)}`, `${top.g.p}. Hydro-Informatics Institute reading, ${top.g.t.slice(11)} local time.`);
     await k.wait(5500);
+    const xb = await p.evaluateHandle(() => [...document.querySelectorAll(".pkghead .x")].find((x) => x.offsetParent) || null);
+    if (xb.asElement()) { await k.glide(xb.asElement()); await k.wait(500); }
     await p.evaluate(() => { window.__asapMap.closePopup(); });
     await p.evaluate(() => window.OSAP_DISASTERX && window.OSAP_DISASTERX.set("now", true));
     k.caption("Flood water seen from orbit", "NASA's satellite flood map from the last three days.");
