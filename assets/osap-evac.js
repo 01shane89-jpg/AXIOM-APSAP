@@ -15,9 +15,9 @@
   var D = document, W = window;
   var KINDS = [
     { k: "posts", sym: "govt", one: "U.S. post", name: "U.S. embassies and consulates", note: "Address, phone and after-hours numbers as published" },
-    { k: "airports", sym: "airport", one: "Airport", name: "Airports", note: "Main airports with the longest runway (OurAirports)" },
-    { k: "seaports", sym: "seaport", one: "Seaport", name: "Seaports", note: "Main commercial ports (UN/LOCODE)" },
-    { k: "crossings", sym: "crossing", one: "Border crossing", name: "Border crossings", note: "Official crossings mapped in OpenStreetMap" }
+    { k: "airports", sym: "airport", one: "Airport", name: "Evacuation airports", note: "Main airports with the longest runway, for evacuation planning (OurAirports). Every airfield is under Infrastructure" },
+    { k: "seaports", sym: "seaport", one: "Seaport", name: "Evacuation seaports", note: "Main commercial ports, for evacuation planning (UN/LOCODE). Every port is under Infrastructure" },
+    { k: "crossings", sym: "crossing", one: "Border crossing", name: "Evacuation border crossings", note: "Official crossings mapped in OpenStreetMap, for evacuation planning" }
   ];
   var NEAR_N = 3, NEIGH_PAD = 1.5;
   var S = { on: {}, from: null, fromHow: "", near: null, msg: "", tap: false, loaded: {} };

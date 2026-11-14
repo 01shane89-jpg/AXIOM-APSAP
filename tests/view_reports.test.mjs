@@ -22,7 +22,8 @@ assert.deepEqual(viewsOf(V, "Border reopens", ["th"], []), ["border"]);
 // the shipped config: valid unique ids, known data sets, every tab has words, no tab the page never shows
 const cfg = JSON.parse(fs.readFileSync(new URL("../tools/view_reports.json", import.meta.url), "utf8"));
 const topics = new Set(JSON.parse(fs.readFileSync(new URL("../tools/topics.json", import.meta.url), "utf8")).topics.map((t) => t.id));
-const TABS = new Set(["flood", "border", "insurgency", "crime", "scam", "aml", "weather", "infra", "transport", "safety", "health", "hazards", "crisis", "partners", "presence", "security"]);
+const TABS = new Set(["flood", "border", "insurgency", "crime", "scam", "aml", "weather", "infra", "transport", "safety", "health", "hazards", "crisis", "partners", "presence", "security",
+  "maritime", "cyber", "sanctions", "protest", "politics", "migration"]);
 const ids = cfg.views.map((v) => v.id);
 assert.equal(new Set(ids).size, ids.length, "duplicate tab id");
 for (const v of cfg.views) {
@@ -38,4 +39,15 @@ assert.ok(viewsOf(C, "Hospitality chain opens hotel", ["vn"], []).indexOf("healt
 assert.ok(viewsOf(C, "Flash floods hit Hat Yai", ["th"], []).indexOf("flood") >= 0);
 assert.ok(viewsOf(C, "Police bust meth lab", ["th"], []).indexOf("crime") >= 0);
 assert.ok(viewsOf(C, "Ceasefire talks resume", ["th"], []).indexOf("safety") < 0);
+// the topics split out of Security signals and the new Politics and society topics (layout audit, 2026-11-14)
+const has = (t, cc, id) => viewsOf(C, t, [cc], []).indexOf(id) >= 0;
+assert.ok(has("Pirates board tanker in Singapore Strait", "sg", "maritime") && !has("Pirates board tanker in Singapore Strait", "sg", "security"));
+assert.ok(has("Ransomware attack hits hospital network", "th", "cyber"));
+assert.ok(has("Internet shutdown ordered ahead of vote", "pk", "cyber"));
+assert.ok(has("OFAC sanctions scam compound owners", "kh", "sanctions"));
+assert.ok(has("Thousands of protesters clash with police", "th", "protest"));
+assert.ok(!has("Israeli air strike kills five", "sy", "protest"), "an air strike is not a protest");
+assert.ok(!has("Stocks rally on rate cut hopes", "th", "protest"), "a market rally is not a protest");
+assert.ok(has("Parliament dissolved ahead of snap election", "th", "politics"));
+assert.ok(has("Rohingya refugees land in Aceh", "id", "migration"));
 console.log("view_reports: ok");

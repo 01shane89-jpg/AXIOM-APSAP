@@ -3665,16 +3665,21 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     { id: "safety", name: "Public safety", sources: "DDPM, Thai Meteorological Department (earthquakes), provincial authorities",
       shows: "Fire, chemical spills, industrial accidents, building collapse, earthquakes, civil disturbances." },
     { id: "health", name: "Public health", sources: "Ministry of Public Health, Department of Disease Control",
-      shows: "Disease outbreaks, hospital alerts, animal disease, food contamination, air quality, heat warnings." }
+      shows: "Disease outbreaks, hospital alerts, animal disease, food contamination, air quality, heat warnings." },
+    /* topics an analyst filters by that had no data set of their own (layout audit, Shane 2026-11-14 "Full cleanup"): filled in
+       every area, Thailand included, by automatic reports from the layer feed (tools/refresh_layerfeed.mjs); no researched records */
+    { id: "protest", name: "Protests and unrest", shows: "Protests, strikes, riots, curfews and crackdowns on demonstrations." },
+    { id: "politics", name: "Politics and elections", shows: "Elections, coups, cabinet changes, impeachment, emergency rule and political arrests." },
+    { id: "migration", name: "Migration and displacement", shows: "Refugees, internally displaced people, asylum seekers, deportations and migrant boats." }
   ];
   /* each area names its layers for what matters there; "null" hides a layer that does not apply */
   var AREA_NAMES = {
     ph: { flood: "Floods and landslides", border: "Maritime Domain Awareness", insurgency: "NPA and Mindanao conflict",
           crime: "Organized crime", scam: "POGOs and scam hubs", aml: "Money laundering", weather: "Typhoons and weather",
-          infra: "Power grid and infrastructure", transport: "Sea, air and road transport", safety: "Earthquakes, volcanoes and safety", health: "Public health" },
+          infra: "Power grid and infrastructure", transport: "Sea, air and road transport", safety: "Volcanoes and public safety", health: "Public health" },
     tw: { flood: "Floods and landslides", border: "Cross-Strait military activity", insurgency: null, crime: "Organized crime",
           scam: "Fraud rings", aml: "Money laundering", weather: "Typhoons and weather", infra: "Undersea cables and infrastructure",
-          transport: "Transportation", safety: "Earthquakes and public safety", health: "Public health" },
+          transport: "Transportation", safety: "Public safety", health: "Public health" },
     kp: { flood: "Floods", border: "Missiles and military activity", insurgency: null, crime: "Illicit networks",
           scam: "Fraud and cyber theft", aml: "Illicit finance and sanctions evasion", weather: "Weather", infra: "Infrastructure",
           transport: "Transportation", safety: "Public safety", health: "Public health" },
@@ -3686,7 +3691,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
           transport: "Transportation", safety: "Public safety", health: "Livestock disease and air quality" },
     oki: { flood: "Storm surge and floods", border: "Senkaku and Sakishima maritime", insurgency: null, crime: "Crime and US-base incidents",
           scam: "Fraud", aml: "Money laundering", weather: "Typhoons", infra: "Infrastructure",
-          transport: "Air and sea links", safety: "Earthquakes and tsunami", health: "Public health and PFAS" },
+          transport: "Air and sea links", safety: "Tsunami and public safety", health: "Public health and PFAS" },
     mm: { flood: "Monsoon floods and landslides", border: "Border fighting and crossings", insurgency: "Civil war", crime: "Narcotics and smuggling", scam: "Scam compounds", aml: "Money laundering and sanctions", weather: "Heat, monsoon and cyclones", infra: "Power, fuel and internet", transport: "Roads, rivers and sea routes", safety: "Disasters and mining accidents", health: "Disease outbreaks" },
     sg: { flood: "Flash floods", border: "Straits maritime security", insurgency: "Terrorism and ISA actions", crime: "Drugs and vapes", scam: "Scams and money mules", aml: "Money laundering", weather: "Monsoon, squalls and heat", infra: "Infrastructure", transport: "Port, sea and land transport", safety: "Public safety", health: "Dengue, haze and public health" },
     in: { flood: "Monsoon floods", border: "LoC, LAC and border security", insurgency: "Militancy and Maoist conflict", crime: "Organized crime", scam: "Cyber fraud and scam compounds", aml: "Money laundering and betting", weather: "Monsoon, cyclones and heat", infra: "Infrastructure", transport: "Transportation", safety: "Public safety", health: "Public health" },
@@ -3695,7 +3700,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     np: { flood: "Floods, landslides and glacial lakes", border: "Open border and Himalayan passes", insurgency: "Conflict legacy and security", crime: "Trafficking, gold and narcotics", scam: "Scam-compound trafficking", aml: "Gray list and hundi", weather: "Weather", infra: "Infrastructure", transport: "Transportation", safety: "Civil unrest and hazards", health: "Public health" },
     lk: { flood: "Monsoon floods and landslides", border: "Palk Strait and maritime boundary", insurgency: "Terrorism and extremism", crime: "Narcotics and underworld violence", scam: "Scam-center crackdown", aml: "Money laundering", weather: "Weather", infra: "Infrastructure", transport: "Transportation", safety: "Public safety", health: "Dengue and public health" },
     pg: { flood: "Floods and landslides", border: "Border and maritime security", insurgency: "Tribal conflict and Bougainville", crime: "Law and order", scam: "Scams and trafficking", aml: "Financial crime and gray list", weather: "Cyclones and drought", infra: "Power and water supply", transport: "Transport and sea safety", safety: "Public safety and disorder", health: "Public health" },
-    nz: { flood: "Floods and landslips", border: "Maritime and Pacific security", insurgency: "Terrorism and extremism", crime: "Gangs and drugs", scam: "Scams and cyber fraud", aml: "Financial crime", weather: "Storms and weather warnings", infra: "Lifelines and utilities", transport: "Highways, rail and Cook Strait", safety: "Earthquakes and volcanoes", health: "Public health" },
+    nz: { flood: "Floods and landslips", border: "Maritime and Pacific security", insurgency: "Terrorism and extremism", crime: "Gangs and drugs", scam: "Scams and cyber fraud", aml: "Financial crime", weather: "Storms and weather warnings", infra: "Lifelines and utilities", transport: "Highways, rail and Cook Strait", safety: "Volcanoes and public safety", health: "Public health" },
     cn: { flood: "Floods and geohazards", border: "Frontier and maritime claims", insurgency: "Terrorism and extremism", crime: "Organized crime and narcotics", scam: "Telecom fraud and overseas compounds", aml: "Illicit finance and underground banking", weather: "Typhoons and extreme weather", infra: "Critical infrastructure", transport: "Transportation", safety: "Work safety and disasters", health: "Public health" },
     id: { flood: "Floods and landslides", border: "Maritime and border security", insurgency: "Papua conflict and counterterrorism", crime: "Narcotics and organized crime", scam: "Online scams and trafficked workers", aml: "Money laundering and gambling finance", weather: "Weather and drought", infra: "Power, water and telecoms", transport: "Transport and Mudik", safety: "Volcanoes, quakes and disasters", health: "Public health" },
     au: { flood: "Floods and river warnings", border: "Maritime border and approaches", insurgency: "Terrorism and violent extremism", crime: "Organized crime and contraband", scam: "Scams and fraud", aml: "Financial crime", weather: "Cyclones, heat and severe weather", infra: "Power, telco and Triple Zero outages", transport: "Roads, rail and aviation", safety: "Bushfires and emergencies", health: "Public and animal health" },
@@ -3705,7 +3710,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     vn: { flood: "Floods and landslides", border: "East Sea maritime security", insurgency: null, crime: "Drug trafficking and border crime", scam: "Scam compounds and online fraud", aml: "Money laundering, crypto and betting", weather: "Storms, heat and severe weather", infra: "Energy, fuel and utilities", transport: "Roads, rail and aviation", safety: "Fires, explosions and public safety", health: "Outbreaks, food safety and air quality" },
     la: { flood: "Mekong and tributary flooding", border: "Mekong frontier and border security", insurgency: null, crime: "Golden Triangle drugs and wildlife crime", scam: "Scam compound crackdown", aml: "Money laundering and sanctions", weather: "Monsoon and severe weather", infra: "Hydropower and grid", transport: "Roads and Laos-China Railway", safety: "UXO and public safety", health: "Dengue, haze and animal disease" },
     pk: { flood: "Monsoon and glacial floods", border: "Western front and LoC", insurgency: "Counter-terrorism (TTP and BLA)", crime: "Organized crime", scam: "Foreign-run scam call centers", aml: "Hawala, hundi and financial crime", weather: "Weather", infra: "Energy and fuel security", transport: "Transportation", safety: "Public safety", health: "Public health" },
-    jp: { flood: "Heavy rain and landslides", border: "Air and maritime defense", insurgency: "Terrorism and extremism", crime: "Organized crime and smuggling", scam: "Special fraud (tokushu sagi)", aml: "Scam proceeds and mule accounts", weather: "Typhoons and extreme heat", infra: "Infrastructure", transport: "Transportation", safety: "Earthquakes and public safety", health: "Heatstroke and infectious disease" },
+    jp: { flood: "Heavy rain and landslides", border: "Air and maritime defense", insurgency: "Terrorism and extremism", crime: "Organized crime and smuggling", scam: "Special fraud (tokushu sagi)", aml: "Scam proceeds and mule accounts", weather: "Typhoons and extreme heat", infra: "Infrastructure", transport: "Transportation", safety: "Public safety", health: "Heatstroke and infectious disease" },
     mv: { flood: "Floods and storm surge", border: "Maritime security", insurgency: "Terrorism and extremism", crime: "Drugs and gangs", scam: "Scams", aml: "Money laundering", weather: "Monsoon and weather", infra: "Utilities", transport: "Sea and air transport", safety: "Public safety", health: "Public health" },
     tl: { flood: "Floods and landslides", border: "Border and maritime", insurgency: "Martial-arts group violence", crime: "Crime", scam: "Scam compounds", aml: "Money laundering", weather: "Weather", infra: "Power and water", transport: "Transportation", safety: "Public safety", health: "Public health" }
   };
@@ -3713,11 +3718,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      layer definition, so it opens like any other layer; its records are added by addLayerFeed() and are all automatic. */
   (function () {
     var F = window.OSAP_LAYERFEED, ids = {};
-    if (TH || !F || F.cc !== CC) return;   /* Thailand's layers are all researched, and its flood and border tabs are live widgets */
+    if (!F || F.cc !== CC) return;
+    /* Thailand's layers are all researched, and its flood and border tabs are live widgets: there only the newer topics with no
+       researched records (protests, politics, migration) are filled from the feed */
+    var AUTO_TH = { protest: 1, politics: 1, migration: 1 };
     (F.items || []).forEach(function (i) { ids[i.l] = 1; });
     var day = String(F.asof || "").slice(0, 10), from = new Date(Date.parse(day + "T00:00:00Z") - (F.days || 30) * 864e5).toISOString().slice(0, 10);
     Object.keys(ids).forEach(function (lid) {
-      if (TD[lid] || (AREA_NAMES[CC] || {})[lid] === null || !/^[a-z]+$/.test(lid) || !day) return;
+      if (TD[lid] || (TH && !AUTO_TH[lid]) || (AREA_NAMES[CC] || {})[lid] === null || !/^[a-z]+$/.test(lid) || !day) return;
       TD[lid] = { asof: day, from: from, color: "--muted", auto: true, events: [], tableAll: true, unit: "reports", unitShort: "Reports",
         srcline: "Automatic reports from the news pool · not reviewed",
         status: "<b>Automatic reports only.</b> Headlines from the news pool that the refresh job sorted into this layer by their words. Not reviewed, and not a count of incidents; no researched records yet.",
@@ -3726,6 +3734,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
   })();
   if (!TH) LAYERS = LAYERS.filter(function (l) { var n = (AREA_NAMES[CC] || {})[l.id]; return C.world ? !!TD[l.id] || l.id === "timeline" : n !== null || !!TD[l.id]; });
+  /* the feed-only topics are listed only where the feed has reports for them */
+  LAYERS = LAYERS.filter(function (l) { return (l.id !== "protest" && l.id !== "politics" && l.id !== "migration") || !!TD[l.id]; });
   if (!TH) LAYERS.forEach(function (l) {
     if (l.id === "flood" || l.id === "border") l.live = false;
     var an = (AREA_NAMES[CC] || {})[l.id];
@@ -3743,7 +3753,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   LAYERS.push({ id: "hazards", name: "Earthquakes and hazards", title: "Earthquakes and hazards", sof: true, live: true },
     { id: "news", name: "Local news", title: "Local news", sof: true, live: true },
     { id: "social", name: "Social media", title: "Social media", sof: true, live: true },
-    { id: "security", name: "Security signals", title: "Security signals", sof: true, live: true },
+    /* Security signals was one panel of conflict events, internet outages, sea warnings, piracy and sanctions; split so each can
+       be filtered on its own (Shane 2026-11-14 "Full cleanup"). "security" keeps the conflict events (UCDP). */
+    { id: "security", name: "Conflict events", title: "Conflict events (UCDP)", sof: true, live: true },
+    { id: "maritime", name: "Maritime security", title: "Maritime security", sof: true, live: true },
+    { id: "cyber", name: "Cyber and internet outages", title: "Cyber and internet outages", sof: true, live: true },
+    { id: "sanctions", name: "Sanctions", title: "Sanctions", sof: true, live: true },
     { id: "opendata", name: "Open data", title: "Open data: every public feed", sof: true, live: true },
     { id: "et", name: "UFO and UAP reports", title: "UFO and UAP reports", sof: true, live: true },
     { id: "route", name: "Route", title: "Route planning", sof: true, live: true },
@@ -6498,8 +6513,16 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<p class="note">Preliminary events coded from media and NGO reports; later releases revise them. <a href="https://ucdp.uu.se/" target="_blank" rel="noopener noreferrer">UCDP</a>, CC BY 4.0.</p></div>';
   }
 
-  LCOL.security = "--over";
+  LCOL.security = "--over"; LCOL.maritime = "--over"; LCOL.sanctions = "--over";
+  /* Conflict events, Maritime security, Cyber and internet outages and Sanctions were one "Security signals" panel until
+     2026-11-14 (Shane: "Full cleanup" of the data set categories); each is now its own data set with its own panel */
+  var SEC_BANNER = '<div class="sec"><div class="banner" style="margin:0"><b>Automated signals and published lists, not verified.</b> Nothing here is a finding.</div></div>';
   function showSecurity() {
+    sofLayer.clearLayers(); sofM = {};
+    railO.innerHTML = SEC_BANNER + ucdpHtml();
+  }
+  LCOL.cyber = "--over";
+  function showCyber() {
     sofLayer.clearLayers(); sofM = {};
     var I = window.ASAP_IODA, o = I && I.items ? I.items[CC] : null;
     var ih = '<div class="sec"><h2>Internet outages (IODA)</h2><p class="obs">' + snapBadge(I) + "</p>" + (o ? '<p class="obs">' + (o.events ? "<b>" + o.events + " outage signal" + (o.events > 1 ? "s" : "") + "</b> for " + esc(C.name) : "No outage signal for " + esc(C.name)) +
@@ -6507,6 +6530,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         return "<tr><td>" + esc(x.start.replace("T", " ")) + '</td><td class="n">' + (x.minutes != null ? x.minutes + " min" : "–") + "</td><td>" + esc([x.source, x.region].filter(Boolean).join(" · ")) + "</td></tr>"; }).join("") + "</table>" : "")
       : (I ? '<p class="obs">No IODA signal recorded for ' + esc(C.name) + ".</p>" : "")) +
       '<p class="note" style="margin-top:6px">Automated detection from routing, active probing and traffic telescopes. A drop can be a power cut, a cable fault or a shutdown; IODA does not say which. <a href="https://ioda.inetintel.cc.gatech.edu/country/' + esc((CC === "oki" ? "JP" : CC.toUpperCase())) + '" target="_blank" rel="noopener noreferrer">IODA dashboard</a>.</p></div>';
+    railO.innerHTML = SEC_BANNER + ih;
+  }
+  function showMaritime() {
+    sofLayer.clearLayers(); sofM = {};
     var M = window.ASAP_MAR, asam = M ? (M.asam || []).filter(function (a) { return hasCC(a) && inPeriodDate(a.date); }) : [];
     asam.forEach(function (a, i) {
       var m = osapMark([a.lat, a.lon], "a_robbery", { pane: "tlpane", radius: 7, color: "#222", weight: 1, fillColor: "#6a1b9a", fillOpacity: 0.85, lgk: "asam" });
@@ -6526,6 +6553,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       ((M.recaap || []).length ? '<h3 style="margin:8px 0 2px;font-size:13px">ReCAAP ISC alerts and reports</h3><ul class="note">' + M.recaap.slice(0, 8).map(function (x) {
         return '<li><a href="' + esc(x.link) + '" target="_blank" rel="noopener noreferrer">' + esc(x.title) + "</a></li>"; }).join("") + "</ul>" : "") : "") +
       '<p class="note" style="margin-top:6px">Reports from ships, navies and reporting centers; positions are approximate and events unverified.</p></div>';
+    railO.innerHTML = SEC_BANNER + navwHtml() + mh;
+  }
+  function showSanctions() {
+    sofLayer.clearLayers(); sofM = {};
     var S1 = window.ASAP_SANC, se = sancFor(), hits = [];
     R.forEach(function (r) { var m = sancMatches(r); if (m.length) hits.push([r, m]); });
     var cnt = { person: 0, entity: 0, vessel: 0, aircraft: 0 }; se.forEach(function (e) { cnt[e.t] = (cnt[e.t] || 0) + 1; });
@@ -6537,7 +6568,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         : '<p class="obs">No record names a listed person or company.</p>') +
       '<input type="search" id="sanc-q" class="mini" placeholder="Search the list for ' + esc(C.name) + '" style="width:100%;margin-top:6px"><div id="sanc-r"></div>' : "") +
       '<p class="note" style="margin-top:6px">A name match is not an identity match: different people and firms share names. Check the OFAC entry before relying on it.</p></div>';
-    railO.innerHTML = '<div class="sec"><div class="banner" style="margin:0"><b>Automated signals and published lists, not verified.</b> Nothing here is a finding.</div></div>' + ucdpHtml() + ih + navwHtml() + mh + sh;
+    railO.innerHTML = SEC_BANNER + sh;
     var q = document.getElementById("sanc-q");
     if (q) q.addEventListener("input", function () {
       var v = q.value.trim().toLowerCase(), box = document.getElementById("sanc-r");
@@ -6754,7 +6785,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
   }
   if (window.OSAP_XF && xMine()) {} else if (/^https?:$/.test(location.protocol)) { if (document.readyState === "complete") xLoad(); else window.addEventListener("load", xLoad); } else xLoadFailed = true;
-  function showSof(v) { if (v === "presence") showPresence(); else if (v === "rupresence" || v === "irpresence") showActorPresence(v); else if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "opendata") showOpenData(); else if (v === "et") showEt(); else if (v === "route") showRoute(); else if (v === "comms") showComms(); else showPartners(); }
+  function showSof(v) { if (v === "presence") showPresence(); else if (v === "rupresence" || v === "irpresence") showActorPresence(v); else if (v === "crisis") showCrisis(); else if (v === "hazards") showHazards(); else if (v === "news") showNews(); else if (v === "social") showSocial(); else if (v === "security") showSecurity(); else if (v === "maritime") showMaritime(); else if (v === "cyber") showCyber(); else if (v === "sanctions") showSanctions(); else if (v === "opendata") showOpenData(); else if (v === "et") showEt(); else if (v === "route") showRoute(); else if (v === "comms") showComms(); else showPartners(); }
   /* ET: UFO and UAP reports (assets/osap-et.js, data/live/et.js); reported claims, never verified events */
   function showEt() {
     sofLayer.clearLayers(); sofM = {};
@@ -6834,8 +6865,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      the reporting). The conflict tabs ("cf-") sit with Conflict and security; a set in none of the groups goes under
      "More topics" */
   var DS_NAT = "Natural disasters";
-  var DS_GROUPS = [["Conflict and security", ["cf-", "border", "insurgency", "security", "partners", "presence", "rupresence", "irpresence"]],
-    ["Crime", ["crime", "scam", "aml"]],
+  /* regrouped 2026-11-14 (Shane chose "Full cleanup"): foreign presence is influence, not conflict, so it has its own group;
+     politics, protests and migration are their own group; sanctions sit with illicit finance */
+  var DS_GROUPS = [["Conflict and security", ["cf-", "border", "insurgency", "security", "maritime", "cyber", "partners"]],
+    ["Politics and society", ["protest", "politics", "migration"]],
+    ["Foreign influence", ["presence", "rupresence", "irpresence"]],
+    ["Crime and illicit finance", ["crime", "scam", "aml", "sanctions"]],
     /* natural disasters also list the satellite layers (flooding now, flood history, fires now): window.OSAP_DISASTERX */
     ["Natural disasters", ["flood", "hazards"]],
     ["Public safety and health", ["alerts", "safety", "health", "crisis"]],
@@ -7096,7 +7131,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
     h1.textContent = l.title || l.name;
     srcline.textContent = (l.sof && { presence: "Public reporting · AidData · U.S. Consolidated Screening List · Wikidata · DoD 1260H via OpenSanctions; reported, not verified",
-      rupresence: "U.S. Consolidated Screening List · Wikidata · GeoNames; reported, not verified", irpresence: "U.S. Consolidated Screening List · Wikidata · GeoNames; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organizers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · Mastodon · YouTube (official and established accounts)", security: "UCDP · IODA · NGA · MARAD · ReCAAP · U.S. Treasury OFAC", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles · IODA; coverage and link figures are estimates, not a promise of signal; your plans stay on this device" }[v]) ||
+      rupresence: "U.S. Consolidated Screening List · Wikidata · GeoNames; reported, not verified", irpresence: "U.S. Consolidated Screening List · Wikidata · GeoNames; reported, not verified", crisis: "U.S. Department of State · OurAirports · UN/LOCODE · public sources", partners: "Organizers' announcements and public reporting", hazards: "JMA · JTWC · GDACS · USGS · Open-Meteo · national weather agencies", news: "National outlets' RSS feeds", social: "Bluesky · Telegram · Mastodon · YouTube (official and established accounts)", security: "UCDP candidate events", maritime: "NGA · NAVAREA coordinators · ASAM · UKMTO · IMB · ReCAAP · MARAD", cyber: "IODA (Georgia Tech)", sanctions: "U.S. Treasury OFAC SDN list", opendata: "NASA · NOAA · EMSC · WHO · World Bank · IMF · UN · UK · Canada · Germany · Australia · OONI · abuse.ch · Wikidata and more", et: "News outlets · U.S. War Department · AARO · The Black Vault · notable past cases; reported claims, not verified", route: "OpenStreetMap routing (FOSSGIS) · Open-Meteo elevation and forecast · worked out in this browser; a planning aid", comms: "OpenStreetMap masts and towers · Speedtest by Ookla open data · AWS Terrain Tiles · IODA; coverage and link figures are estimates, not a promise of signal; your plans stay on this device" }[v]) ||
       ((TH || v === "timeline" || v === "alerts") && SRCLINE[v]) || (TD[v] && TD[v].srcline) || "Not collected yet";
     railF.hidden = !(v === "flood" && TH);
     railB.hidden = !(v === "border" && TH);
