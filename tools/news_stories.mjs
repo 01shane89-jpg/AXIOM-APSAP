@@ -81,7 +81,7 @@ let checks = [], fcBy = new Map();
 try { const fc = readJs(FC); checks = prepChecks(fc.items || [], names.find); fcBy = new Map((fc.feeds || []).map((f) => [f[0], f])); } catch (e) { console.error("stories: no fact-checks:", e.message); }
 let nFc = 0, nFig = 0;
 for (const [, c] of built) for (const t of c.threads) {
-  const fc = factMatch(t, checks), fig = figures(t.rows, t.w, t.names);
+  const fc = factMatch(t, checks, { skipName: (x) => ccsInText(x).length > 0 }), fig = figures(t.rows, t.w, t.names);
   // [fact-checker, its site, date, its headline, link, its summary, names shared with the thread]
   if (fc.length) { t.fc = fc.map(([id, ...x]) => [(fcBy.get(id) || [])[1] || id, (fcBy.get(id) || [])[2] || "", ...x]); nFc++; }
   if (fig.length) { t.fig = fig; nFig++; }

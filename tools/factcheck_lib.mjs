@@ -19,25 +19,38 @@ export function checkItem(feed, i) {
   return [feed, new Date(ms).toISOString().slice(0, 16) + "Z", title.slice(0, 300), link, sum.length > 240 ? sum.slice(0, 237).replace(/\s+\S*$/, "") + "…" : sum];
 }
 
-/** the checks made ready for matching: their words and the names (nameBook.find) they mention */
+/** the checks made ready for matching: the words and names (nameBook.find) of each check's own headline (a summary's words
+ *  match far too much: "the Iran war" in a summary ties a toothpaste check to a war story) */
 export function prepChecks(items, find) {
-  return items.map((c) => ({ c, ms: Date.parse(c[1]), w: stems(c[2] + " " + c[4]), nm: new Set([...find(c[2]), ...find(c[4])]) }));
+  return items.map((c) => ({ c, ms: Date.parse(c[1]), w: stems(c[2]), nm: new Set(find(c[2])) }));
 }
 
-/** Fact-checks that may relate to a thread: one that names one of the thread's names and has two of the event's own words, or
- *  names two of its names and one of its words, or has three of its words. Words alone are weak (an old flood check shares
- *  "flood" and "dead" with every flood), so a check must also be from 45 days before the thread to 14 days after it.
+// offices, bodies and words for a people name no one event ("Prime Minister", "Senate", "Chinese")
+const GENERIC = /^(the )?(prime minister|president|vice president|minister|ministry|senate|house|congress|parliament|government|cabinet|attorney general|prosecutor'?s? office|supreme court|high court|court|police|army|navy|military|white house|kremlin|pentagon|state department|democrats?|republicans?|opposition|united nations|un|nato|eu|european union|europe|asia|africa|middle east|west|western|world|international|national|federal|central bank|interior|foreign|defense|defence|health|election|elections|commission|council|committee|agency|department|office|governor|mayor|king|queen|pope|church)$/i;
+const DEMONYM = /^([A-Z][a-z]+(ese|ian|ish|ean|ic|i)|French|Dutch|Swiss|Greek|Thai|Welsh|Irish|British|English|Spanish|Turkish|Polish)$/;
+// words in so many headlines that sharing one says nothing ("Trump", "report", "war")
+const COMMON = stems("trump biden putin xi report reports says said new year years war people day days week world news live video videos update updates state states united unit country government official officials");
+
+/** Fact-checks that may relate to a thread, from the words of each check's headline:
+ *  one that names one of the thread's own names (not a country, a people or an office: skipName and the lists above) and has
+ *  one more of the event's words besides that name (two for a one-word name), or one that has four of the event's words.
+ *  A check must be from 45 days before the thread to 14 days after it.
  *  t: a thread after connect() (t.names are the names worth following, t.w the event's distinctive words, stemmed).
  *  Returns up to MAX_CHECKS [feed id, date, headline, link, summary, [shared names]], best first. */
-export function factMatch(t, prepped, max = MAX_CHECKS) {
-  const N = new Set((t.names || []).map((x) => x[0])), W = new Set(t.w || []);
+export function factMatch(t, prepped, opt = {}) {
+  const max = opt.max || MAX_CHECKS, skip = opt.skipName || (() => false);
+  const N = new Set((t.names || []).map((x) => x[0]).filter((x) => x.length > 3 && !GENERIC.test(x) && !DEMONYM.test(x) && !skip(x))), W = new Set(t.w || []);
   const lo = Date.parse(t.d0) - 45 * 864e5, hi = Date.parse(t.d) + 14 * 864e5;
   const hits = [];
   for (const p of prepped) {
     if (!(p.ms >= lo && p.ms <= hi)) continue;
-    const sn = [...p.nm].filter((x) => N.has(x)), sw = [...W].filter((x) => p.w.has(x)).length;
-    if (!((sn.length >= 1 && sw >= 2) || (sn.length >= 2 && sw >= 1) || sw >= 3)) continue;
-    hits.push([sn.length * 2 + sw, p.ms, [...p.c, sn]]);
+    const sn = [...p.nm].filter((x) => N.has(x)), inName = stems(sn.join(" "));
+    const sw = [...W].filter((x) => p.w.has(x)), out = sw.filter((x) => !inName.has(x) && !COMMON.has(x) && x.length >= 4).length;
+    // a name of two words or more (Abu Dhabi, Unknown Soldier) or an acronym (FAA) and one more of the event's words; a single
+    // word (Bukele, Washington, John) is often someone or somewhere else, so it needs two more
+    const strong = sn.some((x) => /\s/.test(x) || /^[A-Z]{2,}$/.test(x)) || sn.length >= 2;
+    if (!((sn.length && out >= (strong ? 1 : 2)) || sw.length >= 4)) continue;
+    hits.push([sn.length * 2 + sw.length, p.ms, [...p.c, sn]]);
   }
   return hits.sort((a, b) => b[0] - a[0] || b[1] - a[1]).slice(0, max).map((h) => h[2]);
 }

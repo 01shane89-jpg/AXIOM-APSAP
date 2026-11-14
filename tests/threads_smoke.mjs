@@ -1,7 +1,7 @@
 // Headless check of Go deeper (assets/osap-threads.js) from Today > Story coverage (assets/osap-coverage.js) on the United States
 // with the stored data/live/threads/us.js: Most covered lists story threads, each with its outlet and report counts and a Go deeper
 // button; Go deeper opens the biggest one in layers (its parts, each part's stories, each story's reports with the outlets' own
-// links), the timeline oldest first, the connections (names, each with other headlines), a Linked note kept on this device with
+// links), the timeline oldest first, Check it (who carried it, differing figures, matched fact-checks, never a verdict), the connections (names, each with other headlines), a Linked note kept on this device with
 // when and by whom, a connection to another threaded story opening it one layer deeper with a trail back, and Escape closing it.
 // On a 390 px phone the view fits the screen and nothing scrolls sideways. The page throws nothing. External hosts are blocked.
 // Writes screenshots to SHOTS (default: none).
@@ -97,6 +97,24 @@ async function open(opts) {
   const all = await p.evaluate(() => document.querySelectorAll("#thv .thbody .ths > li").length);
   ok(all === Math.min(pick.rows.length, pick.r), `All reports lists every report (${all})`);
   ok(await p.evaluate(() => /[0-9a-f]{64}/.test(document.querySelector("#thv .thfoot code").textContent)), "the story's SHA-256 fingerprint shows");
+  // Check it: who carried it, differing figures, officials' claims, published fact-checks (may relate), never a verdict
+  await p.click('#thv [data-thtab="check"]');
+  const ck = await p.evaluate(() => ({ h: [...document.querySelectorAll("#thv .thck h3")].map((x) => x.textContent), note: document.querySelector("#thv .thnote").textContent,
+    fc: [...document.querySelectorAll("#thv .thck .ths > li a.tht")].map((a) => [a.href, a.target, a.rel]) }));
+  ok(ck.h[0] === "Who carried it" && ck.h.includes("Published fact-checks that may relate") && ck.h.includes("Check it yourself"), `Check it shows its sections (${ck.h.join(" | ")})`);
+  ok(/does not rate a story true or false/.test(ck.note), "Check it says OSAP gives no verdict of its own");
+  ok(ck.fc.length === (pick.fc || []).length && ck.fc.every(([h, t, r]) => /^https?:/.test(h) && t === "_blank" && /noopener/.test(r)), `each matched fact-check links the fact-checker's own page (${ck.fc.length})`);
+  ok(ck.h.includes("Figures differ between reports") === !!(pick.fig && pick.fig.length), "differing figures show when the reports give them");
+  // a thread whose reports give different figures, and one with a fact-check, opened straight from the API
+  for (const [what, t] of [["figures", want.threads.find((x) => x.fig)], ["fact-checks", want.threads.find((x) => x.fc)]]) {
+    if (!t) { console.log("SKIP no thread with " + what + " in the stored file"); continue; }
+    await p.evaluate(([cc, id]) => window.OSAP_THREADSQ.open(cc, id), [CC, t.id]);
+    await p.waitForSelector("#thv .thpart");
+    await p.click('#thv [data-thtab="check"]');
+    const got = await p.evaluate(() => ({ fig: document.querySelectorAll("#thv .thfig").length, fc: document.querySelectorAll("#thv .thck .ths > li").length }));
+    ok(what === "figures" ? got.fig === t.fig.length : got.fc === t.fc.length, `Check it shows a story's ${what} (${JSON.stringify(got)})`);
+    if (SHOTS) await p.locator("#thv .thp").screenshot({ path: SHOTS + "/threads-check-" + what + ".png" });
+  }
   await p.keyboard.press("Escape");
   ok(await p.evaluate(() => !document.getElementById("thv")), "Escape closes it");
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
@@ -110,12 +128,13 @@ async function open(opts) {
   if (SHOTS) await p.screenshot({ path: SHOTS + "/threads-phone-list.png" });
   await p.click("#td-cover [data-cvdeep]");
   await p.waitForSelector("#thv .thpart");
-  for (const tab of ["parts", "dev", "conn", "all"]) {
+  for (const tab of ["parts", "dev", "check", "conn", "all"]) {
     await p.click(`#thv [data-thtab="${tab}"]`);
     const fit = await p.evaluate(() => { const b = document.querySelector("#thv .thbody"), r = document.querySelector("#thv .thp").getBoundingClientRect();
       return { sx: b.scrollWidth - b.clientWidth, w: Math.round(r.width), h: Math.round(r.height), vw: innerWidth, vh: innerHeight }; });
     ok(fit.sx <= 1 && fit.w <= fit.vw && fit.h <= fit.vh, `phone ${tab}: fits the screen, nothing sideways (${JSON.stringify(fit)})`);
     if (SHOTS && tab === "parts") await p.screenshot({ path: SHOTS + "/threads-phone-parts.png" });
+    if (SHOTS && tab === "check") await p.screenshot({ path: SHOTS + "/threads-phone-check.png" });
     if (SHOTS && tab === "conn") await p.screenshot({ path: SHOTS + "/threads-phone-connections.png" });
   }
   await p.click("#thv [data-thclose]");
