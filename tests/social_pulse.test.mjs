@@ -67,4 +67,5 @@ assert.deepEqual(S.tagMoves.up[0].slice(0, 2), ["newtag", 12]);
 assert.equal(S.tagMoves.down[0][0], "oldtag");
 const thin = summarise(H.slice(-5), now);
 assert.equal(thin.base, null, "under 12 earlier hours: no normal"); assert.equal(thin.spike, false);
+assert.deepEqual(thin.tagMoves, { up: [], down: [] }, "no rising or fading without a day before to compare with");
 console.log("social_pulse.test: ok");

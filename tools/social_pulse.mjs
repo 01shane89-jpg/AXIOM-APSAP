@@ -171,7 +171,9 @@ export function summarise(hours, now) {
   const top = (o, n = 10) => Object.entries(o).filter(([, v]) => v >= SHOW_MIN).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1)).slice(0, n);
   // narratives: words and hashtags rising or fading, last 24 h against the 24 h before it (scaled by the sample sizes)
   const scale = P.s ? C.s / P.s : 1;
+  // no "rising" or "fading" until the day before has at least 6 sampled hours to compare with
   const moves = (k) => {
+    if (P.hours < 6) return { up: [], down: [] };
     const all = new Set([...Object.keys(C[k]), ...Object.keys(P[k])]), up = [], down = [];
     for (const w of all) {
       const c = C[k][w] || 0, p = (P[k][w] || 0) * scale;
