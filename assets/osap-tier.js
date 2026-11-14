@@ -232,8 +232,10 @@
         (UI.recover ? "" : '<button type="button" class="refresh" data-tr="plans">Back</button>') + "</div></form>";
     } else {
       h += CFG.signedIn ? '<p>Signed in as <b>' + esc(CFG.email || "") + "</b>. Your plan: <b>" + esc(name(me)) + "</b>" +
-          (CFG.owner ? " (owner)" : CFG.beta ? " (beta tester code" + (CFG.beta.until ? ", until " + esc(String(CFG.beta.until).slice(0, 10)) : "") + ")" : "") + ".</p>"
+          (CFG.owner ? " (owner)" : CFG.early ? " (early access)" : CFG.beta ? " (beta tester code" + (CFG.beta.until ? ", until " + esc(String(CFG.beta.until).slice(0, 10)) : "") + ")" : "") + ".</p>"
         : '<p class="obs">You are using the Free plan. Sign in to use a plan you have paid for.</p>';
+      /* early access (tools/owner.mjs earlyAccess): every account has Full until paid plans open */
+      if (CFG.signedIn && CFG.early && !CFG.owner) h += '<p class="trsoon" role="note"><b>Early access: Full is free for every account until paid plans open.</b> When they open, you can keep Full by choosing a plan, or carry on with Free.</p>';
       var trial = CFG.rules.trialDays || 0, soon = TIERS.some(function (t) { return rank(t) > rank(me) && !payOn(t); });
       if (soon) h += soonHtml("Paid plans");
       h += '<div class="trplans">' + TIERS.map(function (t) {
@@ -247,7 +249,7 @@
       h += '<div class="trbtns">' + (CFG.signedIn ? '<button type="button" class="refresh" data-tr="newpw"' + dis + ">Change password</button>" +
           '<button type="button" class="refresh" data-tr="signout"' + dis + ">Sign out</button>"
         : '<button type="button" class="refresh primary" data-tr="signin">Sign in</button><button type="button" class="refresh" data-tr="signup">Create an account</button>') + "</div>";
-      if (CFG.signedIn && me !== "free" && !CFG.owner && !CFG.beta) h += '<p class="obs">To change or cancel your plan, use the link in your Paddle receipt email.</p>';
+      if (CFG.signedIn && me !== "free" && !CFG.owner && !CFG.beta && !CFG.early) h += '<p class="obs">To change or cancel your plan, use the link in your Paddle receipt email.</p>';
       h += teamPlansHtml();
       /* a beta tester code from the owner (tools/codes.mjs) */
       if (CFG.signedIn && me !== "full") h += '<form data-tr-form="code" class="trcode"><label>Beta tester code<input name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="OSAP-XXXX-XXXX-XXXX" required></label>' +

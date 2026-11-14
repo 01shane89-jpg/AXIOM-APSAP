@@ -136,7 +136,7 @@ const toks = {
   "tok-full": { id: "u-f", email: "f@test.org", confirmed_at: "x", app_metadata: { roles: ["full"] } },
   "tok-free": { id: "u-g", email: "g@test.org", confirmed_at: "x", app_metadata: {} },
 };
-globalThis.Netlify = { env: { get: () => undefined } };
+globalThis.Netlify = { env: { get: (k) => (k === "OSAP_EARLY_ACCESS" ? "off" : undefined) } }; // early access (tools/owner.mjs) off: these checks are about the paid plans
 const logs = [], realLog = console.log;
 globalThis.fetch = async (u, o) => { const t = ((o && o.headers && o.headers.authorization) || "").replace("Bearer ", ""); return toks[t] ? Response.json(toks[t]) : new Response("{}", { status: 401 }); };
 const call = async (tok, body, q = "") => {

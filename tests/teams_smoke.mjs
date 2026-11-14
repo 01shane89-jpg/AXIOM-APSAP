@@ -53,7 +53,7 @@ const server = createServer(async (req, res) => {
 }).listen(0, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
 base = `http://127.0.0.1:${server.address().port}/`;
-const env = { OSAP_DATA_ORIGIN: base + "AXIOM-APSAP", OSAP_OWNERS: "", PADDLE_CLIENT_TOKEN: "test_client", PADDLE_API_KEY: "pdl_sdbx_apikey_srv", PADDLE_WEBHOOK_SECRET: "whsec",
+const env = { OSAP_EARLY_ACCESS: "off", OSAP_DATA_ORIGIN: base + "AXIOM-APSAP", OSAP_OWNERS: "", PADDLE_CLIENT_TOKEN: "test_client", PADDLE_API_KEY: "pdl_sdbx_apikey_srv", PADDLE_WEBHOOK_SECRET: "whsec",
   PADDLE_PRICE_TEAM_MONTH: "pri_tm", PADDLE_PRICE_TEAM_YEAR: "pri_ty", PADDLE_PRICE_ORG_BASE: "pri_ob", PADDLE_PRICE_ORG_SEAT: "pri_os", PADDLE_PRICE_PILOT: "pri_pi" };
 globalThis.Netlify = { env: { get: (k) => env[k] } };
 const ID = { getUser: async (id) => ({ id, appMetadata: meta[id] }), updateUser: async (id, b) => { meta[id] = b.app_metadata; } };

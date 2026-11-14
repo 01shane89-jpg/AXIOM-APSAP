@@ -51,7 +51,7 @@ ok(await rejects(verifyActionsToken(parts[0] + "." + b64u(JSON.stringify({ iss: 
 ok(await rejects(verifyActionsToken(b64u(JSON.stringify({ alg: "none", kid: "k1" })) + "." + parts[1] + ".", OPT)), "an unsigned token is refused");
 
 // ---------- 2. the function ----------
-const env = { OSAP_OWNERS: "" };
+const env = { OSAP_OWNERS: "", OSAP_EARLY_ACCESS: "off" }; // early access (tools/owner.mjs) off: these checks are about the paid plans
 globalThis.Netlify = { env: { get: (k) => env[k] } };
 const USERS = { OWNER: { id: "u1-owner-0001", email: "boss@test", app_metadata: { roles: ["owner"] } }, OTHER: { id: "u2-free-00002", email: "x@test", app_metadata: { roles: [] } },
   MID: { id: "u3-mid-000003", email: "m@test", app_metadata: { roles: ["mid"] } }, MID2: { id: "u4-mid-000004", email: "n@test", app_metadata: { roles: ["mid"] } } };

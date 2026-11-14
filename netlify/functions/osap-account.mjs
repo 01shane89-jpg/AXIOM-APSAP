@@ -2,19 +2,20 @@
 // checkout settings. Nothing secret: the Paddle client token is a public, checkout-only token.
 import { admin } from "@netlify/identity";
 import { rulesForPage, tierOfRoles } from "../../tools/tiers.mjs";
-import { isOwner, planOf } from "../../tools/owner.mjs";
+import { earlyAccess, isOwner, planOf } from "../../tools/owner.mjs";
 import { betaActive } from "../../tools/codes.mjs";
 
 const ids = (k) => String(Netlify.env.get(k) || "").split(",").map((s) => s.trim()).filter(Boolean);
 
 export default async (req) => {
   let tier = "free", email = null, uid = null, signedIn = false, owner = false, beta = null;
+  const early = earlyAccess((k) => Netlify.env.get(k));
   const auth = req.headers.get("authorization");
   if (auth && /^Bearer\s+\S+$/.test(auth)) {
     const r = await fetch(new URL("/.netlify/identity/user", req.url), { headers: { authorization: auth } }).catch(() => null);
     const u = r && r.ok ? await r.json().catch(() => null) : null;
     if (u) {
-      signedIn = true; uid = u.id || null; email = u.email || null; tier = planOf(u, Netlify.env.get("OSAP_OWNERS"), tierOfRoles);
+      signedIn = true; uid = u.id || null; email = u.email || null; tier = planOf(u, Netlify.env.get("OSAP_OWNERS"), tierOfRoles, early);
       owner = isOwner(u, Netlify.env.get("OSAP_OWNERS"));
       if (betaActive(u.app_metadata)) beta = { until: u.app_metadata.osap_beta.until || null };
       // "last seen" for the owner's Users list: written at most once an hour per account, and only the time
@@ -27,7 +28,7 @@ export default async (req) => {
   }
   const token = Netlify.env.get("PADDLE_CLIENT_TOKEN") || null;
   return Response.json({
-    gate: true, signedIn, uid, email, tier, owner, beta, rules: rulesForPage(),
+    gate: true, signedIn, uid, email, tier, owner, beta, early, rules: rulesForPage(),
     paddle: token ? { token, sandbox: /^test_/.test(token), prices: { mid: ids("PADDLE_PRICE_MID")[0] || null, full: ids("PADDLE_PRICE_FULL")[0] || null } } : null,
   }, { headers: { "cache-control": "no-store" } });
 };

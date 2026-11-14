@@ -13,7 +13,7 @@
 // Anyone not a member of a case gets 404 for it, the same as for a case that does not exist. Records are in the Netlify Blobs
 // store "osap-cases". Logs carry the command, the case id and the status only: never emails, names, reasons or tokens.
 import { getStore } from "@netlify/blobs";
-import { planOf } from "../../tools/owner.mjs";
+import { earlyAccess, planOf } from "../../tools/owner.mjs";
 import { tierOfRoles } from "../../tools/tiers.mjs";
 import { actorOf, getCase, listMine, readLog, run, CaseError } from "../../tools/cases.mjs";
 import { addDevice, dropDevice, keysFor, putWraps, readData, writeData } from "../../tools/case_vault.mjs";
@@ -60,7 +60,7 @@ export default async (req) => {
       console.log("osap case", cmd, "ok");
       return json(res);
     }
-    const out = await run(store, actor, b, { plan: planOf(me, Netlify.env.get("OSAP_OWNERS"), tierOfRoles) });
+    const out = await run(store, actor, b, { plan: planOf(me, Netlify.env.get("OSAP_OWNERS"), tierOfRoles, earlyAccess((k) => Netlify.env.get(k))) });
     console.log("osap case", cmd, out.decision ? out.decision.case.slice(5, 13) + ":" + out.decision.version : "-", out.repeat ? "repeat" : "ok");
     return json({ case: out.view, decision: out.decision, repeat: !!out.repeat });
   } catch (e) {
