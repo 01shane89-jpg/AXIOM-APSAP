@@ -1902,6 +1902,9 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
         /* Infrastructure: the home in Map overlays for infrastructure layers and tools (communications masts and coverage,
            power grid); filled by their own modules, hidden while empty */
         '<div id="ml-infra" hidden><div class="mlh">Infrastructure</div></div>' +
+        /* Cameras: road, river, volcano, weather and sea cameras plus mapped surveillance cameras (assets/osap-cams.js). Their own
+           section after Infrastructure and Embassies and evacuation, not under Roads, since most kinds have nothing to do with roads (audit 2026-11-14) */
+        '<div id="ml-cams" hidden><div class="mlh">Cameras</div></div>' +
         '<div id="ml-extra"></div></div>';
       L.DomEvent.disableClickPropagation(box); L.DomEvent.disableScrollPropagation(box);
       var btn = box.querySelector(".mlbtn"), pan = box.querySelector(".mlpanel");
@@ -3742,7 +3745,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     { id: "social", name: "Social media", title: "Social media", sof: true, live: true },
     { id: "security", name: "Security signals", title: "Security signals", sof: true, live: true },
     { id: "opendata", name: "Open data", title: "Open data: every public feed", sof: true, live: true },
-    { id: "et", name: "ET", title: "ET: UFO and UAP reports", sof: true, live: true },
+    { id: "et", name: "UFO and UAP reports", title: "UFO and UAP reports", sof: true, live: true },
     { id: "route", name: "Route", title: "Route planning", sof: true, live: true },
     { id: "comms", name: "Comms planning", title: "Comms planning: PACE, coverage, links, networks, power and status", sof: true, live: true });
   var LBY = {}; LAYERS.forEach(function (l) { LBY[l.id] = l; });
@@ -7002,7 +7005,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* Map overlays in a fixed, sensible order whatever order the modules add their sections in (Shane 2026-10-01: organised so
      it is intuitive): infrastructure first (communications, power: Shane could not find them lower down), then terrain, roads and movement, aircraft, then your own marking (country sides,
      boundaries), then display options. Sections not named here stay where their module put them. */
-  var ML_ORDER = [["#ml-infra"], [null, /embass|evacuat/i], ["#ml-elev"], [null, /^Terrain/], ["#ml-pop"], ["#ml-sat"], ["#mob-sec", /^Ground movement/], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/], ["#ml-warn", /^Airspace and sea warnings/],
+  var ML_ORDER = [["#ml-infra"], [null, /embass|evacuat/i], ["#ml-cams"], ["#ml-elev"], [null, /^Terrain/], ["#ml-pop"], ["#ml-sat"], ["#mob-sec", /^Ground movement/], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/], ["#ml-warn", /^Airspace and sea warnings/],
     [null, /boundar/i], ["#ml-sides", /^Country sides/], ["#ml-heat", /^Dense points/], ["#ml-disp", /^Map display/]];
   function mlArrange() {
     var pan = document.getElementById("ml-panel"), base = pan && pan.querySelector(".mlbase"), ex = document.getElementById("ml-extra");
@@ -8181,9 +8184,23 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      match on two shared words, one of them distinctive ("Kelantan-Thailand border concertina wire found cut 11 times" and
      "Fence wires cut at 13 illegal border crossing points along Rantau Panjang"); elsewhere a third of all their words must be
      shared, as before. */
+  /* In that looser same-place test a city's own name and the country's name do not count as shared words: two reports
+     placed in Bangkok both say "Bangkok", which is why they are in the same place, not a sign of one incident (14 Nov 2026: a
+     weather round-up, a gambling arrest, WorldPride 2030 and a mall project, all placed in Bangkok, had become one 14-outlet
+     "story" heading Today's Top stories, joined on "Bangkok" plus one other word each). */
+  var EV_SKIP = Object.create(null);
+  function evSkip(place) {
+    var k = place + "\u0001" + CC, v = EV_SKIP[k]; if (v !== undefined) return v;
+    /* only a bare city name ("Bangkok", "Pattaya"); a district or state label ("Si Sakhon district, Narathiwat",
+       "Rantau Panjang (Kelantan, Malaysia)") is small enough that sharing it still means something */
+    if (/district|[(,]/i.test(place)) return (EV_SKIP[k] = null);
+    v = []; evWords({ title: place }).concat(evWords({ title: C.name || "" })).forEach(function (w) { v[w] = 1; });
+    return (EV_SKIP[k] = v);
+  }
   function evSame(a, b, close) {
     if (a !== EVW_CUR) evMark(a);
-    var bw = b.__wi, n = 0, nd = 0; for (var i = 0; i < bw.length; i++) if (EVW_MARK[bw[i]] === EVW_STAMP) { n++; if (!evGen(bw[i])) nd++; }
+    var sk = close && a.place ? evSkip(a.place) : null;
+    var bw = b.__wi, n = 0, nd = 0; for (var i = 0; i < bw.length; i++) if (EVW_MARK[bw[i]] === EVW_STAMP && !(sk && sk[bw[i]])) { n++; if (!evGen(bw[i])) nd++; }
     return n >= 2 && nd >= 1 && (close || n / Math.max(1, a.__wi.length + bw.length - n) >= 0.3);
   }
   function evPair(a, b) {

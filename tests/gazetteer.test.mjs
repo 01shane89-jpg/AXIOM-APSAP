@@ -26,16 +26,21 @@ const cities = [
   row("Kramatorsk", 48.72, 37.56, "PPL", "UA", "14", 150000),
   row("Bunia", 1.56, 30.25, "PPLA", "CD", "12", 96000),
   row("Iligan", 8.23, 124.24, "PPL", "PH", "40", 300000),
+  row("Toluca", 19.28, -99.66, "PPLA", "MX", "15", 490000),
 ].join("\n");
 const admin = ["US.UT\tUtah\tUtah\t1", "US.HI\tHawaii\tHawaii\t2", "US.TX\tTexas\tTexas\t3", "US.IL\tIllinois\tIllinois\t4",
   "FR.11\tIle-de-France\tIle-de-France\t5", "TH.40\tBangkok\tBangkok\t6", "KR.11\tSeoul\tSeoul\t7", "KR.10\tBusan\tBusan\t8",
-  "UA.14\tDonetsk Oblast\tDonetsk Oblast\t9", "CD.12\tIturi\tIturi\t10", "PH.40\tAgusan del Sur\tAgusan del Sur\t11"].join("\n");
+  "UA.14\tDonetsk Oblast\tDonetsk Oblast\t9", "CD.12\tIturi\tIturi\t10", "PH.40\tAgusan del Sur\tAgusan del Sur\t11",
+  "MX.15\tMéxico\tMexico\t12"].join("\n");
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gz-")), txt = path.join(dir, "cities15000.txt"), zip = path.join(dir, "c.zip");
 fs.writeFileSync(txt, cities + "\n");
 spawnSync("zip", ["-qj", zip, txt]);
 const gz = await loadGazetteer(async (u) => (/cities15000/.test(u) ? fs.readFileSync(zip) : Buffer.from(admin)));
 
 const cases = [
+  // a region spelled like its own country in the local language (México state) is never read for the country's name
+  ["Decomisan 620 kilos de cocaína con destino a México", "mx", null],
+  ["Balacera en Toluca deja tres heridos, informa México", "mx", "Toluca"],
   ["Hurricane Nolo expected to unleash powerful winds and flash flooding on Hawaii", "us", "Hawaii"],
   ["Hawaii braces for Hurricane Nolo", "us", "Hawaii"],
   ["Flash flood warning for Hilo as Hurricane Nolo nears Hawaii", "us", "Hilo"],

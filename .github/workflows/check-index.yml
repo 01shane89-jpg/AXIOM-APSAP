@@ -91,6 +91,8 @@ jobs:
       - run: node tests/comms.test.mjs
       - run: node tests/commsplan.test.mjs
       - run: node tests/gazetteer.test.mjs
+      - run: node tests/history_pins.test.mjs
+      - run: node tests/country_bounds.test.mjs
       - run: node tests/illum.test.mjs
       # DZSO sheet maths and the shared drop zone store (assets/osap-dzso.js, assets/osap-dz.js)
       - run: node tests/dzso.test.mjs

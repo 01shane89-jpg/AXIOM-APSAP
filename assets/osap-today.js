@@ -336,13 +336,18 @@
     if (WORLD_PATH.test(path)) return false;
     return !P.away.test(t);
   }
+  var EV_FRESH = 48 * 36e5;
+  function outlet(n) { return String(n || "").replace(/\s*\(via [^)]*\)\s*$/i, "").replace(/\s+on MSN$/i, "").trim(); }
   function stories() {
     var now = Date.now(), out = [], used = {};
     events().forEach(function (ev) {
-      if (!ev.reports || ev.reports.length < 2 || !isFinite(ev.to) || now - ev.to > 7 * 864e5) return;
+      /* a grouped story leads only while it is current: its latest report within EV_FRESH (a 4-day-old incident with 15
+         outlets had headed Thailand's list on 14 Nov 2026, above that morning's news) */
+      if (!ev.reports || ev.reports.length < 2 || !isFinite(ev.to) || now - ev.to > EV_FRESH) return;
       var r0 = null; for (var i = 0; i < ev.reports.length && !r0; i++) r0 = recByUrl(ev.reports[i].url);
       if (!aboutHere(r0 || { title: ev.title, url: ev.reports[0].url })) return;
-      var srcs = {}; ev.reports.forEach(function (r) { srcs[r.source] = 1; used[r.url] = 1; });
+      /* one outlet counts once, however it reached OSAP ("Amarin TV", "AmarinTV on MSN (via Bing News search)") */
+      var srcs = {}; ev.reports.forEach(function (r) { srcs[outlet(r.source)] = 1; used[r.url] = 1; });
       out.push({ ev: true, title: ev.title, n: Object.keys(srcs).length, ms: ev.to, rec: r0, url: ev.reports[0].url, src: Object.keys(srcs).slice(0, 3).join(", "), xb: ev.crossBorder,
         status: ev.reports.every(function (r) { return r.status === "Observed"; }) ? "observation" : "event", sev: ev.sev || 1 });
     });

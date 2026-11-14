@@ -124,7 +124,9 @@ ok(ix.sources.every((s) => s.live || true), "index: sources " + ix.sources.map((
   ok(!(await p.evaluate(() => !!document.querySelector("#atk-tools [data-ocam]"))), "desktop: no toolbar button of its own");
   await om(p, true);
   ok(await shown(p, '#atk-om #cam-sec input[data-cam]'), "desktop: Cameras switch in the Overlays sheet");
-  ok(await p.evaluate(() => { const s = document.getElementById("cam-sec"), h = s.parentElement; return h.id === "ml-roads" && !!h.querySelector("[data-roads]") && !!h.closest("#ml-infra") && !h.closest("#ml-infra").hidden; }), "desktop: under Infrastructure > Roads, next to road closures");
+  ok(await p.evaluate(() => { const s = document.getElementById("cam-sec"), h = s.parentElement, ids = [...document.querySelectorAll("#ml-panel > *")].map((c) => c.id);
+    return h.id === "ml-cams" && !h.hidden && !h.closest("#ml-infra") && /^Cameras/.test(h.querySelector(".mlh").textContent) && ids.indexOf("ml-cams") > ids.indexOf("ml-infra") && ids.indexOf("ml-cams") <= ids.indexOf("ml-infra") + 2; }),
+    "desktop: its own Cameras section, after Infrastructure and Embassies and evacuation (not under Roads)");
   await p.evaluate(() => window.__asapMap.setView([22.57, 88.36], 9, { animate: false }));
   await p.check("#cam-sec input[data-cam]"); await p.waitForTimeout(1500);
   s = await st(p);
