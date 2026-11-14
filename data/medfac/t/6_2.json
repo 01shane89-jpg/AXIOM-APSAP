@@ -901,6 +901,7 @@
 ["w608141745",7.39203,3.96431,"ng",{"name":"WELFARE HOSPITAL","amenity":"hospital","healthcare":"hospital","addr:street":"Old Ife Road","addr:city":"Ibadan"}],
 ["w643481485",6.43475,3.50543,"ng",{"name":"St. Kizito Clinic & Maternity Ward","amenity":"hospital","healthcare":"hospital"}],
 ["w659370489",6.44285,3.42905,"ng",{"name":"Nigerian Police Hospital - Falomo","amenity":"hospital","healthcare":"hospital"}],
+["w671364156",7.02078,3.13505,"ng",{"name":"Ogun State Federal Airport","aeroway":"aerodrome"}],
 ["w672092174",6.44741,3.39663,"ng",{"name":"General Hospital Lagos","amenity":"hospital","healthcare":"hospital","website":"http://www.ghlagos.org.ng","wikidata":"Q19874986"}],
 ["w679723520",6.45688,3.40051,"ng",{"name":"Staff clinic","amenity":"clinic","healthcare":"clinic"}],
 ["w704991085",6.58954,3.3422,"ng",{"name":"Lagos State University Teaching Hospital","amenity":"hospital","healthcare":"hospital","wikidata":"Q28449098"}],

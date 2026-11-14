@@ -29,6 +29,8 @@
 ["n14219121322",45.42983,28.04456,"ro",{"name":"Geronmed","amenity":"clinic","healthcare":"clinic"}],
 ["n14219163328",45.42968,28.04432,"ro",{"name":"Exima City Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["n14243618277",45.44174,28.05663,"ro",{"name":"Medicover","amenity":"clinic","healthcare":"clinic","website":"https://www.medicover.ro/","addr:city":"Galati"}],
+["n14353777201",45.43775,28.05002,"ro",{"name":"Centru medical Ioma","amenity":"clinic","healthcare":"clinic"}],
+["n14358727102",45.4375,28.02276,"ro",{"name":"Sante","amenity":"clinic","healthcare":"clinic","addr:housenumber":"35","addr:street":"Bulevardul Siderurgiștilor"}],
 ["n1491143452",44.1731,28.64165,"ro",{"name":"Cardiomed","amenity":"clinic","healthcare":"clinic"}],
 ["n1815674209",44.16448,28.47959,"ro",{"name":"Cabinete Medicale Individuale","amenity":"clinic","healthcare":"clinic","emergency":"no"}],
 ["n1882384793",45.43044,28.01917,"ro",{"name":"Cabinete Medicale","amenity":"hospital","emergency":"no","addr:street":"Strada Gheorghe Asachi","addr:city":"Galați"}],

@@ -525,7 +525,7 @@
 ["w805974173",41.30907,-7.75925,"pt",{"name":"Edifício G","healthcare":"clinic","healthcare:speciality":"anaesthetics;cardiology;surgery;dental_oral_maxillo_facial_surgery;plastic_surgery;dermatology;physiatry;orthopaedics;pulmonology"}],
 ["w805974174",41.30929,-7.7585,"pt",{"name":"Edifício H","healthcare":"clinic","healthcare:speciality":"palliative;haematology;oncology;radiotherapy"}],
 ["w809349294",40.32644,-7.68876,"pt",{"name":"Extensão de Saúde de Loriga","amenity":"clinic","healthcare":"clinic","addr:street":"Rua Professor Egas Moniz","addr:city":"Loriga","addr:postcode":"6270-073"}],
-["w818048718",40.59168,-7.75963,"pt",{"name":"Unidade de Saúde Familiar de Mangualde","amenity":"clinic","healthcare":"clinic","operator":"Serviço Nacional de Saúde","operator:type":"public","addr:housenumber":"99","addr:street":"Avenida Montes Hermínios","addr:city":"Mangualde","addr:postcode":"3530-110","opening_hours":"Mo-Fr 08:00-20:00"}],
+["w818048718",40.59169,-7.75957,"pt",{"name":"Unidade de Saúde Familiar de Mangualde","amenity":"clinic","healthcare":"clinic","operator":"Serviço Nacional de Saúde","operator:type":"public","addr:housenumber":"99","addr:street":"Avenida Montes Hermínios","addr:city":"Mangualde","addr:postcode":"3530-110","opening_hours":"Mo-Fr 08:00-20:00"}],
 ["w818059743",40.61159,-7.76177,"pt",{"operator":"Bombeiros Voluntários de Mangualde","aeroway":"helipad","surface":"paved"}],
 ["w843569718",41.80265,-6.7688,"pt",{"name":"Heliporto do Hospital de Bragança","aeroway":"helipad"}],
 ["w847272107",41.20981,-7.78583,"pt",{"name":"Centro de Saúde de Santa Marta de Penaguião","amenity":"clinic","healthcare":"clinic"}],

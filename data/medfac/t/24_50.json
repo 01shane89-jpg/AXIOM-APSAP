@@ -15,6 +15,7 @@
 ["n13468859760",25.38299,51.52298,"qa",{"name":"Platinum Medical Center","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"dentist;dermatology;aesthetics;dental_oral_maxillo_facial_surgery;hollywood_smile;veneers;cosmetic_bonding;laser_hair_removal;botox;fillers;dental_implants;clear_aligners;braces;orthodontics;root_cana","phone":"+974 4455 0411","addr:housenumber":"17th Floor","addr:street":"QiG Tower","addr:city":"Lusail"}],
 ["n13786667003",25.26391,51.52005,"qa",{"name":"Reyada Medical","amenity":"hospital","addr:street":"الطريق الدائري الثالث","addr:postcode":"00000"}],
 ["n14232376395",25.35515,51.47905,"qa",{"name":"Al Ula Medical Center","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"dermatology;dentistry;dental_oral_maxillo_facial_surgery","addr:housenumber":"498","addr:street":"Arab League Street","addr:city":"Doha","opening_hours":"Sa-Th 09:00-21:00"}],
+["n14340369701",25.28253,51.49386,"qa",{"name":"Al Sadd HC","amenity":"hospital","opening_hours":"Su-Th 7:00AM-2:00PM , 4:00PM-10:00PM"}],
 ["n1969601368",25.16025,51.40621,"qa",{"name":"Workers Health Centre","name:en":"Workers Health Center","amenity":"hospital","emergency":"yes"}],
 ["n2323452366",25.68205,51.49819,"qa",{"name":"Al Khor Primary Health Clinic","name:en":"Al Khor Primary Health Clinic","amenity":"hospital","healthcare":"hospital","emergency":"no"}],
 ["n2339003188",25.71381,51.52925,"qa",{"amenity":"clinic","emergency":"no"}],
