@@ -7,13 +7,15 @@
 // It also writes the story threads (tools/threads_lib.mjs, "Go deeper"): data/live/threads/<cc>.js (window.OSAP_THREADS), every
 // headline of one event in layers, with the names it mentions and the other headlines (any country) that name them.
 //   STORIES_IX (default data/live/news-index), STORIES_OUT (default data/live/stories), THREADS_OUT (default data/live/threads),
-//   STORIES_HOURS (default 72)
+//   STORIES_HOURS (default 72), STORIES_FACTCHECKS (default data/live/factchecks.js)
 import fs from "node:fs";
 import { outletBook, fromRow, buildCountry, SCHEMA, HOURS } from "./stories_lib.mjs";
 import { nameBook, connect, TSCHEMA } from "./threads_lib.mjs";
+import { prepChecks, factMatch, figures } from "./factcheck_lib.mjs";
 import { ccsInText } from "./geo_cc.mjs";
 
 const IX = process.env.STORIES_IX || "data/live/news-index", OUT = process.env.STORIES_OUT || "data/live/stories";
+const FC = process.env.STORIES_FACTCHECKS || "data/live/factchecks.js";
 const TOUT = process.env.THREADS_OUT || (/stories\/?$/.test(OUT) ? OUT.replace(/stories\/?$/, "threads") : OUT.replace(/\/?$/, "-threads"));
 const H = Number(process.env.STORIES_HOURS || HOURS), END = process.env.STORIES_END ? Date.parse(process.env.STORIES_END) : Date.now();
 const stamp = new Date(END).toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -73,6 +75,17 @@ const nix = new Map();
 all.forEach((a, i) => { for (const x of names.find(a.title)) if (want2.has(x)) { if (!nix.has(x)) nix.set(x, []); nix.get(x).push(i); } });
 const tbc = new Map([...built].map(([cc, c]) => [cc, c.threads]));
 connect(tbc, all, nix, Math.max(40, Math.round(all.length * 0.005)));
+// Check it (tools/factcheck_lib.mjs): published fact-checks whose words overlap each thread (data/live/factchecks.js, from
+// tools/refresh_factchecks.mjs; none if that file is missing), and the figures its reports give differently
+let checks = [], fcBy = new Map();
+try { const fc = readJs(FC); checks = prepChecks(fc.items || [], names.find); fcBy = new Map((fc.feeds || []).map((f) => [f[0], f])); } catch (e) { console.error("stories: no fact-checks:", e.message); }
+let nFc = 0, nFig = 0;
+for (const [, c] of built) for (const t of c.threads) {
+  const fc = factMatch(t, checks), fig = figures(t.rows, t.w, t.names);
+  // [fact-checker, its site, date, its headline, link, its summary, names shared with the thread]
+  if (fc.length) { t.fc = fc.map(([id, ...x]) => [(fcBy.get(id) || [])[1] || id, (fcBy.get(id) || [])[2] || "", ...x]); nFc++; }
+  if (fig.length) { t.fig = fig; nFig++; }
+}
 // the threads go in their own file per country, loaded only when a reader opens one (Today stays as light as before)
 fs.mkdirSync(TOUT, { recursive: true });
 const tw = new Set();
@@ -86,4 +99,4 @@ for (const [cc, c] of built) {
 for (const f of fs.readdirSync(TOUT)) if (/\.js$/.test(f) && !tw.has(f)) fs.rmSync(TOUT + "/" + f);
 for (const f of fs.readdirSync(OUT)) if (/\.js$/.test(f) && !written.has(f)) fs.rmSync(OUT + "/" + f);
 fs.writeFileSync(OUT.replace(/\/?$/, "") + ".js", "window.OSAP_STORIESIX=" + JSON.stringify({ schema: SCHEMA, asof: stamp, hours: H, countries: ix }) + ";\n");
-console.log(`stories: ${nS} stories (${nB} blindspots), ${nT} threads (${names.size} names) for ${written.size} countries from ${reps.length} headlines, last ${H} h, ${Date.now() - t0} ms`);
+console.log(`stories: ${nS} stories (${nB} blindspots), ${nT} threads (${names.size} names, ${nFc} with fact-checks from ${checks.length}, ${nFig} with differing figures) for ${written.size} countries from ${reps.length} headlines, last ${H} h, ${Date.now() - t0} ms`);
