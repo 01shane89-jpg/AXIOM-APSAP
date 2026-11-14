@@ -1,0 +1,1 @@
+{"schema":"osap-avwx/1","built":"2026-11-14T15:46:28.109Z","cell":"-30_-40","st":[{"id":"SBLB","n":"Platform P-25","c":"BR","la":-22.109,"lo":-39.917,"el":10,"m":{"raw":"SPECI SBLB 141503Z AUTO 23010KT 9999 BKN012 27/23 Q1014","t":1794668580000,"cat":"MVFR","wd":230,"ws":10,"wg":null,"vis":6,"visp":true,"cig":1200,"sky":"BKN012","tc":27,"dc":23,"alt":29.94,"wx":null},"f":null}]}

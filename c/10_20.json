@@ -1,0 +1,1 @@
+{"schema":"osap-avwx/1","built":"2026-11-14T15:46:28.109Z","cell":"10_20","st":[{"id":"FTTC","n":"Abeche Arpt","c":"TD","la":13.847,"lo":20.844,"el":548,"m":{"raw":"METAR FTTC 141500Z 04002KT CAVOK 35/01 Q1015","t":1794668400000,"cat":"VFR","wd":40,"ws":2,"wg":null,"vis":6,"visp":true,"cig":null,"sky":null,"tc":35,"dc":1,"alt":29.97,"wx":null},"f":null}]}
