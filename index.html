@@ -8181,9 +8181,23 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      match on two shared words, one of them distinctive ("Kelantan-Thailand border concertina wire found cut 11 times" and
      "Fence wires cut at 13 illegal border crossing points along Rantau Panjang"); elsewhere a third of all their words must be
      shared, as before. */
+  /* In that looser same-place test a city's own name and the country's name do not count as shared words: two reports
+     placed in Bangkok both say "Bangkok", which is why they are in the same place, not a sign of one incident (14 Nov 2026: a
+     weather round-up, a gambling arrest, WorldPride 2030 and a mall project, all placed in Bangkok, had become one 14-outlet
+     "story" heading Today's Top stories, joined on "Bangkok" plus one other word each). */
+  var EV_SKIP = Object.create(null);
+  function evSkip(place) {
+    var k = place + "\u0001" + CC, v = EV_SKIP[k]; if (v !== undefined) return v;
+    /* only a bare city name ("Bangkok", "Pattaya"); a district or state label ("Si Sakhon district, Narathiwat",
+       "Rantau Panjang (Kelantan, Malaysia)") is small enough that sharing it still means something */
+    if (/district|[(,]/i.test(place)) return (EV_SKIP[k] = null);
+    v = []; evWords({ title: place }).concat(evWords({ title: C.name || "" })).forEach(function (w) { v[w] = 1; });
+    return (EV_SKIP[k] = v);
+  }
   function evSame(a, b, close) {
     if (a !== EVW_CUR) evMark(a);
-    var bw = b.__wi, n = 0, nd = 0; for (var i = 0; i < bw.length; i++) if (EVW_MARK[bw[i]] === EVW_STAMP) { n++; if (!evGen(bw[i])) nd++; }
+    var sk = close && a.place ? evSkip(a.place) : null;
+    var bw = b.__wi, n = 0, nd = 0; for (var i = 0; i < bw.length; i++) if (EVW_MARK[bw[i]] === EVW_STAMP && !(sk && sk[bw[i]])) { n++; if (!evGen(bw[i])) nd++; }
     return n >= 2 && nd >= 1 && (close || n / Math.max(1, a.__wi.length + bw.length - n) >= 0.3);
   }
   function evPair(a, b) {
