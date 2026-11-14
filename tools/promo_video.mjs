@@ -230,7 +230,7 @@ const SCENES = [
     await k.scrollIn(".cbox:has(#off-h)", 260, 2, 1500);
     await k.wait(5000);
   }],
-  ["alerts", { z: 11, at: [13.75, 100.53], settle: 9000, prep: (p) => p.evaluate(() => { try { localStorage.setItem("osap-w-pushnext", "false"); } catch (e) {} }) }, async ({ k, p }) => {
+  ["alerts", { hash: "#th/timeline", z: 11, at: [13.75, 100.53], settle: 9000, prep: (p) => p.evaluate(() => { try { localStorage.setItem("osap-w-pushnext", "false"); } catch (e) {} }) }, async ({ k, p }) => {
     k.caption("Know when something happens in your city", "Watch any place, in any country.");
     await k.tool("watch"); await k.wait(2500);
     const fld = "#w-pq";
@@ -252,12 +252,17 @@ const SCENES = [
     const from = (Date.now() - k.t0) / 1000;
     const n = await p.evaluate(() => {
       const ws = JSON.parse(localStorage.getItem("asap-watches") || "[]"), w = ws[ws.length - 1]; if (!w || !window.OSAP_WATCH) return -1;
-      const seen = JSON.parse(localStorage.getItem("asap-watch-seen") || "{}"), sw = seen[w.id] || {}, cut = Date.now() - 24 * 36e5; let n = 0;
-      window.OSAP_WATCH.matches(w).forEach((m) => { const t = m.t0 || Date.parse(m.ts); if (t > cut) { n++; delete sw[m.k]; if (m.sk) delete sw["s:" + m.sk]; } });
-      seen[w.id] = sw; localStorage.setItem("asap-watch-seen", JSON.stringify(seen)); return { n, id: w.id };
+      // everything this watch matches is marked as already seen except the three newest reports, which then arrive as its hits
+      const seen = JSON.parse(localStorage.getItem("asap-watch-seen") || "{}"), sw = {}, now = Date.now();
+      const ms = window.OSAP_WATCH.matches(w).map((m) => Object.assign({ _t: m.t0 || Date.parse(m.ts) || 0 }, m)).sort((a, b) => b._t - a._t);
+      const keep = {}; let n = 0; ms.forEach((m) => { if (n < 3 && !keep[m.gk]) { keep[m.gk] = 1; n++; } });
+      ms.forEach((m) => { if (keep[m.gk]) return; sw[m.k] = now; if (m.sk) sw["s:" + m.sk] = now; });
+      ms.forEach((m) => { if (keep[m.gk]) { delete sw[m.k]; if (m.sk) delete sw["s:" + m.sk]; } });
+      w.base = now - 864e5; localStorage.setItem("asap-watches", JSON.stringify(ws));
+      seen[w.id] = sw; localStorage.setItem("asap-watch-seen", JSON.stringify(seen)); return { n, all: ms.length, pts: (w.area || []).length, id: w.id };
     });
     console.log("  recent matches", JSON.stringify(n));
-    await p.goto(base + "?wshow=" + encodeURIComponent(n.id) + "#th/map");
+    await p.goto(base + "?wshow=" + encodeURIComponent(n.id) + "#th/timeline");
     await p.waitForFunction(() => window.__asapMap && window.OSAP_ATAK, null, { timeout: 60000 });
     await p.evaluate(() => { const b = document.querySelector('button[data-rv-mode="map"]'); if (b) b.click(); });
     try { await p.waitForFunction(() => { const t = document.getElementById("wtoast"); return t && !t.hidden; }, null, { timeout: 30000 }); } catch { console.log("  no alert toast"); }
