@@ -5,7 +5,7 @@
    picks which kinds are drawn (kept on this device). The same switch carries the surveillance cameras mapped in OpenStreetMap
    (assets/osap-surveil.js keeps its own source, layer and pop-ups; its button here is the "Surveillance" kind, and its messages
    sit under the buttons), so Map overlays has one Cameras switch.
-   Its switch sits in its own Map overlays section, Cameras (#ml-cams), right after Infrastructure (before 2026-11-14 it sat
+   Its switch sits in its own Map overlays section, Cameras (#ml-cams), after Infrastructure and Embassies and evacuation (before 2026-11-14 it sat
    under Infrastructure > Roads, but most kinds are not road cameras). It is not a data set: it never filters reports, and nothing here creates or changes a record.
    - Off by default. Switched on, the page reads the camera list of each agency whose area is on screen (zoom 8 and closer), and
      draws a camera icon per camera, up to MAX at a time.
