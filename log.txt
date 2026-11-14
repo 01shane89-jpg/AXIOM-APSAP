@@ -1,0 +1,10 @@
+  reports 7d 900 asof 2026-11-14 15:24Z
+  item tanker.*mine|mine.*tanker -> "3 oil tankers hit mines in Strait of Hormuz, Iran says"
+  item 25 seafarer -> "UN says 25 seafarers killed in, around Hormuz since US-Israel war on Iran"
+  item MQ-1 -> "IRGC downs 17th US MQ-1 drone over Qeshm Island"
+  item CENTCOM|denies -> "US Military Denies Iran’s Radar Attack Claim Amid Escalating Gulf Tensions"
+  thread 4d42679b7746 Iran Claims Destruction of U.S. Radar in Bahrain
+  item hold off -> "Trump tells advisers he may hold off on Iran attacks barring new provocations"
+  item 7,?000 -> "Al-Badawi to the Security Council: Gulf States have been targeted by more than 7,000 Iranian missiles and drones"
+PASS 15 iranwar {"caps":10,"pdfs":[]}
+all clips recorded

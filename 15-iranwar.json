@@ -1,0 +1,63 @@
+{
+ "name": "iranwar",
+ "view": "phone",
+ "w": 1080,
+ "h": 1620,
+ "frames": 616,
+ "start": 16.348,
+ "end": 74.804,
+ "caps": [
+  {
+   "t": 16.381,
+   "text": "Iran war: where it stands",
+   "sub": "Week to 14 Nov 2026, from 900 reports in OSAP. Every report links to its source."
+  },
+  {
+   "t": 20.884,
+   "text": "No ceasefire agreement",
+   "sub": "UN, 13 Nov: talks have not produced a deal. Shaded: reported strike and shipping zones, each with its source."
+  },
+  {
+   "t": 25.387,
+   "text": "Hormuz: Iran says 3 tankers hit mines",
+   "sub": "A claim by Iran's navy and IRGC, 13 to 14 Nov (IRNA, Mehr). Not independently confirmed."
+  },
+  {
+   "t": 35.283,
+   "text": "UN: 25 seafarers killed since February",
+   "sub": "The IMO's count for in and around the strait, reported 14 Nov."
+  },
+  {
+   "t": 39.088,
+   "text": "Claims from both sides",
+   "sub": "IRGC: it downed a US MQ-1 and hit a US radar in Bahrain. CENTCOM denies the radar claim."
+  },
+  {
+   "t": 49.818,
+   "text": "Go deeper: one story, every outlet",
+   "sub": "Iran's claim it hit a US radar in Bahrain, and every outlet that carried it."
+  },
+  {
+   "t": 53.845,
+   "text": "Check it: who carried it",
+   "sub": "State media or independent, and from which countries. OSAP never rates a story true or false."
+  },
+  {
+   "t": 60.506,
+   "text": "Talks: no deal yet",
+   "sub": "Reuters, 13 Nov: sources say Trump may hold off on new strikes unless Iran provokes the US."
+  },
+  {
+   "t": 64.91,
+   "text": "UN Security Council meets on Hormuz",
+   "sub": "13 Nov, at Bahrain's request. Gulf states told it Iran fired over 7,000 missiles and drones at them: their figure."
+  },
+  {
+   "t": 69.515,
+   "text": "Reported, not verified",
+   "sub": "Every side's statements are claims. Every item is dated and linked to its source."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}
