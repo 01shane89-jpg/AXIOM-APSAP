@@ -922,8 +922,8 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
       <div class="ctl"><input type="checkbox" id="lyr-rain" checked><label for="lyr-rain">Rain in the last 24 h<span class="hint">Stations above 60 mm</span></label></div>
       <div class="ctl"><input type="checkbox" id="lyr-flood" checked><label for="lyr-flood">Satellite water detection<span class="hint">NASA MODIS, 3-day composite</span></label></div>
       <div class="seg" role="group" aria-label="Satellite composite date">
-        <button type="button" id="d24" aria-pressed="true">to 24 Sep</button>
-        <button type="button" id="d25" aria-pressed="false">to 25 Sep</button>
+        <button type="button" id="fd1" aria-pressed="true">to yesterday</button>
+        <button type="button" id="fd2" aria-pressed="false">a day earlier</button>
       </div>
       <div class="sub2"><input type="range" id="op-flood" min="20" max="100" value="100" aria-label="Satellite layer opacity"></div>
       <div class="ctl"><input type="checkbox" id="lyr-base" checked><label for="lyr-base">Basemap</label></div>
@@ -931,7 +931,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
         <label for="op-bright" style="font-size:11px;color:var(--muted)">Basemap brightness</label>
         <input type="range" id="op-bright" min="70" max="175" value="100" aria-label="Basemap brightness">
       </div>
-      <div class="ctl"><input type="checkbox" id="lyr-prov"><label for="lyr-prov">Provincial alert level<span class="hint">DDPM, RID, ONWR and GISTDA bulletins, 21&ndash;25 Sep</span></label></div>
+      <div class="ctl"><input type="checkbox" id="lyr-prov"><label for="lyr-prov">Provincial alert level, September<span class="hint">Archived: DDPM, RID, ONWR and GISTDA bulletins of 21&ndash;25 Sep 2026, not current</span></label></div>
     </div>
 
     <div class="sec maplg">
@@ -964,7 +964,7 @@ html.phone .leaflet-control-attribution{font-size:9px;line-height:1.3}
 
     <div class="sec">
       <h2>Official warnings</h2>
-      <p class="sub">Issued by the Hydro-Informatics Institute. English is a structured reading of the Thai bulletin.</p>
+      <p class="sub">Thai Meteorological Department warnings from the last 3 days, and this hour&rsquo;s ThaiWater gauges over their bank or with heavy rain. The gauge lines are a plain reading of the telemetry, not a bulletin.</p>
       <div id="warn-list"></div>
     </div>
 
@@ -1247,6 +1247,17 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   "use strict";
   var BLANK = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
   var TW = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/";
+  /* staleness guard for the Thailand flood tab: a warning older than WARN_HOURS (Bangkok time, as ThaiWater and the snapshot
+     write it) is not shown as a warning, here or in the reports list */
+  var WARN_HOURS = 72;
+  function freshWarnings() {
+    var L = window.LIVE || {};
+    return (L.warnings || []).filter(function (w) {
+      var t = Date.parse(String(w.t || "").slice(0, 16).replace(" ", "T") + "Z") - 7 * 36e5;
+      return isFinite(t) && Date.now() - t < WARN_HOURS * 36e5 && w.en && w.en.length;
+    });
+  }
+  window.OSAP_FRESH_WARN = freshWarnings;   /* the reports list (a later script) reads warnings through the same guard */
 
   /* the root's computed style is a live object: read once, it always gives the current theme's values (one lookup per marker
      instead of a new style object per marker) */
@@ -2143,37 +2154,25 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   function buildFlood() {
   if (floodBuilt) return;
   floodBuilt = true;
-  /* ---------- satellite raster (packaged, re-keyed from the GIBS palette) ---------- */
-  var floodStore = function () { return window.TILES_FLOOD; };
-  var Packed = L.TileLayer.extend({
-    getTileUrl: function (c) {
-      var s = floodStore();
-      return (s && s[c.z + "/" + c.x + "/" + c.y]) || BLANK;
-    }
-  });
-  var floodLayer = new Packed("", { maxNativeZoom: 9, minNativeZoom: 6, minZoom: 5, maxZoom: 13,
-    opacity: 1, pane: "floodpane", attribution: "NASA LANCE MCDWD" }).addTo(map);
-  /* the packed tiles (about 1.4 MB) load after the page is up, so they never hold up the start; tiles are blank until then */
-  window.OSAP_LATER("assets/tiles-flood.js", function () { floodLayer.redraw(); });
-
-  var d24 = document.getElementById("d24"), d25 = document.getElementById("d25");
-  function setDate(which) {
-    d24.setAttribute("aria-pressed", which === 24 ? "true" : "false");
-    d25.setAttribute("aria-pressed", which === 25 ? "true" : "false");
-    if (which === 25 && !window.TILES_FLOOD25) {
-      var s = document.createElement("script");
-      s.src = "assets/tiles-flood25.js";
-      s.onload = function () { floodStore = function () { return window.TILES_FLOOD25; }; floodLayer.redraw(); };
-      s.onerror = function () { d24.click(); };
-      document.body.appendChild(s);
-      return;
-    }
-    floodStore = which === 25 ? function () { return window.TILES_FLOOD25; }
-                              : function () { return window.TILES_FLOOD; };
-    floodLayer.redraw();
+  /* ---------- satellite raster: NASA MODIS 3-day flood composite, live from GIBS ----------
+     Until 14 Nov 2026 this drew tiles packaged from the 24 and 25 Sep composites, so the layer still showed September's flooding
+     in November (Shane, filming the flood reel). It now asks GIBS for the composite ending yesterday (UTC) or the day before,
+     re-coloured in the browser like Data sets > Flooding now (FLD_KEY.now, KeyedTiles). The buttons name the dates they draw. */
+  var FD = function (k) { return new Date(Date.now() - k * 864e5).toISOString().slice(0, 10); };
+  var fdUrl = function (k) { return "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Combined_Flood_3-Day/default/" + FD(k) +
+    "/GoogleMapsCompatible_Level9/{z}/{y}/{x}.png"; };
+  var floodLayer = new KeyedTiles(fdUrl(1), { rekey: FLD_KEY.now, maxNativeZoom: 9, minZoom: 5, maxZoom: 13,
+    opacity: 1, pane: "floodpane", attribution: "NASA LANCE MODIS flood product (MCDWD) via GIBS" }).addTo(map);
+  var fd1 = document.getElementById("fd1"), fd2 = document.getElementById("fd2");
+  var dayLabel = function (k) { var d = new Date(Date.now() - k * 864e5); return "to " + d.getUTCDate() + " " + ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][d.getUTCMonth()]; };
+  fd1.textContent = dayLabel(1); fd2.textContent = dayLabel(2);
+  function setDate(k) {
+    fd1.setAttribute("aria-pressed", k === 1 ? "true" : "false");
+    fd2.setAttribute("aria-pressed", k === 2 ? "true" : "false");
+    floodLayer.setUrl(fdUrl(k));
   }
-  d24.addEventListener("click", function () { setDate(24); });
-  d25.addEventListener("click", function () { setDate(25); });
+  fd1.addEventListener("click", function () { setDate(1); });
+  fd2.addEventListener("click", function () { setDate(2); });
 
   /* ---------- province alert tiers (context, off by default) ---------- */
   var TIER = { 3: { label: "Overflow expected", css: "--l3-fill", fill: 0.5 },
@@ -2414,14 +2413,16 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
 
     var wl = document.getElementById("warn-list");
     wl.textContent = "";
-    LIVE.warnings.slice(0, 5).forEach(function (w) {
+    var fresh = freshWarnings();
+    fresh.slice(0, 5).forEach(function (w) {
       var d = document.createElement("div");
       d.className = "warn";
-      d.innerHTML = '<div class="wt">' + esc(w.t) + '</div><ul>' +
-        w.en.slice(0, 4).map(function (l) { return "<li>" + esc(l) + "</li>"; }).join("") +
-        '</ul><details><summary>Thai original</summary><span class="th">' + esc(w.th) + '</span></details>';
+      d.innerHTML = '<div class="wt">' + esc(w.t) + ' (Thai time) · ' + esc(w.src || "Hydro-Informatics Institute") + '</div><ul>' +
+        w.en.slice(0, 6).map(function (l) { return "<li>" + esc(l) + "</li>"; }).join("") + "</ul>" +
+        (w.th ? '<details><summary>Thai original</summary><span class="th">' + esc(w.th) + "</span></details>" : "");
       wl.appendChild(d);
     });
+    if (!fresh.length) wl.innerHTML = '<p class="sub">No flood or heavy-rain warning in the last 3 days.</p>';
 
     var nPow = POWER.filter(function (o) { return o.g === "power"; }).length;
     var nCare = POWER.filter(function (o) { return o.g === "care"; }).length;
@@ -3547,15 +3548,19 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   });
   }
   addLiveFlood();
-  if (TH) LIVE.warnings.forEach(function (w) {
-    add({ layer: "flood", type: "claim", cat: "Official warning",
+  if (TH) (window.OSAP_FRESH_WARN ? window.OSAP_FRESH_WARN() : []).forEach(function (w) {
+    add({ layer: "flood", type: "claim", cat: w.kind === "gauges" ? "Gauge reading" : "Official warning",
       title: w.en[0] + (w.en.length > 1 ? " (+" + (w.en.length - 1) + " more)" : ""),
       detail: w.en.join(" · "), th: w.th, ts: w.t, place: "", prov: "", lat: null, lon: null, prec: "none",
-      sev: /flash-flood|over the bank/i.test(w.en.join(" ")) ? 3 : 2, src: SOURCES.hii, url: "https://www.thaiwater.net/",
+      sev: /flash-flood|over the bank/i.test(w.en.join(" ")) ? 3 : 2, src: w.kind === "official" ? SOURCES.tmd : SOURCES.hii, url: w.url || "https://www.thaiwater.net/",
       issued: w.t, recorded: BUILT,
-      derived: "English lines are a structured reading of the Thai bulletin (a derivative). The Thai original is kept." });
+      derived: w.kind === "gauges" ? "Written out from this hour's ThaiWater gauge readings; not a bulletin."
+        : w.kind === "official" ? "English as the Thai Meteorological Department published it through WMO."
+        : "English lines are a structured reading of the Thai bulletin (a derivative). The Thai original is kept." });
   });
-  if (TH) PROV.features.forEach(function (f) {
+  /* the provincial bulletins are September's (21 to 25 Sep 2026) and are not refreshed: past 14 days they stay on the map
+     as an archived layer, off by default, but no longer enter the reports list as if they were current */
+  if (TH && Date.now() - Date.parse("2026-09-25T00:00Z") < 14 * 864e5) PROV.features.forEach(function (f) {
     var p = f.properties;
     if (p.lvl < 2) return;
     var ag = (String(p.why).match(/\b(DDPM|RID|ONWR|GISTDA|TMD)\b/) || [])[1] || "DDPM";
