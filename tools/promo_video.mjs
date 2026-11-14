@@ -299,7 +299,7 @@ const SCENES = [
     if (await k.click("#td-daily [data-dlprint]")) await k.pdf("daily-brief.pdf");
     await k.wait(1200);
   }],
-  ["imagery", { z: 13, at: [25.117, 55.135], settle: 9000 }, async ({ k, p }) => {
+  ["imagery", { hash: "#th/timeline", z: 13, at: [25.117, 55.135], settle: 9000 }, async ({ k, p }) => {
     k.caption("The newest satellite pictures of any place", "Every free source at once, newest first.");
     await k.wait(1800);
     await k.tool("overlays"); await k.wait(1500);
@@ -322,11 +322,14 @@ const SCENES = [
     await p.evaluate((sel) => { const e = document.querySelector(sel); if (e) e.scrollIntoView({ behavior: "smooth", block: "center" }); }, sel); await k.wait(1200);
     await k.click(sel);
     await k.wait(2500);
-    await k.press("Map"); await k.wait(5500);
-    k.caption("Compare two dates with a swipe", "Sentinel-2 before and after, any place in the world.");
-    await p.evaluate(() => { window.OSAP_NEWIMG.close && window.OSAP_NEWIMG.close(); window.OSAP_SAT.mode("swipe"); window.OSAP_SAT.open(); });
-    await k.wait(7000);
-    await k.press("Map"); await k.wait(5000);
+    // the windows close; the picture stays on the map with its date badge
+    await p.evaluate(() => { window.OSAP_NEWIMG.close(); document.querySelectorAll("#atk-om .x, #atk-om [data-om=x], .chead .x").forEach((x) => { if (x.offsetParent) x.click(); }); });
+    await p.keyboard.press("Escape"); await k.wait(800);
+    await p.evaluate(() => { const s = document.querySelector('[data-split="map"], button[aria-label="Map only"]'); if (s && s.offsetParent) s.click(); });
+    await k.wait(1500);
+    await k.view([25.117, 55.135], 14, true); await k.wait(4500);
+    k.caption("Dated, sourced and free to use", "Sentinel-2, Landsat and NASA daily pictures, for any place in the world.");
+    await k.wait(4500);
   }],
 ];
 
