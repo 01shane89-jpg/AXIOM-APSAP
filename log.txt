@@ -1,0 +1,3 @@
+  traffic {"sea":1202,"air":10,"chk":"air:true,ground:false,sea:true"}
+PASS 14 mapping {"caps":6,"pdfs":[]}
+all clips recorded

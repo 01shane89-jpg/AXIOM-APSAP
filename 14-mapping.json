@@ -1,0 +1,43 @@
+{
+ "name": "mapping",
+ "view": "desk",
+ "w": 1920,
+ "h": 1080,
+ "frames": 595,
+ "start": 12.681,
+ "end": 60.417,
+ "caps": [
+  {
+   "t": 12.681,
+   "text": "One map for everything",
+   "sub": "News, warnings, weather and live traffic, for any place on earth."
+  },
+  {
+   "t": 15.881,
+   "text": "Street, topographic or satellite",
+   "sub": "Change the base map in one tap."
+  },
+  {
+   "t": 24.207,
+   "text": "Live ships and aircraft",
+   "sub": "Positions they broadcast themselves, refreshed every minute."
+  },
+  {
+   "t": 36.905,
+   "text": "Draw your own plans",
+   "sub": "Circles, range rings, shapes, arrows and labels, saved on your device."
+  },
+  {
+   "t": 46.182,
+   "text": "Any place in 3D",
+   "sub": "Real terrain you can tilt and turn."
+  },
+  {
+   "t": 56.313,
+   "text": "Every country, one map",
+   "sub": "Every item dated and linked to its source."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}
