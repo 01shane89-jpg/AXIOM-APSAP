@@ -1,0 +1,38 @@
+{
+ "name": "brief",
+ "view": "phone",
+ "w": 1080,
+ "h": 1620,
+ "frames": 175,
+ "start": 13.284,
+ "end": 30.139,
+ "caps": [
+  {
+   "t": 13.284,
+   "text": "Your country's daily brief, every morning",
+   "sub": "Top lines, key events and what to watch."
+  },
+  {
+   "t": 17.891,
+   "text": "Every line cites its sources",
+   "sub": "Numbered links back to the original reports."
+  },
+  {
+   "t": 25.025,
+   "text": "One tap: Export PDF",
+   "sub": "Built from the latest reporting for the country."
+  }
+ ],
+ "skips": [
+  [
+   27.981,
+   28.335
+  ]
+ ],
+ "pdfs": [
+  {
+   "file": "daily-brief.pdf",
+   "t": 27.975
+  }
+ ]
+}

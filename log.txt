@@ -1,0 +1,2 @@
+PASS 09 brief {"caps":3,"pdfs":["daily-brief.pdf"]}
+all clips recorded
