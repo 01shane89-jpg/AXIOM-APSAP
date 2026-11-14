@@ -91,7 +91,7 @@ async function entities(ids, props) {
 const allIds = [...new Set([...itemOf.values()].flatMap((s) => [...s]))];
 const ents = await entities(allIds, "labels|claims");
 const named = new Set();
-for (const e of ents.values()) for (const p of ["P127", "P749", "P31", "P1454", "P1142", "P2770", "P17"]) for (const c of (e.claims || {})[p] || []) { const id = c.mainsnak?.datavalue?.value?.id; if (id) named.add(id); }
+for (const e of ents.values()) for (const p of ["P127", "P749", "P31", "P1454", "P1142", "P2770", "P17", "P8324"]) for (const c of (e.claims || {})[p] || []) { const id = c.mainsnak?.datavalue?.value?.id; if (id) named.add(id); }
 const nEnt = await entities([...named], "labels|claims");
 const labels = new Map(), iso = new Map();
 for (const [k, v] of nEnt) {
@@ -99,6 +99,15 @@ for (const [k, v] of nEnt) {
   const a2 = ((v.claims || {}).P297 || [])[0]?.mainsnak?.datavalue?.value;
   if (a2) iso.set(k, a2.toLowerCase());
 }
+// what each owner or parent is (its own "instance of" and "legal form"), named in English
+const ownerIsaIds = new Map();
+for (const e of ents.values()) for (const p of ["P127", "P749"]) for (const c of (e.claims || {})[p] || []) {
+  const id = c.mainsnak?.datavalue?.value?.id, o = id && nEnt.get(id); if (!o) continue;
+  ownerIsaIds.set(id, ["P31", "P1454"].flatMap((pp) => ((o.claims || {})[pp] || []).map((x) => x.mainsnak?.datavalue?.value?.id).filter(Boolean)));
+}
+const need = [...new Set([...ownerIsaIds.values()].flat())].filter((q) => !labels.has(q));
+for (const [k, v] of await entities(need, "labels")) labels.set(k, (v.labels && v.labels.en && v.labels.en.value) || "");
+const isaOf = (q) => (ownerIsaIds.get(q) || []).map((x) => labels.get(x)).filter(Boolean);
 
 // 3. one record a host: where several items share a site, the one that is a news outlet (has an owner or a media "instance of")
 const facts = {};
@@ -106,9 +115,9 @@ const media = /news|newspaper|broadcast|television|radio|agency|magazine|media|w
 for (const h of want) {
   const ids = [...(itemOf.get(h) || [])].filter((id) => ents.has(id));
   if (!ids.length) continue;
-  const score = (id) => { const f = factsOf(ents.get(id), labels, (q) => iso.get(q), ""); return (f.own.length ? 2 : 0) + (f.isa.some(([l]) => media.test(l)) ? 3 : 0) + (f.par.length ? 1 : 0); };
+  const score = (id) => { const f = factsOf(ents.get(id), labels, (q) => iso.get(q), "", isaOf); return (f.own.length ? 2 : 0) + (f.isa.some(([l]) => media.test(l)) ? 3 : 0) + (f.par.length ? 1 : 0); };
   const best = ids.sort((a, b) => score(b) - score(a) || (a < b ? -1 : 1))[0];
-  facts[h] = factsOf(ents.get(best), labels, (q) => iso.get(q), osapKind.get(h) || "");
+  facts[h] = factsOf(ents.get(best), labels, (q) => iso.get(q), osapKind.get(h) || "", isaOf);
 }
 const asof = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const kinds = {}; Object.values(facts).forEach((f) => { kinds[f.fund.kind] = (kinds[f.fund.kind] || 0) + 1; });

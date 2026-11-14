@@ -6,7 +6,7 @@
 // it came from, so a reader can open it. OSAP's own outlet list (tools/outlet_owners.json, tools/news_feeds.json state flag) wins for
 // state media and public broadcasters. Nothing is OSAP's judgement of an outlet's reporting.
 export const SCHEMA = "osap-outlet-facts/1";
-export const P = { site: "P856", owner: "P127", parent: "P749", country: "P17", isa: "P31", form: "P1454", ideology: "P1142", income: "P2770", sponsor: "P859", founded: "P571" };
+export const P = { site: "P856", owner: "P127", parent: "P749", country: "P17", isa: "P31", form: "P1454", ideology: "P1142", income: "P2770", sponsor: "P859", founded: "P571", funder: "P8324" };
 
 /** host of a link, without "www." and "m.", lower case; "" if none */
 export function hostOf(u) {
@@ -39,10 +39,16 @@ export const FUNDING = {
 export function fundingOf(rec, osap) {
   if (osap === "state" || osap === "public") return { kind: osap, why: "OSAP's outlet list" };
   const own = [...(rec.owner || []), ...(rec.parent || [])].map((x) => x.l).join("; ");
-  const what = [...(rec.isa || []), ...(rec.form || []), ...(rec.income || [])].map((x) => x.l).join("; ");
+  const what = [...(rec.isa || []), ...(rec.form || []), ...(rec.income || []), ...(rec.funder || [])].map((x) => x.l).join("; ");
+  // what the owner or parent itself is ("government agency", "nonprofit organization"): RFE/RL's services are owned by a
+  // nonprofit funded by the U.S. Congress, not by a business
+  const ownWhat = (rec.ownerIsa || []).join("; ");
   if (RX.state.test(what)) return { kind: "state", why: "Wikidata: " + pick(what, RX.state) };
   if (own && RX.stateOwner.test(own)) return { kind: "state", why: "Wikidata: owned by " + own };
+  if (ownWhat && (RX.state.test(ownWhat) || /government agency|independent agency|executive agency/i.test(ownWhat))) return { kind: "state", why: "Wikidata: owned by " + own + " (" + (pick(ownWhat, RX.state) || pick(ownWhat, /agency/i)) + ")" };
   if (RX.public.test(what)) return { kind: "public", why: "Wikidata: " + pick(what, RX.public) };
+  if (ownWhat && RX.public.test(ownWhat)) return { kind: "public", why: "Wikidata: owned by " + own + " (" + pick(ownWhat, RX.public) + ")" };
+  if (ownWhat && RX.nonprofit.test(ownWhat) && !RX.business.test(what)) return { kind: "nonprofit", why: "Wikidata: owned by " + own + " (" + pick(ownWhat, RX.nonprofit) + ")" };
   if (RX.nonprofit.test(what)) return { kind: "nonprofit", why: "Wikidata: " + pick(what, RX.nonprofit) };
   if (RX.business.test(what) || (own && RX.business.test(own))) return { kind: "business", why: "Wikidata: " + (pick(what, RX.business) || "owned by " + own) };
   if (own) return { kind: "business", why: "Wikidata: owned by " + own };
@@ -52,7 +58,7 @@ function pick(s, rx) { return s.split("; ").find((x) => rx.test(x)) || ""; }
 
 /** One outlet's facts from a Wikidata entity (wbgetentities JSON) and the labels of the items it names.
  *  Returns { q, n, cc?, own[], par[], isa[], fund{kind,why}, lean[], yr? } with each named item as [label, Q-id]. */
-export function factsOf(ent, labels, ccOf, osap) {
+export function factsOf(ent, labels, ccOf, osap, isaOf = () => []) {
   const claims = ent.claims || {};
   const ids = (p) => (claims[p] || []).filter((c) => c.mainsnak && c.mainsnak.datavalue && c.rank !== "deprecated" && !c.qualifiers?.P582)
     .map((c) => c.mainsnak.datavalue.value && c.mainsnak.datavalue.value.id).filter(Boolean);
@@ -60,8 +66,9 @@ export function factsOf(ent, labels, ccOf, osap) {
   const rec = {
     owner: ids(P.owner).map(lab).filter((x) => x.l), parent: ids(P.parent).map(lab).filter((x) => x.l),
     isa: ids(P.isa).map(lab).filter((x) => x.l), form: ids(P.form).map(lab).filter((x) => x.l), income: ids(P.income).map(lab).filter((x) => x.l),
-    ideology: ids(P.ideology).map(lab).filter((x) => x.l), country: ids(P.country),
+    ideology: ids(P.ideology).map(lab).filter((x) => x.l), country: ids(P.country), funder: ids(P.funder).map(lab).filter((x) => x.l),
   };
+  rec.ownerIsa = [...ids(P.owner), ...ids(P.parent)].flatMap((q) => isaOf(q) || []);
   const fund = fundingOf(rec, osap);
   const yr = ((claims[P.founded] || [])[0]?.mainsnak?.datavalue?.value?.time || "").match(/^[+-](\d{4})/);
   const cc = rec.country.map(ccOf).find(Boolean) || "";

@@ -23,6 +23,7 @@ const PRECACHE = [
 "manifest.webmanifest",
 "assets/osap-news.js",
 "assets/osap-daily.js",
+"assets/osap-outletfacts.js",
 "assets/osap-coverage.js",
 "assets/osap-mobility.js",
 "assets/osap-panels.js",

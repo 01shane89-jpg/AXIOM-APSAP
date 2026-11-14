@@ -7,7 +7,9 @@
    - Every line is an outlet's own headline and link. Nothing is judged: a blindspot means no matching headline was found in the
      outlets OSAP reads (a story told in other words, or in an untranslated headline, is missed), not that it went unreported.
    - Who owns an outlet comes from OSAP's outlet list (tools/news_feeds.json, tools/outlet_owners.json), not from its reporting.
-   - The file is fetched only when Today is shown for the country. Read-only: it never changes a record. */
+   - The file is fetched only when Today is shown for the country. Read-only: it never changes a record.
+   - Under Who carried it, each outlet can show About this outlet (assets/osap-outletfacts.js): who owns it and how it is paid
+     for, from its Wikidata record. */
 (function () {
   "use strict";
   var D = document, W = window, CC = "", NAME = "", el = null, state = 0, view = "top", bsel = "", shown = 10, open = {};
@@ -95,7 +97,8 @@
       var ru = safeUrl(r[5]), place = r[3] ? cName(r[3]) + (r[8] ? " (placed by where its stories are filed)" : "") : "country not known";
       return "<li>" + (ru ? '<a href="' + esc(ru) + '" target="_blank" rel="noopener noreferrer">' + esc(r[0]) + "</a>" : esc(r[0])) +
         ' <span class="cvo">· ' + esc(KIND[r[1]] || "") + (r[1] === "state" ? " (a claim)" : "") + " · " + esc(place) + " · " + esc(when(r[4])) + "</span>" +
-        (r[6] && r[6] !== s.t ? '<div class="cvo">' + esc(txt(r[6])) + (r[7] ? " (machine translated)" : "") + "</div>" : r[7] ? '<div class="cvo">Machine translated headline</div>' : "") + "</li>";
+        (r[6] && r[6] !== s.t ? '<div class="cvo">' + esc(txt(r[6])) + (r[7] ? " (machine translated)" : "") + "</div>" : r[7] ? '<div class="cvo">Machine translated headline</div>' : "") +
+        (W.OSAP_OUTLETFACTSQ ? W.OSAP_OUTLETFACTSQ.html(r[5]) : "") + "</li>";
     }).join("") + '</ul><div class="cvo">Record fingerprint (SHA-256 of the links): ' + esc(String(s.fp || "").slice(0, 16)) + "…</div></details></li>";
     return h;
   }
@@ -141,7 +144,11 @@
     var s = D.createElement("script");
     s.src = "data/live/stories/" + encodeURIComponent(CC) + ".js?t=" + Math.floor(Date.now() / 6e5);
     s.async = true;
-    s.onload = s.onerror = function () { s.remove(); state = 2; render(); };
+    s.onload = s.onerror = function () {
+      s.remove(); state = 2; render();
+      // then who owns and pays for each outlet (assets/osap-outletfacts.js), for "About this outlet" under Who carried it
+      if (W.OSAP_OUTLETFACTSQ && data()) W.OSAP_OUTLETFACTSQ.load(function () { render(); });
+    };
     D.head.appendChild(s);
   }
   function mount(box, cc, name) {
