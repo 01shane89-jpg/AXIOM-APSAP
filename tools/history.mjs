@@ -32,6 +32,22 @@ const KEEP = ["title", "title_en", "sum_rel", "notext", "rel_v", "date", "link",
 // it is removed from new and already-kept items alike, so older copies are cleaned on the next refresh.
 const CODE = /\bwindow\.\w+|addEventListener\s*\(|document\.getElementById|function\s*\(\s*\w*\s*\)\s*\{/;
 // A machine translation the model invented (tools/mt_guard.mjs) is removed from new and kept items alike; the original stays.
+// A pin named for the area's own country at "province" precision is not a place: GeoNames has regions spelled like their country
+// in the local language (México state, Panamá province), and headlines that only named the country were pinned there until
+// tools/gazetteer.mjs folded accents (audit 2026-11-14). Kept items with such a pin lose it, so the next refresh cleans them.
+const fold = (s) => String(s || "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+let CNAME = null;
+function countryName(cc) {
+  if (!CNAME) {
+    CNAME = {};
+    try { const t = fs.readFileSync("data/basemap/world-countries.js", "utf8"); for (const c of JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, ""))) CNAME[c.id] = fold(c.name); } catch (e) {}
+  }
+  return CNAME[cc] || "";
+}
+export function dropCountryPin(cc, i) {
+  if (i && i.geo && i.geo.p === "province" && countryName(cc) && fold(i.geo.n) === countryName(cc)) i.geo = null;
+  return i;
+}
 const unCode = (i) => { for (const k of ["summary", "summary_en"]) if (i[k] && CODE.test(i[k])) delete i[k]; dropSuspectMt(i); return i; };
 // A US state's own outlets ("us:MO") are kept apart in data/history/us-states/<st>.js (window.ASAP_HIST_ST), loaded only by
 // that state's view, so the state keeps its past reporting as countries do.
@@ -71,7 +87,7 @@ export async function updateHistory(kind, items, stamp, caps) {
     if (!/^[a-z]{2,3}$/.test(cc) && !isState(cc)) continue;
     const h = read(cc), byLink = new Map();
     // items kept before 2026-10-17 still carry the outlet's summary: it is dropped here (its relevance verdict kept)
-    for (const i of h[kind] || []) if (i && i.link) byLink.set(i.link, await wordsOnly(stripOutletText(unCode(i), R)));
+    for (const i of h[kind] || []) if (i && i.link) byLink.set(i.link, await wordsOnly(stripOutletText(unCode(dropCountryPin(cc, i)), R)));
     for (const i of items[cc] || []) {
       if (!i || !i.link || !/^https?:\/\//.test(i.link)) continue;
       if (!byLink.has(i.link)) added++;

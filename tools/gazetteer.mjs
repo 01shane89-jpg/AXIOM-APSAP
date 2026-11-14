@@ -35,7 +35,11 @@ const STOP = new Set(["police", "mobile", "split", "nice", "reading", "bath", "h
   "mission", "temple", "church", "castle", "market", "garden", "gardens", "bridge", "beach", "valley", "canyon", "mountain", "harbour", "harbor",
   "whites", "blacks", "nations", "america", "europe", "africa", "asia", "pacific", "atlantic", "arctic", "alliance", "senate", "congress",
   "parliament", "court", "crown", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "christmas", "easter"]);
-const COUNTRY_NAMES = new Set(COUNTRIES.map((c) => c.name.toLowerCase()));
+// Accents folded, so a region spelled like its own country in the local language ("México" state, "Panamá" province) is not
+// read when a text names the country: Spanish headlines saying "México" were pinned on the State of Mexico (audit 2026-11-14).
+const fold = (s) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+const COUNTRY_NAMES = new Set(COUNTRIES.map((c) => fold(c.name)));
+const isCountryName = (k) => COUNTRY_NAMES.has(fold(k));
 
 let LOADED = null, WORLD = null;
 export function loadGazetteer(get = fetchBuf) {
@@ -52,7 +56,7 @@ export function loadGazetteer(get = fetchBuf) {
     const world = WORLD = new Map();  // lower name -> every town of that name, in any country (to spot ambiguous names)
     const put = (cc, name, p) => {
       const k = name.toLowerCase();
-      if (name.length < 4 || STOP.has(k) || COUNTRY_NAMES.has(k) || !/^\p{Lu}/u.test(name)) return;
+      if (name.length < 4 || STOP.has(k) || isCountryName(k) || !/^\p{Lu}/u.test(name)) return;
       const m = (byCc[cc] = byCc[cc] || new Map()), prev = m.get(k);
       // A name that is both a region and a town (Okinawa, Kharkiv) means the town only when the town is that region's seat;
       // otherwise the region wins, with its coarser precision, because the text cannot say which is meant.
@@ -202,7 +206,7 @@ export async function addSmallPlaces(idx, ccs, get = fetchBuf, cacheDir = proces
     const m = (byCc[cc] = byCc[cc] || new Map());
     for (const n of names) {
       const k = n.toLowerCase();
-      if (n.length < 5 || STOP.has(k) || COUNTRY_NAMES.has(k) || !/^\p{Lu}/u.test(n) || idx[cc].m.has(k)) continue;
+      if (n.length < 5 || STOP.has(k) || isCountryName(k) || !/^\p{Lu}/u.test(n) || idx[cc].m.has(k)) continue;
       if (k.split(/[^\p{L}\p{N}]+/u).every((w) => SMALL_WORDS.has(w) || STOP.has(w))) continue;
       if (regHead[cc] && regHead[cc].has(k)) continue;
       const e = m.get(k) || { cands: [] };

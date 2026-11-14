@@ -5,8 +5,8 @@
    picks which kinds are drawn (kept on this device). The same switch carries the surveillance cameras mapped in OpenStreetMap
    (assets/osap-surveil.js keeps its own source, layer and pop-ups; its button here is the "Surveillance" kind, and its messages
    sit under the buttons), so Map overlays has one Cameras switch.
-   Its switch sits in Map overlays > Infrastructure > Roads (#ml-roads), next to road
-   closures. It is not a data set: it never filters reports, and nothing here creates or changes a record.
+   Its switch sits in its own Map overlays section, Cameras (#ml-cams), after Infrastructure and Embassies and evacuation (before 2026-11-14 it sat
+   under Infrastructure > Roads, but most kinds are not road cameras). It is not a data set: it never filters reports, and nothing here creates or changes a record.
    - Off by default. Switched on, the page reads the camera list of each agency whose area is on screen (zoom 8 and closer), and
      draws a camera icon per camera, up to MAX at a time.
    - Hover (mouse) shows the latest still image; a tap or click opens it larger with the agency, licence and fetch time, a refresh
@@ -409,8 +409,8 @@
   D.head.appendChild(css);
 
   function mount() {
-    /* the home is Map overlays > Infrastructure > Roads (#ml-roads, next to road closures); older pages have only #ml-infra or #ml-extra */
-    var home = D.getElementById("ml-roads") || D.getElementById("ml-infra") || D.getElementById("ml-extra");
+    /* the home is Map overlays > Cameras (#ml-cams); older pages have only Infrastructure > Roads, #ml-infra or #ml-extra */
+    var home = D.getElementById("ml-cams") || D.getElementById("ml-roads") || D.getElementById("ml-infra") || D.getElementById("ml-extra");
     if (!home) return false;
     if (sec && sec.parentNode === home) return true;
     if (!sec) {
