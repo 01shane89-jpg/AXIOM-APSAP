@@ -1,0 +1,1 @@
+window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-11-17"]=[["th","2026-11-17T00:00","\"Mother post sad message, 'Don't. 15-year-old golfer killed by lightning.\"","สุดอาลัย คุณแม่โพสต์เศร้า “เอย่า” นักกอล์ฟวัย 15 ปีโดนฟ้าผ่า เสียชีวิตแล้ว","Daily News","https://www.dailynews.co.th/news/6324235/","","m","","weather"]];
