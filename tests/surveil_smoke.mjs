@@ -85,7 +85,7 @@ const om = async (p, want) => {
   let s = await st(p); ok(!s.on && s.drawn === 0, "desktop: starts off, nothing drawn");
   await om(p, true);
   ok(await shown(p, '#atk-om #cam-sec input[data-cam]'), "desktop: the one Cameras switch is in the Overlays sheet");
-  ok(await p.evaluate(() => { const e = document.getElementById("sv-sec"); return !!e && !!e.closest("#cam-sec [data-camsv]") && !!e.closest("#ml-infra") && !document.querySelector('input[data-sv="on"]'); }), "desktop: no switch of its own, it sits inside the Cameras section under Infrastructure");
+  ok(await p.evaluate(() => { const e = document.getElementById("sv-sec"); return !!e && !!e.closest("#cam-sec [data-camsv]") && !!e.closest("#ml-cams") && !e.closest("#ml-infra") && !document.querySelector('input[data-sv="on"]'); }), "desktop: no switch of its own, it sits inside the Cameras section (its own Map overlays section)");
   ok(/^Cameras$/.test(await p.evaluate(() => document.querySelector("#cam-sec .mlrow b").textContent)), "desktop: the switch is called Cameras");
   // zoomed out: switching on asks you to zoom in, fetches nothing
   await p.evaluate(() => window.__asapMap.setView([13.75, 100.5], 6, { animate: false }));
