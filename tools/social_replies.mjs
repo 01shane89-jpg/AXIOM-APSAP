@@ -126,12 +126,15 @@ export function pickOther(social, skip = [], per = 15) {
 }
 const unhtml = (h) => String(h || "").replace(/<br\s*\/?>|<\/p>/gi, "\n").replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
   .replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'").replace(/&nbsp;/g, " ").replace(/&#(\d+);/g, (m, d) => String.fromCodePoint(+d));
-// Telegram comments widget HTML -> reply texts (in memory only). Each comment is a tgme_widget_message block with its own text.
+// Telegram comments widget HTML -> reply texts (in memory only). Each comment is a js-widget_message_wrap block; its own words
+// are in "tgme_widget_message_text js-message_text". The quoted message a comment answers ("js-message_reply_text", and the
+// empty reply template every comment carries) is not that comment's text and is skipped. The widget shows the newest 50.
 export function tgComments(html) {
   const out = [];
-  for (const m of String(html || "").matchAll(/<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/g)) out.push({ text: unhtml(m[1]).trim(), langs: [] });
+  for (const m of String(html || "").matchAll(/<div class="tgme_widget_message_text js-message_text"[^>]*>([\s\S]*?)<\/div>/g)) out.push({ text: unhtml(m[1]).trim(), langs: [] });
   return out.filter((r) => r.text);
 }
+export const tgCount = (html) => (String(html || "").match(/js-widget_message_wrap/g) || []).length;
 async function getUrl(url, json) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
   try {
@@ -149,8 +152,8 @@ async function readOther(i) {
   }
   const [, ch, id] = TG_LINK.exec(i.link);
   const html = await getUrl(`https://t.me/${ch}/${id}?embed=1&discussion=1&comments_limit=50`);
-  const replies = tgComments(html.slice(html.indexOf("tgme_widget_discussion") >= 0 ? html.indexOf("tgme_widget_discussion") : 0));
-  return { replies: replies.length, likes: 0, reposts: 0, quotes: 0, a: analyse(replies), tg: html.includes("tgme_widget_discussion") ? 1 : 0 };
+  const replies = tgComments(html);
+  return { replies: tgCount(html), likes: 0, reposts: 0, quotes: 0, a: analyse(replies), tg: html.includes("tgme_post_discussion") ? 1 : 0 };
 }
 
 async function req(name, q) {

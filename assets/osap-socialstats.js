@@ -118,7 +118,7 @@
         (a.scored ? bar([["Positive", t.positive, "sspos"], ["Neutral", t.neutral, "ssneu"], ["Negative", t.negative, "ssneg"]]) : "") +
         (u ? '<a class="rellink" href="' + E(u) + '" target="_blank" rel="noopener noreferrer">Post</a>' : "") + "</div>";
     }).join("") + "</div>";
-    return h + '<p class="obs">' + NO_COMMENTS.YouTube + " Telegram comments are read from Telegram's public comments widget, so channels without comments show none.</p></div>";
+    return h + '<p class="obs">' + NO_COMMENTS.YouTube + " Telegram comments are read from Telegram's public comments widget, which shows the newest 50 per post; channels without comments show none.</p></div>";
   }
   function platMix(list) {
     var c = {}; (list || []).forEach(function (p) { var k = p.platform || "Bluesky"; c[k] = (c[k] || 0) + 1; });

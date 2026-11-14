@@ -1,6 +1,6 @@
 // Social reply analysis: aggregates only, never a reply's author or text; words only when MIN_REPLIES different replies used them.
 import assert from "node:assert/strict";
-import { analyse, tone, totals, pick, pickOther, tgComments, MIN_REPLIES } from "../tools/social_replies.mjs";
+import { analyse, tone, totals, pick, pickOther, tgComments, tgCount, MIN_REPLIES } from "../tools/social_replies.mjs";
 
 assert.equal(tone("This is terrible news"), "negative");
 assert.equal(tone("Not bad at all, glad they are safe"), "positive");
@@ -57,8 +57,12 @@ const o = pickOther({ items: { ph: [
 assert.deepEqual(Object.keys(o), ["ph"]);
 assert.deepEqual(o.ph.map((i) => i.platform), ["Mastodon", "Telegram"], "only post links of those shapes");
 // Telegram comments widget: comment texts only, markup and entities undone, nothing else kept
-const tg = tgComments('<div class="tgme_widget_message_author"><span>Some Person</span></div><div class="tgme_widget_message_text js-message_text" dir="auto">Terrible news &amp; so sad<br/>stay safe</div>' +
-  '<div class="tgme_widget_message_text js-message_text" dir="auto"></div>');
+const TGHTML = '<div class="tgme_widget_message_wrap js-widget_message_wrap"><div class="tgme_widget_message_author"><span>Some Person</span></div>' +
+  '<div class="tgme_widget_message_text js-message_reply_text" dir="auto">the channel post being answered</div>' +
+  '<div class="tgme_widget_message_text js-message_text" dir="auto">Terrible news &amp; so sad<br/>stay safe</div></div>' +
+  '<div class="tgme_widget_message_wrap js-widget_message_wrap"><div class="tgme_widget_message_text js-message_text" dir="auto"></div></div>';
+const tg = tgComments(TGHTML);
+assert.equal(tgCount(TGHTML), 2, "every comment counts, with or without text");
 assert.deepEqual(tg, [{ text: "Terrible news & so sad\nstay safe", langs: [] }]);
 assert.ok(!JSON.stringify(analyse(tg)).includes("Some Person"));
 console.log("social_replies.test: ok");

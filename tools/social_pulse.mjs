@@ -23,7 +23,8 @@ export const MAX_CCS = 4, TAG_MIN = 2, TERM_MIN = 3, SHOW_MIN = 3, KEEP_H = 192,
 const SAMPLE_MS = +(process.env.PULSE_SAMPLE_MS || 4 * 6e4), MAX_POSTS = 400000, MAX_TEXT = 3000;
 const UA = "AXIOM-OSAP/1.0 (situational awareness; public aggregate counts)";
 const JETSTREAM = ["jetstream2.us-east.bsky.network", "jetstream1.us-east.bsky.network", "jetstream2.us-west.bsky.network", "jetstream1.us-west.bsky.network"];
-const MASTODON = ["mastodon.social", "mastodon.online", "mas.to", "mstdn.social", "mastodon.world", "social.vivaldi.net"];
+// mastodon.social, mastodon.online and mstdn.social answer 422 (login required) for the public timeline (tested 14 Nov 2026), so they are not asked.
+const MASTODON = ["mas.to", "mastodon.world", "social.vivaldi.net"];
 
 // Demonyms and capitals people use instead of the country's name (whole words, case-insensitive).
 const EXTRA = {
