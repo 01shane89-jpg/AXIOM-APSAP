@@ -1,0 +1,1 @@
+window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-12-03"]=[["py","2026-12-03T10:10","FILFA 2026: A four-day program to explore the photobook","FILFA 2026: Un programa de cuatro d�as para explorar el fotolibro","El Nacional","https://elnacional.com.py/agenda-cultural/filfa-2026-programa-cuatro-dias-explorar-fotolibro-n114458","","m","",""]];
