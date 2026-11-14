@@ -245,3 +245,5 @@ jobs:
       # 100svh is taller than the page (the iPhone cut-off fixed by PR #712), and the sheet never scrolls sideways
       - run: BROWSER=webkit node tests/phone_fit_smoke.mjs
       - run: BROWSER=webkit node tests/phone_sheet_sideways_smoke.mjs
+      # a finger tap on a live aircraft or ship opens its details, also on a US state page where the state outline lies under it
+      - run: BROWSER=webkit node tests/traffic_tap_smoke.mjs

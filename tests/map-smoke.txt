@@ -158,6 +158,7 @@ tests/infra_smoke.mjs
 # Overlays > Infrastructure > Bridges and tunnels: every bridge in view with its details from street level (assets/osap-bridges.js)
 tests/bridges_smoke.mjs
 tests/traffic_smoke.mjs
+tests/traffic_tap_smoke.mjs
 tests/medplan_smoke.mjs
 tests/medplan_sea_smoke.mjs
 tests/medplan_hang_smoke.mjs
