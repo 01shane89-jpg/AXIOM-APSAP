@@ -377,6 +377,40 @@ const SCENES = [
     k.caption("Every reading dated and sourced", "So you can see what's happening, and where it came from.");
     await k.wait(4000);
   }],
+  ["medplan", { hash: "#th/timeline", z: 13, at: [18.7883, 98.9853], settle: 9000 }, async ({ k, p }) => {
+    const AT = [18.7883, 98.9853];
+    const into = (sel, txt) => p.evaluate(([s, t]) => { const e = [...document.querySelectorAll(s)].find((x) => !t || x.textContent.trim().startsWith(t)); if (e) e.scrollIntoView({ behavior: "smooth", block: "start" }); return !!e; }, [sel, txt || ""]);
+    // a long wait (routing, the forecast) is cut from the video
+    const waitCut = async (fn, ms) => { const t0 = (Date.now() - k.t0) / 1000; try { await p.waitForFunction(fn, null, { timeout: ms }); } catch { console.log("  wait timed out"); } const t1 = (Date.now() - k.t0) / 1000; if (t1 - t0 > 1.5) k.skips.push([t0 + 0.6, t1]); };
+    k.caption("A medical plan for anywhere, in seconds", "Pick the spot where you'll be. OSAP plans the rest.");
+    await k.wait(1500);
+    const c = await k.mapAt(0.45, 0.45);
+    await p.mouse.move(c[0], c[1], { steps: 22 }); await k.wait(400);
+    await p.evaluate((a) => window.OSAP_MEDPLAN.open({ at: a }), AT);
+    await k.wait(1500);
+    await k.press("Full", "#medplan");
+    await waitCut(() => { const e = document.getElementById("mp-conop"); return e && /\d+ min road/.test(e.innerText) && !/GROUND EVAC\s*NOT ROUTED/.test(e.innerText); }, 40000);
+    const plan = await p.evaluate(() => { const t = (document.getElementById("mp-conop") || {}).innerText || ""; const m = t.match(/DEFINITIVE CARE[^\n]*\n([^\n]+)\n(\d+) min road/); return { name: m ? m[1] : "", min: m ? m[2] : "", head: t.slice(0, 600) }; });
+    console.log("  medplan", JSON.stringify(plan));
+    await into("#mp-conop"); await k.wait(800);
+    k.caption("The right hospital for the injury", plan.name ? `Ranked by what each can treat. Here: ${plan.name}, ${plan.min} min by road.` : "Ranked by what each one can treat, with the drive time.");
+    await k.wait(5500);
+    k.caption("Choose the injury and the plan follows", "Trauma, head injury, burns or limb injuries.");
+    await k.click('[data-mp-cat="cat.severe_tbi"]'); await k.wait(3000);
+    await k.click('[data-mp-cat="cat.major_burn"]'); await k.wait(3000);
+    await k.click('[data-mp-cat="cat.major_trauma"]'); await k.wait(1200);
+    k.caption("Emergency numbers and air ambulance", "Published numbers, nearby ambulance stations and air rescue services.");
+    await into("#medplan h3", "4. Emergency contacts"); await k.wait(5000);
+    k.caption("Road routes to each hospital, on the map", "First, second and third choice, with the drive time to each.");
+    await k.press("Map", "#medplan"); await k.wait(5500);
+    await k.press("Half", "#medplan"); await k.wait(1200);
+    await into("#medplan h3", "2. Receiving hospitals"); await k.wait(1500);
+    k.caption("A printable page for each hospital", "Emergency care, surgery, imaging and contacts, with \"Not known\" on every gap.");
+    await k.click("#medplan [data-mp-assess]"); await k.wait(2500);
+    await k.scrollIn("#brief", 260, 4, 1300);
+    k.caption("Built from open data, every source linked", "A draft to confirm with the hospital, never a guarantee.");
+    await k.wait(4000);
+  }],
 ];
 
 let fails = 0, n = 0;
