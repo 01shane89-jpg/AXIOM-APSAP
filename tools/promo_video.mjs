@@ -459,7 +459,7 @@ const SCENES = [
     const MB = [1.2834, 103.8607];
     const tl = async (sel) => { await p.evaluate((s) => { const e = document.querySelector(s); if (e) e.scrollIntoView({ block: "center" }); }, sel); await k.wait(300); return k.click(sel); };
     const close = async () => {
-      const x = await p.evaluateHandle(() => [...document.querySelectorAll("button")].find((b) => b.offsetParent && /^[×✕]$/.test(b.textContent.trim()) && !b.closest("#medplan")) || null);
+      const x = await p.evaluateHandle(() => [...document.querySelectorAll('#atk-om [data-om="x"], button[aria-label="Close"]')].find((b) => b.offsetParent) || null);
       if (x.asElement()) await k.glide(x.asElement()); else await p.keyboard.press("Escape");
       await k.wait(600); };
     const cut = async (fn, ms) => { const t0 = (Date.now() - k.t0) / 1000; try { await p.waitForFunction(fn, null, { timeout: ms }); } catch { console.log("  wait timed out"); } const t1 = (Date.now() - k.t0) / 1000; if (t1 - t0 > 1.5) k.skips.push([t0 + 0.4, t1]); };
