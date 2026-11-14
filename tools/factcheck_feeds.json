@@ -400,6 +400,527 @@
       "alt": [
         "https://www.snopes.com/feed/"
       ]
+    },
+    {
+      "id": "thejournal",
+      "name": "TheJournal.ie FactCheck",
+      "home": "https://www.thejournal.ie/factcheck/",
+      "cc": "ie",
+      "lang": "en",
+      "url": "https://www.thejournal.ie/factcheck/rss/",
+      "alt": [
+        "https://www.thejournal.ie/factcheck/news/rss/"
+      ]
+    },
+    {
+      "id": "mimikama",
+      "name": "Mimikama",
+      "home": "https://www.mimikama.org",
+      "cc": "at",
+      "lang": "de",
+      "url": "https://www.mimikama.org/feed/"
+    },
+    {
+      "id": "faktisk",
+      "name": "Faktisk.no",
+      "home": "https://www.faktisk.no",
+      "cc": "no",
+      "lang": "no",
+      "url": "https://www.faktisk.no/rss",
+      "alt": [
+        "https://www.faktisk.no/feed"
+      ]
+    },
+    {
+      "id": "lakmusz",
+      "name": "Lakmusz",
+      "home": "https://lakmusz.hu",
+      "cc": "hu",
+      "lang": "hu",
+      "url": "https://lakmusz.hu/feed",
+      "alt": [
+        "https://lakmusz.hu/rss"
+      ]
+    },
+    {
+      "id": "provereno",
+      "name": "Provereno.media",
+      "home": "https://provereno.media",
+      "cc": "ru",
+      "lang": "ru",
+      "url": "https://provereno.media/feed/"
+    },
+    {
+      "id": "istinomer",
+      "name": "Istinomer",
+      "home": "https://www.istinomer.rs",
+      "cc": "rs",
+      "lang": "sr",
+      "url": "https://www.istinomer.rs/feed/"
+    },
+    {
+      "id": "faktograf",
+      "name": "Faktograf",
+      "home": "https://faktograf.hr",
+      "cc": "hr",
+      "lang": "hr",
+      "url": "https://faktograf.hr/feed/"
+    },
+    {
+      "id": "raskrikavanje",
+      "name": "Raskrikavanje",
+      "home": "https://www.raskrikavanje.rs",
+      "cc": "rs",
+      "lang": "sr",
+      "url": "https://www.raskrikavanje.rs/rss.php",
+      "alt": [
+        "https://www.raskrikavanje.rs/feed"
+      ]
+    },
+    {
+      "id": "ecuadorchequea",
+      "name": "Ecuador Chequea",
+      "home": "https://ecuadorchequea.com",
+      "cc": "ec",
+      "lang": "es",
+      "url": "https://ecuadorchequea.com/feed/"
+    },
+    {
+      "id": "verificado",
+      "name": "Verificado",
+      "home": "https://verificado.com.mx",
+      "cc": "mx",
+      "lang": "es",
+      "url": "https://verificado.com.mx/feed/"
+    },
+    {
+      "id": "boliviaverifica",
+      "name": "Bolivia Verifica",
+      "home": "https://boliviaverifica.bo",
+      "cc": "bo",
+      "lang": "es",
+      "url": "https://boliviaverifica.bo/feed/"
+    },
+    {
+      "id": "cotejo",
+      "name": "Cotejo.info",
+      "home": "https://cotejo.info",
+      "cc": "ve",
+      "lang": "es",
+      "url": "https://cotejo.info/feed/"
+    },
+    {
+      "id": "fastcheck",
+      "name": "Fast Check",
+      "home": "https://www.fastcheck.cl",
+      "cc": "cl",
+      "lang": "es",
+      "url": "https://www.fastcheck.cl/feed/"
+    },
+    {
+      "id": "efarsas",
+      "name": "E-farsas",
+      "home": "https://www.e-farsas.com",
+      "cc": "br",
+      "lang": "pt",
+      "url": "https://www.e-farsas.com/feed"
+    },
+    {
+      "id": "boatos",
+      "name": "Boatos.org",
+      "home": "https://www.boatos.org",
+      "cc": "br",
+      "lang": "pt",
+      "url": "https://www.boatos.org/feed"
+    },
+    {
+      "id": "rumorscanner",
+      "name": "Rumor Scanner",
+      "home": "https://rumorscanner.com",
+      "cc": "bd",
+      "lang": "bn",
+      "url": "https://rumorscanner.com/feed",
+      "alt": [
+        "https://rumorscanner.com/en/feed"
+      ]
+    },
+    {
+      "id": "jfc",
+      "name": "Japan FactCheck Center",
+      "home": "https://www.factcheckcenter.jp",
+      "cc": "jp",
+      "lang": "ja",
+      "url": "https://www.factcheckcenter.jp/feed/",
+      "alt": [
+        "https://www.factcheckcenter.jp/rss/"
+      ]
+    },
+    {
+      "id": "infact",
+      "name": "InFact",
+      "home": "https://infact.press",
+      "cc": "jp",
+      "lang": "ja",
+      "url": "https://infact.press/feed/"
+    },
+    {
+      "id": "tsek",
+      "name": "Tsek.ph",
+      "home": "https://www.tsek.ph",
+      "cc": "ph",
+      "lang": "en",
+      "url": "https://www.tsek.ph/feed/"
+    },
+    {
+      "id": "ghanafact",
+      "name": "GhanaFact",
+      "home": "https://ghanafact.com",
+      "cc": "gh",
+      "lang": "en",
+      "url": "https://ghanafact.com/feed/"
+    },
+    {
+      "id": "factcheckghana",
+      "name": "Fact-Check Ghana",
+      "home": "https://www.fact-checkghana.com",
+      "cc": "gh",
+      "lang": "en",
+      "url": "https://www.fact-checkghana.com/feed/"
+    },
+    {
+      "id": "factcheckhub",
+      "name": "FactCheckHub",
+      "home": "https://factcheckhub.com",
+      "cc": "ng",
+      "lang": "en",
+      "url": "https://factcheckhub.com/feed/"
+    },
+    {
+      "id": "namibiafc",
+      "name": "Namibia Fact Check",
+      "home": "https://namibiafactcheck.org.na",
+      "cc": "na",
+      "lang": "en",
+      "url": "https://namibiafactcheck.org.na/feed/"
+    },
+    {
+      "id": "zimfact",
+      "name": "ZimFact",
+      "home": "https://zimfact.org",
+      "cc": "zw",
+      "lang": "en",
+      "url": "https://zimfact.org/feed/"
+    },
+    {
+      "id": "211check",
+      "name": "211Check",
+      "home": "https://211check.org",
+      "cc": "ss",
+      "lang": "en",
+      "url": "https://211check.org/feed/"
+    },
+    {
+      "id": "congocheck",
+      "name": "Congo Check",
+      "home": "https://congocheck.net",
+      "cc": "cd",
+      "lang": "fr",
+      "url": "https://congocheck.net/feed/"
+    },
+    {
+      "id": "verificat",
+      "name": "Verificat",
+      "home": "https://www.verificat.cat",
+      "cc": "es",
+      "lang": "ca",
+      "url": "https://www.verificat.cat/feed",
+      "alt": [
+        "https://www.verificat.cat/rss"
+      ]
+    },
+    {
+      "id": "poligrafo",
+      "name": "Polígrafo",
+      "home": "https://poligrafo.sapo.pt",
+      "cc": "pt",
+      "lang": "pt",
+      "url": "https://poligrafo.sapo.pt/feed",
+      "alt": [
+        "https://poligrafo.sapo.pt/rss"
+      ]
+    },
+    {
+      "id": "ellinikahoaxes",
+      "name": "Ellinika Hoaxes",
+      "home": "https://www.ellinikahoaxes.gr",
+      "cc": "gr",
+      "lang": "el",
+      "url": "https://www.ellinikahoaxes.gr/feed/"
+    },
+    {
+      "id": "facta",
+      "name": "Facta",
+      "home": "https://facta.news",
+      "cc": "it",
+      "lang": "it",
+      "url": "https://facta.news/feed",
+      "alt": [
+        "https://facta.news/rss"
+      ]
+    },
+    {
+      "id": "demagogcz",
+      "name": "Demagog.cz",
+      "home": "https://demagog.cz",
+      "cc": "cz",
+      "lang": "cs",
+      "url": "https://demagog.cz/rss",
+      "alt": [
+        "https://demagog.cz/feed"
+      ]
+    },
+    {
+      "id": "infoveritas",
+      "name": "Infovéritás",
+      "home": "https://infoveritas.hu",
+      "cc": "hu",
+      "lang": "hu",
+      "url": "https://infoveritas.hu/feed/"
+    },
+    {
+      "id": "factualro",
+      "name": "Factual.ro",
+      "home": "https://www.factual.ro",
+      "cc": "ro",
+      "lang": "ro",
+      "url": "https://www.factual.ro/feed/"
+    },
+    {
+      "id": "veridica",
+      "name": "Veridica",
+      "home": "https://www.veridica.ro/en",
+      "cc": "ro",
+      "lang": "en",
+      "url": "https://www.veridica.ro/en/rss",
+      "alt": [
+        "https://www.veridica.ro/rss"
+      ]
+    },
+    {
+      "id": "stopfals",
+      "name": "StopFals",
+      "home": "https://stopfals.md",
+      "cc": "md",
+      "lang": "ro",
+      "url": "https://stopfals.md/feed",
+      "alt": [
+        "https://stopfals.md/rss"
+      ]
+    },
+    {
+      "id": "fip",
+      "name": "FIP Armenia",
+      "home": "https://fip.am/en",
+      "cc": "am",
+      "lang": "en",
+      "url": "https://fip.am/en/feed",
+      "alt": [
+        "https://fip.am/feed"
+      ]
+    },
+    {
+      "id": "faktyoxla",
+      "name": "Faktyoxla",
+      "home": "https://faktyoxla.info",
+      "cc": "az",
+      "lang": "az",
+      "url": "https://faktyoxla.info/feed",
+      "alt": [
+        "https://faktyoxla.info/rss"
+      ]
+    },
+    {
+      "id": "factnameh",
+      "name": "Factnameh",
+      "home": "https://factnameh.com",
+      "cc": "ir",
+      "lang": "fa",
+      "url": "https://factnameh.com/feed",
+      "alt": [
+        "https://factnameh.com/rss"
+      ]
+    },
+    {
+      "id": "soch",
+      "name": "Soch Fact Check",
+      "home": "https://www.sochfactcheck.com",
+      "cc": "pk",
+      "lang": "en",
+      "url": "https://www.sochfactcheck.com/feed/"
+    },
+    {
+      "id": "southasiacheck",
+      "name": "South Asia Check",
+      "home": "https://southasiacheck.org",
+      "cc": "np",
+      "lang": "en",
+      "url": "https://southasiacheck.org/feed/"
+    },
+    {
+      "id": "nepalcheck",
+      "name": "Nepal Fact Check",
+      "home": "https://nepalcheck.org",
+      "cc": "np",
+      "lang": "ne",
+      "url": "https://nepalcheck.org/feed/"
+    },
+    {
+      "id": "factseeker",
+      "name": "Factseeker",
+      "home": "https://factseeker.lk",
+      "cc": "lk",
+      "lang": "en",
+      "url": "https://factseeker.lk/feed/"
+    },
+    {
+      "id": "dismislab",
+      "name": "Dismislab",
+      "home": "https://www.dismislab.com",
+      "cc": "bd",
+      "lang": "bn",
+      "url": "https://www.dismislab.com/feed/"
+    },
+    {
+      "id": "cofact",
+      "name": "Cofact",
+      "home": "https://cofact.org",
+      "cc": "th",
+      "lang": "th",
+      "url": "https://blog.cofact.org/feed/",
+      "alt": [
+        "https://cofact.org/feed"
+      ]
+    },
+    {
+      "id": "kompascek",
+      "name": "Kompas Cek Fakta",
+      "home": "https://www.kompas.com/cekfakta",
+      "cc": "id",
+      "lang": "id",
+      "url": "https://www.kompas.com/cekfakta/rss",
+      "alt": [
+        "https://rss.kompas.com/cekfakta"
+      ]
+    },
+    {
+      "id": "liputan6",
+      "name": "Liputan6 Cek Fakta",
+      "home": "https://www.liputan6.com/cek-fakta",
+      "cc": "id",
+      "lang": "id",
+      "url": "https://feed.liputan6.com/rss/cek-fakta"
+    },
+    {
+      "id": "rebaltica",
+      "name": "Re:Check (Re:Baltica)",
+      "home": "https://en.rebaltica.lv",
+      "cc": "lv",
+      "lang": "en",
+      "url": "https://en.rebaltica.lv/feed/"
+    },
+    {
+      "id": "delfidetektorius",
+      "name": "Delfi Melo detektorius",
+      "home": "https://www.delfi.lt/news/melo-detektorius",
+      "cc": "lt",
+      "lang": "lt",
+      "url": "https://www.delfi.lt/rss/feeds/melo-detektorius.xml"
+    },
+    {
+      "id": "factcheckvl",
+      "name": "Factcheck.Vlaanderen",
+      "home": "https://factcheck.vlaanderen",
+      "cc": "be",
+      "lang": "nl",
+      "url": "https://factcheck.vlaanderen/feed",
+      "alt": [
+        "https://factcheck.vlaanderen/rss"
+      ]
+    },
+    {
+      "id": "kallkritik",
+      "name": "Källkritikbyrån",
+      "home": "https://kallkritikbyran.se",
+      "cc": "se",
+      "lang": "sv",
+      "url": "https://kallkritikbyran.se/feed/"
+    },
+    {
+      "id": "faktabaari",
+      "name": "Faktabaari",
+      "home": "https://faktabaari.fi",
+      "cc": "fi",
+      "lang": "fi",
+      "url": "https://faktabaari.fi/feed/"
+    },
+    {
+      "id": "ecuadorverifica",
+      "name": "Ecuador Verifica",
+      "home": "https://ecuadorverifica.org",
+      "cc": "ec",
+      "lang": "es",
+      "url": "https://ecuadorverifica.org/feed/"
+    },
+    {
+      "id": "animalpolitico",
+      "name": "El Sabueso (Animal Político)",
+      "home": "https://animalpolitico.com/verificacion-de-hechos",
+      "cc": "mx",
+      "lang": "es",
+      "url": "https://animalpolitico.com/verificacion-de-hechos/feed"
+    },
+    {
+      "id": "africacheckfr",
+      "name": "Africa Check (French)",
+      "home": "https://fr.africacheck.org",
+      "cc": "sn",
+      "lang": "fr",
+      "url": "https://fr.africacheck.org/rss.xml",
+      "alt": [
+        "https://fr.africacheck.org/feed"
+      ]
+    },
+    {
+      "id": "afpes",
+      "name": "AFP Factual",
+      "home": "https://factual.afp.com",
+      "cc": "fr",
+      "lang": "es",
+      "url": "https://factual.afp.com/rss.xml"
+    },
+    {
+      "id": "afpchecamos",
+      "name": "AFP Checamos",
+      "home": "https://checamos.afp.com",
+      "cc": "br",
+      "lang": "pt",
+      "url": "https://checamos.afp.com/rss.xml"
+    },
+    {
+      "id": "afpde",
+      "name": "AFP Faktencheck",
+      "home": "https://faktencheck.afp.com",
+      "cc": "de",
+      "lang": "de",
+      "url": "https://faktencheck.afp.com/rss.xml"
+    },
+    {
+      "id": "afpar",
+      "name": "AFP Arabic Fact Check",
+      "home": "https://factuel.afp.com/ar",
+      "cc": "fr",
+      "lang": "ar",
+      "url": "https://factuel.afp.com/ar/rss.xml"
     }
   ]
 }

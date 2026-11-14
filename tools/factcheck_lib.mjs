@@ -15,41 +15,58 @@ export function checkItem(feed, i) {
   const title = String(i.title || "").replace(/\s+/g, " ").trim(), link = String(i.link || "").trim();
   const ms = Date.parse(i.date || "");
   if (!title || !/^https?:\/\/[^\s<>"]+$/i.test(link) || !isFinite(ms)) return null;
-  const sum = String(i.summary || "").replace(/\s+/g, " ").replace(/\s*(The post .{0,200} appeared first on .*|Continue reading.*|Read more.*)$/i, "").trim();
+  const sum0 = String(i.summary || "").replace(/\s+/g, " ").replace(/\s*(The post .{0,200} appeared first on .*|Continue reading.*|Read more.*)$/i, "").trim();
+  // a feed whose summary is its page template ("{{x.txt}}") has no summary
+  const sum = /\{\{|\}\}/.test(sum0) ? "" : sum0;
   return [feed, new Date(ms).toISOString().slice(0, 16) + "Z", title.slice(0, 300), link, sum.length > 240 ? sum.slice(0, 237).replace(/\s+\S*$/, "") + "…" : sum];
 }
 
 /** the checks made ready for matching: the words and names (nameBook.find) of each check's own headline (a summary's words
  *  match far too much: "the Iran war" in a summary ties a toothpaste check to a war story) */
 export function prepChecks(items, find) {
-  return items.map((c) => ({ c, ms: Date.parse(c[1]), w: stems(c[2]), nm: new Set(find(c[2])) }));
+  // a check in another language is matched by its English headline (item[5], from tools/translate.mjs) and its names in either
+  return items.map((c) => ({ c: [c[0], c[1], c[2], c[3], c[4], c[5] || ""], ms: Date.parse(c[1]), w: stems(c[5] || c[2]),
+    nm: new Set([...find(c[2]), ...(c[5] ? find(c[5]) : [])]) }));
 }
 
 // offices, bodies and words for a people name no one event ("Prime Minister", "Senate", "Chinese")
-const GENERIC = /^(the )?(prime minister|president|vice president|minister|ministry|senate|house|congress|parliament|government|cabinet|attorney general|prosecutor'?s? office|supreme court|high court|court|police|army|navy|military|white house|kremlin|pentagon|state department|democrats?|republicans?|opposition|united nations|un|nato|eu|european union|europe|asia|africa|middle east|west|western|world|international|national|federal|central bank|interior|foreign|defense|defence|health|election|elections|commission|council|committee|agency|department|office|governor|mayor|king|queen|pope|church)$/i;
+const GENERIC = /^(the )?(global voices|european commission|commission|fiscal[ií]a|ministerio p[uú]blico|procuradur[ií]a|gobierno|governo|presidente|ministro|polic[ií]a|prime minister|president|vice president|minister|ministry|senate|house|congress|parliament|government|cabinet|attorney general|prosecutor'?s? office|supreme court|high court|court|police|army|navy|military|white house|kremlin|pentagon|state department|democrats?|republicans?|opposition|united nations|un|nato|eu|european union|europe|asia|africa|middle east|west|western|world|international|national|federal|central bank|interior|foreign|defense|defence|health|election|elections|commission|council|committee|agency|department|office|governor|mayor|king|queen|pope|church)$/i;
 const DEMONYM = /^([A-Z][a-z]+(ese|ian|ish|ean|ic|i)|French|Dutch|Swiss|Greek|Thai|Welsh|Irish|British|English|Spanish|Turkish|Polish)$/;
 // words in so many headlines that sharing one says nothing ("Trump", "report", "war")
 const COMMON = stems("trump biden putin xi report reports says said new year years war people day days week world news live video videos update updates state states united unit country government official officials");
 
 /** Fact-checks that may relate to a thread, from the words of each check's headline:
  *  one that names one of the thread's own names (not a country, a people or an office: skipName and the lists above) and has
- *  one more of the event's words besides that name (two for a one-word name), or one that has four of the event's words.
+ *  two more of the event's words besides that name (three for a one-word name, one when it shares two names), or one that has
+ *  four of the event's words that
+ *  are not part of a name it carries.
  *  A check must be from 45 days before the thread to 14 days after it.
  *  t: a thread after connect() (t.names are the names worth following, t.w the event's distinctive words, stemmed).
- *  Returns up to MAX_CHECKS [feed id, date, headline, link, summary, [shared names]], best first. */
+ *  opt.ctxOf(name): the words that go with that name in most of the pool's headlines ("nvidia", "ceo" for Jensen Huang); they do
+ *  not count as the one more word, so a check about the same person but another claim is left out.
+ *  Returns up to MAX_CHECKS [feed id, date, headline, link, summary, English headline or "", [shared names]], best first. */
 export function factMatch(t, prepped, opt = {}) {
   const max = opt.max || MAX_CHECKS, skip = opt.skipName || (() => false);
   const N = new Set((t.names || []).map((x) => x[0]).filter((x) => x.length > 3 && !GENERIC.test(x) && !DEMONYM.test(x) && !skip(x))), W = new Set(t.w || []);
+  const C = new Map((t.names || []).map((x) => [x[0], x[1]]));
   const lo = Date.parse(t.d0) - 45 * 864e5, hi = Date.parse(t.d) + 14 * 864e5;
   const hits = [];
   for (const p of prepped) {
     if (!(p.ms >= lo && p.ms <= hi)) continue;
     const sn = [...p.nm].filter((x) => N.has(x)), inName = stems(sn.join(" "));
+    if (opt.ctxOf) for (const x of sn) for (const w of opt.ctxOf(x) || []) inName.add(w);
     const sw = [...W].filter((x) => p.w.has(x)), out = sw.filter((x) => !inName.has(x) && !COMMON.has(x) && x.length >= 4).length;
     // a name of two words or more (Abu Dhabi, Unknown Soldier) or an acronym (FAA) and one more of the event's words; a single
     // word (Bukele, Washington, John) is often someone or somewhere else, so it needs two more
     const strong = sn.some((x) => /\s/.test(x) || /^[A-Z]{2,}$/.test(x)) || sn.length >= 2;
-    if (!((sn.length && out >= (strong ? 1 : 2)) || sw.length >= 4)) continue;
+    // four words without a name: none of them may belong to a name the check carries (or go with it), so "Nvidia CEO Jensen
+    // Huang did not say ..." is not four words of a story about his resignation
+    const own = stems([...p.nm].join(" "));
+    if (opt.ctxOf) for (const x of p.nm) for (const w of opt.ctxOf(x) || []) own.add(w);
+    // a check from the days of the event itself needs one word fewer
+    // a check from the days of the event itself, on a name central to the story (in at least 15% of its reports), needs one word fewer
+    const near = p.ms >= Date.parse(t.d0) - 2 * 864e5 && p.ms <= Date.parse(t.d) + 2 * 864e5 && sn.some((x) => (C.get(x) || 0) >= Math.max(2, (t.r || 0) * 0.15)) ? 1 : 0;
+    if (!((sn.length && out >= Math.max(1, (sn.length >= 2 ? 1 : strong ? 2 : 3) - near)) || (sw.filter((x) => !inName.has(x) && !own.has(x)).length >= 4 && sw.filter((x) => !inName.has(x) && !own.has(x) && x.length >= 5).length >= 3))) continue;
     hits.push([sn.length * 2 + sw.length, p.ms, [...p.c, sn]]);
   }
   return hits.sort((a, b) => b[0] - a[0] || b[1] - a[1]).slice(0, max).map((h) => h[2]);
