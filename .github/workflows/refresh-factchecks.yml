@@ -38,6 +38,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git checkout -q --orphan fact-check-preview-data
           git rm -rqf --cached .
           git add -f data/live/factchecks.js
@@ -46,6 +47,7 @@ jobs:
       - name: Commit if the checks changed
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
           git add -N data/live/factchecks.js
           if git diff --quiet data/live/factchecks.js; then echo "no change"; exit 0; fi
           git config user.name "asap-flood-refresh[bot]"
