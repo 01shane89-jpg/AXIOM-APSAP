@@ -331,6 +331,41 @@ const SCENES = [
     k.caption("Dated, sourced and free to use", "Sentinel-2, Landsat and NASA daily pictures, for any place in the world.");
     await k.wait(4500);
   }],
+  ["flood", { hash: "#th/map", z: 8, at: [14.0, 100.3], settle: 10000, prep: (p) => p.evaluate(() => {
+    // the packed satellite composite and the areas built from it are a past event; show only today's readings
+    ["lyr-flood", "lyr-expo", "lyr-infra"].forEach((id) => { const e = document.getElementById(id); if (e && e.checked) { e.checked = false; e.dispatchEvent(new Event("change")); } });
+  }) }, async ({ k, p }) => {
+    const top = await p.evaluate(() => {
+      const L = window.LIVE, o = L.over.map((i) => L.stations[i]).sort((a, b) => (b.d || 0) - (a.d || 0));
+      const r = L.rain.slice().sort((a, b) => b.mm - a.mm)[0];
+      const prov = {}; o.forEach((s) => { if (s.p) prov[s.p] = 1; });
+      return { n: o.length, np: Object.keys(prov).length, g: o[0] && { d: o[0].d, a: o[0].a, p: o[0].p, lat: o[0].lat, lon: o[0].lon, t: o[0].t },
+        r: r && { mm: r.mm, a: r.a, p: r.p, lat: r.lat, lon: r.lon }, asof: L.asof };
+    });
+    console.log("  flood", JSON.stringify(top));
+    const dist = (a) => String(a || "").replace(/ District$/, "");
+    k.caption("Thailand's floods, as they're reported", "Live river gauges from official telemetry, on one map.");
+    await k.wait(4000);
+    k.caption(`${top.n} gauges over their bank right now`, `In ${top.np} provinces. Red means the river is over its bank.`);
+    await k.view([top.g.lat, top.g.lon], 11, true); await k.wait(3800);
+    // tap the gauge itself
+    const pt = await p.evaluate(([a, b]) => { const m = window.__asapMap, c = m.latLngToContainerPoint([a, b]), r = document.getElementById("map").getBoundingClientRect(); return [r.left + c.x, r.top + c.y]; }, [top.g.lat, top.g.lon]);
+    await p.mouse.move(pt[0], pt[1], { steps: 22 }); await k.wait(300); await p.mouse.click(pt[0], pt[1]);
+    await k.wait(900);
+    if (!(await p.evaluate(() => !!document.querySelector(".leaflet-popup")))) console.log("  no gauge popup");
+    k.caption(`${top.g.d.toFixed(2)} m over the bank at ${dist(top.g.a)}`, `${top.g.p}. Hydro-Informatics Institute reading, ${top.g.t.slice(11)} local time.`);
+    await k.wait(5500);
+    await p.evaluate(() => window.__asapMap.closePopup());
+    await p.evaluate(() => window.OSAP_DISASTERX && window.OSAP_DISASTERX.set("now", true));
+    k.caption("Flood water seen from orbit", "NASA's satellite flood map from the last three days.");
+    await k.view([13.6, 100.4], 7, true); await k.wait(5500);
+    if (top.r) {
+      k.caption(`${Math.round(top.r.mm)} mm of rain in 24 hours`, `At ${dist(top.r.a)}, ${top.r.p}, the heaviest of any station.`);
+      await k.view([top.r.lat, top.r.lon], 9, true); await k.wait(5000);
+    }
+    k.caption("Every reading dated and sourced", "So you can see what's happening, and where it came from.");
+    await k.wait(4000);
+  }],
 ];
 
 let fails = 0, n = 0;
