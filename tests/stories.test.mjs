@@ -8,7 +8,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { outletBook, outletName, fromRow, group, buildCountry } from "../tools/stories_lib.mjs";
+import { outletBook, outletName, fromRow, group, joinEvents, buildCountry } from "../tools/stories_lib.mjs";
 
 const END = Date.parse("2026-10-23T12:00:00Z");
 const at = (h) => new Date(END - h * 36e5).toISOString().slice(0, 16);
@@ -42,6 +42,36 @@ assert.ok(!("summary" in r), "an outlet's text is never carried");
 // grouping
 const g = group([{ title: "Flood kills five in northern Xland province" }, { title: "Five killed as flood hits northern Xland province" }, { title: "Central bank raises rates" }]);
 assert.equal(g.length, 2);
+
+// joining one happening told in other words (the FAA ground stop of 13 Nov 2026), and not joining unrelated stories that
+// share only common words or happened far apart
+{
+  const T0 = Date.parse("2026-11-13T21:00Z");
+  const it = (title, h) => ({ title, ms: T0 + h * 36e5 });
+  const filler = [];
+  for (let i = 0; i < 300; i++) filler.push(it(`Council votes on item${i} budget plan${i} for ward${i}`, i % 24));
+  const faa = [
+    it("FAA orders nationwide ground stop due to extraordinary circumstances", 0),
+    it("FAA orders nationwide ground stop for departing flights across the United States", 2),
+    it("Ground stop ordered for all airports nationwide", 0),
+    it("FAA issues nationwide ground stop for all airports", 1),
+    it("Mullin says FAA ground stop caused by telecommunications outage", 1),
+    it("Secretary Mullin says FAA ground stop was caused by telecommunication outage", 1),
+  ];
+  const other = [it("Building collapse kills two people in city centre", 3), it("Two people killed as building collapses in city", 3),
+  ];
+  const j = joinEvents(group([...filler, ...faa, ...other]));
+  const home = (t) => j.find((g) => g.items.some((x) => x.title === t));
+  assert.equal(home(faa[0].title), home(faa[4].title), "same happening in other words: one story");
+  assert.equal(home(faa[0].title).items.length, 6, "nothing else joined to it");
+  assert.notEqual(home(other[0].title), home(faa[0].title), "an unrelated story stays apart");
+  // the same groups, one of them a day later: left apart
+  const g2 = group([...filler, ...faa].map((x) => ({ ...x }))), late = g2.find((g) => g.items.some((x) => x.title === faa[4].title));
+  late.items.forEach((x) => { x.ms += 30 * 36e5; });
+  const j2 = joinEvents(g2), home2 = (t) => j2.find((g) => g.items.some((x) => x.title === t));
+  assert.notEqual(home2(faa[4].title), home2(faa[0].title), "a group more than 12 hours away stays apart");
+  assert.ok(home(faa[0].title).items.every((x, k, l) => !k || l[k - 1].ms <= x.ms), "a joined story's reports are in time order");
+}
 
 // enough background headlines that each side counts as publishing (20 state, 10 home)
 const bg = [];
@@ -77,8 +107,11 @@ assert.ok(bridge.src.every((x) => x.length === 9 && /^https:/.test(x[5])), "each
 assert.equal(find("record harvest").b, "state-only");
 assert.equal(find("Opposition leader").b, "state-silent");
 assert.equal(find("army moves troops").b, "outside-only");
-assert.notEqual(find("gas pipeline").b, "outside-only", "a near-matching home headline stops the not-covered-at-home blindspot");
-assert.equal(find("gas pipeline").b, "state-silent", "the state agency still carried nothing like it");
+// the home headline told it in other words, and joining by shared words puts it in the same story, which it now leads
+const pipe = find("pipeline");
+assert.notEqual(pipe.b, "outside-only", "a near-matching home headline stops the not-covered-at-home blindspot");
+assert.equal(pipe.b, "state-silent", "the state agency still carried nothing like it");
+assert.equal(pipe.o.dom, 1); assert.equal(pipe.s, "Home Times", "the country's own outlet leads its own story");
 assert.equal(find("drought relief"), undefined, "a story older than 72 hours is left out");
 assert.deepEqual(c.sides.stateRead, ["State Agency"]);
 assert.equal(c.sides.active.state, true); assert.equal(c.sides.active.home, true);
