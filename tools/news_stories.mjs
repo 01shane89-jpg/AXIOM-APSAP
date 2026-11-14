@@ -10,7 +10,7 @@
 //   STORIES_HOURS (default 72), STORIES_FACTCHECKS (default data/live/factchecks.js)
 import fs from "node:fs";
 import { outletBook, fromRow, buildCountry, SCHEMA, HOURS } from "./stories_lib.mjs";
-import { nameBook, connect, TSCHEMA } from "./threads_lib.mjs";
+import { nameBook, connect, TSCHEMA, stems } from "./threads_lib.mjs";
 import { prepChecks, factMatch, figures } from "./factcheck_lib.mjs";
 import { ccsInText } from "./geo_cc.mjs";
 
@@ -79,10 +79,19 @@ connect(tbc, all, nix, Math.max(40, Math.round(all.length * 0.005)));
 // tools/refresh_factchecks.mjs; none if that file is missing), and the figures its reports give differently
 let checks = [], fcBy = new Map();
 try { const fc = readJs(FC); checks = prepChecks(fc.items || [], names.find); fcBy = new Map((fc.feeds || []).map((f) => [f[0], f])); } catch (e) { console.error("stories: no fact-checks:", e.message); }
+// the words that go with each name in at least 40% of the pool's headlines naming it (Jensen Huang: nvidia, ceo)
+const ctxCache = new Map();
+function ctxOf(x) {
+  if (ctxCache.has(x)) return ctxCache.get(x);
+  const hits = nix.get(x) || [], c = new Map();
+  for (const i of hits) for (const w of stems(all[i].title)) c.set(w, (c.get(w) || 0) + 1);
+  const out = hits.length >= 5 ? [...c].filter(([, n]) => n >= hits.length * 0.4).map(([w]) => w) : [];
+  ctxCache.set(x, out); return out;
+}
 let nFc = 0, nFig = 0;
 for (const [, c] of built) for (const t of c.threads) {
-  const fc = factMatch(t, checks, { skipName: (x) => ccsInText(x).length > 0 }), fig = figures(t.rows, t.w, t.names);
-  // [fact-checker, its site, date, its headline, link, its summary, names shared with the thread]
+  const fc = factMatch(t, checks, { skipName: (x) => ccsInText(x).length > 0, ctxOf }), fig = figures(t.rows, t.w, t.names);
+  // [fact-checker, its site, date, its headline, link, its summary, its headline in English if translated, names shared]
   if (fc.length) { t.fc = fc.map(([id, ...x]) => [(fcBy.get(id) || [])[1] || id, (fcBy.get(id) || [])[2] || "", ...x]); nFc++; }
   if (fig.length) { t.fig = fig; nFig++; }
 }

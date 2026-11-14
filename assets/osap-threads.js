@@ -230,11 +230,14 @@
     H += '<section class="thck"><h3>Published fact-checks that may relate</h3>' + (C.length
       ? '<p class="tho">Checks by fact-checking outlets that share this story\'s words or names. Matched by machine, not by an analyst: a check can be about a different claim. Each finding is the fact-checker\'s own; read it in full.</p><ul class="ths">' +
         C.map(function (c) {
-          /* [fact-checker, its site, date, its headline, link, its summary, names shared with the story] */
-          var u = safeUrl(c[4]), h = safeUrl(c[1]);
-          return "<li>" + (u ? '<a class="tht" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(txt(c[3])) + "</a>" : '<span class="tht">' + esc(txt(c[3])) + "</span>") +
+          /* [fact-checker, its site, date, its headline, link, its summary, its headline in English if machine translated, names shared]
+             (files before 2026-11-14 12Z carry the names at 6) */
+          var u = safeUrl(c[4]), h = safeUrl(c[1]), en = typeof c[6] === "string" ? c[6] : "", sh = Array.isArray(c[7]) ? c[7] : Array.isArray(c[6]) ? c[6] : [];
+          var hl = en || c[3];
+          return "<li>" + (u ? '<a class="tht" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(txt(hl)) + "</a>" : '<span class="tht">' + esc(txt(hl)) + "</span>") +
+            (en ? '<span class="tho">Machine translated from: ' + esc(txt(c[3])) + "</span>" : "") +
             '<span class="tho">Fact-checked by ' + (h ? '<a href="' + esc(h) + '" target="_blank" rel="noopener noreferrer">' + esc(c[0]) + "</a>" : esc(c[0])) + " · " + esc(when(c[2])) +
-            (c[6] && c[6].length ? " · shares " + esc(c[6].join(", ")) : "") + "</span>" + (c[5] ? '<span class="tho">' + esc(txt(c[5])) + "</span>" : "") + "</li>";
+            (sh.length ? " · shares " + esc(sh.join(", ")) : "") + "</span>" + (c[5] && !en ? '<span class="tho">' + esc(txt(c[5])) + "</span>" : "") + "</li>";
         }).join("") + "</ul>"
       : "<p>No published fact-check OSAP reads shares this story's words. Most stories are never fact-checked: that says nothing about whether it is true.</p>") + "</section>";
     H += '<section class="thck"><h3>Check it yourself</h3><ul><li>Open the earliest report under Timeline: is the first source named, and was it there?</li>' +

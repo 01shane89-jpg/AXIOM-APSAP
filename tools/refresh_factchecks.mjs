@@ -3,7 +3,9 @@
 // data/live/factchecks.js (window.OSAP_FACTCHECKS): headline, link, date and a short summary, each as the fact-checker wrote it.
 // The feeds hold only their newest items, so each run adds to what the file already holds. tools/news_stories.mjs matches them
 // to the story threads (tools/threads_lib.mjs factMatch) as "may relate". OSAP never gives a verdict of its own.
-//   FC_OUT (default data/live/factchecks.js), FC_DAYS (default 90)
+// A check in another language gets an English headline from OSAP's own translation model (tools/translate.mjs, MADLAD-400 on the
+// job's CPU; skipped when the model is not installed), kept as item[5], so it can be matched to English headlines by its words.
+//   FC_OUT (default data/live/factchecks.js), FC_DAYS (default 90), FC_MT (default 200: most new headlines translated a run)
 import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
 import { getFeed } from "./news_fetch.mjs";
@@ -32,6 +34,19 @@ for (const [f, r] of res) {
   if (!r) { bad.push(f.id + " (" + f.err + ")"); continue; }
   ok.push(f.id + " " + r.items.length + (r.url === f.url ? "" : " via " + r.url));
   for (const i of r.items) keep.set(i[3], i);
+}
+// English headlines for checks in other languages: kept from earlier runs, the newest missing ones translated now
+const langOf = new Map(feeds.map((f) => [f.id, f.lang || ""]));
+for (const i of keep.values()) { const was = old && (old.items || []).find((o) => o[3] === i[3]); if (was && was[5] && !i[5]) i[5] = was[5]; }
+const need = [...keep.values()].filter((i) => !/^en/.test(langOf.get(i[0]) || "en") && !i[5] && i[1].slice(0, 10) >= cut)
+  .sort((a, b) => (a[1] < b[1] ? 1 : -1)).slice(0, Number(process.env.FC_MT || 200));
+if (need.length) {
+  try {
+    const { translateAll } = await import("./translate.mjs");
+    const tr = await translateAll(need.map((i) => ({ text: i[2], lang: langOf.get(i[0]) })));
+    let n = 0; tr.forEach((t, k) => { if (t && t.en && t.en !== need[k][2]) { need[k][5] = t.en.slice(0, 300); n++; } });
+    console.log(`factchecks: ${n} of ${need.length} headlines in other languages translated`);
+  } catch (e) { console.error("factchecks: translation unavailable:", e.message); }
 }
 const items = [...keep.values()].filter((i) => i[1].slice(0, 10) >= cut && feeds.some((f) => f.id === i[0]))
   .sort((a, b) => (a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : a[3] < b[3] ? -1 : 1));

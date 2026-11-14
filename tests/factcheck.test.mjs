@@ -28,7 +28,15 @@ assert.deepEqual(ids(thread(["Abu Dhabi", "Washington", "Prime Minister", "Chine
 assert.deepEqual(ids(thread(["Hegseth"], ["hegseth", "reprimand", "soldier"])), ["c"], "a one-word name needs two more of the event's words");
 assert.deepEqual(ids(thread(["Hegseth"], ["hegseth", "medal"])), [], "a one-word name and nothing else is no match");
 assert.deepEqual(ids(thread([], ["tanker", "collide", "cruise", "ship", "orlean"])), ["f"], "four of the event's words match without a name");
-assert.deepEqual(factMatch(thread(["Abu Dhabi"], ["abu", "dhabi", "talk"]), checks)[0].slice(5), [["Abu Dhabi"]], "says which names it shares");
+assert.deepEqual(factMatch(thread(["Abu Dhabi"], ["abu", "dhabi", "talk"]), checks)[0].slice(5), ["", ["Abu Dhabi"]], "says which names it shares");
+// a check in another language matches by its English headline (item[5]) and says so
+const es = prepChecks([["m", "2026-11-13T09:00Z", "Las conversaciones de Abu Dhabi", "https://fc.example/es", "", "The Abu Dhabi talks"]], find);
+assert.deepEqual(factMatch(thread(["Abu Dhabi"], ["abu", "dhabi", "talk"]), es).map((c) => [c[0], c[5]]), [["m", "The Abu Dhabi talks"]]);
+// words that always go with a name (Jensen Huang: nvidia, ceo) are not the one more word
+const hu = prepChecks([["l", "2026-11-13T09:00Z", "Nvidia CEO Jensen Huang did not say that", "https://fc.example/hu", ""]], (t) => ["Jensen Huang"].filter((n) => t.includes(n)));
+const tH = thread(["Jensen Huang"], ["nvidia", "ceo", "huang", "jensen", "resign"]);
+assert.equal(factMatch(tH, hu).length, 1, "without the name's usual words it matches");
+assert.equal(factMatch(tH, hu, { ctxOf: () => ["nvidia", "ceo"] }).length, 0, "with them, a check about another claim by the same person is left out");
 assert.deepEqual(ids({ ...thread(["Abu Dhabi"], ["abu", "dhabi", "talk"]), d0: "2026-08-10T00:00" }), ["a", "e"], "a check from up to 45 days before counts");
 
 assert.equal(figureIn("At least 12 people killed in strike", "killed"), 12);

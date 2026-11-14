@@ -22,7 +22,9 @@ export function checkItem(feed, i) {
 /** the checks made ready for matching: the words and names (nameBook.find) of each check's own headline (a summary's words
  *  match far too much: "the Iran war" in a summary ties a toothpaste check to a war story) */
 export function prepChecks(items, find) {
-  return items.map((c) => ({ c, ms: Date.parse(c[1]), w: stems(c[2]), nm: new Set(find(c[2])) }));
+  // a check in another language is matched by its English headline (item[5], from tools/translate.mjs) and its names in either
+  return items.map((c) => ({ c: [c[0], c[1], c[2], c[3], c[4], c[5] || ""], ms: Date.parse(c[1]), w: stems(c[5] || c[2]),
+    nm: new Set([...find(c[2]), ...(c[5] ? find(c[5]) : [])]) }));
 }
 
 // offices, bodies and words for a people name no one event ("Prime Minister", "Senate", "Chinese")
@@ -33,10 +35,13 @@ const COMMON = stems("trump biden putin xi report reports says said new year yea
 
 /** Fact-checks that may relate to a thread, from the words of each check's headline:
  *  one that names one of the thread's own names (not a country, a people or an office: skipName and the lists above) and has
- *  one more of the event's words besides that name (two for a one-word name), or one that has four of the event's words.
+ *  one more of the event's words besides that name (two for a one-word name), or one that has four of the event's words that
+ *  are not part of a name it carries.
  *  A check must be from 45 days before the thread to 14 days after it.
  *  t: a thread after connect() (t.names are the names worth following, t.w the event's distinctive words, stemmed).
- *  Returns up to MAX_CHECKS [feed id, date, headline, link, summary, [shared names]], best first. */
+ *  opt.ctxOf(name): the words that go with that name in most of the pool's headlines ("nvidia", "ceo" for Jensen Huang); they do
+ *  not count as the one more word, so a check about the same person but another claim is left out.
+ *  Returns up to MAX_CHECKS [feed id, date, headline, link, summary, English headline or "", [shared names]], best first. */
 export function factMatch(t, prepped, opt = {}) {
   const max = opt.max || MAX_CHECKS, skip = opt.skipName || (() => false);
   const N = new Set((t.names || []).map((x) => x[0]).filter((x) => x.length > 3 && !GENERIC.test(x) && !DEMONYM.test(x) && !skip(x))), W = new Set(t.w || []);
@@ -45,11 +50,16 @@ export function factMatch(t, prepped, opt = {}) {
   for (const p of prepped) {
     if (!(p.ms >= lo && p.ms <= hi)) continue;
     const sn = [...p.nm].filter((x) => N.has(x)), inName = stems(sn.join(" "));
+    if (opt.ctxOf) for (const x of sn) for (const w of opt.ctxOf(x) || []) inName.add(w);
     const sw = [...W].filter((x) => p.w.has(x)), out = sw.filter((x) => !inName.has(x) && !COMMON.has(x) && x.length >= 4).length;
     // a name of two words or more (Abu Dhabi, Unknown Soldier) or an acronym (FAA) and one more of the event's words; a single
     // word (Bukele, Washington, John) is often someone or somewhere else, so it needs two more
     const strong = sn.some((x) => /\s/.test(x) || /^[A-Z]{2,}$/.test(x)) || sn.length >= 2;
-    if (!((sn.length && out >= (strong ? 1 : 2)) || sw.length >= 4)) continue;
+    // four words without a name: none of them may belong to a name the check carries (or go with it), so "Nvidia CEO Jensen
+    // Huang did not say ..." is not four words of a story about his resignation
+    const own = stems([...p.nm].join(" "));
+    if (opt.ctxOf) for (const x of p.nm) for (const w of opt.ctxOf(x) || []) own.add(w);
+    if (!((sn.length && out >= (strong ? 1 : 2)) || sw.filter((x) => !inName.has(x) && !own.has(x)).length >= 4)) continue;
     hits.push([sn.length * 2 + sw.length, p.ms, [...p.c, sn]]);
   }
   return hits.sort((a, b) => b[0] - a[0] || b[1] - a[1]).slice(0, max).map((h) => h[2]);
