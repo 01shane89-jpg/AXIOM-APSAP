@@ -389,7 +389,9 @@ const SCENES = [
     await p.evaluate((a) => window.OSAP_MEDPLAN.open({ at: a }), AT);
     await k.wait(1500);
     await k.press("Full", "#medplan");
-    await waitCut(() => { const e = document.getElementById("mp-conop"); return e && /GROUND EVAC\s*AVAILABLE/.test(e.innerText) && /min \/ [\d.]+ km road/.test(e.innerText); }, 40000);
+    const stable = () => { const e = document.getElementById("mp-conop"), h = document.querySelector("#medplan .osheet-h"); if (!e) return false; const t = e.innerText;
+      return !/Still reading|Reading|Building/i.test(h ? h.innerText : "") && /STATUS\s*(AMBER|GREEN)/.test(t) && /GROUND EVAC\s*AVAILABLE/.test(t) && /min \/ [\d.]+ km road/.test(t); };
+    await waitCut(stable, 60000);
     const plan = await p.evaluate(() => { const t = (document.getElementById("mp-conop") || {}).innerText || ""; const m = t.match(/DEFINITIVE CARE[^\n]*\n([^\n]+)\n(\d+) min/); return { name: m ? m[1] : "", min: m ? m[2] : "", head: t.slice(0, 600) }; });
     console.log("  medplan", JSON.stringify(plan));
     await into("#mp-conop"); await k.wait(800);
@@ -398,7 +400,8 @@ const SCENES = [
     k.caption("Choose the injury and the plan follows", "Trauma, head injury, burns or limb injuries.");
     const head = async (t) => { const h = await p.evaluateHandle((t) => [...document.querySelectorAll("#medplan .osheet-h button")].find((b) => b.textContent.trim() === t && b.offsetParent) || null, t);
       if (!(await k.glide(h.asElement()))) console.log("  missing head", t); };
-    const cat = async (id, ms) => tap(`#medplan [data-mp-cat="${id}"]`, ms);
+    const cat = async (id, ms) => { await tap(`#medplan [data-mp-cat="${id}"]`, 300); await waitCut(stable, 30000);
+      console.log("  cat", id, await p.evaluate(() => ((document.getElementById("mp-conop") || {}).innerText || "").match(/STATUS\s*([^\n]+)/)?.[1])); await k.wait(ms); };
     const tap = async (sel, ms) => {
       await p.evaluate((s) => { const e = [...document.querySelectorAll(s)].find((x) => x.offsetParent); if (e) e.scrollIntoView({ behavior: "smooth", block: "center" }); }, sel);
       await k.wait(900);
@@ -407,7 +410,7 @@ const SCENES = [
       if (ok) await k.click(sel); else { console.log("  covered", sel); await p.evaluate((s) => { const e = [...document.querySelectorAll(s)].find((x) => x.offsetParent); if (e) e.click(); }, sel); }
       await k.wait(ms);
     };
-    await cat("cat.severe_tbi", 3000); await cat("cat.major_burn", 3000); await cat("cat.major_trauma", 1200);
+    await cat("cat.severe_tbi", 2700); await cat("cat.major_burn", 2700); await cat("cat.major_trauma", 1000);
     k.caption("Emergency numbers and air ambulance", "Published numbers, nearby ambulance stations and air rescue services.");
     await into("#medplan h3", "4. Emergency contacts"); await k.wait(4200);
     k.caption("Road routes to each hospital, on the map", "First, second and third choice, with the drive time to each.");
