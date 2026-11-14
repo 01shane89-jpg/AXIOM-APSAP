@@ -148,6 +148,6 @@ assert.ok(!fs.readFileSync(path.join(out, "th.js"), "utf8").includes("outlet sum
 assert.ok(!fs.existsSync(path.join(out, "zz.js")), "a stale country file is removed");
 assert.ok(fs.existsSync(path.join(out, "my.js")));
 const sum = read(out + ".js").OSAP_STORIESIX;
-assert.deepEqual(sum.countries.th, [1, 0]);
+assert.deepEqual(sum.countries.th, [1, 0, 1], "stories, blindspots, story threads");
 fs.rmSync(dir, { recursive: true, force: true });
 console.log("stories: all checks passed");
