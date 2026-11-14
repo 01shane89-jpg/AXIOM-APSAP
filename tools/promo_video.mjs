@@ -230,6 +230,39 @@ const SCENES = [
     await k.scrollIn(".cbox:has(#off-h)", 260, 2, 1500);
     await k.wait(5000);
   }],
+  ["alerts", { z: 11, at: [13.75, 100.53], settle: 9000, prep: (p) => p.evaluate(() => { try { localStorage.setItem("osap-w-pushnext", "false"); } catch (e) {} }) }, async ({ k, p }) => {
+    k.caption("Know when something happens in your city", "Watch any place, in any country.");
+    await k.tool("watch"); await k.wait(2500);
+    const fld = "#w-pq";
+    await p.evaluate((s) => { const e = document.querySelector(s); if (e) e.scrollIntoView({ behavior: "smooth", block: "center" }); }, fld); await k.wait(1300);
+    k.caption("Type a city and pick a distance", "OSAP draws the circle for you.");
+    if (await k.type(fld, "Bangkok")) { await k.wait(400); await k.press("Find"); }
+    try { await p.waitForSelector("#w-plist .wpick", { timeout: 12000 }); } catch { console.log("  no places found"); }
+    await k.wait(800);
+    await k.click("#w-plist .wpick");
+    await k.wait(1200);
+    const km = await k.el("#w-pkm"); if (km) { await k.glide(km); await p.keyboard.press("Escape"); await p.selectOption("#w-pkm", "25"); }
+    await k.wait(2200);
+    await p.evaluate(() => { const b = [...document.querySelectorAll("#wform button[type=submit]")][0]; if (b) b.scrollIntoView({ behavior: "smooth", block: "center" }); }); await k.wait(1300);
+    k.caption("Save it, and OSAP keeps checking", "Within minutes of new data, day and night.");
+    await k.press("Save watch");
+    // demo: the watch is treated as saved 6 hours ago, so the reports that really arrived inside the circle since then are its hits
+    await p.evaluate(() => {
+      const ws = JSON.parse(localStorage.getItem("asap-watches") || "[]"), w = ws[ws.length - 1]; if (!w || !window.OSAP_WATCH) return;
+      const seen = JSON.parse(localStorage.getItem("asap-watch-seen") || "{}"), sw = seen[w.id] || {}, cut = Date.now() - 6 * 36e5;
+      window.OSAP_WATCH.matches(w).forEach((m) => { const t = m.t0 || Date.parse(m.ts); if (t > cut) { delete sw[m.k]; if (m.sk) delete sw["s:" + m.sk]; } });
+      seen[w.id] = sw; localStorage.setItem("asap-watch-seen", JSON.stringify(seen));
+    });
+    await k.wait(2500);
+    const from = (Date.now() - k.t0) / 1000;
+    try { await p.waitForFunction(() => { const t = document.getElementById("wtoast"); return t && !t.hidden; }, null, { timeout: 60000 }); } catch { console.log("  no alert toast"); }
+    k.skips.push([from + 0.5, (Date.now() - k.t0) / 1000 - 0.3]);
+    k.caption("Something new inside it? You get an alert", "On screen, or as a push alert on your phone.");
+    await k.wait(4500);
+    k.caption("Every alert opens the report and its source");
+    if (!(await k.click("#wtoast [data-w-openhit]"))) console.log("  no open button");
+    await k.wait(5500);
+  }],
 ];
 
 let fails = 0, n = 0;
