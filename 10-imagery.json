@@ -1,0 +1,33 @@
+{
+ "name": "imagery",
+ "view": "phone",
+ "w": 1080,
+ "h": 1620,
+ "frames": 237,
+ "start": 11.885,
+ "end": 39.914,
+ "caps": [
+  {
+   "t": 11.885,
+   "text": "The newest satellite pictures of any place",
+   "sub": "Every free source at once, newest first."
+  },
+  {
+   "t": 20.65,
+   "text": "Each one shows its date, sensor and cloud",
+   "sub": "So an old picture is never mistaken for today's."
+  },
+  {
+   "t": 23.653,
+   "text": "Tap one and it goes on the map",
+   "sub": "With a date badge on it."
+  },
+  {
+   "t": 34.81,
+   "text": "Dated, sourced and free to use",
+   "sub": "Sentinel-2, Landsat and NASA daily pictures, for any place in the world."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}
