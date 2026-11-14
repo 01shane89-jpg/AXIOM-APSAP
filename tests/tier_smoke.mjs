@@ -191,7 +191,12 @@ gate = true;
   ok((await get(p, "data/live/news.js")) === 200 && (await get(p, "data/live/ucdp.js")) === 402, "Free: news 200, conflict events 402");
   await p.evaluate(() => document.querySelector('#atk-tools [data-atk="overlays"]').click()); await p.waitForTimeout(400);
   const dlg = await wall(p);
-  ok(dlg && /needs the Mid plan/.test(dlg.text) && /US\$50 a year/.test(dlg.text) && /14 days free/.test(dlg.text), "Free: a locked tool opens the plans with prices and the free trial");
+  ok(dlg && /needs the Mid plan/.test(dlg.text) && /US\$50 a year/.test(dlg.text) && /Paid plans open soon/.test(dlg.text) && /nobody is charged/.test(dlg.text) && !/14 days free/.test(dlg.text),
+    "Free, no payments set up: a locked tool opens the plans with prices and says paid plans open soon, with no trial offered");
+  const btns = await p.evaluate(() => [...document.querySelectorAll("#tierdlg .trplan button")].map((b) => b.textContent + (b.disabled ? ":off" : "") + (b.hasAttribute("data-tr-buy") ? ":buy" : "")));
+  ok(btns.length === 2 && btns.every((b) => b === "Opens soon:off"), "Free, no payments set up: Mid and Full show a turned-off Opens soon button, not a buy button " + JSON.stringify(btns));
+  ok(await p.evaluate(() => !!document.querySelector('#tierdlg .trsoon a[href^="mailto:support@axiom-intelligence-systems.com"]')), "Free, no payments set up: an email link to hear when paid plans open");
+  ok(!(await p.evaluate(() => !!document.querySelector("script[src*='cdn.paddle.com']"))), "Free, no payments set up: Paddle's checkout script is never loaded");
   const om = await p.evaluate(() => { const o = document.getElementById("atk-om"); return !!(o && !o.hidden && o.offsetParent); });
   ok(!om, "the locked Overlays panel did not open");
   await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/tier-plans.png" : "/dev/null" }).catch(() => {});
