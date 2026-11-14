@@ -396,24 +396,25 @@ const SCENES = [
     k.caption("The right hospital for the injury", plan.name ? `Ranked by what each can treat. Here: ${plan.name}, ${plan.min} min by road.` : "Ranked by what each one can treat, with the drive time.");
     await k.wait(5500);
     k.caption("Choose the injury and the plan follows", "Trauma, head injury, burns or limb injuries.");
-    const cat = async (id, ms) => {
-      const sel = `#medplan [data-mp-cat="${id}"]`;
+    const head = async (t) => { const h = await p.evaluateHandle((t) => [...document.querySelectorAll("#medplan .osheet-h button, #medplan [class*=osheet] > * button")].find((b) => b.textContent.trim() === t && b.offsetParent && b.getBoundingClientRect().top < 80) || null, t);
+      if (!(await k.glide(h.asElement()))) console.log("  missing head", t); };
+    const cat = async (id, ms) => tap(`#medplan [data-mp-cat="${id}"]`, ms);
+    const tap = async (sel, ms) => {
       await p.evaluate((s) => { const e = [...document.querySelectorAll(s)].find((x) => x.offsetParent); if (e) e.scrollIntoView({ behavior: "smooth", block: "center" }); }, sel);
       await k.wait(900);
       // only tap it when the button itself is what is under the finger (never a toolbar button above it)
       const ok = await p.evaluate((s) => { const e = [...document.querySelectorAll(s)].find((x) => x.offsetParent); if (!e) return false; const b = e.getBoundingClientRect(); const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2); return hit === e || e.contains(hit); }, sel);
-      if (ok) await k.click(sel); else { console.log("  cat covered", id); await p.evaluate((s) => { const e = [...document.querySelectorAll(s)].find((x) => x.offsetParent); if (e) e.click(); }, sel); }
+      if (ok) await k.click(sel); else { console.log("  covered", sel); await p.evaluate((s) => { const e = [...document.querySelectorAll(s)].find((x) => x.offsetParent); if (e) e.click(); }, sel); }
       await k.wait(ms);
     };
     await cat("cat.severe_tbi", 3000); await cat("cat.major_burn", 3000); await cat("cat.major_trauma", 1200);
     k.caption("Emergency numbers and air ambulance", "Published numbers, nearby ambulance stations and air rescue services.");
-    await into("#medplan h3", "4. Emergency contacts"); await k.wait(5000);
+    await into("#medplan h3", "4. Emergency contacts"); await k.wait(4200);
     k.caption("Road routes to each hospital, on the map", "First, second and third choice, with the drive time to each.");
-    await k.press("Map", "#medplan"); await k.wait(5500);
-    await k.press("Half", "#medplan"); await k.wait(1200);
-    await into("#medplan h3", "2. Receiving hospitals"); await k.wait(1500);
+    await head("Map"); await k.wait(5500);
+    await head("Full"); await k.wait(1200);
     k.caption("A printable page for each hospital", "Emergency care, surgery, imaging and contacts, with \"Not known\" on every gap.");
-    await k.click("#medplan [data-mp-assess]"); await k.wait(2500);
+    await tap("#medplan [data-mp-assess]", 2500);
     await k.scrollIn("#brief", 260, 4, 1300);
     k.caption("Built from open data, every source linked", "A draft to confirm with the hospital, never a guarantee.");
     await k.wait(4000);
