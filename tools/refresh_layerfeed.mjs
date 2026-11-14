@@ -9,8 +9,9 @@ import fs from "node:fs";
 
 const DAYS = Number(process.env.LAYERFEED_DAYS || 30), PER_LAYER = Number(process.env.LAYERFEED_PER_LAYER || 40);
 const IX = "data/live/news-index", OUT = "data/live/layerfeed";
-// a headline goes to one layer only: the first of its tabs in this order (violence before hazards, hazards before weather)
-const ORDER = ["insurgency", "border", "crime", "scam", "aml", "safety", "health", "transport", "infra", "flood", "weather"];
+// a headline goes to one layer only: the first of its tabs in this order (violence before hazards, hazards before weather).
+// protest, migration and politics (2026-11-14) are the feed-only topics: unrest after violence, politics last before the weather
+const ORDER = ["insurgency", "border", "protest", "crime", "scam", "aml", "migration", "safety", "health", "transport", "infra", "flood", "politics", "weather"];
 // Thailand's southern insurgency has its own live reporting (tools/refresh_deepsouth.mjs)
 const SKIP = { th: new Set(["insurgency"]) };
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";

@@ -10,7 +10,9 @@
    - The file is fetched only when Today is shown for the country. Read-only: it never changes a record.
    - Most covered lists story threads once their file is in (assets/osap-threads.js, Shane 2026-11-14 "go multiple layers deep
      on a topic"): every headline of one event joined, however it was worded, with a Go deeper button that opens it in layers.
-     Until then, and where a country has no threads, it lists the stories as before. */
+     Until then, and where a country has no threads, it lists the stories as before.
+   - Under Who carried it, each outlet can show About this outlet (assets/osap-outletfacts.js): who owns it and how it is paid
+     for, from its Wikidata record. */
 (function () {
   "use strict";
   var D = document, W = window, CC = "", NAME = "", el = null, state = 0, view = "top", bsel = "", shown = 10, open = {};
@@ -102,7 +104,8 @@
       var ru = safeUrl(r[5]), place = r[3] ? cName(r[3]) + (r[8] ? " (placed by where its stories are filed)" : "") : "country not known";
       return "<li>" + (ru ? '<a href="' + esc(ru) + '" target="_blank" rel="noopener noreferrer">' + esc(r[0]) + "</a>" : esc(r[0])) +
         ' <span class="cvo">· ' + esc(KIND[r[1]] || "") + (r[1] === "state" ? " (a claim)" : "") + " · " + esc(place) + " · " + esc(when(r[4])) + "</span>" +
-        (r[6] && r[6] !== s.t ? '<div class="cvo">' + esc(txt(r[6])) + (r[7] ? " (machine translated)" : "") + "</div>" : r[7] ? '<div class="cvo">Machine translated headline</div>' : "") + "</li>";
+        (r[6] && r[6] !== s.t ? '<div class="cvo">' + esc(txt(r[6])) + (r[7] ? " (machine translated)" : "") + "</div>" : r[7] ? '<div class="cvo">Machine translated headline</div>' : "") +
+        (W.OSAP_OUTLETFACTSQ ? W.OSAP_OUTLETFACTSQ.html(r[5]) : "") + "</li>";
     }).join("") + '</ul><div class="cvo">Record fingerprint (SHA-256 of the links): ' + esc(String(s.fp || "").slice(0, 16)) + "…</div></details></li>";
     return h;
   }
@@ -166,6 +169,8 @@
       s.remove(); state = 2; render();
       // then the threads, for Go deeper: Most covered switches to them when they are in
       if (W.OSAP_THREADSQ && data()) W.OSAP_THREADSQ.load(CC, function () { render(); });
+      // then who owns and pays for each outlet (assets/osap-outletfacts.js), for "About this outlet" under Who carried it
+      if (W.OSAP_OUTLETFACTSQ && data()) W.OSAP_OUTLETFACTSQ.load(function () { render(); });
     };
     D.head.appendChild(s);
   }

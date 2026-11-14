@@ -92,7 +92,7 @@
       if (b[0][0] <= me[1][0] + 1.5 && b[1][0] >= me[0][0] - 1.5 && b[0][1] <= me[1][1] + 1.5 && b[1][1] >= me[0][1] - 1.5) L.push("data/sof/" + o.id + ".js");
     });
     L.push("data/live/news/" + c + ".js", "data/live/social/" + c + ".js", "data/history/" + c + ".js", "data/terrain/" + c + ".js", "data/live/daily/" + c + ".js",
-      "data/live/news-index.js", "data/medfac/index.json", "data/live/sanctions/" + c + ".js", "data/live/ucdp/" + c + ".js",
+      "data/live/news-index.js", "data/outlet-facts.js", "data/medfac/index.json", "data/live/sanctions/" + c + ".js", "data/live/ucdp/" + c + ".js",
       "data/basemap/borders-50m.js", "data/basemap/borders-10m.js",
       "data/live/stories/" + c + ".js", "data/live/threads/" + c + ".js", "data/live/x/" + c + ".js", "data/live/layerfeed/" + c + ".js",
       "data/live/conflicts/history/cc/" + c + ".js", "data/live/conflicts/history/mm/" + c + ".js", "data/live/conflicts/history/pc/" + c + ".js");

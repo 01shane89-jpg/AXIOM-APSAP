@@ -20,6 +20,9 @@ fs.writeFileSync(path.join(dir, "data/live/news-index", day + ".js"), "window.OS
     row("ng", "Flood hits Lokoja", "https://a.ng/2", "flood,weather,hazards"),
     row("ng,th", "Joint statement on window.x = 1 security", "https://a.ng/3", "insurgency"),
     row("ng", "Elections update", "https://a.ng/4", "security"),
+    row("ng", "Protesters and police clash, curfew declared", "https://a.ng/5", "protest,safety,politics"),
+    row("ng", "Parliament passes electoral bill", "https://a.ng/6", "politics,weather"),
+    row("ng", "Displaced families return to Borno", "https://a.ng/7", "migration,health"),
   ]) + ";\n");
 fs.writeFileSync(path.join(dir, "data/history/ng.js"), "window.ASAP_HIST=window.ASAP_HIST||{};window.ASAP_HIST[\"ng\"]=" +
   JSON.stringify({ news: [{ link: "https://a.ng/1", geo: { n: "Kano", la: 12, lo: 8.5, p: "approx" } }] }) + ";\n");
@@ -31,7 +34,8 @@ const run = () => execFileSync("node", [tool], { cwd: dir, encoding: "utf8" });
 run();
 const read = (cc) => { const w = {}; new Function("window", fs.readFileSync(path.join(dir, "data/live/layerfeed", cc + ".js"), "utf8"))(w); return w.OSAP_LAYERFEED; };
 const ng = read("ng");
-assert.deepEqual(ng.items.map((i) => [i.u, i.l]).sort(), [["https://a.ng/1", "insurgency"], ["https://a.ng/2", "flood"], ["https://a.ng/3", "insurgency"]]);
+assert.deepEqual(ng.items.map((i) => [i.u, i.l]).sort(), [["https://a.ng/1", "insurgency"], ["https://a.ng/2", "flood"], ["https://a.ng/3", "insurgency"],
+  ["https://a.ng/5", "protest"], ["https://a.ng/6", "politics"], ["https://a.ng/7", "migration"]]);   // unrest before safety and politics; migration before health
 assert.deepEqual(ng.items.find((i) => i.u === "https://a.ng/1").g, ["Kano", 12, 8.5, "approx"]);
 assert.equal(ng.items.find((i) => i.u === "https://a.ng/2").g, undefined);
 assert.ok(!fs.existsSync(path.join(dir, "data/live/layerfeed/th.js")), "Thailand's insurgency is left to the Deep South feed");

@@ -133,12 +133,14 @@
     ":root[data-theme=dark] #thv .thsig-warn{color:#fdba74}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) #thv .thsig-warn{color:#fdba74}}" +
     "@media (max-width:560px){#thv .thtop{padding:8px 12px 6px}#thv .thbody{padding:8px 12px 24px}#thv h2{font-size:16px}#thv .thtabs button{font-size:12.5px;padding:4px 3px}#thv .thtabs .thl{display:none}#thv .thtabs .thsh{display:inline}}";
 
+  /* who owns and pays for the outlet (assets/osap-outletfacts.js, its Wikidata record), when that file is in */
+  function about(link) { var Q = W.OSAP_OUTLETFACTSQ; return Q && Q.of(link) ? Q.html(link) : ""; }
   function rowLine(r, lead) {
     /* [outlet, kind, home, outlet's country, date, link, headline, machine translated, country inferred] */
     var u = safeUrl(r[5]), place = r[3] ? cName(r[3]) + (r[8] ? " (placed by where its stories are filed)" : "") : "country not known";
     return "<li>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer"><b>' + esc(r[0]) + "</b></a>" : "<b>" + esc(r[0]) + "</b>") +
       ' <span class="tho" style="display:inline">· ' + esc(KIND[r[1]] || "") + (r[1] === "state" ? " (a claim)" : "") + " · based in " + esc(place) + " · " + esc(when(r[4])) + "</span>" +
-      (r[6] && r[6] !== lead ? '<span class="tho">' + esc(txt(r[6])) + (r[7] ? " (machine translated)" : "") + "</span>" : r[7] ? '<span class="tho">Machine translated headline</span>' : "") + "</li>";
+      (r[6] && r[6] !== lead ? '<span class="tho">' + esc(txt(r[6])) + (r[7] ? " (machine translated)" : "") + "</span>" : r[7] ? '<span class="tho">Machine translated headline</span>' : "") + about(r[5]) + "</li>";
   }
   function storyLine(t, s, key) {
     var ix = s[0], n = s[1], lead = t.rows[ix[0]], u = safeUrl(lead[5]), hl = txt(lead[6]);
@@ -192,7 +194,7 @@
   function allHtml(t) {
     return '<p class="thnote">Every report in this story, oldest first: each outlet\'s own headline and link, who owns it and where it is based.' + (t.r > t.rows.length ? " " + t.rows.length + " of " + t.r + " are listed: the first and the newest." : "") + '</p><ul class="ths" style="padding:0">' +
       t.rows.map(function (r) { var u = safeUrl(r[5]); return "<li>" + (u ? '<a class="tht" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(txt(r[6])) + "</a>" : esc(txt(r[6]))) +
-        '<span class="tho">' + esc(r[0]) + " · " + esc(KIND[r[1]] || "") + (r[1] === "state" ? " (a claim)" : "") + " · based in " + esc(r[3] ? cName(r[3]) : "country not known") + " · " + esc(when(r[4])) + (r[7] ? " · machine translated" : "") + "</span></li>"; }).join("") + "</ul>";
+        '<span class="tho">' + esc(r[0]) + " · " + esc(KIND[r[1]] || "") + (r[1] === "state" ? " (a claim)" : "") + " · based in " + esc(r[3] ? cName(r[3]) : "country not known") + " · " + esc(when(r[4])) + (r[7] ? " · machine translated" : "") + "</span>" + about(r[5]) + "</li>"; }).join("") + "</ul>";
   }
   function checkHtml(t, cc) {
     var k = t.k || {}, o = t.o || {}, n = t.n || 0, H = "";
@@ -299,6 +301,7 @@
     }
     trail = [{ cc: cc, id: id }]; tab = "parts"; nameSel = "";
     render(); load(cc, function () { render(); });
+    if (W.OSAP_OUTLETFACTSQ) W.OSAP_OUTLETFACTSQ.load(function () { if (box) render(); });
     var x = box.querySelector(".thx"); if (x) x.focus();
   }
   function close() {
