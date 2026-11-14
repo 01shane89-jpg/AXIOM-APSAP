@@ -94,7 +94,7 @@
     L.push("data/live/news/" + c + ".js", "data/live/social/" + c + ".js", "data/history/" + c + ".js", "data/terrain/" + c + ".js", "data/live/daily/" + c + ".js",
       "data/live/news-index.js", "data/outlet-facts.js", "data/medfac/index.json", "data/live/sanctions/" + c + ".js", "data/live/ucdp/" + c + ".js",
       "data/basemap/borders-50m.js", "data/basemap/borders-10m.js",
-      "data/live/stories/" + c + ".js", "data/live/x/" + c + ".js", "data/live/layerfeed/" + c + ".js",
+      "data/live/stories/" + c + ".js", "data/live/threads/" + c + ".js", "data/live/x/" + c + ".js", "data/live/layerfeed/" + c + ".js",
       "data/live/conflicts/history/cc/" + c + ".js", "data/live/conflicts/history/mm/" + c + ".js", "data/live/conflicts/history/pc/" + c + ".js");
     if (news7) for (var i = 0; i < 7; i++) L.push("data/live/news-index/" + new Date(Date.now() - i * 864e5).toISOString().slice(0, 10) + ".js");
     /* whatever this session has already read from data/ (open tabs, conflict files, weather, power, comms coverage) */
@@ -115,7 +115,7 @@
     }).catch(function () { return []; });
   }
   /* files only this country uses (deleting the country removes them; shared files stay) */
-  function own(u, c) { return new RegExp("^data/(layers/" + c + "/|hospitals/" + c + "/|(sof|brief|history|terrain)/" + c + "\\.js$|live/(news|social|daily|sanctions|ucdp|stories|x|layerfeed)/" + c + "\\.js$|live/conflicts/history/(cc|mm|pc)/" + c + "\\.js$)").test(u); }
+  function own(u, c) { return new RegExp("^data/(layers/" + c + "/|hospitals/" + c + "/|(sof|brief|history|terrain)/" + c + "\\.js$|live/(news|social|daily|sanctions|ucdp|stories|threads|x|layerfeed)/" + c + "\\.js$|live/conflicts/history/(cc|mm|pc)/" + c + "\\.js$)").test(u); }
 
   /* ---------- downloading ---------- */
   var JOB = null;

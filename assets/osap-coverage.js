@@ -8,6 +8,9 @@
      outlets OSAP reads (a story told in other words, or in an untranslated headline, is missed), not that it went unreported.
    - Who owns an outlet comes from OSAP's outlet list (tools/news_feeds.json, tools/outlet_owners.json), not from its reporting.
    - The file is fetched only when Today is shown for the country. Read-only: it never changes a record.
+   - Most covered lists story threads once their file is in (assets/osap-threads.js, Shane 2026-11-14 "go multiple layers deep
+     on a topic"): every headline of one event joined, however it was worded, with a Go deeper button that opens it in layers.
+     Until then, and where a country has no threads, it lists the stories as before.
    - Under Who carried it, each outlet can show About this outlet (assets/osap-outletfacts.js): who owns it and how it is paid
      for, from its Wikidata record. */
 (function () {
@@ -69,6 +72,8 @@
       "color:#7c2d12;background:#fde7d6;border:1px solid #f3b58b}" +
     ".cvsrc summary{cursor:pointer;font-size:12px;min-height:26px;padding-top:3px;color:var(--accent,#1f5f99)}.cvsrc ul{list-style:none;margin:2px 0 0;padding:0 0 0 10px;border-left:2px solid var(--line)}" +
     ".cvsrc li{padding:3px 0;font-size:12.5px}.cvsrc a{font-weight:600}.cvo{color:var(--muted)}" +
+    ".cvdeep{display:inline-flex;align-items:center;margin-top:6px;min-height:36px;padding:3px 14px;font:inherit;font-size:13px;font-weight:700;border:1px solid var(--accent,#1D5A86);border-radius:6px;background:var(--accent-soft,#D6E3EE);color:var(--ink);cursor:pointer}" +
+    ".cvdeep::after{content:' \\203A';margin-left:4px}.cvparts b{font-weight:600;color:var(--ink)}" +
     ".cvmore{margin-top:6px;min-height:32px;padding:3px 12px;font-weight:600}.cvfoot{margin-top:8px;font-size:12px;color:var(--muted)}.cvfoot p{margin:3px 0}" +
     "@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .cvb{color:#fed7aa;background:#4a2412;border-color:#9a3412}}:root[data-theme=dark] .cvb{color:#fed7aa;background:#4a2412;border-color:#9a3412}";
 
@@ -92,6 +97,8 @@
     h += bar(s) + '<span class="cvmeta"><b>' + plural(s.n, "outlet") + "</b> · " + split(s) + "</span>";
     h += '<span class="cvmeta">' + esc(s.s || "") + (ago(ms(s.d)) ? " · latest " + esc(ago(ms(s.d))) : "") + "</span>";
     if (b) h += '<span class="cvb" tabindex="0" title="' + esc(b[1]) + '">' + esc(b[0]) + "</span>";
+    var th = W.OSAP_THREADSQ && W.OSAP_THREADSQ.ofLinks(CC, (s.src || []).map(function (r) { return r[5]; }));
+    if (th) h += '<button type="button" class="cvdeep" data-cvdeep="' + esc(th.id) + '">Go deeper</button>';
     h += '<details class="cvsrc" data-cvid="' + esc(s.id) + '"' + (open[s.id] ? " open" : "") + "><summary>Who carried it</summary><ul>" + (s.src || []).map(function (r) {
       /* [outlet, kind, home, outlet's country, date, link, headline, machine translated, country inferred] */
       var ru = safeUrl(r[5]), place = r[3] ? cName(r[3]) + (r[8] ? " (placed by where its stories are filed)" : "") : "country not known";
@@ -102,9 +109,23 @@
     }).join("") + '</ul><div class="cvo">Record fingerprint (SHA-256 of the links): ' + esc(String(s.fp || "").slice(0, 16)) + "…</div></details></li>";
     return h;
   }
+  /* a story thread: one event however it was worded, with what the layers hold and the button that opens them */
+  function threadHtml(t) {
+    var u = safeUrl(t.u), P = (W.OSAP_THREADSQ && W.OSAP_THREADSQ.PART) || {}, parts = [];
+    (t.parts || []).forEach(function (p) { var n = 0; p[1].forEach(function (x) { n += x[0].length; }); if (P[p[0]]) parts.push([p[0], P[p[0]][0], n]); });
+    var order = ["what", "why", "said", "impact", "next"];
+    parts.sort(function (a, b) { return order.indexOf(a[0]) - order.indexOf(b[0]); });
+    var h = '<li class="cvth">' + (u ? '<a class="cvt" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(txt(t.t)) + "</a>" : '<span class="cvt">' + esc(txt(t.t)) + "</span>");
+    h += bar(t) + '<span class="cvmeta"><b>' + plural(t.n, "outlet") + "</b>, " + plural(t.r, "report") + " · " + split(t) + "</span>";
+    h += '<span class="cvmeta">' + (ago(ms(t.d)) ? "latest " + esc(ago(ms(t.d))) : "") + (ago(ms(t.d0)) ? " · first " + esc(ago(ms(t.d0))) : "") + "</span>";
+    if (parts.length) h += '<span class="cvmeta cvparts">' + parts.map(function (p) { return esc(p[1]) + " <b>" + p[2] + "</b>"; }).join(" · ") + "</span>";
+    if (t.names && t.names.length) h += '<span class="cvmeta">Names: ' + esc(t.names.slice(0, 5).map(function (n) { return n[0]; }).join(", ")) + "</span>";
+    return h + '<button type="button" class="cvdeep" data-cvdeep="' + esc(t.id) + '">Go deeper</button></li>';
+  }
+  function threads() { var Q = W.OSAP_THREADSQ, f = Q && Q.get(CC); return f && f.threads && f.threads.length ? f.threads : null; }
   function list() {
     var S = data(), L = S ? S.stories || [] : [];
-    if (view === "top") return L.filter(function (s) { return !s.b; });
+    if (view === "top") return threads() || L.filter(function (s) { return !s.b; });
     return L.filter(function (s) { return s.b && (!bsel || s.b === bsel); });
   }
   function locked() { var T = W.OSAP_TIER; return !!(T && T.on && T.on() && T.allows && !T.allows("mid")); }
@@ -129,7 +150,7 @@
     }
     if (!L.length) h += '<p class="tdobs">' + (view === "top" ? "No story was carried by two or more outlets in the last " + esc(S.hours) + " hours." :
       "No blindspot of this kind in the last " + esc(S.hours) + " hours.") + "</p>";
-    else h += '<ul class="cvlist">' + L.slice(0, shown).map(storyHtml).join("") + "</ul>" + (L.length > shown ? '<button type="button" class="cvmore" data-cvmore>Show ' + Math.min(PAGE, L.length - shown) + " more of " + L.length + "</button>" : "");
+    else h += '<ul class="cvlist">' + L.slice(0, shown).map(view === "top" && threads() ? threadHtml : storyHtml).join("") + "</ul>" + (L.length > shown ? '<button type="button" class="cvmore" data-cvmore>Show ' + Math.min(PAGE, L.length - shown) + " more of " + L.length + "</button>" : "");
     var sd = S.sides || {}, a = sd.active || {};
     h += '<div class="cvfoot"><p><span class="cvdot cvk-state"></span>State media <span class="cvdot cvk-public"></span>Public broadcaster <span class="cvdot cvk-other"></span>Private or independent. ' +
       "Ownership is from OSAP's outlet list, not a judgment of the reporting; state media lines are that government's claims.</p>" +
@@ -146,6 +167,8 @@
     s.async = true;
     s.onload = s.onerror = function () {
       s.remove(); state = 2; render();
+      // then the threads, for Go deeper: Most covered switches to them when they are in
+      if (W.OSAP_THREADSQ && data()) W.OSAP_THREADSQ.load(CC, function () { render(); });
       // then who owns and pays for each outlet (assets/osap-outletfacts.js), for "About this outlet" under Who carried it
       if (W.OSAP_OUTLETFACTSQ && data()) W.OSAP_OUTLETFACTSQ.load(function () { render(); });
     };
@@ -160,6 +183,7 @@
       else if (t.hasAttribute("data-cvb")) { bsel = t.getAttribute("data-cvb"); shown = PAGE; render(); }
       else if (t.hasAttribute("data-cvmore")) { shown += PAGE; render(); }
       else if (t.hasAttribute("data-cvplans") && W.OSAP_TIER) W.OSAP_TIER.open();
+      else if (t.hasAttribute("data-cvdeep") && W.OSAP_THREADSQ) W.OSAP_THREADSQ.open(CC, t.getAttribute("data-cvdeep"));
     });
     el.addEventListener("toggle", function (e) { var d = e.target; if (d.classList && d.classList.contains("cvsrc")) open[d.getAttribute("data-cvid")] = d.open; }, true);
     render(); load();

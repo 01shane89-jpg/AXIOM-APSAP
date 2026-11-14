@@ -34,10 +34,13 @@ async function open(opts) {
 }
 {
   const { p, ctx, errors } = await open({ viewport: { width: 1600, height: 1000 } });
+  // Most covered lists the story threads once their file is in (tests/threads_smoke.mjs checks Go deeper), the stories before
+  await p.waitForFunction(() => document.querySelector("#td-cover .cvlist > li.cvth"), null, { timeout: 30000 }).catch(() => {});
+  const th = await readFile(join(root, "data/live/threads/ru.js"), "utf8").then((t) => { const w = {}; new Function("window", t)(w); return w.OSAP_THREADS.threads; }).catch(() => []);
   const top = await p.evaluate(() => [...document.querySelectorAll("#td-cover .cvlist > li")].map((li) => ({ t: li.querySelector(".cvt").textContent,
     meta: li.querySelector(".cvmeta").textContent, bar: li.querySelectorAll(".cvbar i").length, tag: !!li.querySelector(".cvb") })));
-  const first = want.stories.filter((s) => !s.b)[0];
-  ok(top.length === Math.min(10, want.stories.filter((s) => !s.b).length), `Most covered shows the first page (${top.length})`);
+  const L = th.length ? th : want.stories.filter((s) => !s.b), first = L[0];
+  ok(top.length === Math.min(10, L.length), `Most covered shows the first page (${top.length})`);
   ok(top[0] && new RegExp("^" + first.n + " outlets").test(top[0].meta), `the top story shows its outlet count (${top[0] && top[0].meta.slice(0, 60)})`);
   ok(top.every((x) => x.bar > 0 && !x.tag), "every story has an ownership bar and no blindspot tag");
   await p.locator("#td-cover").scrollIntoViewIfNeeded();
