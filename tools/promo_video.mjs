@@ -422,6 +422,46 @@ const SCENES = [
     k.caption("Built from open data, every source linked", "A draft to confirm with the hospital, never a guarantee.");
     await k.wait(4000);
   }],
+  ["todaybrief", { today: true, settle: 10000 }, async ({ k, p }) => {
+    const cut = async (fn, ms, arg) => { const t0 = (Date.now() - k.t0) / 1000; try { await p.waitForFunction(fn, arg, { timeout: ms }); } catch { console.log("  wait timed out"); } const t1 = (Date.now() - k.t0) / 1000; if (t1 - t0 > 1.5) k.skips.push([t0 + 0.4, t1]); };
+    const storiesIn = () => document.querySelectorAll(".tdnews .tdst").length > 2;
+    k.caption("Every country's picture, in one place", "1,857 news feeds, 122 official warning feeds and 1,087 social accounts.");
+    await k.wait(3800);
+    await cut(storiesIn, 30000);
+    await p.evaluate(() => { const e = document.querySelector(".tdnews"); if (e) e.scrollIntoView({ behavior: "smooth", block: "start" }); }); await k.wait(1400);
+    k.caption("Translated to English, grouped into stories", "When several outlets report one event, it becomes one story.");
+    await k.wait(4200);
+    // a story told by more than one outlet, else the first with a record
+    const pick = await p.evaluate(() => { const A = [...document.querySelectorAll(".tdnews .tdst")]; const a = A.find((x) => /\d+ sources/.test(x.innerText) && x.querySelector("[data-rec]")) || A.find((x) => x.querySelector("[data-rec]"));
+      if (!a) return null; a.querySelector("[data-rec]").setAttribute("data-pick", "1"); a.scrollIntoView({ behavior: "smooth", block: "center" }); return a.innerText.slice(0, 160); });
+    console.log("  story", JSON.stringify(pick)); await k.wait(1200);
+    k.caption("Every item: its source and a fingerprint", "A link to the original and a SHA-256 of exactly what was shown.");
+    if (pick) await k.click('[data-pick="1"]');
+    await k.wait(5200);
+    const xb = await p.evaluateHandle(() => [...document.querySelectorAll(".pkghead .x")].find((x) => x.offsetParent) || null);
+    if (xb.asElement()) { await k.glide(xb.asElement()); await k.wait(400); }
+    // back to Today if the story opened the map
+    if (!(await p.evaluate(() => { const s = document.getElementById("td-cc"); return !!(s && s.offsetParent); }))) await p.evaluate(() => { const b = document.querySelector("header .brand"); if (b) b.click(); });
+    await k.wait(800);
+    for (const [cc, name, t] of [["jp", "Japan", 0], ["ke", "Kenya", 1], ["br", "Brazil", 2]]) {
+      if (t === 0) k.caption("Every country, the same way", "Switch countries in one tap. News, warnings, hazards and weather.");
+      await p.evaluate(() => { window.scrollTo({ top: 0, behavior: "smooth" }); const b = document.getElementById("td-body"); if (b) b.scrollTo({ top: 0, behavior: "smooth" }); }); await k.wait(700);
+      const sel = await k.el("#td-cc"); if (!sel) { console.log("  no country select"); break; }
+      await k.glide(sel); await k.wait(300);
+      const ok = await p.evaluate((cc) => { const s = document.getElementById("td-cc"); if (![...s.options].some((o) => o.value === cc)) return false; s.value = cc; s.dispatchEvent(new Event("change", { bubbles: true })); return true; }, cc);
+      if (!ok) { console.log("  no option", cc); continue; }
+      await k.wait(500);
+      await p.waitForLoadState("load").catch(() => {});
+      await k.cursor();
+      await cut(storiesIn, 30000);
+      await k.wait(800);
+      if (t === 1) k.caption(name + ", " + new Date().toISOString().slice(0, 10), "The same layout, the same sourcing, for 198 countries.");
+      await k.wheel(PHONE ? 320 : 380, 2, 1100, 0.5, 0.6);
+      await k.wait(1500);
+    }
+    k.caption("Your country, every morning", "Every item dated, sourced and fingerprinted.");
+    await k.wait(4000);
+  }],
 ];
 
 let fails = 0, n = 0;
