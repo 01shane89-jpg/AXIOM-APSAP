@@ -598,8 +598,6 @@ const PRECACHE = [
 "assets/osap-work.js",
 "assets/osap-grade.js",
 "assets/world-watermark.svg",
-"assets/tiles-flood.js",
-"assets/tiles-flood25.js",
 "assets/fonts/plex.css",
 "assets/fonts/ibmplexmono--F63fjptAgt5VM-kVkqdyU8n1i8q1w.woff2",
 "assets/fonts/ibmplexmono--F63fjptAgt5VM-kVkqdyU8n1iAq129k.woff2",

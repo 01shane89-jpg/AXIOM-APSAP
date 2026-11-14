@@ -1,9 +1,11 @@
 // Hourly flood snapshot refresh (run by .github/workflows/refresh-flood.yml, or by hand with Node 18+).
 // Pulls the same two ThaiWater feeds the page's Refresh button uses and rewrites
 // data/thailand/flood-live-snapshot.js: stations, rain, over, asof and built change;
-// warnings, exposure and province bulletins are kept as they were.
+// warnings are rebuilt from those gauges and the Thai Meteorological Department warnings in data/live/warnings.js
+// (tools/flood_warnings.mjs), and the ones replaced move to archive; exposure and province bulletins are kept as they were.
 // Exit codes: 0 = snapshot updated or unchanged, 1 = feed failed (the old snapshot is left untouched).
 import fs from "node:fs";
+import { buildWarnings, archiveOf } from "./flood_warnings.mjs";
 
 const TW = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/";
 const FILE = "data/thailand/flood-live-snapshot.js";
@@ -58,10 +60,17 @@ try {
   // Readings more than an hour ahead of Bangkok time don't count toward asof.
   const limit = new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 16).replace("T", " ");
   const asof = stations.reduce((m, s) => (s.t && s.t <= limit && s.t > m ? s.t : m), "");
-  if (asof === LIVE.asof) { console.log("unchanged: newest gauge reading is still " + asof); process.exit(0); }
-  Object.assign(LIVE, clean({ stations, rain, over, asof }), { built: new Date().toISOString().slice(0, 16).replace("T", " ") + "Z" });
+  // official warnings come from the hourly warnings step's last file (a failed read leaves only the gauge lines)
+  let tmd = [];
+  try { const w = fs.readFileSync("data/live/warnings.js", "utf8"); tmd = (JSON.parse(w.slice(w.indexOf("=") + 1).trim().replace(/;$/, "")).items || {}).th || []; }
+  catch (e) { console.error("warnings.js not read: " + e.message); }
+  const warnings = buildWarnings({ stations, rain, over, asof, tmd });
+  // warnings that leave the list are kept in the archive at their own dates (the page's reports list shows them by period)
+  const archive = archiveOf(LIVE.warnings, LIVE.archive, warnings);
+  if (asof === LIVE.asof && JSON.stringify(warnings) === JSON.stringify(LIVE.warnings)) { console.log("unchanged: newest gauge reading is still " + asof); process.exit(0); }
+  Object.assign(LIVE, clean({ stations, rain, over, asof, warnings, archive }), { built: new Date().toISOString().slice(0, 16).replace("T", " ") + "Z" });
   fs.writeFileSync(FILE, "window.LIVE=" + JSON.stringify(LIVE) + ";\n");
-  console.log(`updated: ${stations.length} gauges, ${over.length} over the bank, ${rain.length} rain stations >= 60 mm, as of ${asof}`);
+  console.log(`updated: ${stations.length} gauges, ${over.length} over the bank, ${rain.length} rain stations >= 60 mm, ${warnings.length} warning entries, as of ${asof}`);
 } catch (e) {
   console.error("flood refresh failed, snapshot left as it was: " + (e.message || e));
   process.exit(1);
