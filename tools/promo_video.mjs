@@ -455,6 +455,52 @@ const SCENES = [
     k.caption("Your country, every morning", "Every item dated and linked to its source.");
     await k.wait(4000);
   }],
+  ["mapping", { hash: "#th/timeline", z: 12, at: [1.2905, 103.852], settle: 9000 }, async ({ k, p }) => {
+    const MB = [1.2834, 103.8607];
+    const tl = async (sel) => { await p.evaluate((s) => { const e = document.querySelector(s); if (e) e.scrollIntoView({ block: "center" }); }, sel); await k.wait(300); return k.click(sel); };
+    const close = async () => { await p.keyboard.press("Escape"); await k.wait(300); await p.evaluate(() => document.querySelectorAll("#ml-panel .x, .mlclose, [data-ml-close]").forEach((x) => { if (x.offsetParent) x.click(); })); await k.wait(500); };
+    const at = async (ll) => p.evaluate((ll) => { const m = window.__asapMap, c = m.latLngToContainerPoint(ll), r = document.getElementById("map").getBoundingClientRect(); return [r.left + c.x, r.top + c.y]; }, ll);
+    const tapMap = async (ll) => { const q = await at(ll); await p.mouse.move(q[0], q[1], { steps: 18 }); await k.wait(200); await p.mouse.click(q[0], q[1]); await k.wait(600); };
+    k.caption("One map for everything", "News, warnings, weather and live traffic, for any place on earth.");
+    await k.wait(3200);
+    k.caption("Street, topographic or satellite", "Change the base map in one tap.");
+    await tl('#atk-tools [data-atk="basemap"]'); await k.wait(1200);
+    if (!(await k.press("Satellite"))) await k.basemap("sat");
+    await k.wait(1500); await close();
+    if (await p.evaluate(() => window.OSAP_BASEMAP.get()) !== "sat") await k.basemap("sat");
+    await k.view([1.25, 103.85], 11, true); await k.wait(3000);
+    k.caption("Live ships and aircraft", "Positions they broadcast themselves, refreshed every minute.");
+    await tl('#atk-tools [data-atk="overlays"]'); await k.wait(1400);
+    for (const t of ["sea", "air"]) {
+      const sel = `input[data-trf="${t}"]`;
+      await p.evaluate((s) => { const e = document.querySelector(s); if (e) e.closest("label").scrollIntoView({ block: "center", behavior: "smooth" }); }, sel); await k.wait(700);
+      if (!(await k.click(sel))) await p.evaluate((s) => { const e = document.querySelector(s); if (e && !e.checked) e.click(); }, sel);
+      await k.wait(700);
+    }
+    await close();
+    try { await p.waitForFunction(() => { const T = window.OSAP_TRAFFIC; return T && ((T.sea() || []).length > 5); }, null, { timeout: 25000 }); } catch { console.log("  no ships yet"); }
+    console.log("  traffic", JSON.stringify(await p.evaluate(() => ({ sea: (window.OSAP_TRAFFIC.sea() || []).length, air: (window.OSAP_TRAFFIC.air() || []).length }))));
+    await k.wait(4500);
+    k.caption("Draw your own plans", "Circles, range rings, shapes, arrows and labels, saved on your device.");
+    await k.basemap("streets"); await k.view(MB, 15, true); await k.wait(2600);
+    await tl('#atk-tools [data-atk="draw"]'); await k.wait(1200);
+    if (await k.press("Range rings")) { await k.wait(500); await tapMap(MB); await k.wait(1200); await close(); }
+    else { console.log("  rings by API"); await p.evaluate((ll) => window.OSAP_DRAW.add("rings", [ll], { name: "Meeting point" }), MB); }
+    await k.wait(800);
+    await p.evaluate(() => { if (window.OSAP_DRAW.palette) window.OSAP_DRAW.palette(false); window.OSAP_DRAW.close(); });
+    await k.view(MB, 14, true); await k.wait(3500);
+    k.caption("Any place in 3D", "Real terrain you can tilt and turn.");
+    await k.basemap("sat"); await k.view([35.3606, 138.7274], 12, false); await k.wait(1500);
+    if (!(await tl("#atk-tools [data-o3d]"))) await p.evaluate(() => window.OSAP_3D.open());
+    try { await p.waitForFunction(() => { const m = document.querySelector("#o3d .o3-msg"); return document.getElementById("o3d") && (!m || m.hidden || !m.textContent.trim() || !/Loading/.test(m.textContent)); }, null, { timeout: 30000 }); } catch { console.log("  3D slow"); }
+    await k.wait(2500);
+    // a slow turn: right-drag across the view
+    const b = await p.locator("#o3d").boundingBox().catch(() => null);
+    if (b) { await p.mouse.move(b.x + b.width * 0.3, b.y + b.height * 0.5); await p.mouse.down({ button: "right" }); await p.mouse.move(b.x + b.width * 0.7, b.y + b.height * 0.42, { steps: 60 }); await p.mouse.up({ button: "right" }); }
+    await k.wait(3500);
+    k.caption("Every country, one map", "Every item dated and linked to its source.");
+    await k.wait(3500);
+  }],
 ];
 
 let fails = 0, n = 0;

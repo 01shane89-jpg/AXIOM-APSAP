@@ -27,19 +27,19 @@ jobs:
           done
           getent hosts osap.axiom-intelligence-systems.com || echo "ADDR no DNS for osap."
       - name: Use the newest data from main
-        run: git fetch -q --depth 1 origin main && git checkout FETCH_HEAD -- data
+        run: git fetch -q --depth 1 origin main && git checkout FETCH_HEAD -- . ':(exclude)tools/promo_video.mjs' ':(exclude).github'
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg > /dev/null
       - run: npm install --no-save --no-audit --no-fund playwright@1
       - run: npx playwright install --with-deps chromium
       - run: VIEW=${{ matrix.view }} OUT=pub node tools/promo_video.mjs 2>&1 | tee pub-log.txt
         env:
-          ONLY: todaybrief
+          ONLY: mapping
       - name: Push the clips
         env:
           TOKEN: ${{ github.token }}
         run: |
           cp pub-log.txt pub/log.txt && cd pub && ls -la
-          git init -q -b media/promo-today-${{ matrix.view }}
+          git init -q -b media/promo-mapping-${{ matrix.view }}
           git add -A
           git -c user.name="github-actions[bot]" -c user.email="41898269+github-actions[bot]@users.noreply.github.com" commit -q -m "promo clips (${{ matrix.view }}) from ${GITHUB_SHA::7}"
-          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" media/promo-today-${{ matrix.view }}
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" media/promo-mapping-${{ matrix.view }}
