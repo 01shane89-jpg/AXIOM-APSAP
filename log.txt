@@ -1,0 +1,4 @@
+  flood {"n":12,"np":5,"g":{"d":1.06,"a":"Bang Len District","p":"Nakhon Pathom","lat":14.05221,"lon":100.175087,"t":"2026-11-14 11:00"},"r":{"mm":218.5,"a":"Takua Pa District","p":"Phangnga","lat":8.762331,"lon":98.320761},"asof":"2026-11-15 00:00"}
+  gauge popup tap
+PASS 11 flood {"caps":6,"pdfs":[]}
+all clips recorded
