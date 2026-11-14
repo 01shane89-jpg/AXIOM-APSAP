@@ -5,7 +5,7 @@
 // to the story threads (tools/threads_lib.mjs factMatch) as "may relate". OSAP never gives a verdict of its own.
 // A check in another language gets an English headline from OSAP's own translation model (tools/translate.mjs, MADLAD-400 on the
 // job's CPU; skipped when the model is not installed), kept as item[5], so it can be matched to English headlines by its words.
-//   FC_OUT (default data/live/factchecks.js), FC_DAYS (default 90), FC_MT (default 200: most new headlines translated a run)
+//   FC_OUT (default data/live/factchecks.js), FC_DAYS (default 90), FC_MT (default 300: most new headlines translated a run)
 import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
 import { getFeed } from "./news_fetch.mjs";
@@ -15,6 +15,8 @@ const OUT = process.env.FC_OUT || "data/live/factchecks.js", DAYS = Number(proce
 const { feeds } = JSON.parse(fs.readFileSync("tools/factcheck_feeds.json", "utf8"));
 const old = (() => { try { const t = fs.readFileSync(OUT, "utf8"); return JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, "")); } catch (e) { return null; } })();
 const keep = new Map(((old && old.items) || []).map((i) => [i[3], i]));
+// a summary kept from before the template filter in checkItem ("{{x.txt}}") is dropped
+for (const i of keep.values()) if (/\{\{|\}\}/.test(i[4] || "")) i[4] = "";
 const cut = new Date(Date.now() - DAYS * 864e5).toISOString().slice(0, 10);
 const ok = [], bad = [];
 async function one(f) {
@@ -39,7 +41,7 @@ for (const [f, r] of res) {
 const langOf = new Map(feeds.map((f) => [f.id, f.lang || ""]));
 for (const i of keep.values()) { const was = old && (old.items || []).find((o) => o[3] === i[3]); if (was && was[5] && !i[5]) i[5] = was[5]; }
 const need = [...keep.values()].filter((i) => !/^en/.test(langOf.get(i[0]) || "en") && !i[5] && i[1].slice(0, 10) >= cut)
-  .sort((a, b) => (a[1] < b[1] ? 1 : -1)).slice(0, Number(process.env.FC_MT || 200));
+  .sort((a, b) => (a[1] < b[1] ? 1 : -1)).slice(0, Number(process.env.FC_MT || 300));
 if (need.length) {
   try {
     const { translateAll } = await import("./translate.mjs");

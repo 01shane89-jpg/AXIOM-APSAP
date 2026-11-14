@@ -90,7 +90,7 @@ function ctxOf(x) {
 }
 let nFc = 0, nFig = 0;
 for (const [, c] of built) for (const t of c.threads) {
-  const fc = factMatch(t, checks, { skipName: (x) => ccsInText(x).length > 0, ctxOf }), fig = figures(t.rows, t.w, t.names);
+  const fc = factMatch(t, checks, { skipName: (x) => ccsInText(x).length > 0 || ccsInText(x, true).length > 0, ctxOf }), fig = figures(t.rows, t.w, t.names);
   // [fact-checker, its site, date, its headline, link, its summary, its headline in English if translated, names shared]
   if (fc.length) { t.fc = fc.map(([id, ...x]) => [(fcBy.get(id) || [])[1] || id, (fcBy.get(id) || [])[2] || "", ...x]); nFc++; }
   if (fig.length) { t.fig = fig; nFig++; }

@@ -223,7 +223,7 @@
     }
     // officials' lines
     var said = 0; (t.parts || []).forEach(function (p) { if (p[0] === "said") p[1].forEach(function (x) { said += x[0].length; }); });
-    if (said) H += '<section class="thck"><h3>What officials say</h3><p>' + plural(said, "report") + " carry statements by officials or agencies. They are claims: an official account can be wrong, partial or self-serving. " +
+    if (said) H += '<section class="thck"><h3>What officials say</h3><p>' + plural(said, "report") + (said === 1 ? " carries" : " carry") + " statements by officials or agencies. They are claims: an official account can be wrong, partial or self-serving. " +
       '<button type="button" class="thgo" data-thtab="parts" style="font:inherit;background:none;border:0;padding:0;color:var(--accent,#1f5f99);text-decoration:underline;cursor:pointer">Read them under The story</button>.</p></section>';
     // published fact-checks
     var C = t.fc || [];
@@ -237,7 +237,7 @@
           return "<li>" + (u ? '<a class="tht" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(txt(hl)) + "</a>" : '<span class="tht">' + esc(txt(hl)) + "</span>") +
             (en ? '<span class="tho">Machine translated from: ' + esc(txt(c[3])) + "</span>" : "") +
             '<span class="tho">Fact-checked by ' + (h ? '<a href="' + esc(h) + '" target="_blank" rel="noopener noreferrer">' + esc(c[0]) + "</a>" : esc(c[0])) + " · " + esc(when(c[2])) +
-            (sh.length ? " · shares " + esc(sh.join(", ")) : "") + "</span>" + (c[5] && !en ? '<span class="tho">' + esc(txt(c[5])) + "</span>" : "") + "</li>";
+            (sh.length ? " · shares " + esc(sh.join(", ")) : "") + "</span>" + (c[5] && !en && !/\{\{|\}\}/.test(c[5]) ? '<span class="tho">' + esc(txt(c[5])) + "</span>" : "") + "</li>";
         }).join("") + "</ul>"
       : "<p>No published fact-check OSAP reads shares this story's words. Most stories are never fact-checked: that says nothing about whether it is true.</p>") + "</section>";
     H += '<section class="thck"><h3>Check it yourself</h3><ul><li>Open the earliest report under Timeline: is the first source named, and was it there?</li>' +

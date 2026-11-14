@@ -821,17 +821,6 @@
       "url": "https://feed.liputan6.com/rss/cek-fakta"
     },
     {
-      "id": "detector",
-      "name": "Detector Media",
-      "home": "https://detector.media",
-      "cc": "ua",
-      "lang": "uk",
-      "url": "https://detector.media/rss",
-      "alt": [
-        "https://detector.media/feed"
-      ]
-    },
-    {
       "id": "rebaltica",
       "name": "Re:Check (Re:Baltica)",
       "home": "https://en.rebaltica.lv",
@@ -889,14 +878,6 @@
       "cc": "mx",
       "lang": "es",
       "url": "https://animalpolitico.com/verificacion-de-hechos/feed"
-    },
-    {
-      "id": "lasillavacia",
-      "name": "La Silla Vacía Detector",
-      "home": "https://www.lasillavacia.com/detector-de-mentiras",
-      "cc": "co",
-      "lang": "es",
-      "url": "https://www.lasillavacia.com/feed"
     },
     {
       "id": "africacheckfr",
