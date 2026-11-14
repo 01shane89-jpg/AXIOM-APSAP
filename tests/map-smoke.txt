@@ -119,6 +119,8 @@ tests/commsradio_smoke.mjs
 tests/power_smoke.mjs
 tests/surveil_smoke.mjs
 tests/cams_smoke.mjs
+# Data sets categories after the layout audit (groups, split Security signals, feed-only topics)
+tests/dataset_groups_smoke.mjs
 tests/privacy_smoke.mjs
 tests/vault_smoke.mjs
 tests/borders_smoke.mjs
