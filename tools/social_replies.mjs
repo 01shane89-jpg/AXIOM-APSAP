@@ -1,8 +1,11 @@
-// Reply analysis for the social view: what the public replies to the official and news accounts' Bluesky posts say, as
-// aggregates only. Run after tools/refresh_social.mjs (it reads data/live/social.js), or by hand: node tools/social_replies.mjs
-// Keyless: Bluesky's public read API (public.api.bsky.app, app.bsky.feed.getPostThread). The other platforms cannot be read
-// without an account or key: YouTube comments need the YouTube Data API key; Telegram comments sit in each channel's linked
-// discussion group, which needs a logged-in account; X, Facebook, Instagram and TikTok need accounts and are not read at all.
+// Reply analysis for the social view: what the public replies to the official and news accounts' posts say, as aggregates
+// only. Run after tools/refresh_social.mjs (it reads data/live/social.js), or by hand: node tools/social_replies.mjs
+// Keyless, official public reads only:
+//   Bluesky: the public read API (public.api.bsky.app, app.bsky.feed.getPostThread).
+//   Mastodon: each post's own server, /api/v1/statuses/<id>/context (public posts need no login).
+//   Telegram: the channel post's public comments widget (t.me/<channel>/<id>?embed=1&discussion=1, Telegram's own embed for
+//   websites). Channels without comments, or whose widget answers nothing, are counted as read with no replies.
+// YouTube comments need the YouTube Data API key; X, Facebook, Instagram and TikTok need accounts and are not read at all.
 // Privacy: replies come from private people, so nothing that identifies one is kept. No handle, name, avatar or reply text is
 // written; only counts, a word-list tone estimate, theme shares and words that at least MIN_REPLIES different replies used.
 // The tone and themes are fixed word lists (below), not AI: a rough reading of the room, wrong on sarcasm and other languages.
@@ -12,8 +15,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 export const PER_AREA = 25, MIN_REPLIES = 3, MAX_TERMS = 8;
-const API = "https://public.api.bsky.app/xrpc/", TIMEOUT = 15000, BUDGET = +(process.env.REPLIES_BUDGET_MS || 2 * 6e4);
-export const METHOD = "osap-replies/1";
+const API = "https://public.api.bsky.app/xrpc/", TIMEOUT = 15000, BUDGET = +(process.env.REPLIES_BUDGET_MS || 3 * 6e4);
+export const METHOD = "osap-replies/2";
 
 // Tone: one point per listed word, a negation (not, no, never, n't) in the two words before flips it. Net > 0 positive, < 0 negative.
 const POS = new Set(("good great excellent amazing wonderful brilliant love loved lovely glad happy relieved relief hope hopeful hopefully thank thanks thankful " +
@@ -108,6 +111,48 @@ export function pick(social, skip = [], per = PER_AREA) {
   return out;
 }
 
+// The newest `per` Mastodon and Telegram posts per area, as { cc: [post] }; only links of the shapes those platforms use.
+export const MASTO_LINK = /^https:\/\/([a-z0-9.-]+\.[a-z]{2,})\/@[\w.]+(?:@[\w.-]+)?\/(\d{6,})$/i, TG_LINK = /^https:\/\/t\.me\/([A-Za-z0-9_]{4,64})\/(\d{1,9})$/;
+export function pickOther(social, skip = [], per = 15) {
+  const off = new Set(skip), out = {};
+  for (const [cc, list] of Object.entries(social.items || {})) {
+    if (off.has(cc)) continue;
+    const ok = (i) => i && ((i.platform === "Mastodon" && MASTO_LINK.test(i.link || "")) || (i.platform === "Telegram" && TG_LINK.test(i.link || "")));
+    const xs = (list || []).filter(ok).sort((a, b) => (b.date > a.date ? 1 : a.date > b.date ? -1 : 0));
+    const m = xs.filter((i) => i.platform === "Mastodon").slice(0, per), t = xs.filter((i) => i.platform === "Telegram").slice(0, per);
+    if (m.length || t.length) out[cc] = [...m, ...t];
+  }
+  return out;
+}
+const unhtml = (h) => String(h || "").replace(/<br\s*\/?>|<\/p>/gi, "\n").replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+  .replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'").replace(/&nbsp;/g, " ").replace(/&#(\d+);/g, (m, d) => String.fromCodePoint(+d));
+// Telegram comments widget HTML -> reply texts (in memory only). Each comment is a tgme_widget_message block with its own text.
+export function tgComments(html) {
+  const out = [];
+  for (const m of String(html || "").matchAll(/<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/g)) out.push({ text: unhtml(m[1]).trim(), langs: [] });
+  return out.filter((r) => r.text);
+}
+async function getUrl(url, json) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
+  try {
+    const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": "AXIOM-OSAP/1.0 (situational awareness; reply aggregates)", accept: json ? "application/json" : "text/html" } });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return json ? await r.json() : await r.text();
+  } finally { clearTimeout(t); }
+}
+async function readOther(i) {
+  if (i.platform === "Mastodon") {
+    const [, host, id] = MASTO_LINK.exec(i.link);
+    const [st, ctx] = await Promise.all([getUrl(`https://${host}/api/v1/statuses/${id}`, 1), getUrl(`https://${host}/api/v1/statuses/${id}/context`, 1)]);
+    const replies = (ctx.descendants || []).filter((d) => d && d.in_reply_to_id === id).map((d) => ({ text: unhtml(d.content), langs: d.language ? [d.language] : [] }));
+    return { replies: st.replies_count || 0, likes: st.favourites_count || 0, reposts: st.reblogs_count || 0, quotes: 0, a: analyse(replies) };
+  }
+  const [, ch, id] = TG_LINK.exec(i.link);
+  const html = await getUrl(`https://t.me/${ch}/${id}?embed=1&discussion=1&comments_limit=50`);
+  const replies = tgComments(html.slice(html.indexOf("tgme_widget_discussion") >= 0 ? html.indexOf("tgme_widget_discussion") : 0));
+  return { replies: replies.length, likes: 0, reposts: 0, quotes: 0, a: analyse(replies), tg: html.includes("tgme_widget_discussion") ? 1 : 0 };
+}
+
 async function req(name, q) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), TIMEOUT);
   try {
@@ -125,8 +170,10 @@ if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1])))
   const t = fs.readFileSync("data/live/social.js", "utf8");
   const social = JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, ""));
   const skip = JSON.parse(fs.readFileSync("tools/hidden-areas.json", "utf8")).hidden || [];
-  const byCc = pick(social, skip);
-  const links = [...new Set(Object.values(byCc).flat().map((i) => i.link))];
+  const byCc = pick(social, skip), other = pickOther(social, skip);
+  for (const [cc, list] of Object.entries(other)) byCc[cc] = [...(byCc[cc] || []), ...list];
+  const links = [...new Set(Object.values(byCc).flat().filter((i) => i.platform === "Bluesky").map((i) => i.link))];
+  const others = [...new Map(Object.values(other).flat().map((i) => [i.link, i])).values()];
   // handles to DIDs once each (a post's at:// address needs the account's DID)
   const dids = {}, res = {}, prevBy = {};
   for (const h of new Set(links.map((l) => l.split("/")[4]))) {
@@ -148,6 +195,19 @@ if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1])))
       } catch (e) { bad++; }
     }
   }));
+  // Mastodon and Telegram, a few at a time, within the same budget
+  const st = { Mastodon: { ok: 0, bad: 0, with: 0 }, Telegram: { ok: 0, bad: 0, with: 0, widget: 0 } };
+  let j2 = 0;
+  await Promise.all(Array.from({ length: 4 }, async () => {
+    while (j2 < others.length) {
+      const it = others[j2++];
+      if (Date.now() - T0 > BUDGET) { late++; continue; }
+      try { const r = await readOther(it); res[it.link] = r; st[it.platform].ok++; if (r.a.read) st[it.platform].with++; if (r.tg) st.Telegram.widget++; }
+      catch (e) { st[it.platform].bad++; }
+    }
+  }));
+  console.log("Mastodon posts: read " + st.Mastodon.ok + " (" + st.Mastodon.with + " with replies), failed " + st.Mastodon.bad +
+    "; Telegram posts: read " + st.Telegram.ok + " (" + st.Telegram.widget + " with a comments widget, " + st.Telegram.with + " with comments), failed " + st.Telegram.bad);
   const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
   fs.mkdirSync(DIR, { recursive: true });
   let areas = 0, kept = 0;
@@ -155,12 +215,12 @@ if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1])))
     const posts = list.map((i) => {
       const r = res[i.link] || (prevBy[i.link] && (kept++, { ...prevBy[i.link], stale: 1 }));
       if (!r) return null;
-      return { link: i.link, account: i.account, date: i.date, title: String(i.title_en || i.title || "").slice(0, 200), replies: r.replies, likes: r.likes, reposts: r.reposts, quotes: r.quotes, a: r.a, ...(r.stale ? { stale: 1 } : {}) };
+      return { link: i.link, platform: i.platform, account: i.account, date: i.date, title: String(i.title_en || i.title || "").slice(0, 200), replies: r.replies, likes: r.likes, reposts: r.reposts, quotes: r.quotes, a: r.a, ...(r.stale ? { stale: 1 } : {}) };
     }).filter(Boolean);
     if (!posts.length) continue;
-    const v = { asof: stamp, method: METHOD, source: "Bluesky public replies", posts, totals: totals(posts) };
+    const v = { asof: stamp, method: METHOD, source: "Public replies (Bluesky, Mastodon, Telegram)", posts, totals: totals(posts) };
     fs.writeFileSync(path.join(DIR, cc + ".js"), "window.OSAP_REPLIES=window.OSAP_REPLIES||{};window.OSAP_REPLIES[" + JSON.stringify(cc) + "]=" + JSON.stringify(v).replace(/<\//g, "<\\/") + ";\n");
     areas++;
   }
-  console.log(`social replies: ${links.length} Bluesky posts in ${Object.keys(byCc).length} areas; read ${ok}, failed ${bad}, not reached ${late}, kept from last run ${kept}; wrote ${areas} area files in ${((Date.now() - T0) / 1000).toFixed(1)} s`);
+  console.log(`social replies: ${links.length} Bluesky and ${others.length} Mastodon/Telegram posts in ${Object.keys(byCc).length} areas; read ${ok}, failed ${bad}, not reached ${late}, kept from last run ${kept}; wrote ${areas} area files in ${((Date.now() - T0) / 1000).toFixed(1)} s`);
 }
