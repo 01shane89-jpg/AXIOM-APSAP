@@ -389,16 +389,23 @@ const SCENES = [
     await p.evaluate((a) => window.OSAP_MEDPLAN.open({ at: a }), AT);
     await k.wait(1500);
     await k.press("Full", "#medplan");
-    await waitCut(() => { const e = document.getElementById("mp-conop"); return e && /\d+ min road/.test(e.innerText) && !/GROUND EVAC\s*NOT ROUTED/.test(e.innerText); }, 40000);
-    const plan = await p.evaluate(() => { const t = (document.getElementById("mp-conop") || {}).innerText || ""; const m = t.match(/DEFINITIVE CARE[^\n]*\n([^\n]+)\n(\d+) min road/); return { name: m ? m[1] : "", min: m ? m[2] : "", head: t.slice(0, 600) }; });
+    await waitCut(() => { const e = document.getElementById("mp-conop"); return e && /GROUND EVAC\s*AVAILABLE/.test(e.innerText) && /min \/ [\d.]+ km road/.test(e.innerText); }, 40000);
+    const plan = await p.evaluate(() => { const t = (document.getElementById("mp-conop") || {}).innerText || ""; const m = t.match(/DEFINITIVE CARE[^\n]*\n([^\n]+)\n(\d+) min/); return { name: m ? m[1] : "", min: m ? m[2] : "", head: t.slice(0, 600) }; });
     console.log("  medplan", JSON.stringify(plan));
     await into("#mp-conop"); await k.wait(800);
     k.caption("The right hospital for the injury", plan.name ? `Ranked by what each can treat. Here: ${plan.name}, ${plan.min} min by road.` : "Ranked by what each one can treat, with the drive time.");
     await k.wait(5500);
     k.caption("Choose the injury and the plan follows", "Trauma, head injury, burns or limb injuries.");
-    await k.click('[data-mp-cat="cat.severe_tbi"]'); await k.wait(3000);
-    await k.click('[data-mp-cat="cat.major_burn"]'); await k.wait(3000);
-    await k.click('[data-mp-cat="cat.major_trauma"]'); await k.wait(1200);
+    const cat = async (id, ms) => {
+      const sel = `#medplan [data-mp-cat="${id}"]`;
+      await p.evaluate((s) => { const e = [...document.querySelectorAll(s)].find((x) => x.offsetParent); if (e) e.scrollIntoView({ behavior: "smooth", block: "center" }); }, sel);
+      await k.wait(900);
+      // only tap it when the button itself is what is under the finger (never a toolbar button above it)
+      const ok = await p.evaluate((s) => { const e = [...document.querySelectorAll(s)].find((x) => x.offsetParent); if (!e) return false; const b = e.getBoundingClientRect(); const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2); return hit === e || e.contains(hit); }, sel);
+      if (ok) await k.click(sel); else { console.log("  cat covered", id); await p.evaluate((s) => { const e = [...document.querySelectorAll(s)].find((x) => x.offsetParent); if (e) e.click(); }, sel); }
+      await k.wait(ms);
+    };
+    await cat("cat.severe_tbi", 3000); await cat("cat.major_burn", 3000); await cat("cat.major_trauma", 1200);
     k.caption("Emergency numbers and air ambulance", "Published numbers, nearby ambulance stations and air rescue services.");
     await into("#medplan h3", "4. Emergency contacts"); await k.wait(5000);
     k.caption("Road routes to each hospital, on the map", "First, second and third choice, with the drive time to each.");
