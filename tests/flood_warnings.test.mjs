@@ -1,7 +1,7 @@
 // tools/flood_warnings.mjs: the Thailand flood tab's warnings list is rebuilt from this hour's gauges and the last 3 days of Thai
 // Meteorological Department warnings, so it cannot sit on an old event (14 Nov 2026: it still showed 26 Sep). No network.
 import assert from "node:assert/strict";
-import { buildWarnings, ageHours, WARN_HOURS } from "../tools/flood_warnings.mjs";
+import { buildWarnings, archiveOf, ageHours, WARN_HOURS } from "../tools/flood_warnings.mjs";
 
 const now = Date.parse("2026-11-14T05:00Z");   // 12:00 in Bangkok
 const st = [
@@ -34,4 +34,12 @@ assert.equal(m.en.length, 13); assert.equal(m.en[12], "and 8 more gauges over th
 // the page's guard reads the same Bangkok times
 assert.equal(Math.round(ageHours("2026-11-14 11:00", now)), 1);
 assert.ok(ageHours("2026-09-26 06:00", now) > WARN_HOURS, "the September bulletin is older than the guard allows");
+// back-dating: the September bulletins leave the current list but stay in the archive at their own dates; gauge entries do not
+const sep = [{ t: "2026-09-26 06:00", en: ["Water 4 cm over the bank — Phanom Sarakham, Chachoengsao"], th: "x" }, { t: "2026-09-26 05:00", en: ["Water 5 cm over the bank — Khao Saming, Trat"], th: "y" }];
+const arch = archiveOf(sep, [], w);
+assert.deepEqual(arch.map((x) => x.t), ["2026-09-26 06:00", "2026-09-26 05:00"]);
+const arch2 = archiveOf(w, arch, buildWarnings({ stations: st, rain, over: [0], asof: "2026-11-14 12:00", tmd, now }));
+assert.equal(arch2.length, 2, "the official warning still current is not archived, the old gauge entry is dropped, nothing doubles");
+assert.ok(!arch2.some((x) => x.kind === "gauges"));
+assert.equal(archiveOf([], Array.from({ length: 500 }, (_, i) => ({ t: "2026-09-" + String(1 + (i % 28)).padStart(2, "0") + " 00:00", en: ["n" + i] })), []).length, 400);
 console.log("flood warnings tests passed");

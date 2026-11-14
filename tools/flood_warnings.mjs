@@ -38,3 +38,20 @@ export function buildWarnings({ stations = [], rain = [], over = [], asof = "", 
 
 /** hours since a Bangkok-local "YYYY-MM-DD HH:MM" time; NaN when it cannot be read */
 export const ageHours = (t, now = Date.now()) => (now - (Date.parse(String(t).slice(0, 16).replace(" ", "T") + "Z") - 7 * 36e5)) / 36e5;
+
+/** Past warnings are kept, not dropped, so a look back at the September 2026 flooding still finds them at their own dates
+ *  (Shane, 14 Nov 2026): every bulletin or official warning that has left the current list moves to the archive, newest first,
+ *  at most ARCHIVE_MAX. Gauge entries are not archived: they are rebuilt every hour from readings, not issued by anyone. */
+export const ARCHIVE_MAX = 400;
+export function archiveOf(prevWarnings = [], prevArchive = [], current = []) {
+  const key = (w) => w.t + "|" + (w.en || []).join("|");
+  const now = new Set(current.map(key)), seen = new Set(), out = [];
+  for (const w of [...prevWarnings, ...prevArchive]) {
+    if (!w || w.kind === "gauges" || !w.t || !(w.en || []).length) continue;
+    const k = key(w);
+    if (now.has(k) || seen.has(k)) continue;
+    seen.add(k);
+    out.push(w);
+  }
+  return out.sort((a, b) => (b.t > a.t ? 1 : b.t < a.t ? -1 : 0)).slice(0, ARCHIVE_MAX);
+}
