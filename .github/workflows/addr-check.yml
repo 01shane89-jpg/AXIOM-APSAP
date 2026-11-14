@@ -1,4 +1,4 @@
-# Scratch (claude/promo-video, never merged): waits for osap.axiom-intelligence-systems.com to serve OSAP over HTTPS.
+# Scratch (claude/promo-video, never merged): waits for osap.axiom-intelligence-systems.com to serve OSAP over HTTPS (run 2).
 name: Address check
 on:
   push:
