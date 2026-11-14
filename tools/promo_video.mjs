@@ -288,6 +288,17 @@ const SCENES = [
     if (!(await k.click("#wtoast [data-w-openhit]"))) console.log("  no open button");
     await k.wait(5500);
   }],
+  ["brief", { today: true, settle: 11000 }, async ({ k, p }) => {
+    k.caption("Your country's daily brief, every morning", "Top lines, key events and what to watch.");
+    await k.into("#td-daily"); await k.wait(3000);
+    k.caption("Every line cites its sources", "Numbered links back to the original reports.");
+    await k.wheel(PHONE ? 260 : 320, 3, 1300, 0.5, 0.6); await k.wait(800);
+    await k.into("#td-daily"); await k.wait(600);
+    k.caption("One tap: Export PDF", "Built from the latest reporting for the country.");
+    await k.wait(1500);
+    if (await k.click("#td-daily [data-dlprint]")) await k.pdf("daily-brief.pdf");
+    await k.wait(1200);
+  }],
 ];
 
 let fails = 0, n = 0;
