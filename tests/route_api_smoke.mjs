@@ -81,9 +81,11 @@ const today = new Date().toISOString().slice(0, 10), old = new Date(Date.now() -
 await p.evaluate(([A, B, today, old]) => { window.__inject = () => {
   const at = (t, off) => [A[0] + (B[0] - A[0]) * t + off, A[1] + (B[1] - A[1]) * t];
   const c1 = at(1 / 3, 0), g = at(0.5, 0.09), o = at(0.8, 0);
-  window.ASAP_ROADS = { items: [{ lat: c1[0], lon: c1[1], kind: "closure", title: "Bridge closed", link: "https://example.org/closed", updated: today },
+  const roads = { items: [{ lat: c1[0], lon: c1[1], kind: "closure", title: "Bridge closed", link: "https://example.org/closed", updated: today },
     { lat: o[0], lon: o[1], kind: "closure", title: "Old works", link: "", updated: old }] };
-  window.ASAP_GDACS = { events: [{ lat: g[0], lon: g[1], name: "Flood alert", url: "https://example.org/gdacs", from: today }] };
+  const gdacs = { events: [{ lat: g[0], lon: g[1], name: "Flood alert", url: "https://example.org/gdacs", from: today }] };
+  /* hold these while the calls run: the page's own data/live/roads.js can arrive mid-call and replace a plain assignment */
+  for (const [k, v] of [["ASAP_ROADS", roads], ["ASAP_GDACS", gdacs]]) Object.defineProperty(window, k, { configurable: true, get: () => v, set: () => {} });
 }; }, [A, B, today, old]);
 
 const r3 = await p.evaluate(([A, B]) => (window.__inject(), window.OSAP_ROUTETAB.alternates(A, B, { mode: "car", n: 3 }).then((x) => x.map((y) => ({ id: y.id, n: y.coords.length, m: y.m, s: y.s, road: y.road, xc: y.xc, src: y.src, how: y.how, a: y.coords[0], b: y.coords[y.coords.length - 1] })))), [A, B]);
