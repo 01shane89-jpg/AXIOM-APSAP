@@ -458,7 +458,11 @@ const SCENES = [
   ["mapping", { hash: "#th/timeline", z: 12, at: [1.2905, 103.852], settle: 9000 }, async ({ k, p }) => {
     const MB = [1.2834, 103.8607];
     const tl = async (sel) => { await p.evaluate((s) => { const e = document.querySelector(s); if (e) e.scrollIntoView({ block: "center" }); }, sel); await k.wait(300); return k.click(sel); };
-    const close = async () => { await p.keyboard.press("Escape"); await k.wait(300); await p.evaluate(() => document.querySelectorAll("#ml-panel .x, .mlclose, [data-ml-close]").forEach((x) => { if (x.offsetParent) x.click(); })); await k.wait(500); };
+    const close = async () => {
+      const x = await p.evaluateHandle(() => [...document.querySelectorAll("button")].find((b) => b.offsetParent && /^[×✕]$/.test(b.textContent.trim()) && !b.closest("#medplan")) || null);
+      if (x.asElement()) await k.glide(x.asElement()); else await p.keyboard.press("Escape");
+      await k.wait(600); };
+    const cut = async (fn, ms) => { const t0 = (Date.now() - k.t0) / 1000; try { await p.waitForFunction(fn, null, { timeout: ms }); } catch { console.log("  wait timed out"); } const t1 = (Date.now() - k.t0) / 1000; if (t1 - t0 > 1.5) k.skips.push([t0 + 0.4, t1]); };
     const at = async (ll) => p.evaluate((ll) => { const m = window.__asapMap, c = m.latLngToContainerPoint(ll), r = document.getElementById("map").getBoundingClientRect(); return [r.left + c.x, r.top + c.y]; }, ll);
     const tapMap = async (ll) => { const q = await at(ll); await p.mouse.move(q[0], q[1], { steps: 18 }); await k.wait(200); await p.mouse.click(q[0], q[1]); await k.wait(600); };
     k.caption("One map for everything", "News, warnings, weather and live traffic, for any place on earth.");
@@ -478,8 +482,9 @@ const SCENES = [
       await k.wait(700);
     }
     await close();
-    try { await p.waitForFunction(() => { const T = window.OSAP_TRAFFIC; return T && ((T.sea() || []).length > 5); }, null, { timeout: 25000 }); } catch { console.log("  no ships yet"); }
-    console.log("  traffic", JSON.stringify(await p.evaluate(() => ({ sea: (window.OSAP_TRAFFIC.sea() || []).length, air: (window.OSAP_TRAFFIC.air() || []).length }))));
+    const nTr = () => { const L = window.OSAP_TRAFFIC.layers(); const n = (g) => (g && g.getLayers ? g.getLayers().length : 0); return { sea: n(L.sea), air: n(L.air), chk: [...document.querySelectorAll("input[data-trf]")].map((i) => i.getAttribute("data-trf") + ":" + i.checked).join(",") }; };
+    await cut(() => { const L = window.OSAP_TRAFFIC.layers(); return L.sea && L.sea.getLayers && L.sea.getLayers().length > 5; }, 25000);
+    console.log("  traffic", JSON.stringify(await p.evaluate(nTr)));
     await k.wait(4500);
     k.caption("Draw your own plans", "Circles, range rings, shapes, arrows and labels, saved on your device.");
     await k.basemap("streets"); await k.view(MB, 15, true); await k.wait(2600);
@@ -492,7 +497,7 @@ const SCENES = [
     k.caption("Any place in 3D", "Real terrain you can tilt and turn.");
     await k.basemap("sat"); await k.view([35.3606, 138.7274], 12, false); await k.wait(1500);
     if (!(await tl("#atk-tools [data-o3d]"))) await p.evaluate(() => window.OSAP_3D.open());
-    try { await p.waitForFunction(() => { const m = document.querySelector("#o3d .o3-msg"); return document.getElementById("o3d") && (!m || m.hidden || !m.textContent.trim() || !/Loading/.test(m.textContent)); }, null, { timeout: 30000 }); } catch { console.log("  3D slow"); }
+    await cut(() => { const o = document.getElementById("o3d"); if (!o) return false; const l = o.querySelector(".o3-load"), m = o.querySelector(".o3-msg"); return (!l || l.hidden) && (!m || m.hidden || !/Loading/.test(m.textContent)); }, 40000);
     await k.wait(2500);
     // a slow turn: right-drag across the view
     const b = await p.locator("#o3d").boundingBox().catch(() => null);
