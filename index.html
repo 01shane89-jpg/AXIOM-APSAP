@@ -2174,9 +2174,9 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
   var SEP = "2026-09-25";
   var dayLabel = function (k) { var d = new Date(Date.parse(FD(k))); return "to " + d.getUTCDate() + " " + ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][d.getUTCMonth()]; };
   fdb[0].textContent = dayLabel(1); fdb[1].textContent = dayLabel(2);
-  fdIn.max = FD(1); fdIn.value = FD(1);
+  fdIn.max = FD(1); fdIn.min = "2021-01-01"; fdIn.value = FD(1);   /* GIBS holds this composite from 1 Jan 2021 (capabilities, 14 Nov 2026) */
   function setDay(day) {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || day > FD(1)) day = FD(1);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || day > FD(1) || day < "2021-01-01") day = FD(1);
     fdb.forEach(function (b, i) { b.setAttribute("aria-pressed", day === (i === 2 ? SEP : FD(i + 1)) ? "true" : "false"); });
     fdIn.value = day;
     floodLayer.setUrl(fdUrl(day));
