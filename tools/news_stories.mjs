@@ -4,12 +4,17 @@
 // data/live/stories.js (window.OSAP_STORIESIX: each country's story and blindspot counts). Only headlines and links, which the
 // pool already holds; never an outlet's text (tools/outlet_text.mjs). Rebuildable at any time from the pool; holds nothing of
 // its own. No network. Run after tools/news_index.mjs.
-//   STORIES_IX (default data/live/news-index), STORIES_OUT (default data/live/stories), STORIES_HOURS (default 72)
+// It also writes the story threads (tools/threads_lib.mjs, "Go deeper"): data/live/threads/<cc>.js (window.OSAP_THREADS), every
+// headline of one event in layers, with the names it mentions and the other headlines (any country) that name them.
+//   STORIES_IX (default data/live/news-index), STORIES_OUT (default data/live/stories), THREADS_OUT (default data/live/threads),
+//   STORIES_HOURS (default 72)
 import fs from "node:fs";
 import { outletBook, fromRow, buildCountry, SCHEMA, HOURS } from "./stories_lib.mjs";
+import { nameBook, connect, TSCHEMA } from "./threads_lib.mjs";
 import { ccsInText } from "./geo_cc.mjs";
 
 const IX = process.env.STORIES_IX || "data/live/news-index", OUT = process.env.STORIES_OUT || "data/live/stories";
+const TOUT = process.env.THREADS_OUT || (/stories\/?$/.test(OUT) ? OUT.replace(/stories\/?$/, "threads") : OUT.replace(/\/?$/, "-threads"));
 const H = Number(process.env.STORIES_HOURS || HOURS), END = process.env.STORIES_END ? Date.parse(process.env.STORIES_END) : Date.now();
 const stamp = new Date(END).toISOString().slice(0, 16).replace("T", " ") + "Z";
 const HEAD = /^(?:window\.\w+=window\.\w+\|\|\{\};)?window\.\w+(?:\["[^"]+"\])?=/;
@@ -43,16 +48,42 @@ const want = new Set(by.keys());
 for (const f of fs.existsSync("data/live/news") ? fs.readdirSync("data/live/news") : []) if (/^[a-z]{2,3}\.js$/.test(f)) want.add(f.slice(0, -3));
 fs.mkdirSync(OUT, { recursive: true });
 const written = new Set(), ix = {};
-let nS = 0, nB = 0;
+let nS = 0, nB = 0, nT = 0;
+// names (people, bodies, places, systems) learnt from every headline in the window, for the threads' connections
+const inWin = reps.filter((r) => { const t = Date.parse(r.date.slice(0, 16) + "Z"); return isFinite(t) && t >= END - H * 36e5 && t <= END + 14 * 36e5; });
+const names = nameBook(inWin.map((r) => r.title));
+const built = new Map();
 const METHOD = "Headlines from the outlets OSAP reads, grouped into stories by their words. Many headlines are machine translated, so a story told in other words is missed: counts are a floor, and a blindspot means no matching headline was found, not that the story went unreported.";
+const TMETHOD = "Go deeper joins every headline that shares an event's distinctive words within a few days, sorts each into a part by its words, and lists the names outlets write with a capital letter. All of it is word matching by machine, not AI and not an analyst: a headline can be missed or wrongly joined, and two stories naming the same person are not shown to be linked. Officials' lines are their claims.";
 for (const cc of [...want].sort()) {
-  const c = buildCountry(cc, by.get(cc) || [], book, ccsInText, { end: END, hours: H });
+  // a country's own name is no connection ("United States" in every US thread)
+  const skipName = (x) => ccsInText(x).some((c) => c === cc || (cc === "oki" && c === "jp"));
+  const c = buildCountry(cc, by.get(cc) || [], book, ccsInText, { end: END, hours: H, names, skipName });
   const b = c.stories.filter((s) => s.b).length;
-  nS += c.stories.length; nB += b;
-  ix[cc] = [c.stories.length, b];
-  fs.writeFileSync(OUT + "/" + cc + ".js", "window.OSAP_STORIES=" + JSON.stringify({ schema: SCHEMA, asof: stamp, method: METHOD, ...c }).replace(/<\//g, "<\\/") + ";\n");
-  written.add(cc + ".js");
+  nS += c.stories.length; nB += b; nT += c.threads.length;
+  ix[cc] = [c.stories.length, b, c.threads.length];
+  built.set(cc, c);
 }
+// connections: every headline in the window that names one of a thread's names, in any country, newest first
+const all = [], linkAt = new Map();
+for (const r of inWin) { if (linkAt.has(r.link)) continue; linkAt.set(r.link, all.length); all.push({ cc: r.ccs[0] || "", title: r.title, outlet: r.outlet, link: r.link, date: r.date, ms: Date.parse(r.date.slice(0, 16) + "Z"), thread: "" }); }
+const want2 = new Set();
+for (const [cc, c] of built) for (const t of c.threads) { t.names.forEach(([x]) => want2.add(x)); for (const row of t.rows) { const i = linkAt.get(row[5]); if (i != null && !all[i].thread) { all[i].thread = cc + ":" + t.id; all[i].cc = cc; } } }
+const nix = new Map();
+all.forEach((a, i) => { for (const x of names.find(a.title)) if (want2.has(x)) { if (!nix.has(x)) nix.set(x, []); nix.get(x).push(i); } });
+const tbc = new Map([...built].map(([cc, c]) => [cc, c.threads]));
+connect(tbc, all, nix, Math.max(40, Math.round(all.length * 0.005)));
+// the threads go in their own file per country, loaded only when a reader opens one (Today stays as light as before)
+fs.mkdirSync(TOUT, { recursive: true });
+const tw = new Set();
+for (const [cc, c] of built) {
+  const { threads, ...rest } = c;
+  fs.writeFileSync(OUT + "/" + cc + ".js", "window.OSAP_STORIES=" + JSON.stringify({ schema: SCHEMA, asof: stamp, method: METHOD, ...rest }).replace(/<\//g, "<\\/") + ";\n");
+  written.add(cc + ".js");
+  fs.writeFileSync(TOUT + "/" + cc + ".js", "window.OSAP_THREADS=" + JSON.stringify({ schema: TSCHEMA, asof: stamp, method: TMETHOD, cc, hours: H, threads }).replace(/<\//g, "<\\/") + ";\n");
+  tw.add(cc + ".js");
+}
+for (const f of fs.readdirSync(TOUT)) if (/\.js$/.test(f) && !tw.has(f)) fs.rmSync(TOUT + "/" + f);
 for (const f of fs.readdirSync(OUT)) if (/\.js$/.test(f) && !written.has(f)) fs.rmSync(OUT + "/" + f);
 fs.writeFileSync(OUT.replace(/\/?$/, "") + ".js", "window.OSAP_STORIESIX=" + JSON.stringify({ schema: SCHEMA, asof: stamp, hours: H, countries: ix }) + ";\n");
-console.log(`stories: ${nS} stories (${nB} blindspots) for ${written.size} countries from ${reps.length} headlines, last ${H} h, ${Date.now() - t0} ms`);
+console.log(`stories: ${nS} stories (${nB} blindspots), ${nT} threads (${names.size} names) for ${written.size} countries from ${reps.length} headlines, last ${H} h, ${Date.now() - t0} ms`);

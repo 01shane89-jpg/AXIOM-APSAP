@@ -11,6 +11,7 @@
 // Every line is an outlet's own headline and link; nothing is judged or added. Rebuildable at any time from the pool.
 import crypto from "node:crypto";
 import { words, unent } from "./daily_lib.mjs";
+import { buildThreads } from "./threads_lib.mjs";
 
 export const SCHEMA = "osap-stories/1";
 export const HOURS = 72, MAX_STORIES = 40, MAX_BLIND = 15, MIN_BLIND = 3;
@@ -169,8 +170,8 @@ export function buildCountry(cc, reps, book, named, opt = {}) {
   const stateRead = stateRows.filter((r) => /g/.test(r.flags));
   const active = { state: stateRead.length >= ACTIVE_STATE, home: homeRows.length >= ACTIVE_HOME };
   const stateSide = silentSide(stateRows), homeSide = silentSide(homeRows);
-  const out = [];
-  for (const g of joinEvents(group(R))) {
+  const out = [], groups = group(R);
+  for (const g of joinEvents(groups)) {
     const by = new Map();
     for (const r of g.items) if (!by.has(r.outlet)) by.set(r.outlet, r);
     const src = [...by.values()];
@@ -201,5 +202,7 @@ export function buildCountry(cc, reps, book, named, opt = {}) {
   return { cc, hours: opt.hours || HOURS, reports: R.length, outlets: outletsOf(R),
     sides: { state: outletsOf(stateRows), stateReports: stateRows.length, stateRead: [...new Set(stateRead.map((r) => r.outlet))].sort(), home: outletsOf(homeRows),
       homeReports: homeRows.length, active },
-    stories: all };
+    stories: all,
+    // story threads (tools/threads_lib.mjs): every headline of one event in layers, when the caller gives the name book
+    ...(opt.names ? { threads: buildThreads(R, groups, opt.names, { skipName: opt.skipName }) } : {}) };
 }
