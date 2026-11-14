@@ -24,7 +24,7 @@
   var S = lsGet() || {};
   S.air = !!S.air; S.ground = !!S.ground; S.sea = !!S.sea; S.k = S.k || {};
   KINDS.forEach(function (k) { if (S.k[k[0]] == null) S.k[k[0]] = true; });
-  var map = null, ren = null, gAir = null, gSea = null, timer = null, mvT = null, tick = 0;
+  var map = null, renAir = null, renSea = null, gAir = null, gSea = null, timer = null, mvT = null, tick = 0;
   var A = { idx: null, cells: {}, err: "", busy: false, note: "", shown: 0, live: null, lerr: "", lbusy: false, loff: false, lnote: "" };
   var V = { list: {}, err: "", busy: false, note: "", shown: 0, trunc: false, attr: {}, at: 0 };
 
@@ -149,7 +149,7 @@
     })).then(airDraw);
   }
   function addAc(a) {
-    var col = acColour(a), m = new Glyph([a.lat, a.lon], { renderer: ren, pane: "trafairpane", radius: EMERG[a.sqk] ? 8 : 5.5, hdg: a.fl & 4 ? null : a.trk,
+    var col = acColour(a), m = new Glyph([a.lat, a.lon], { renderer: renAir, pane: "trafairpane", radius: EMERG[a.sqk] ? 8 : 5.5, hdg: a.fl & 4 ? null : a.trk,
       shape: "air", color: "#fff", weight: 1, fillColor: col, fillOpacity: 0.95 });
     m.bindPopup(function () { return acPop(a); }, { maxWidth: 330 });
     m.bindTooltip(function () { return acTip(a); }, { direction: "top", offset: [0, -6] });
@@ -287,7 +287,7 @@
         if (!S.k[k] || !b.contains([v.lat, v.lon])) return;
         if (isFinite(seen) && now - seen > SEA_STALE) return;
         var moving = p.sog != null && p.sog >= 0.5, hdg = moving ? (p.heading != null && p.heading < 360 ? p.heading : p.cog) : null;
-        var m = new Glyph([v.lat, v.lon], { renderer: ren, pane: "trafseapane", radius: moving ? 5 : 3.5, hdg: hdg, shape: "ship",
+        var m = new Glyph([v.lat, v.lon], { renderer: renSea, pane: "trafseapane", radius: moving ? 5 : 3.5, hdg: hdg, shape: "ship",
           color: "#fff", weight: 1, fillColor: KC[k], fillOpacity: 0.9 });
         m.bindPopup(function () { return shPop(v); }, { maxWidth: 330 });
         m.bindTooltip(function () { return shTip(v); }, { direction: "top", offset: [0, -6] });
@@ -402,7 +402,14 @@
       ".trnow{font:inherit;font-size:11px;padding:1px 8px;margin-left:4px;border:1px solid var(--line,#bbb);border-radius:10px;background:var(--panel,#fff);color:inherit;cursor:pointer}";
     D.head.appendChild(css);
     ["trafseapane", "trafairpane"].forEach(function (p, i) { if (!map.getPane(p)) { map.createPane(p); map.getPane(p).style.zIndex = 660 + i; } });
-    ren = L.canvas({ padding: 0.2, tolerance: 4 });
+    /* each kind draws on a canvas in its own pane, above the base map's shapes. One shared canvas without a pane went into
+       Leaflet's overlay pane, level with the map's own canvas, so on a page with a tappable outline under the aircraft (a US
+       state such as Texas) the map-click finder in index.html reached the outline first and a tap on an aircraft opened
+       the state's card instead. The hit margin is left to the page's default: 14 px beyond the marker on touch screens
+       (index.html, "on touch screens every canvas marker answers a tap"), 4 px with a mouse */
+    var tol = W.matchMedia && matchMedia("(pointer: coarse)").matches ? 14 : 4;
+    renAir = L.canvas({ pane: "trafairpane", padding: 0.2, tolerance: tol });
+    renSea = L.canvas({ pane: "trafseapane", padding: 0.2, tolerance: tol });
     gAir = L.layerGroup(); gSea = L.layerGroup();
     D.addEventListener("change", function (e) {
       var t = e.target, k = t.dataset && t.dataset.trf, kk = t.dataset && t.dataset.trk;
