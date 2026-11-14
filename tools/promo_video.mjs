@@ -487,22 +487,20 @@ const SCENES = [
     console.log("  traffic", JSON.stringify(await p.evaluate(nTr)));
     await k.wait(4500);
     k.caption("Draw your own plans", "Circles, range rings, shapes, arrows and labels, saved on your device.");
-    await k.basemap("streets"); await k.view(MB, 15, true); await k.wait(2600);
-    await tl('#atk-tools [data-atk="draw"]'); await k.wait(1200);
-    if (await k.press("Range rings")) { await k.wait(500); await tapMap(MB); await k.wait(1200); await close(); }
-    else { console.log("  rings by API"); await p.evaluate((ll) => window.OSAP_DRAW.add("rings", [ll], { name: "Meeting point" }), MB); }
-    await k.wait(800);
-    await p.evaluate(() => { if (window.OSAP_DRAW.palette) window.OSAP_DRAW.palette(false); window.OSAP_DRAW.close(); });
+    await p.evaluate(() => document.querySelectorAll("input[data-trf]").forEach((x) => { if (x.checked) x.click(); }));
+    await k.basemap("streets"); await k.view(MB, 15, true); await k.wait(2000);
+    await p.evaluate((ll) => { const D = window.OSAP_DRAW; D.add("rings", [ll], { name: "Meeting point", r: [200, 400, 600] }); }, MB);
+    await k.wait(1500);
+    await p.evaluate((ll) => { const D = window.OSAP_DRAW; D.add("arrow", [[ll[0] - 0.006, ll[1] - 0.012], [ll[0] - 0.0012, ll[1] - 0.0025]], { name: "Route in" }); D.close(); }, MB);
+    await k.wait(1500);
     await k.view(MB, 14, true); await k.wait(3500);
     k.caption("Any place in 3D", "Real terrain you can tilt and turn.");
     await k.basemap("sat"); await k.view([35.3606, 138.7274], 12, false); await k.wait(1500);
-    if (!(await tl("#atk-tools [data-o3d]"))) await p.evaluate(() => window.OSAP_3D.open());
-    await cut(() => { const o = document.getElementById("o3d"); if (!o) return false; const l = o.querySelector(".o3-load"), m = o.querySelector(".o3-msg"); return (!l || l.hidden) && (!m || m.hidden || !/Loading/.test(m.textContent)); }, 40000);
-    await k.wait(2500);
-    // a slow turn: right-drag across the view
-    const b = await p.locator("#o3d").boundingBox().catch(() => null);
-    if (b) { await p.mouse.move(b.x + b.width * 0.3, b.y + b.height * 0.5); await p.mouse.down({ button: "right" }); await p.mouse.move(b.x + b.width * 0.7, b.y + b.height * 0.42, { steps: 60 }); await p.mouse.up({ button: "right" }); }
-    await k.wait(3500);
+    await p.evaluate(() => window.OSAP_3D.open());
+    const t0 = (Date.now() - k.t0) / 1000; await k.wait(1500);
+    try { await p.waitForFunction(() => { const l = document.querySelector("#o3d .o3-load"); const t = l ? l.textContent : ""; const m = t.match(/(\d+)%/); return !l || l.hidden || (m && +m[1] >= 70); }, null, { timeout: 25000 }); } catch { console.log("  3D slow"); }
+    const t1 = (Date.now() - k.t0) / 1000; if (t1 - t0 > 3) k.skips.push([t0 + 1.5, t1 - 0.3]);
+    await k.wait(6500);
     k.caption("Every country, one map", "Every item dated and linked to its source.");
     await k.wait(3500);
   }],
