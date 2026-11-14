@@ -96,6 +96,8 @@ async function open(opts) {
   await p.click('#thv [data-thtab="all"]');
   const all = await p.evaluate(() => document.querySelectorAll("#thv .thbody .ths > li").length);
   ok(all === Math.min(pick.rows.length, pick.r), `All reports lists every report (${all})`);
+  const ofx = await p.evaluate(() => [document.querySelectorAll("#thv .thbody .ofx").length, !!(window.OSAP_OUTLETFACTS && window.OSAP_OUTLETFACTS.hosts)]);
+  ok(!ofx[1] || ofx[0] > 0, `reports show About this outlet where the outlet has a record (${ofx[0]})`);
   ok(await p.evaluate(() => /[0-9a-f]{64}/.test(document.querySelector("#thv .thfoot code").textContent)), "the story's SHA-256 fingerprint shows");
   await p.keyboard.press("Escape");
   ok(await p.evaluate(() => !document.getElementById("thv")), "Escape closes it");

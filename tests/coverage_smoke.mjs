@@ -59,6 +59,12 @@ async function open(opts) {
     await p.click("#td-cover .cvsrc > summary");
     const src = await p.evaluate(() => [...document.querySelectorAll("#td-cover .cvsrc[open] li a")].map((a) => [a.href, a.target, a.rel]));
     ok(src.length >= 2 && src.every(([h, t, r]) => /^https?:/.test(h) && t === "_blank" && /noopener/.test(r)), `"Who carried it" links each outlet's own story (${src.length})`);
+    // About this outlet (assets/osap-outletfacts.js, data/outlet-facts.js): who owns and pays for an outlet, from its Wikidata record
+    await p.waitForFunction(() => window.OSAP_OUTLETFACTS, null, { timeout: 20000 }).catch(() => {});
+    const about = await p.evaluate(() => { const d = document.querySelector("#td-cover .cvsrc[open] .ofx"); if (!d) return null; d.open = true;
+      return { kind: d.querySelector(".ofk").textContent, rows: [...d.querySelectorAll("dt")].map((x) => x.textContent), wd: [...d.querySelectorAll("a")].every((a) => /^https:\/\/www\.wikidata\.org\/wiki\/Q\d+$/.test(a.href) && a.target === "_blank") }; });
+    const anyFacts = await p.evaluate(() => [...document.querySelectorAll("#td-cover .cvsrc[open] li a")].some((a) => window.OSAP_OUTLETFACTSQ.of(a.href)));
+    ok(!anyFacts || (about && about.rows[0] === "Paid for by" && about.kind && about.wd), `About this outlet shows how it is paid for, linked to Wikidata (${JSON.stringify(about)})`);
     if (SHOTS) await p.locator("#td-cover").screenshot({ path: SHOTS + "/coverage-blind.png" });
   } else console.log("SKIP no blindspot in the stored Russia file");
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
