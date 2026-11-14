@@ -230,13 +230,18 @@ const SCENES = [
     await k.scrollIn(".cbox:has(#off-h)", 260, 2, 1500);
     await k.wait(5000);
   }],
-  ["alerts", { hash: "#th/timeline", z: 11, at: [13.75, 100.53], settle: 9000, prep: (p) => p.evaluate(() => { try { localStorage.setItem("osap-w-pushnext", "false"); } catch (e) {} }) }, async ({ k, p }) => {
+  ["alerts", { hash: "#th/timeline", z: 11, at: [13.75, 100.53], settle: 9000, prep: async (p) => {
+    await p.evaluate(() => { try { localStorage.setItem("osap-w-pushnext", "false"); } catch (e) {} });
+    // the reports load after the map: wait until the watch check can see Bangkok's (a 25 km circle, as the place search makes)
+    await p.waitForFunction(() => { const c = [13.7563, 100.5018], pts = []; for (let i = 0; i < 48; i++) { const a = i / 48 * 2 * Math.PI; pts.push([c[0] + 25 / 111 * Math.cos(a), c[1] + 25 / (111 * Math.cos(c[0] * Math.PI / 180)) * Math.sin(a)]); }
+      return window.OSAP_WATCH && window.OSAP_WATCH.matches({ area: pts }).length > 5; }, null, { timeout: 90000, polling: 1000 }).catch(() => console.log("  reports not loaded"));
+  } }, async ({ k, p }) => {
     k.caption("Know when something happens in your city", "Watch any place, in any country.");
     await k.tool("watch"); await k.wait(2500);
     const fld = "#w-pq";
     await p.evaluate((s) => { const e = document.querySelector(s); if (e) e.scrollIntoView({ behavior: "smooth", block: "center" }); }, fld); await k.wait(1300);
     k.caption("Type a city and pick a distance", "OSAP draws the circle for you.");
-    if (await k.type(fld, "Bangkok")) { await k.wait(400); await k.press("Find"); }
+    if (await k.type(fld, process.env.PLACE || "Bangkok")) { await k.wait(400); await k.press("Find"); }
     try { await p.waitForSelector("#w-plist .wpick", { timeout: 12000 }); } catch { console.log("  no places found"); }
     await k.wait(800);
     await k.click("#w-plist .wpick");
