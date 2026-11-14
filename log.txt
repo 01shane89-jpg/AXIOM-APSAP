@@ -1,0 +1,8 @@
+  medplan {"name":"Maharaj Nakorn Chiang Mai Hospital","min":"14","head":"MEDICAL PLAN: THAILAND\nTRAUMA\nHEAD INJURY\nBURN\nLIMB / VASCULAR\nSTATUS\nAMBER: medical verification required\nPOI\n47Q MA 9845 7740\nGROUND EVAC\nAVAILABLE\nAIR MEDEVAC\nNOT CONFIRMED\nRequest: Thai Sky Doctor (National Institute for Emergency Medicine, NIEM), call 1669 (documented service, not confirmed for this mission)\nSTABILIZATION\nBYPASS: direct is quicker\nDEFINITIVE CARE: MAJOR TRAUMA\nMaharaj Nakorn Chiang Mai Hospital\n14 min / 1.7 km road\nPRIMARY ROUTE\nAVAILABLE\nALTERNATE ROUTE\nNONE FOUND\nCRITICAL GAPS\nReceiving hospital acceptance\nAir MEDEVAC provider not confirmed: request Thai Sky Doctor (Nat"}
+  cat cat.severe_tbi AMBER: medical verification required
+  wait timed out
+  cat cat.major_burn AMBER: medical verification required
+  cat cat.major_trauma AMBER: medical verification required
+  covered #medplan [data-mp-assess]
+PASS 12 medplan {"caps":7,"pdfs":[]}
+all clips recorded

@@ -1,0 +1,53 @@
+{
+ "name": "medplan",
+ "view": "desk",
+ "w": 1920,
+ "h": 1080,
+ "frames": 633,
+ "start": 11.987,
+ "end": 90.803,
+ "caps": [
+  {
+   "t": 11.988,
+   "text": "A medical plan for anywhere, in seconds",
+   "sub": "Pick the spot where you'll be. OSAP plans the rest."
+  },
+  {
+   "t": 17.47,
+   "text": "The right hospital for the injury",
+   "sub": "Ranked by what each can treat. Here: Maharaj Nakorn Chiang Mai Hospital, 14 min by road."
+  },
+  {
+   "t": 22.971,
+   "text": "Choose the injury and the plan follows",
+   "sub": "Trauma, head injury, burns or limb injuries."
+  },
+  {
+   "t": 65.094,
+   "text": "Emergency numbers and air ambulance",
+   "sub": "Published numbers, nearby ambulance stations and air rescue services."
+  },
+  {
+   "t": 69.297,
+   "text": "Road routes to each hospital, on the map",
+   "sub": "First, second and third choice, with the drive time to each."
+  },
+  {
+   "t": 77.323,
+   "text": "A printable page for each hospital",
+   "sub": "Emergency care, surgery, imaging and contacts, with \"Not known\" on every gap."
+  },
+  {
+   "t": 86.201,
+   "text": "Built from open data, every source linked",
+   "sub": "A draft to confirm with the hospital, never a guarantee."
+  }
+ ],
+ "skips": [
+  [
+   30.128,
+   59.549
+  ]
+ ],
+ "pdfs": []
+}
