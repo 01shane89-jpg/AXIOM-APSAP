@@ -1,0 +1,43 @@
+{
+ "name": "todaybrief",
+ "view": "desk",
+ "w": 1920,
+ "h": 1080,
+ "frames": 406,
+ "start": 12.253,
+ "end": 56.041,
+ "caps": [
+  {
+   "t": 12.253,
+   "text": "Every country's picture, in one place",
+   "sub": "1,857 news feeds, 122 official warning feeds and 1,087 social accounts."
+  },
+  {
+   "t": 16.254,
+   "text": "A daily summary, every line cited",
+   "sub": "The top lines and what to watch, each linked to its report."
+  },
+  {
+   "t": 22.358,
+   "text": "Translated to English, grouped into stories",
+   "sub": "When several outlets report one event, it becomes one story."
+  },
+  {
+   "t": 31.011,
+   "text": "Each story names its outlets",
+   "sub": "With the time, a status tag and a link to the original."
+  },
+  {
+   "t": 35.783,
+   "text": "Every country, the same way",
+   "sub": "News, warnings, hazards and weather for 198 countries."
+  },
+  {
+   "t": 51.436,
+   "text": "Your country, every morning",
+   "sub": "Every item dated and linked to its source."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}
