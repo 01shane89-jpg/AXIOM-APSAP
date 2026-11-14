@@ -352,15 +352,19 @@ const SCENES = [
     await k.view([top.g.lat, top.g.lon], 11, true); await k.wait(3800);
     // tap the gauge itself
     const pt = await p.evaluate(([a, b]) => { const m = window.__asapMap, c = m.latLngToContainerPoint([a, b]), r = document.getElementById("map").getBoundingClientRect(); return [r.left + c.x, r.top + c.y]; }, [top.g.lat, top.g.lon]);
-    const mk = await p.evaluateHandle(([x, y]) => { let best = null, bd = 40;
-      document.querySelectorAll(".leaflet-marker-icon, .leaflet-interactive").forEach((m) => { const b = m.getBoundingClientRect(), d = Math.hypot(b.left + b.width / 2 - x, b.top + b.height / 2 - y); if (d < bd) { bd = d; best = m; } });
-      return best; }, pt);
-    if (!(await k.glide(mk.asElement()))) { console.log("  gauge by point"); await p.mouse.move(pt[0], pt[1], { steps: 22 }); await k.wait(300); await p.mouse.click(pt[0], pt[1]); }
+    await p.mouse.move(pt[0], pt[1], { steps: 22 }); await k.wait(300); await p.mouse.click(pt[0], pt[1]);
+    await k.wait(500);
+    // canvas markers do not always take a synthetic tap: open that gauge's own popup
+    const how = await p.evaluate(([a, b]) => { if (document.querySelector(".leaflet-popup")) return "tap";
+      const m = window.__asapMap; let hit = null;
+      Object.values(m._layers).forEach((l) => { if (!hit && l.getLatLng && l.getPopup && l.getPopup()) { const q = l.getLatLng(); if (Math.abs(q.lat - a) < 1e-5 && Math.abs(q.lng - b) < 1e-5) hit = l; } });
+      if (hit) { hit.openPopup(); return "open"; } return "none " + document.querySelector("[data-dsshow]"); }, [top.g.lat, top.g.lon]);
+    console.log("  gauge popup", how);
     await k.wait(900);
     if (!(await p.evaluate(() => !!document.querySelector(".leaflet-popup")))) console.log("  no gauge popup");
     k.caption(`${top.g.d.toFixed(2)} m over the bank at ${dist(top.g.a)}`, `${top.g.p}. Hydro-Informatics Institute reading, ${top.g.t.slice(11)} local time.`);
     await k.wait(5500);
-    await p.evaluate(() => window.__asapMap.closePopup());
+    await p.evaluate(() => { window.__asapMap.closePopup(); });
     await p.evaluate(() => window.OSAP_DISASTERX && window.OSAP_DISASTERX.set("now", true));
     k.caption("Flood water seen from orbit", "NASA's satellite flood map from the last three days.");
     await k.view([13.6, 100.4], 7, true); await k.wait(5500);
