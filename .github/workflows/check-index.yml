@@ -77,6 +77,7 @@ jobs:
       - run: node tests/view_reports.test.mjs
       - run: node tests/sat.test.mjs
       - run: node tests/newimg.test.mjs
+      - run: node tests/feedparse_image.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/tak.test.mjs
       - run: node tests/milsites.test.mjs
