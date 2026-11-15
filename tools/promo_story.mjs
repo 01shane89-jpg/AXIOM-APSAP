@@ -43,6 +43,8 @@ function kit(p, ctx, cdp, dir) {
   k.resume = async () => {
     if (!k.paused) return;
     await setRate(1); await ctx.clock.resume(); k.paused = false;
+    // catch the page clock up with real time, so report times and "minutes ago" stay true
+    await ctx.clock.setSystemTime(Date.now()).catch((e) => console.log("  clock sync", e.message.split("\n")[0]));
   };
   // one frame: the page's time moves on by 1/30 s, then the screen is captured
   k.frame = async () => {
@@ -188,17 +190,20 @@ const SCENES = [
   } }, async ({ k, p }) => {
     k.caption("First: what's going on there right now?", "Recent reports in and around Bangkok, on the map.");
     await k.wait(2600);
-    // the report nearest the middle of the map
-    const mk = (await p.evaluateHandle(() => {
-      const r = document.getElementById("map").getBoundingClientRect(), cx = r.left + r.width * 0.45, cy = r.top + r.height * 0.45;
-      let best = null, bd = 1e9;
-      document.querySelectorAll("#map .leaflet-marker-icon.leaflet-interactive").forEach((m) => { const b = m.getBoundingClientRect(); if (b.top < r.top + 60 || b.bottom > r.bottom - 60 || b.left < r.left + 20 || b.right > r.right - 70) return; const d = Math.hypot(b.left + b.width / 2 - cx, b.top + b.height / 2 - cy); if (d < bd) { bd = d; best = m; } });
-      return best;
-    })).asElement();
+    // the list sheet: the cursor goes to its handle (a synthetic tap on it does nothing, so the page's own click opens it)
+    const grab = await k.el("#rail-handle .grab");
+    if (grab) { const bb = await grab.boundingBox(); await k.tapAt(bb.x + bb.width * 0.3, bb.y + bb.height / 2); }
+    await p.evaluate(() => { if (document.documentElement.getAttribute("data-sheet") === "bar") { const g = document.querySelector("#rail-handle .grab"); if (g) g.click(); } });
+    await k.wait(1400);
+    console.log("  sheet", await p.evaluate(() => document.documentElement.getAttribute("data-sheet")));
     k.caption("Tap a report: what happened, and who said so", "The outlet, the time in Zulu and local, and a link to the original.");
-    if (!(await k.glide(mk))) console.log("  no marker");
+    const card = await p.evaluate(() => { const A = [...document.querySelectorAll("#rv-list .rvcard")].filter((x) => x.offsetParent); const c = A.find((x) => /Bangkok/i.test(x.innerText)) || A[0]; if (!c) return ""; c.setAttribute("data-wt-pick", "1"); return c.innerText.slice(0, 120); });
+    console.log("  card", JSON.stringify(card));
+    if (card) { await k.scrollTo("[data-wt-pick]", "center", 700); await k.click("[data-wt-pick]"); }
     await k.wait(4800);
-    await p.keyboard.press("Escape"); await p.evaluate(() => { window.__asapMap.closePopup(); document.querySelectorAll(".pkghead .x").forEach((x) => { if (x.offsetParent) x.click(); }); });
+    await p.keyboard.press("Escape"); await k.wait(300);
+    await p.evaluate(() => { window.__asapMap.closePopup(); document.querySelectorAll(".pkghead .x").forEach((x) => { if (x.offsetParent) x.click(); }); });
+    for (let i = 0; i < 3; i++) { const st = await p.evaluate(() => document.documentElement.getAttribute("data-sheet")); if (!st || st === "bar") break; await p.evaluate(() => { const g = document.querySelector("#rail-handle .grab"); if (g) g.click(); }); await k.wait(500); }
     await k.wait(600);
     k.caption("Circle the area around your hotel", "Now the map and the list show only what's inside it.");
     // the shape is picked through the page's own area control, so the area menu (with its other tools) is never on screen
@@ -265,7 +270,9 @@ const SCENES = [
       await p.goto(base + "?wshow=" + encodeURIComponent(id) + "#th/timeline");
       await p.waitForFunction(() => window.__asapMap && window.OSAP_ATAK, null, { timeout: 60000 });
       await p.evaluate(() => { const b = document.querySelector('button[data-rv-mode="map"]'); if (b) b.click(); });
-      await p.waitForFunction(() => { const t = document.getElementById("wtoast"); return t && !t.hidden; }, null, { timeout: 30000 }).catch(() => console.log("  no alert toast"));
+      // the page checks its watches 1.5 s after loading; if the reports were not in yet, the next check finds them
+      const toast = () => p.waitForFunction(() => { const t = document.getElementById("wtoast"); return t && !t.hidden; }, null, { timeout: 90000, polling: 500 }).then(() => true, () => false);
+      if (!(await toast())) { console.log("  no toast yet, reopening"); await p.goto(base + "?wshow=" + encodeURIComponent(id) + "#th/timeline"); await p.waitForFunction(() => window.__asapMap && window.OSAP_ATAK, null, { timeout: 60000 }); if (!(await toast())) console.log("  no alert toast"); }
       await p.waitForTimeout(3000);
       await k.cursor();
       return id;
