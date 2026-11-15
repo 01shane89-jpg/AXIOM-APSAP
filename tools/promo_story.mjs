@@ -149,8 +149,9 @@ function kit(p, ctx, cdp, dir) {
     if (!ok) { console.log("  no print for", file); return false; }
     await k.real(async () => {
       await p.waitForTimeout(600);
+      await p.evaluate(() => { const c = document.getElementById("wt-cur"); if (c) c.style.display = "none"; });
       await p.pdf({ path: join(OUT, file), printBackground: true, preferCSSPageSize: true, format: "Letter" }).catch((e) => console.log("  pdf failed", e.message));
-      await p.evaluate(() => dispatchEvent(new Event("afterprint")));
+      await p.evaluate(() => { dispatchEvent(new Event("afterprint")); const c = document.getElementById("wt-cur"); if (c) c.style.display = ""; });
     });
     k.pdfs.push({ file, t: k.vt() });
     return true;
