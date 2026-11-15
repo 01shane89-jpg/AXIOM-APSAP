@@ -1617,7 +1617,7 @@
   function timesChanged() {
     var s = ST; if (!s || !s.fac) return;
     facRender(); pickRender(); ghRender(); mevRender(); mapShow();
-    var ids = picks(s).map(function (p) { return p.f.id; }).join(), had = (s.rts || []).map(function (x) { return x.f.id; }).join();
+    var ids = routeTargets(s).map(function (p) { return p.f.id; }).join(), had = (s.rts || []).map(function (x) { return x.f.id; }).join();
     if (s.rts && ids !== had) routes(s);
   }
   function airOn() { return fieldVals().air !== 0; }
@@ -1893,11 +1893,21 @@
       "Direct counts the move from injury (treat and load included) plus handoff (" + num("handoff") + " min). Via a stop counts the move there, handoff, its time there (" + num("dwell") + " min), transfer activation (" + num("xact") + " min), a transfer drive (straight line x " + XFER_FACTOR + " at " + XFER_KMH + " km/h, an estimate) and handoff again. " + esc(DECISION_NOTE) + "</p>" +
       '<p class="mpspd noprint"><label>Time at a stop <input type="number" min="0" max="240" step="5" data-mpf="dwell" value="' + num("dwell") + '"> min</label><label>Transfer activation <input type="number" min="0" max="120" step="5" data-mpf="xact" value="' + num("xact") + '"> min</label><label>Handoff <input type="number" min="0" max="60" step="1" data-mpf="handoff" value="' + num("handoff") + '"> min</label> <span class="obs">Planner defaults, used only for the bypass comparison.</span></p>';
   }
+  /* what the road routes go to: the plan's picks; where no hospital has the needed care documented (no picks), the nearest
+     hospitals by road, so the analyst still has a drive line from the POI (Shane 2026-11-15, Morocco: "the route from POI
+     didn't populate"). A nearest-hospital route is navigation only: it never fills a role, never counts as a qualified
+     destination and is labelled "capability not documented" everywhere it shows. */
+  var NEAREST = "Nearest hospital", NEAREST_N = 2;
+  function routeTargets(s) {
+    var P = picks(s); if (P.length || !s.fac) return P;
+    return (s.fac.H || []).filter(function (f) { return !isOff(f) && f.lat != null && f.lon != null; }).slice().sort(byDrive).slice(0, NEAREST_N)
+      .map(function (f) { return { f: f, role: NEAREST, why: [NEAREST], nearest: true, reason: "Nearest hospital by road; capability not documented by a credible source, so it fills no plan role" }; });
+  }
   function routes(s) {
-    var P = picks(s);
+    var P = routeTargets(s);
     /* at sea with no landing port there is no road to route: never a line from the water */
     if (s.sea && s.sea.sea && !s.leg) { s.rts = P.map(function (p) { return { f: p.f, why: p.why, r: null, err: "the point of injury is at sea and no landing port is known" }; }); s.pac = null; rtRender(); return; }
-    s.rts = P.map(function (p) { return { f: p.f, why: p.why, r: null, err: "" }; }); rtRender();
+    s.rts = P.map(function (p) { return { f: p.f, why: p.why, nearest: !!p.nearest, r: null, err: "" }; }); rtRender();
     s.rts.forEach(function (x) {
       route(s.ro || s.o, x.f).then(function (r) { if (ST !== s) return; x.r = r; rtRender(); mapShow(); srcRender(); }, function (e) { if (ST !== s) return; x.err = e.message; rtRender(); });
     });
@@ -2187,12 +2197,13 @@
   }
   function rtRender() {
     var el = D.getElementById("mp-rt"), s = ST; if (!el) return;
-    if (s.fac && !picks(s).length) { el.innerHTML = '<p class="obs' + (failed(s) ? ' mpwarn">No routes: the hospital lookup failed.' : '">No hospital with an official trauma designation to route to; see section 2.') + "</p>"; return; }
+    if (s.fac && !routeTargets(s).length) { el.innerHTML = '<p class="obs' + (failed(s) ? ' mpwarn">No routes: the hospital lookup failed.' : '">No hospital found near the point of injury to route to; see section 2.') + "</p>"; return; }
     if (s.routeErr && !s.rts) { el.innerHTML = '<p class="obs mpwarn">No road router answered (' + esc(clip(s.routeErr, 140)) + "), so no route can be drawn. Drive times in section 2 are estimates.</p>"; return; }
     if (!s.rts) return;
-    el.innerHTML = s.rts.map(function (x, i) {
+    var nearNote = s.rts.some(function (x) { return x.nearest; }) ? '<p class="obs mpwarn mpnear">No hospital near here has the needed trauma care documented by a credible source, so no plan role is filled (see section 2). The routes below go to the nearest hospitals by road for navigation only: their capability is not documented, so confirm what they can do before you send a casualty.</p>' : "";
+    el.innerHTML = nearNote + s.rts.map(function (x, i) {
       var f = x.f, H = s.fac.H.indexOf(f), r = x.r;
-      return "<h4>" + esc(x.why[0] || "Route " + (i + 1)) + ": H" + (H + 1) + " " + esc(f.name) + "</h4>" +
+      return "<h4>" + esc(x.why[0] || "Route " + (i + 1)) + ": H" + (H + 1) + " " + esc(f.name) + (x.nearest ? ' <span class="obs">(capability not documented)</span>' : "") + "</h4>" +
         (r ? "<p>" + esc(mins(r.s)) + ", " + esc(km(r.m)) + byRoad() + ". " + ghTag(r.s + PREP_MIN * 60 + legS(s), gPre()) + "</p>" +
           (r.roads.length ? '<p class="obs">Main roads: ' + esc(r.roads.map(function (q) { return q.n + " (" + km(q.m) + ")"; }).join(" → ")) + "</p>" : "") +
           '<p class="obs noprint">Drawn on the map as a ' + ["red", "dark", "dark dashed"][i] + " line." + (W.OSAP_ROUTE_SEED ? ' <button type="button" class="refresh" data-mp-route="' + esc(f.id) + '">Open in Route</button>' : "") + "</p>"
@@ -2748,7 +2759,7 @@
   }
   var SEA_STYLE = { color: "#0b4f8a", weight: 3, dashArray: "2 7" };
   var PK_TXT = { Primary: "PRI", Secondary: "SEC", Tertiary: "TER", Stabilization: "STB" }, RT_STYLE = [{ color: "#D7141A", weight: 4 }, { color: "#222", weight: 3 }, { color: "#222", weight: 3, dashArray: "7 5" }],
-    RT_ROLE = { Primary: RT_STYLE[0], Secondary: RT_STYLE[1], Tertiary: RT_STYLE[2], Stabilization: { color: "#e06c00", weight: 4 } };
+    RT_ROLE = { Primary: RT_STYLE[0], Secondary: RT_STYLE[1], Tertiary: RT_STYLE[2], Stabilization: { color: "#e06c00", weight: 4 }, "Nearest hospital": { color: "#8a5a00", weight: 4, dashArray: "9 5" } };
   /* the alternate MTFs for major trauma as map marks (ALT PRI, ALT SEC, ALT TER), keyed by facility, the first role wins */
   function altMarks(s) {
     var o = {};
@@ -2852,6 +2863,7 @@
     if (ln("#D7141A")) o.push(["ln", "#D7141A", "", "Route to Primary", ""]);
     if (lv("rt") && (s.rts || []).some(function (x) { return x.why[0] === "Secondary" && x.r; })) o.push(["ln", "#222", "", "Route to Secondary", ""]);
     if (lv("rt") && (s.rts || []).some(function (x) { return x.why[0] === "Tertiary" && x.r; })) o.push(["dl", "#222", "", "Route to Tertiary", ""]);
+    if (lv("rt") && (s.rts || []).some(function (x) { return x.nearest && x.r; })) o.push(["dl", "#8a5a00", "", "Route to nearest hospital (capability not documented)", ""]);
     if (ln("#1d5fa8")) o.push(["dl", "#1d5fa8", "", "Alternate (A) and contingency (C) road lines", ""]);
     if (ln("#6a3d9a")) o.push(["dl", "#6a3d9a", "", "Road to the airport for evacuation out of the country", ""]);
     if (ln("#0b6e4f") || ln("#7a1fa2")) o.push(["dl", "#0b6e4f", "", "Strategic evacuation East (green) and West (purple)", ""]);
