@@ -558,6 +558,57 @@ const SCENES = [
     k.caption("Reported, not verified", "Every side's statements are claims. Every item is dated and linked to its source.");
     await sheet("bar"); await k.view([27.5, 53.5], 5, true); await k.wait(3800);
   }],
+  ["hormuz", { hash: "#ir/map", at: [26.45, 56.35], z: 8, bm: "sat", settle: 9000 }, async ({ k, p }) => {
+    const tl = async (sel) => { await p.evaluate((s) => { const e = document.querySelector(s); if (e) e.scrollIntoView({ block: "center" }); }, sel); await k.wait(300); return k.click(sel); };
+    const close = async () => { const x = await p.evaluateHandle(() => [...document.querySelectorAll('#atk-om [data-om="x"], button[aria-label="Close"]')].find((b) => b.offsetParent) || null);
+      if (x.asElement()) await k.glide(x.asElement()); else await p.keyboard.press("Escape"); await k.wait(600); };
+    const seaN = () => p.evaluate(() => { const L = window.OSAP_TRAFFIC && window.OSAP_TRAFFIC.layers(); const m = window.__asapMap, b = m.getBounds(); let n = 0;
+      if (L && L.sea && L.sea.eachLayer) L.sea.eachLayer((x) => { if (x.getLatLng && b.contains(x.getLatLng())) n++; }); return n; });
+    const sheet = async (want) => { if (!PHONE) return;
+      for (let i = 0; i < 3; i++) { if ((await p.evaluate(() => document.documentElement.getAttribute("data-sheet"))) === want) return;
+        const h = await k.el("#rail-handle .grab"); const b = h && await h.boundingBox(); if (b) await p.mouse.move(b.x + b.width / 2, b.y + 20, { steps: 14 });
+        await p.evaluate(() => { const g = document.querySelector("#rail-handle .grab"); if (g) g.click(); }); await k.wait(650); } };
+    const item = async (re) => { const t = await p.evaluate((src) => { const R = new RegExp(src, "i"); const li = [...document.querySelectorAll("#cf-list li")].find((x) => R.test((x.querySelector(".cft") || x).textContent));
+        if (!li) return ""; li.scrollIntoView({ behavior: "smooth", block: "center" }); li.style.outline = "3px solid #3d9bff"; li.style.outlineOffset = "2px"; li.style.borderRadius = "6px"; return li.querySelector(".cft").textContent; }, re);
+      console.log("  item", re, "->", JSON.stringify(t.slice(0, 120))); await k.wait(1200); return !!t; };
+    const kind = async (v) => { await k.into("#cf-reps"); await k.wait(400); const sel = await k.el('select[data-cff="kind"]'); if (sel) await k.glide(sel);
+      await p.evaluate((v) => { const s = document.querySelector('select[data-cff="kind"]'); if (s && [...s.options].some((o) => o.value === v)) { s.value = v; s.dispatchEvent(new Event("change", { bubbles: true })); } }, v); await k.wait(1200); };
+
+    k.caption("The Strait of Hormuz", "About a fifth of the world's seaborne crude passed through it before the war (EIA).");
+    await k.view([26.55, 56.25], 9, true); await k.wait(4500);
+    k.caption("Down to about 4 ships a day", "IMF PortWatch: 3.9 transits a day in the week to 8 Nov, against 87 a day a year earlier.");
+    await tl('#atk-tools [data-atk="overlays"]'); await k.wait(1200);
+    const sel = 'input[data-trf="sea"]';
+    await p.evaluate((s) => { const e = document.querySelector(s); if (e) e.closest("label").scrollIntoView({ block: "center", behavior: "smooth" }); }, sel); await k.wait(700);
+    if (!(await k.click(sel))) await p.evaluate((s) => { const e = document.querySelector(s); if (e && !e.checked) e.click(); }, sel);
+    await k.wait(600); await close();
+    const t0 = (Date.now() - k.t0) / 1000;
+    try { await p.waitForFunction(() => { const L = window.OSAP_TRAFFIC.layers(); return L.sea && L.sea.getLayers && L.sea.getLayers().length > 5; }, null, { timeout: 25000 }); } catch { console.log("  ships slow"); }
+    const t1 = (Date.now() - k.t0) / 1000; if (t1 - t0 > 1.5) k.skips.push([t0 + 0.4, t1]);
+    await k.view([26.3, 56.0], 8, true); await k.wait(2500);
+    const n = await seaN(); console.log("  ships in view", n);
+    k.caption("Ships broadcasting near the strait", n >= 5 ? `${n} in view as OSAP received them, 15 Nov. Many are holding position, not passing through.` : "Positions ships broadcast themselves (AIS), as OSAP receives them.");
+    await k.wait(4500);
+    await p.evaluate(() => document.querySelectorAll("input[data-trf]").forEach((x) => { if (x.checked) x.click(); }));
+    k.caption("Announced zones, as claimed", "Iran's restricted zone, the US blockade of Iranian ports and an Iran-Oman route. Drawn from reporting.");
+    const c0 = (Date.now() - k.t0) / 1000;
+    await p.evaluate(() => window.OSAP_CONFLICT_TABS.open("iran-war", "ir"));
+    try { await p.waitForFunction(() => document.querySelector("input[data-cfs=on]") && document.querySelector("input[data-cfshow=ucdp]") && document.querySelector("input[data-cfi=places]"), null, { timeout: 15000 }); } catch { console.log("  toggles slow"); }
+    for (const s2 of ["input[data-cfs=on]", "input[data-cfi=places]", "input[data-cfshow=ucdp]"]) await p.evaluate((s) => { const e = document.querySelector(s); if (e && e.checked) e.click(); }, s2);
+    await p.evaluate(() => { window.__asapMap.setView([26.2, 56.4], 7, { animate: false }); }); await k.wait(700);
+    k.skips.push([c0 + 0.2, (Date.now() - k.t0) / 1000]); // the tab drawing its layers is cut
+    await k.wait(3000);
+    await sheet("full");
+    await p.evaluate(() => { const h = [...document.querySelectorAll("#cf-extra h3")].find((x) => /Maritime/.test(x.textContent)); if (h) h.scrollIntoView({ behavior: "smooth", block: "start" }); }); await k.wait(3200);
+    k.caption("Mines: Iran's claim", "Iran's navy and IRGC say tankers hit mines on 13 and 14 Nov (IRNA). Not independently confirmed.");
+    await kind("maritime"); await item("tankers? .*mine|mine.*tanker"); await k.wait(2600);
+    k.caption("UN: 25 seafarers killed", "The IMO's count in and around the strait since February, reported 14 Nov.");
+    if (!(await item("25 seafarer"))) await k.wheel(260, 2, 1200, 0.5, 0.6); await k.wait(2600);
+    k.caption("Food supplies at stake", "A UN official urged Iran and the US to let fertiliser shipments through the strait (14 Nov).");
+    await kind(""); if (!(await item("fertili[sz]"))) await k.wheel(260, 2, 1200, 0.5, 0.6); await k.wait(2800);
+    k.caption("Reported, not verified", "Each side's statements are claims. Every item is dated and linked to its source.");
+    await sheet("bar"); await k.view([26.4, 56.3], 8, true); await k.wait(3800);
+  }],
 ];
 
 let fails = 0, n = 0;

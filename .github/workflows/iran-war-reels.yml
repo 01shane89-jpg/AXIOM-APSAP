@@ -1,5 +1,5 @@
 # Scratch (claude/iran-war-reels, never merged): records the Iran war reel clip (tools/promo_video.mjs scene "iranwar")
-# from the newest main, phone view, and pushes it to media/promo-iranwar-phone. Writes nothing to main.
+# from the newest main, phone view, and pushes it to media/promo-hormuz-phone. Writes nothing to main.
 name: Iran war reel clips
 on:
   push:
@@ -33,13 +33,13 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: VIEW=${{ matrix.view }} OUT=pub node tools/promo_video.mjs 2>&1 | tee pub-log.txt
         env:
-          ONLY: iranwar
+          ONLY: hormuz
       - name: Push the clips
         env:
           TOKEN: ${{ github.token }}
         run: |
           cp pub-log.txt pub/log.txt && cd pub && ls -la
-          git init -q -b media/promo-iranwar-${{ matrix.view }}
+          git init -q -b media/promo-hormuz-${{ matrix.view }}
           git add -A
           git -c user.name="github-actions[bot]" -c user.email="41898269+github-actions[bot]@users.noreply.github.com" commit -q -m "promo clips (${{ matrix.view }}) from ${GITHUB_SHA::7}"
-          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" media/promo-iranwar-${{ matrix.view }}
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" media/promo-hormuz-${{ matrix.view }}
