@@ -1,0 +1,5 @@
+  sheet half
+  card "15 Nov 2026 0850Z / 15:50 ICT\n0.23 m over the bank at Wat Bangkachao Nok Gate\nFLOOD\nOBSERVED\nHydro-Informatics Institute"
+  recent matches {"n":3,"all":61}
+PASS 21 trip {"secs":"57.4","caps":8,"pdfs":["area-brief.pdf"]}
+all scenes recorded

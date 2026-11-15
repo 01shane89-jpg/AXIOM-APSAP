@@ -1,0 +1,58 @@
+{
+ "name": "trip",
+ "view": "phone",
+ "w": 1080,
+ "h": 1512,
+ "frames": 1723,
+ "start": 0,
+ "end": 57.43333333333333,
+ "caps": [
+  {
+   "t": 0,
+   "text": "First: what's going on there right now?",
+   "sub": "Recent reports in and around Bangkok, on the map."
+  },
+  {
+   "t": 5,
+   "text": "Tap a report: what happened, and who said so",
+   "sub": "The outlet, the time in Zulu and local, and a link to the original."
+  },
+  {
+   "t": 13.466666666666667,
+   "text": "Circle the area around your hotel",
+   "sub": "Now the map and the list show only what's inside it."
+  },
+  {
+   "t": 19.7,
+   "text": "Take a brief of the area on the flight",
+   "sub": "Maps, reports and sources in one PDF, ready to read offline."
+  },
+  {
+   "t": 31.933333333333334,
+   "text": "Then let OSAP keep watch while you're there",
+   "sub": "Type the city and pick a distance."
+  },
+  {
+   "t": 43.53333333333333,
+   "text": "Save it, and OSAP checks day and night",
+   "sub": "Within minutes of new reports, with no account needed."
+  },
+  {
+   "t": 46.6,
+   "text": "Something happens near you? You get an alert",
+   "sub": "On screen, or as a push alert on your phone."
+  },
+  {
+   "t": 50.8,
+   "text": "One tap: the report, the place and the source",
+   "sub": "So you can decide what it means for your plans."
+  }
+ ],
+ "skips": [],
+ "pdfs": [
+  {
+   "file": "area-brief.pdf",
+   "t": 20.3
+  }
+ ]
+}
