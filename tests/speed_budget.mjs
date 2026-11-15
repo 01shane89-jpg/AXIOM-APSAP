@@ -63,30 +63,31 @@ for (const bm of ["grey", "sat"]) {
   ok(med("all") <= ALL, `${bm}: every base-map picture in view in ${med("all")} ms (budget ${ALL} ms)`);
 }
 /* Today: a fresh open with no start screen chosen lands on Today (assets/osap-start.js); no outside host answers */
-async function today() {
+async function today(hash) {
   const ctx = await browser.newContext({ ...devices["Pixel 7"], serviceWorkers: "block" });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   const p = await ctx.newPage(), cdp = await ctx.newCDPSession(p);
   await cdp.send("Network.enable");
   await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 9e6 / 8, uploadThroughput: 3e6 / 8 });
   await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
-  await p.goto(base, { waitUntil: "commit" });
-  const r = await p.evaluate(async () => {
+  await p.goto(base + hash, { waitUntil: "commit" });
+  const r = await p.evaluate(async (hasDaily) => {
     const T = (h) => new Promise((res) => { (function tick() { const v = h(); if (v || performance.now() > 60000) res(v ? Math.round(performance.now()) : null); else setTimeout(tick, 30); })(); });
     const shown = await T(() => { const b = document.getElementById("osap-boot"); return window.OSAP_TODAY && window.OSAP_TODAY.isOpen() && (!b || b.classList.contains("gone")); });
-    const daily = await T(() => document.querySelectorAll("#td-daily .dlwbtn").length > 0);
+    const daily = hasDaily ? await T(() => document.querySelectorAll("#td-daily .dlwbtn").length > 0) : null;
     const list = await T(() => document.querySelectorAll("#tl-list > *").length > 0);
     return { shown, daily, list };
-  });
+  }, !!hash);
   await ctx.close();
   return r;
 }
-{
-  const rs = []; for (let i = 0; i < RUNS; i++) rs.push(await today());
+/* Thailand by name ("#th"), which has a daily summary; then a plain first open, which starts on World (no daily summary) */
+for (const [hash, name] of [["#th", "Thailand"], ["", "World"]]) {
+  const rs = []; for (let i = 0; i < RUNS; i++) rs.push(await today(hash));
   const med = (k) => rs.map((r) => r[k] || 99999).sort((a, b) => a - b)[1];
-  ok(med("shown") <= TODAY, `Today on screen, loading cover gone, in ${med("shown")} ms (budget ${TODAY} ms) ${JSON.stringify(rs)}`);
-  ok(med("daily") <= TODAY + 1000, `Today's daily summary drawn in ${med("daily")} ms (budget ${TODAY + 1000} ms)`);
-  ok(med("list") <= TODAY + 3000, `the timeline behind Today drawn in ${med("list")} ms (budget ${TODAY + 3000} ms)`);
+  ok(med("shown") <= TODAY, `${name}: Today on screen, loading cover gone, in ${med("shown")} ms (budget ${TODAY} ms) ${JSON.stringify(rs)}`);
+  if (hash) ok(med("daily") <= TODAY + 1000, `${name}: Today's daily summary drawn in ${med("daily")} ms (budget ${TODAY + 1000} ms)`);
+  ok(med("list") <= TODAY + 3000, `${name}: the timeline behind Today drawn in ${med("list")} ms (budget ${TODAY + 3000} ms)`);
 }
 await browser.close(); server.close();
 console.log(fails ? fails + " failed" : "all passed");

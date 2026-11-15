@@ -57,7 +57,7 @@
   var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   function month(m) { var x = /^(\d{4})-(\d\d)/.exec(String(m || "")); return x ? MON[+x[2] - 1] + " " + x[1] : String(m || ""); }
   /* the country file for an app country id (Okinawa reads Japan's) */
-  function fileOf(cc) { cc = String(cc || "").toLowerCase(); if (cc === "oki") cc = "jp"; return /^[a-z]{2}$/.test(cc) ? "data/live/econ/" + cc + ".json" : ""; }
+  function fileOf(cc) { cc = String(cc || "").toLowerCase(); if (cc === "oki") cc = "jp"; return /^[a-z]{2}$/.test(cc) && cc !== "ww" ? "data/live/econ/" + cc + ".json" : ""; }
   /* the headline currency line */
   function fxLine(fx) {
     if (!fx) return "";

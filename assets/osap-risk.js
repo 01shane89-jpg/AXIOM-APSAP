@@ -22,7 +22,7 @@
   function safeUrl(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
   var LEVELS = ["", "Minimal", "Low", "Moderate", "High", "Extreme"];
   var CATS = [["security", "Security and conflict"], ["crime", "Crime"], ["health", "Health and medical"], ["hazards", "Natural hazards now"], ["infra", "Infrastructure and services"]];
-  function fileOf(cc) { cc = String(cc || "").toLowerCase(); return /^[a-z]{2,3}$/.test(cc) ? "data/live/risk/" + cc + ".json" : ""; }
+  function fileOf(cc) { cc = String(cc || "").toLowerCase(); return /^[a-z]{2,3}$/.test(cc) && cc !== "ww" ? "data/live/risk/" + cc + ".json" : ""; }
   /* a level badge: "3 Moderate"; no data gives "No rating" */
   function badge(level, small) {
     var l = +level || 0;

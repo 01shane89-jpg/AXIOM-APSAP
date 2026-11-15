@@ -225,7 +225,7 @@
   }
   function wshow() { wbutton(); if (!document.querySelector(".aiwbtn")) setTimeout(wbutton, 1500); }
   if (window.OSAP_TERRAIN && window.OSAP_TERRAIN[CC]) wshow();
-  else try { fetch("data/terrain/" + CC + ".js", { method: "HEAD" }).then(function (r) { if (r.ok) wshow(); }).catch(function () {}); } catch (e) {}
+  else if (CC !== "ww") try { fetch("data/terrain/" + CC + ".js", { method: "HEAD" }).then(function (r) { if (r.ok) wshow(); }).catch(function () {}); } catch (e) {}
   var st2 = document.createElement("style");
   st2.textContent = "#aiwdlg{position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.45);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}" +
     ".aiwbox{background:var(--bg,#fff);color:var(--ink,#111);max-width:720px;width:100%;border-radius:6px;padding:12px 16px;box-shadow:0 8px 30px rgba(0,0,0,.35)}" +

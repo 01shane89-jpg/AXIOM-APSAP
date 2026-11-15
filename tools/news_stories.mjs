@@ -13,6 +13,8 @@ import { outletBook, fromRow, buildCountry, SCHEMA, HOURS } from "./stories_lib.
 import { nameBook, connect, TSCHEMA, stems } from "./threads_lib.mjs";
 import { prepChecks, factMatch, figures } from "./factcheck_lib.mjs";
 import { ccsInText } from "./geo_cc.mjs";
+import { compileRelevance } from "./topics_lib.mjs";
+import { WW, PER_COUNTRY, worldStories, worldNews } from "./world_lib.mjs";
 
 const IX = process.env.STORIES_IX || "data/live/news-index", OUT = process.env.STORIES_OUT || "data/live/stories";
 const FC = process.env.STORIES_FACTCHECKS || "data/live/factchecks.js";
@@ -48,6 +50,8 @@ const book = outletBook(feeds, owners, seen);
 // country files the page may ask for: every country with news, so a request never fails
 const want = new Set(by.keys());
 for (const f of fs.existsSync("data/live/news") ? fs.readdirSync("data/live/news") : []) if (/^[a-z]{2,3}\.js$/.test(f)) want.add(f.slice(0, -3));
+// World is built from every country's stories below, never from headlines filed under "ww"
+want.delete(WW);
 fs.mkdirSync(OUT, { recursive: true });
 const written = new Set(), ix = {};
 let nS = 0, nB = 0, nT = 0;
@@ -56,6 +60,7 @@ const inWin = reps.filter((r) => { const t = Date.parse(r.date.slice(0, 16) + "Z
 const names = nameBook(inWin.map((r) => r.title));
 const built = new Map();
 const METHOD = "Headlines from the outlets OSAP reads, grouped into stories by their words. Many headlines are machine translated, so a story told in other words is missed: counts are a floor, and a blindspot means no matching headline was found, not that the story went unreported.";
+const WMETHOD = "The stories carried by the most outlets in every country OSAP reads, worldwide, each under its own country: at most " + PER_COUNTRY + " a country, sport and show business left out, a story filed under two countries kept once. " + METHOD;
 const TMETHOD = "Go deeper joins every headline that shares an event's distinctive words within a few days, sorts each into a part by its words, and lists the names outlets write with a capital letter. All of it is word matching by machine, not AI and not an analyst: a headline can be missed or wrongly joined, and two stories naming the same person are not shown to be linked. Officials' lines are their claims.";
 for (const cc of [...want].sort()) {
   // a country's own name is no connection ("United States" in every US thread)
@@ -104,6 +109,22 @@ for (const [cc, c] of built) {
   written.add(cc + ".js");
   fs.writeFileSync(TOUT + "/" + cc + ".js", "window.OSAP_THREADS=" + JSON.stringify({ schema: TSCHEMA, asof: stamp, method: TMETHOD, cc, hours: H, threads }).replace(/<\//g, "<\\/") + ";\n");
   tw.add(cc + ".js");
+}
+// World (tools/world_lib.mjs): the most-covered stories of every country, and their lead headlines as the World news list
+// (data/live/news/ww.js, beside the country files; tools/split_country.mjs keeps it)
+{
+  let R = null; try { R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8"))); } catch (e) { console.error("stories: no relevance rules:", e.message); }
+  const world = worldStories(built, { R, end: END, hours: H });
+  fs.writeFileSync(OUT + "/" + WW + ".js", "window.OSAP_STORIES=" + JSON.stringify({ schema: SCHEMA, asof: stamp, method: WMETHOD, ...world }).replace(/<\//g, "<\\/") + ";\n");
+  written.add(WW + ".js");
+  // no threads of its own (Go deeper stays on each country's): an empty file, so the page's request never fails
+  fs.mkdirSync(TOUT, { recursive: true });
+  fs.writeFileSync(TOUT + "/" + WW + ".js", "window.OSAP_THREADS=" + JSON.stringify({ schema: TSCHEMA, asof: stamp, method: TMETHOD, cc: WW, hours: H, threads: [] }) + ";\n");
+  tw.add(WW + ".js");
+  const NEWS = process.env.STORIES_NEWS || "data/live/news";
+  const newsOf = (cc) => { try { return (readJs(NEWS + "/" + cc + ".js").items || {})[cc] || []; } catch (e) { return []; } };
+  if (fs.existsSync(NEWS)) fs.writeFileSync(NEWS + "/" + WW + ".js", "window.ASAP_NEWS=" + JSON.stringify(worldNews(world, newsOf, stamp)).replace(/<\//g, "<\\/") + ";\n");
+  console.log(`stories: World ${world.stories.length} stories from ${world.countries} countries`);
 }
 for (const f of fs.readdirSync(TOUT)) if (/\.js$/.test(f) && !tw.has(f)) fs.rmSync(TOUT + "/" + f);
 for (const f of fs.readdirSync(OUT)) if (/\.js$/.test(f) && !written.has(f)) fs.rmSync(OUT + "/" + f);

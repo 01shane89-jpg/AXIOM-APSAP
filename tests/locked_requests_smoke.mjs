@@ -68,12 +68,13 @@ const settle = (p) => p.waitForTimeout(7000);
 const dataReqs = (log) => [...new Set(log.reqs.filter((u) => /^(data|source)\//.test(u)).map((u) => u.split("?")[0]))];
 const gateState = (p) => p.evaluate(() => ({ plan: window.OSAP_DATA.plan() && window.OSAP_DATA.plan().tier, skipped: window.OSAP_DATA.skipped(), tier: window.OSAP_TIER && window.OSAP_TIER.tier() }));
 
+// (These open Thailand by name, "#th": a plain first open now starts on World, tests/world_start_smoke.mjs.)
 // 1. GitHub Pages / local (no gate): nothing skipped, the paid feeds load as before
 gate = false;
 let pagesData = [];
 {
   const { ctx, p, log } = await context();
-  await p.goto(base); await settle(p);
+  await p.goto(base + "#th"); await settle(p);
   const g = await gateState(p);
   pagesData = dataReqs(log);
   ok(!g.plan && !g.skipped.length, "no gate: no plan kept, nothing skipped " + JSON.stringify(g));
@@ -94,7 +95,7 @@ let pagesData = [];
 }
 {
   const { ctx, p, log } = await context();
-  await p.goto(base); await settle(p);
+  await p.goto(base + "#th"); await settle(p);
   ok(log.reqs.includes("data/thailand/flood-live-snapshot.js") && !log.reqs.includes("data/thailand/border-geometry.js"), "Thailand: the flood files load at start, the border line waits for its view");
   ok(await p.evaluate(() => /\d/.test(document.getElementById("k-over").textContent)), "Thailand: the flood view's figures are filled in");
   await p.evaluate(() => { location.hash = "#border"; }); await p.reload(); await settle(p);
@@ -108,7 +109,7 @@ gate = true;
 const runs = {};
 for (const [tok, tier] of [["tok-free", "free"], ["tok-mid", "mid"], ["tok-full", "full"]]) {
   const { ctx, p, log, reset } = await context(tok);
-  await p.goto(base); await settle(p);
+  await p.goto(base + "#th"); await settle(p);
   reset();
   await p.reload(); await settle(p);
   const g = await gateState(p);
@@ -140,7 +141,7 @@ for (const [tok, tier] of [["tok-free", "free"], ["tok-mid", "mid"], ["tok-full"
 // 4. Free, signing in on the sign-in screen: the page starts again knowing the plan, so nothing is refused
 {
   const { ctx, p, log, reset } = await context();
-  await p.goto(base); await settle(p);
+  await p.goto(base + "#th"); await settle(p);
   await p.fill('#tierdlg input[name="email"]', "free@test"); await p.fill('#tierdlg input[name="password"]', "password1");
   reset();
   await Promise.all([p.waitForEvent("load", { timeout: 15000 }).catch(() => null), p.click('#tierdlg button[type="submit"]')]);
@@ -156,7 +157,7 @@ for (const [tok, tier] of [["tok-free", "free"], ["tok-mid", "mid"], ["tok-full"
 // 5. a 390 px phone, Free: nothing scrolls sideways
 {
   const { ctx, p, log, reset } = await context("tok-free", { width: 390, height: 844 });
-  await p.goto(base); await settle(p); reset(); await p.reload(); await settle(p);
+  await p.goto(base + "#th"); await settle(p); reset(); await p.reload(); await settle(p);
   ok(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "phone: no sideways scroll");
   ok(log.refused.length === 0, "phone: no data file refused " + log.refused.slice(0, 5).join(", "));
   await ctx.close();

@@ -216,6 +216,8 @@
   function mount(box, cc, name) {
     if (CC && CC !== cc) { state = 0; sel = 0; }
     el = box; CC = cc; NAME = name || cc; el.classList.add("tddaily"); el.hidden = true;
+    /* World ("ww") has no daily summary: each one is one country's */
+    if (cc === "ww") return;
     if (!D.getElementById("dl-css")) { var st = D.createElement("style"); st.id = "dl-css"; st.textContent = CSS; D.head.appendChild(st); }
     el.addEventListener("click", function (e) {
       var t = e.target.closest && e.target.closest("[data-dlprint]"); if (t) { e.preventDefault(); printIt(); return; }

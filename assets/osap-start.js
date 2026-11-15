@@ -6,7 +6,8 @@
    2. Today on launch: every fresh open of the app lands on the Today home screen (assets/osap-today.js), not on the tab that
       was open last time. A fresh open is a new tab or app launch (this tab's sessionStorage has no "osap-today" yet). A link
       that names a country keeps that country; a plain open uses the last country viewed on this device (localStorage
-      "osap-last-cc"). The tab part of the address is dropped. Not applied when the user chose "Map" as the start screen.
+      "osap-last-cc"), and the very first open on a device (no OSAP setting saved yet) starts on World ("ww", the whole map,
+      every country's most-covered stories and the global feeds; Shane 2026-11-15). The tab part of the address is dropped. Not applied when the user chose "Map" as the start screen.
    Neither applies to alert links (?wopen=) or the hidden scan frames (?watchscan=). */
 (function () {
   /* 0. A shared route link carries its waypoints after "#" (".../#kh/route?rt=..."), the part of an address a browser never
@@ -25,6 +26,10 @@
     if (a && (/^(javascript|vbscript):$/i.test(a.protocol || "") || /^\s*(javascript|vbscript):/i.test(a.getAttribute("href") || ""))) { e.preventDefault(); e.stopPropagation(); }
   }, true);
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;
+  function newDevice() {
+    try { for (var i = 0; i < localStorage.length; i++) if (/^(osap|asap|tsap|tfw|tw|tbw)[-.]/.test(localStorage.key(i) || "")) return false; } catch (e) { return false; }
+    return true;
+  }
   function ls(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
   cover();
   var was = null;
@@ -37,8 +42,10 @@
   if (mine) try { sessionStorage.setItem("osap-loc-go", "1"); } catch (e) {}
   if (was == null && ls("osap-home") !== "map") {
     var h = h0, last = ls("osap-last-cc");
-    /* the page reads a country only from "cc/tab"; a bare "#tab" is Thailand */
-    var cc = mine || (h.length > 1 && /^[a-z]{2,3}$/.test(h[0]) ? h[0] : h[0] ? "th" : typeof last === "string" && /^[a-z]{2,3}$/.test(last) ? last : "th");
+    /* the page reads a country only from "cc/tab"; a bare "#tab" is Thailand (older links). Nothing in the link and no
+       country viewed yet: World on a new device (no OSAP setting saved yet, the same test as the first-run setup in
+       assets/osap-mycountries.js, which runs next); a device that has used OSAP before stays on Thailand, where it always opened */
+    var cc = mine || (h.length > 1 && /^[a-z]{2,3}$/.test(h[0]) ? h[0] : h[0] ? "th" : typeof last === "string" && /^[a-z]{2,3}$/.test(last) ? last : newDevice() ? "ww" : "th");
     try { history.replaceState(null, "", location.pathname + stq(mine) + "#" + (cc === "th" ? "" : cc + "/") + "timeline"); } catch (e) {}
   } else if (mine) {
     /* "Map" start screen: keep the tab, change only the country */
@@ -75,7 +82,8 @@
   try {
     if (sessionStorage.getItem("osap-today") === "1") {
       var hn = (location.hash || "").replace("#", "").split("/"), tcc = hn.length > 1 && /^[a-z]{2,3}$/.test(hn[0]) ? hn[0] : "th", tq = "?t=" + Math.floor(Date.now() / 6e5);
-      ["data/live/daily/", "data/live/stories/"].forEach(function (d) {
+      /* (World has no daily summary) */
+      (tcc === "ww" ? ["data/live/stories/"] : ["data/live/daily/", "data/live/stories/"]).forEach(function (d) {
         /* only files the signed-in plan opens (assets/osap-datagate.js): the daily summary is Full, the story list Mid */
         var u = d + tcc + ".js" + tq; if (window.OSAP_DATA && !window.OSAP_DATA.ok(u)) return;
         var l = document.createElement("link"); l.rel = "preload"; l.as = "script"; l.href = u; document.head.appendChild(l);

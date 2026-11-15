@@ -39,7 +39,7 @@ const usFile = (u) => /(^|\/)(us|us-states)(\/|\.js)|layers\/us\/|brief\/us\.js/
   const s = await p.evaluate(() => ({ cc: window.TSAP && window.TSAP.country, url: location.href, us: (window.OSAP_COUNTRIES || []).some((c) => c.id === "us"),
     btn: !!document.querySelector('#country-seg button[data-cc="us"]'), st: document.querySelectorAll("#country-seg button[data-st]").length,
     subs: !!(window.OSAP_SUBS && window.OSAP_SUBS.us), world: (window.ASAP_WORLD || []).some((w) => w.id === "us"), hid: window.OSAP_LOCK.hidden("us") }));
-  ok(s.cc === "th" && !/st=|#us/.test(s.url), "locked: #us link opens the default view: " + s.url);
+  ok(s.cc === "ww" && !/st=|#us/.test(s.url), "locked: #us link opens the default view (World on a new device): " + s.url);
   ok(!s.us && !s.world && !s.btn && !s.st && !s.subs, "locked: no United States in the country list, picker or states " + JSON.stringify(s));
   ok(s.hid, "locked: OSAP_LOCK.hidden('us') is true");
   const bad = local.filter(usFile);

@@ -14,6 +14,8 @@ tests/webpush.test.mjs
 tests/locked_requests_smoke.mjs
 # opening the app never shows Today and then loads again over a tap on Open map (run-out sign-in, new release)
 tests/start_reload_smoke.mjs
+# the first open on a device starts on World; returning users keep their last country (Shane 2026-11-15)
+tests/world_start_smoke.mjs
 tests/analyst_smoke.mjs
 tests/seal_sw_smoke.mjs
 tests/econ_smoke.mjs
