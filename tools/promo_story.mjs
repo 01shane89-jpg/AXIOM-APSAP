@@ -103,7 +103,7 @@ function kit(p, ctx, cdp, dir) {
   const tilesIn = () => !document.querySelector("#map .leaflet-tile-loading") && !document.querySelector("#map .leaflet-tile-container.leaflet-zoom-animated img:not(.leaflet-tile-loaded)");
   k.fly = async (at, z, secs) => {
     await k.view(at, z, true, secs || 2.4);
-    for (let i = Math.round((secs || 2.4) * FPS); i > 0; i--) { await k.frame(); await p.waitForTimeout(45); }
+    for (let i = Math.round((secs || 2.4) * FPS); i > 0; i--) { await k.frame(); await p.waitForTimeout(160); }
     await k.until(tilesIn, null, 10000);
     await k.wait(300);
   };
