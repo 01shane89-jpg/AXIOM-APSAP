@@ -475,7 +475,7 @@
 ["w339814280",49.44837,23.41226,"ua",{"name":"Амбулаторія","amenity":"clinic","addr:housenumber":"22","addr:street":"вулиця Тараса Шевченка"}],
 ["w343266635",49.33008,23.25174,"ua",{"name":"Підбузька районна лікарня","amenity":"hospital"}],
 ["w353525144",49.51408,22.26618,"pl",{"name":"SPZPOZ Zagórz - Przychodnia zdrowia","amenity":"clinic","healthcare":"clinic","phone":"+48 134622020","website":"https://www.facebook.com/spzpozwzagorzu/","addr:housenumber":"4","addr:street":"Józefa Piłsudskiego","addr:city":"Zagórz","addr:postcode":"38-540","opening_hours":"Mo-Fr 07:35-18:00"}],
-["w353525254",49.513,22.26529,"pl",{"name":"SPZPOZ Zagórz - Przychodnia zdrowia nr 2 (w remoncie)","amenity":"clinic","healthcare":"clinic","operator":"SPZPOZ Zagórz","website":"https://www.facebook.com/spzpozwzagorzu","addr:housenumber":"16","addr:street":"Józefa Piłsudskiego","addr:city":"Zagórz","addr:postcode":"38-540"}],
+["w353525254",49.513,22.26529,"pl",{"name":"SPZPOZ Zagórz - Przychodnia zdrowia nr 2","amenity":"clinic","healthcare":"clinic","operator":"SPZPOZ Zagórz","operator:type":"public","website":"https://www.facebook.com/spzpozwzagorzu","addr:housenumber":"16","addr:street":"Józefa Piłsudskiego","addr:city":"Zagórz","addr:postcode":"38-540"}],
 ["w354307968",49.22795,23.32295,"ua",{"name":"Дрогобицька районна лікарня №4","amenity":"hospital","addr:housenumber":"4"}],
 ["w356239919",49.36293,23.32349,"ua",{"name":"Амбулаторія","amenity":"clinic"}],
 ["w356318152",49.37468,22.4346,"pl",{"healthcare":"clinic"}],
