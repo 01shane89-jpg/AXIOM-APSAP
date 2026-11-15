@@ -16,7 +16,7 @@ export const MAX_WATCHES = 25, MAX_AREA_POINTS = 150, MAX_WORDS = 20, MAX_LAYERS
 // job (with "permissions: id-token: write") the list is fetched with a GitHub Actions OIDC token for audience "osap-push",
 // which the server checks came from this repository's main branch: no shared secret. Each watch is checked with validate()
 // before use. Outside Actions (tests, a run by hand) the local file FILE is read, if there is one.
-export const PUSH_API = process.env.PUSH_API || "https://axiom-osap.netlify.app/api/osap-push";
+export const PUSH_API = process.env.PUSH_API || "https://osap.axiom-intelligence-systems.com/api/osap-push";
 // this job's GitHub Actions OIDC token for OSAP's server (audience osap-push), kept 4 minutes (GitHub's last about 5)
 let tokCache = null, tokAt = 0;
 export async function actionsToken() {
@@ -28,7 +28,7 @@ export async function actionsToken() {
   tokCache = t.value; tokAt = Date.now();
   return tokCache;
 }
-export const WEBPUSH_API = process.env.WEBPUSH_API || "https://axiom-osap.netlify.app/api/osap-webpush";
+export const WEBPUSH_API = process.env.WEBPUSH_API || "https://osap.axiom-intelligence-systems.com/api/osap-webpush";
 export async function fetchList() {
   // PUSH_LIST: a local test list (the flash loop's test run on a feature branch), checked like the server's; never set on main
   if (process.env.PUSH_LIST) {
