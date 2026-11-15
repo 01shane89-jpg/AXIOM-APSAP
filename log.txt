@@ -1,0 +1,4 @@
+  medplan {"name":"Maharaj Nakorn Chiang Mai Hospital","min":"14"}
+  wait timed out
+PASS 25 hike {"secs":"46.2","caps":7,"pdfs":[]}
+all scenes recorded

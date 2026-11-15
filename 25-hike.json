@@ -1,0 +1,48 @@
+{
+ "name": "hike",
+ "view": "phone",
+ "w": 1080,
+ "h": 1512,
+ "frames": 1386,
+ "start": 0,
+ "end": 46.2,
+ "caps": [
+  {
+   "t": 0,
+   "text": "Drop a pin where you'll be",
+   "sub": "OSAP builds a medical plan for that spot in seconds."
+  },
+  {
+   "t": 5.233333333333333,
+   "text": "The nearest hospital that can treat it",
+   "sub": "Maharaj Nakorn Chiang Mai Hospital: 14 min by road."
+  },
+  {
+   "t": 10.033333333333333,
+   "text": "A fall? A burn? The plan changes with the injury",
+   "sub": "Head injuries and burns need different hospitals."
+  },
+  {
+   "t": 21.466666666666665,
+   "text": "Emergency numbers, ready before you need them",
+   "sub": "Published numbers, ambulance stations and air rescue services."
+  },
+  {
+   "t": 26.233333333333334,
+   "text": "The road route to each hospital",
+   "sub": "First, second and third choice, with the drive time to each."
+  },
+  {
+   "t": 34.56666666666667,
+   "text": "Print it and put it in the first aid kit",
+   "sub": "A page per hospital, with \"Not known\" wherever the data has a gap."
+  },
+  {
+   "t": 42.2,
+   "text": "Built from open data, every source linked",
+   "sub": "A draft to confirm with the hospital, never a guarantee."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}
