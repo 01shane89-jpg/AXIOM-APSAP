@@ -27,3 +27,5 @@ ma_ds_msps https://data.gov.ma/data/api/3/action/package_search?fq=organization:
 ma_ds_orgs https://data.gov.ma/data/api/3/action/organization_list
 ma_sante_c409_raw https://www.sante.gov.ma/Pages/communiqu%C3%A9s.aspx?communiqueID=409
 ma_sante_search_raw https://www.sante.gov.ma/Pages/Recherche.aspx?k=transfusion
+ma_geonames_ma https://download.geonames.org/export/dump/MA.zip
+ma_geonames_eh https://download.geonames.org/export/dump/EH.zip
