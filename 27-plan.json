@@ -1,0 +1,38 @@
+{
+ "name": "plan",
+ "view": "phone",
+ "w": 1080,
+ "h": 1512,
+ "frames": 1206,
+ "start": 0,
+ "end": 40.2,
+ "caps": [
+  {
+   "t": 0,
+   "text": "Look at the place from above",
+   "sub": "Switch the base map to satellite in one tap."
+  },
+  {
+   "t": 8.4,
+   "text": "See the harbor traffic as it moves",
+   "sub": "Live ships and aircraft, from the positions they broadcast."
+  },
+  {
+   "t": 21.1,
+   "text": "Mark the meeting point and the way in",
+   "sub": "Rings, shapes, arrows and labels, saved on your device."
+  },
+  {
+   "t": 29.9,
+   "text": "Then look at the climb in 3D",
+   "sub": "Real terrain you can tilt and turn, anywhere on earth."
+  },
+  {
+   "t": 36.5,
+   "text": "One map for the whole plan",
+   "sub": "Every item dated and linked to its source."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}
