@@ -176,5 +176,6 @@
 "tests/speed_budget.mjs": 27,
 "tests/boolq_smoke.mjs": 10,
 "tests/grade_smoke.mjs": 21,
-"tests/neighbour_redraw_smoke.mjs": 145
+"tests/neighbour_redraw_smoke.mjs": 145,
+"tests/vbase_sync_smoke.mjs": 25
 }
