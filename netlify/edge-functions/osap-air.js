@@ -8,7 +8,7 @@
 // Sold version (Netlify env OSAP_COMMERCIAL=true): adsb.fi (non-commercial terms) is not asked, only adsb.lol (ODbL 1.0).
 import { FIELDS, row } from "../../tools/air_rows.mjs";
 
-const UA = "AXIOM-OSAP live air traffic (+https://axiom-osap.netlify.app)";
+const UA = "AXIOM-OSAP live air traffic (+https://osap.axiom-intelligence-systems.com)";
 const SRC = [
   { id: "fi", name: "adsb.fi", site: "https://adsb.fi/", licence: "adsb.fi open data terms", nc: true, track: "https://globe.adsb.fi/?icao={hex}",
     url: (la, lo, nm) => `https://opendata.adsb.fi/api/v3/lat/${la}/lon/${lo}/dist/${nm}` },

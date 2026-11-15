@@ -1,5 +1,12 @@
 # The old netlify.app address after the move (2026-11-05)
 
+**What actually happened (2026-11-15):** with osap.axiom-intelligence-systems.com as the app project's primary domain and its
+certificate issued, Netlify kept serving `axiom-osap.netlify.app` (200, no edge redirect). So no stand-in project was
+needed: the app project itself has `OSAP_OLD_TO=https://osap.axiom-intelligence-systems.com/` (production, builds), its build
+writes the meta, and on the netlify.app host `assets/osap-carry.js` hands saved work on and moves the user; on the new host
+the same meta is ignored (a page never hands on to itself). The steps below stay as the fallback if Netlify ever starts
+redirecting netlify.app before the hand-off has run for everyone.
+
 OSAP moves to **https://osap.axiom-intelligence-systems.com/**. A browser keeps saved work (map points, routes, workspaces,
 photos) separately for each address, so the old address has to keep running long enough to hand every user's saved work on.
 Once a custom domain is the app project's primary domain, Netlify answers `axiom-osap.netlify.app` with its own redirect

@@ -8,7 +8,7 @@ const MAX_BODY = 64 * 1024, MAX_OUT = 40 * 1024 * 1024, WAIT = 20000;
 // OpenStreetMap queries (Postpass, Overpass: assets/osap-osm.js) can take half a minute on a built-up area; Netlify wants the
 // first byte of an edge answer within 40 s
 const QUERY_WAIT = 38000, QUERY = /^(postpass\.geofabrik\.de|overpass-api\.de|maps\.mail\.ru|overpass\.kumi\.systems|overpass\.private\.coffee)$/;
-const UA = "AXIOM-OSAP privacy relay (+https://axiom-osap.netlify.app)";
+const UA = "AXIOM-OSAP privacy relay (+https://osap.axiom-intelligence-systems.com)";
 // a verified sign-in is kept for a minute per token, as the data gate does (a map pan asks for dozens of tiles at once)
 const seen = new Map();
 async function signedIn(req) {

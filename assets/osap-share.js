@@ -15,7 +15,7 @@
    Opening a shared link whose story has since dropped out of the feed shows a short note instead of the watch-alert message. */
 (function () {
   "use strict";
-  var LIVE = "https://axiom-osap.netlify.app/";
+  var LIVE = "https://osap.axiom-intelligence-systems.com/";
   /* OpenStreetMap's own tiles (CORS allowed; one picture asks for a handful, within its tile policy), drawn greyed. Was the Esri
      canvas until 2026-10-17: Esri's terms need a paid plan for a product that is sold */
   /* the sold version (assets/osap-sold.js) draws outlines only: tile.openstreetmap.org is not for paid products */
