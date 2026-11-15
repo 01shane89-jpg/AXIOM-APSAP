@@ -1,0 +1,509 @@
+SOURCE https://query.wikidata.org/sparql?format=json&query=SELECT%20%3Fh%20%3Fl%20%3Ffr%20%3Far%20%3Fc%20WHERE%20%7B%20%3Fh%20wdt%3AP31/wdt%3AP279%2A%20wd%3AQ16917%20%3B%20wdt%3AP17%20wd%3AQ1028%20%3B%20wdt%3AP625%20%3Fc%20.%20OPTIONAL%7B%3Fh%20rdfs%3Alabel%20%3Fl%20FILTER%28lang%28%3Fl%29%3D%22en%22%29%7D%20OPTIONAL%7B%3Fh%20rdfs%3Alabel%20%3Ffr%20FILTER%28lang%28%3Ffr%29%3D%22fr%22%29%7D%20OPTIONAL%7B%3Fh%20rdfs%3Alabel%20%3Far%20FILTER%28lang%28%3Far%29%3D%22ar%22%29%7D%20%7D
+{
+ "head" : {
+ "vars" : [ "h", "l", "fr", "ar", "c" ]
+ },
+ "results" : {
+ "bindings" : [ {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q3293729"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "المارستان القديم سلا"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Maristane de Salé"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Madrasa Bou Inaniya"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-6.8241 34.038)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q5984171"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "مستشفى ابن النفيس"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Hôpital Ibn Al Nafees"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Ibn Al-Nafees Hospital"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-7.996794505 31.670352535)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q5984270"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "مستشفى ابن طفيل"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Hôpital Universitaire Ibn Tofail"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Ibn Tofail University Hospital"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-8.01533 31.6419)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q21512945"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "المستشفى الجامعي الدولي الشيخ خليفة"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Hôpital International Cheikh Zaid"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Cheikh Zaid hospital"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-6.869363 33.97745)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q21512945"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "المستشفى الجامعي الدولي الشيخ خليفة"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Hôpital International Cheikh Zaid"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Cheikh Zaid hospital"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-6.869363 33.97745)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q30253994"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "المركز الاستشفائي الجامعي ابن سينا"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Centre Hospitalier Universitaire Ibn Sina"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Ibn Sina hospital center"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-6.851129 33.984327)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q30253994"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "المركز الاستشفائي الجامعي ابن سينا"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Centre Hospitalier Universitaire Ibn Sina"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Ibn Sina hospital center"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-6.851129 33.984327)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q30254120"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "المركز الإستشفائي الجامعي الحسن الثاني (فاس)"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Centre Hospitalier Universitaire Hassan II"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "CHU Hassan II"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-4.962407 34.004653)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q30254268"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "المركز الاستشفائي الرباط سلا"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Centre Hospitalier Universitaire Ibn Sina"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "CHU Rabat-Salé"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-6.852332 33.983958)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q30260354"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "المركز الاستشفائي الجامعي محمد السادس (وجدة)"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Centre Hospitalier Universitaire Mohammed VI"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "CHU Oujda"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-1.910567 34.656495)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q30279999"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "المركز الاستشفائي ابن رشد"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Centre Hospitalier Universitaire Ibn Rochd"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "CHU Ibn Rochd"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-7.58976 33.573642)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q30280025"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "مستشفى العياشي"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Hôpital El Ayachi"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "El Ayachi hospital"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-6.825917 34.03439)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q30280028"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "المركز الاستشفائي الجامعي محمد السادس (مراكش)"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Centre Hospitalier Universitaire Mohammed VI"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "CHU Mohammed VI"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-7.995753 31.664209)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q58366548"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "مستشفى قصر الدار البيضاء"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Hôpital du Palais Dar el Beida"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Dar el Beida Palace hospital"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-7.981473 31.603726)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q60537435"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "مستشفى مولاي إسماعيل"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Hôpital Militaire Moulay Ismail"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Moulay Ismaïl Hospital"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-5.545651 33.892664)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q60762977"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "مستشفى فندق لويس"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Hôpital Militaire Louis"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Louis hotel hospital"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-5.523372 33.888725)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q91339911"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "مارستان سيدي فرج"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Hôpital Maristan de Sidi Frej"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Maristan of Sidi Frej"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-4.975066 34.065185)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q106982007"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "مستشفى إبن زهر"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Hôpital Ibn Zohr"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Ibn Zohr Hospital"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-7.995053516 31.618327355)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q121435143"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "مستشفى 20 غشت الإقليمي أزرو"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Hôpital Provincial 20 Août"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "20 August Provincial Hospital in Azrou"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-5.214523888 33.438983611)"
+ }
+ }, {
+ "h" : {
+ "type" : "uri",
+ "value" : "http://www.wikidata.org/entity/Q136547710"
+ },
+ "ar" : {
+ "xml:lang" : "ar",
+ "type" : "literal",
+ "value" : "مستشفى الخاص كلميم"
+ },
+ "fr" : {
+ "xml:lang" : "fr",
+ "type" : "literal",
+ "value" : "Hôpital Privé Guelmim"
+ },
+ "l" : {
+ "xml:lang" : "en",
+ "type" : "literal",
+ "value" : "Guelmim Private Hospital"
+ },
+ "c" : {
+ "datatype" : "http://www.opengis.net/ont/geosparql#wktLiteral",
+ "type" : "literal",
+ "value" : "Point(-10.0553284 28.9991271)"
+ }
+ } ]
+ }
+}

@@ -468,3 +468,4 @@ ma_sante_c409_raw 200 text/html 857231
 ma_sante_search_raw 404 text/html 665
 ma_geonames_ma 200 application/zip 4201044
 ma_geonames_eh 200 application/zip 70065
+ma_wikidata_hosp 200 application/json 13846
