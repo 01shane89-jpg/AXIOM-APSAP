@@ -419,7 +419,8 @@
     if (!W || !W.keyOf) return h + '</div><p class="tdobs">Loading…</p></section>';
     if (!s || !Array.isArray(s.base)) return h + '</div><p class="tdobs">This is your first visit to ' + esc(countryName()) + " on this device. Next time, reports added since then show here.</p></section>";
     var base = {}; s.base.forEach(function (k) { base[k] = 1; });
-    var N = recs().filter(function (r) { return !base[W.keyOf(r)]; }).map(function (r) { return { r: r, ms: recMs(r) }; });
+    /* one row per story, the same list and count as "What's new" (a headline is also filed under its topic layer) */
+    var N = (W.fresh ? W.fresh(recs(), base) : recs().filter(function (r) { return !base[W.keyOf(r)]; })).map(function (r) { return { r: r, ms: recMs(r) }; });
     N.sort(function (a, b) { return (b.ms || 0) - (a.ms || 0); });
     h += '<span class="tdcount">' + N.length + " new since " + esc(s.baseAt ? when(s.baseAt) : "your last visit") + "</span></div>";
     if (!N.length) h += '<p class="tdobs">Nothing new since you last looked.</p>';

@@ -175,6 +175,26 @@
     seenSet = {}; s.seen.forEach(function (k) { seenSet[k] = 1; });
     baseSet = s.base ? {} : null; if (s.base) s.base.forEach(function (k) { baseSet[k] = 1; });
   }
+  /* one story, however many copies of it are on the list: a feed item is also filed under its topic layer (Transport, Politics,
+     Flood...) as its own record with its own key, so "New since your last visit" had shown the same NYT headline twice on 15 Nov
+     2026. Live feed items group by their link (scheme, www, #fragment, tracking codes and a closing slash left out); curated
+     records keep their own key. A story is new only when none of its copies was there on the last visit, and the news copy
+     stands for it. */
+  function normUrl(u) {
+    return String(u).replace(/#.*$/, "").replace(/^https?:\/\/(www\.)?/i, "").replace(/([?&])(utm_[^=&]*|fbclid|gclid|ocid)=[^&]*/gi, "$1")
+      .replace(/\?&+/, "?").replace(/&&+/g, "&").replace(/[?&]+$/, "").replace(/\/+$/, "");
+  }
+  function storyOf(r) { return (r.live || r.news || r.social) && r.url ? "u|" + normUrl(r.url) : "k|" + keyOf(r); }
+  function freshRecs(R, base) {
+    var old = {}, pick = {}, order = [];
+    R.forEach(function (r) { if (base[keyOf(r)]) old[storyOf(r)] = 1; });
+    R.forEach(function (r) {
+      var s = storyOf(r), p = pick[s];
+      if (old[s]) return;
+      if (!p) { pick[s] = r; order.push(s); } else if (r.news && !p.news) pick[s] = r;
+    });
+    return order.map(function (s) { return pick[s]; });
+  }
   function trackSeen(force) {
     var R = recs();
     if (!force && R === lastRef && R.length === lastLen) { SEEN.lastAt = Date.now(); lsSet(SEEN_PREFIX + CC, SEEN); return; }
@@ -183,8 +203,8 @@
     R.forEach(function (r) {
       var k = keyOf(r);
       if (!seenSet[k]) { seenSet[k] = 1; SEEN.seen.push(k); added++; }
-      if (baseSet && !baseSet[k]) nk.push(k);
     });
+    if (baseSet) nk = freshRecs(R, baseSet).map(keyOf);
     if (SEEN.seen.length > SEEN_CAP) SEEN.seen = SEEN.seen.slice(SEEN.seen.length - SEEN_CAP);
     NEWK = nk; SEEN.lastAt = Date.now();
     lsSet(SEEN_PREFIX + CC, SEEN);
@@ -820,7 +840,7 @@
     new MutationObserver(function () { if (pend) return; pend = true; setTimeout(function () { pend = false; decorate(); }, 50); })
       .observe(document.body, { childList: true, subtree: true });
     decorate();
-    window.OSAP_WORK = { open: openWk, keyOf: keyOf, items: function () { return WORK.items; }, sourceDefaults: function () { return WORK.srcRel; }, addNote: addNote,
+    window.OSAP_WORK = { open: openWk, keyOf: keyOf, fresh: freshRecs, items: function () { return WORK.items; }, sourceDefaults: function () { return WORK.srcRel; }, addNote: addNote,
       /* the My work side panel: dock(section) opens it ("places" or "mine" opens that section), undock() closes it */
       dock: dockOpen, undock: dockClose, toggle: dockToggle, docked: function () { return DK.open; }, covers: dockCovers, pad: dockPad, sectionOpen: function (k) { return DK.open && dockSecOpen(k); } };
   }
