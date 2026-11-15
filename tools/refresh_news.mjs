@@ -7,6 +7,7 @@ import fs from "node:fs";
 import { translateAll, saveCache, seed } from "./translate.mjs";
 import { updateHistory, storedTranslations } from "./history.mjs";
 import { parseFeed, parseList } from "./feedparse.mjs";
+import { loadPics, savePics, fillPics } from "./news_pics.mjs";
 import { ADAPTERS } from "./news_adapters.mjs";
 import { getFeed, robotsAllow, unwrap } from "./news_fetch.mjs";
 import { loadRelevance, itemRelevance, kept, preTranslation } from "./topics_lib.mjs";
@@ -223,37 +224,17 @@ for (const cc of Object.keys(items)) {
   items[cc] = dedupeStories(items[cc].sort((a, b) => (b.date > a.date ? 1 : -1)))
     .filter((i, k) => k < share(cc) || (i.tier === "official" && extra++ < OFFICIAL_EXTRA));
 }
-// Outlets whose feed carries no picture: read the article page's own og:image (first 96 KB only), a few at a time, and keep it as a link.
+// Outlets whose feed carries no picture: the article page's own og:image (tools/news_pics.mjs), kept as a link. A page is read
+// once and remembered (data/live/news-pics.json), so the 400 reads a run go to new stories, newest first.
 const OG_MAX = Number(process.env.OG_MAX || 400);
-async function ogImage(url) {
-  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 8000);
-  try {
-    const r = await fetch(url, { signal: ctl.signal, redirect: "follow", headers: { "user-agent": "Mozilla/5.0 (AXIOM-ASAP hourly refresh)", accept: "text/html" } });
-    if (!r.ok || !r.body) return "";
-    const rd = r.body.getReader(); let html = "", n = 0;
-    while (n < 98304) { const { done, value } = await rd.read(); if (done) break; n += value.length; html += new TextDecoder().decode(value); if (/<\/head>/i.test(html)) break; }
-    try { await rd.cancel(); } catch (e) {}
-    const m = html.match(/<meta[^>]+(?:property|name)=["'](?:og:image|twitter:image)(?::src)?["'][^>]*content=["']([^"']+)["']/i) ||
-      html.match(/<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["'](?:og:image|twitter:image)["']/i);
-    const u = m ? m[1].replace(/&amp;/g, "&").trim() : "";
-    return /^https:\/\/[^\s<>"]+$/i.test(u) && u.length < 600 ? u : "";
-  } catch (e) { return ""; } finally { clearTimeout(t); }
-}
 {
-  const t1 = Date.now();
-  const lack = Object.entries(items).filter(([k]) => !k.includes(":")).flatMap(([, l]) => l).filter((i) => !i.img && /^https:\/\//.test(i.link || ""));
-  // a picture read from the page on an earlier run is kept; the page reads left go to the newest items first (before this, the
-  // same first 400 items in country order were read every run, so most countries never had a picture)
-  let reused = 0;
-  for (const i of lack) { const u = seenImg.get(i.link); if (u) { i.img = u; reused++; } }
-  const need = [...new Set(lack.filter((i) => !i.img))].sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0)).slice(0, OG_MAX);
-  let got = 0;
-  // 16 pages at a time (different outlets, first 96 KB only): with 8 at a time, a few slow sites in each batch held the rest
-  for (let k = 0; k < need.length; k += 16) {
-    const res = await Promise.all(need.slice(k, k + 16).map((i) => ogImage(i.link)));
-    res.forEach((u, j) => { if (u) { need[k + j].img = u; got++; } });
-  }
-  console.log("article-page pictures:", reused, "kept from the last run,", got, "new of", need.length, "pages read; timing", took(t1));
+  const t1 = Date.now(), cache = loadPics();
+  // a feed's own picture goes into the cache too, so the World list (tools/world_pictures.mjs) finds it after the item leaves the snapshot
+  const day = new Date().toISOString().slice(0, 10), flat = Object.entries(items).filter(([k]) => !k.includes(":")).flatMap(([, l]) => l);
+  for (const i of flat) if (i.img && i.link) cache.set(i.link, [i.img, day]);
+  for (const i of flat) if (!i.img && i.link && seenImg.has(i.link)) i.img = seenImg.get(i.link);
+  const r = await fillPics(flat, cache, OG_MAX);
+  console.log("article-page pictures:", r.cached, "from the picture cache,", r.found, "new of", r.read, "pages read; cache", savePics(cache), "links; timing", took(t1));
 }
 const all = [...new Set(Object.values(items).flat())];
 // The model translates about 400 texts a run and the cache holds 6,000, so with every country's outlets the order matters:

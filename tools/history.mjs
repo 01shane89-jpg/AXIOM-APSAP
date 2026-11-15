@@ -24,9 +24,10 @@ async function wordsOnly(i) {
 }
 
 const DIR = "data/history", MAX_DAYS = 365, CAP = { news: 800, social: 600 };
-// geo: the place the refresh job matched (GeoNames), so an older item still has its map pin once it leaves the latest snapshot
+// geo: the place the refresh job matched (GeoNames), so an older item still has its map pin once it leaves the latest snapshot;
+// img: the link to the outlet's own picture (tools/news_pics.mjs), so an older story keeps its picture too
 // no summary: outlet text is never stored (tools/outlet_text.mjs); sum_rel is what the summary's words matched
-const KEEP = ["title", "title_en", "sum_rel", "notext", "rel_v", "date", "link", "geo", "outlet", "account", "platform", "kind", "lang", "mt", "via", "state", "thumb", "date_seen", "tier", "region", "detail", "exempt"];
+const KEEP = ["title", "title_en", "sum_rel", "notext", "rel_v", "date", "link", "geo", "outlet", "account", "platform", "kind", "lang", "mt", "via", "state", "thumb", "img", "date_seen", "tier", "region", "detail", "exempt"];
 
 // Page script text that an outlet put inside an item body ("if (!window._raw... addEventListener(...") is not a summary;
 // it is removed from new and already-kept items alike, so older copies are cleaned on the next refresh.
@@ -99,6 +100,7 @@ export async function updateHistory(kind, items, stamp, caps) {
         if (!o.title_en && o.title && prev.title_en && prev.title === o.title) { o.title_en = prev.title_en; kept = true; }
         if (kept && (!o.mt || o.mt === "untranslated")) o.mt = prev.mt;
       }
+      if (!o.img && prev && prev.img) o.img = prev.img;   // a run whose page read missed keeps the picture found before
       if (!o.sum_rel) { const r = stripOutletText({ summary: i.summary, summary_en: i.summary_en }, R).sum_rel; if (r) o.sum_rel = r; }
       unCode(o);
       o.first_seen = (byLink.get(i.link) || {}).first_seen || stamp;
