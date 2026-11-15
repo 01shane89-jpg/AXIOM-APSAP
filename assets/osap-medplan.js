@@ -764,7 +764,7 @@
       if (!C[k] || !x || !x.src || !(C[k].status === "UNKNOWN" || (C[k].status === "REPORTED" && crowd(C[k].source)))) return;
       C[k] = { status: "INFERRED", confidence: "MODERATE", availability: "unknown", last_verified: null, inferred: true,
         source: { kind: "register", url: x.src, name: x.srcname || "source", at: x.asof || "", sha: x.sha256 || "" },
-        how: "inferred from the designation (" + clip(m.trauma_level || "official designation", 90) + "): the standard says " +
+        how: "inferred from the " + (m.trauma_level ? "designation (" + clip(m.trauma_level, 90) + ")" : m.std_basis ? "category (" + clip(m.std_basis, 170) + ")" : "designation (official designation)") + ": the standard says " +
           (x.quote_en ? "\u201c" + clip(x.quote_en, 160) + "\u201d (" + clip(x.quote_mt || "translated", 60) + "; original: \u201c" + clip(x.quote, 120) + "\u201d)" : "\u201c" + clip(x.quote, 160) + "\u201d") +
           (x.quote_basis ? " (" + x.quote_basis + ")" : "") };
     });

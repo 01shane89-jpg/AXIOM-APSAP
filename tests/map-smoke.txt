@@ -169,6 +169,8 @@ tests/medplan_hang_smoke.mjs
 tests/medplan_equiv.test.mjs
 tests/medplan_conflict_map_smoke.mjs
 tests/medplan_bkk_smoke.mjs
+# Morocco data package: Ministry hospitals fill Primary and Secondary, capabilities INFERRED from Decree 2-14-562
+tests/medplan_ma_roles_smoke.mjs
 # one hospital's standalone assessment: map popup, long-press Plans, Reports, planner's check, PDF, open plan untouched
 tests/hospital_assess_smoke.mjs
 tests/seatransit_smoke.mjs
