@@ -1,0 +1,38 @@
+{
+ "name": "morning",
+ "view": "phone",
+ "w": 1080,
+ "h": 1512,
+ "frames": 701,
+ "start": 0,
+ "end": 23.366666666666667,
+ "caps": [
+  {
+   "t": 0,
+   "text": "Open Today: the country at a glance",
+   "sub": "Weather, official warnings and the top stories, on one screen."
+  },
+  {
+   "t": 6.866666666666666,
+   "text": "Read the daily summary in two minutes",
+   "sub": "The top lines and what to watch, from the last 24 hours."
+  },
+  {
+   "t": 11.133333333333333,
+   "text": "Check any line against its source",
+   "sub": "Numbered links go back to the original reports."
+  },
+  {
+   "t": 19,
+   "text": "Send it to the team before the call",
+   "sub": "One tap makes a clean PDF, with the sources still clickable."
+  }
+ ],
+ "skips": [],
+ "pdfs": [
+  {
+   "file": "daily-brief.pdf",
+   "t": 21.666666666666668
+  }
+ ]
+}

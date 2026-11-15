@@ -1,0 +1,2 @@
+PASS 22 morning {"secs":"23.4","caps":4,"pdfs":["daily-brief.pdf"]}
+all scenes recorded
