@@ -19,3 +19,11 @@ ma_ourairports https://davidmegginson.github.io/ourairports-data/airports.csv
 ma_ourrunways https://davidmegginson.github.io/ourairports-data/runways.csv
 ma_who_sara https://www.sante.gov.ma/
 ma_cnts https://www.cnts.ma/
+ma_msps_hosp2025 https://data.gov.ma/data/fr/dataset/2932e8a4-272c-4101-80ef-85519de47e7c/resource/17bc72a8-99b0-45ad-af61-10e06c58c4ba/download/liste-des-hopitaux-2025.xlsx
+ma_msps_priv2025 https://data.gov.ma/data/fr/dataset/a5853684-b12a-4108-acb1-4a5879cc91e1/resource/b7101f21-e9f4-45d4-bab6-d0e9bc58cd6d/download/infrastructures-privees-2025.xlsx
+ma_ds_sang https://data.gov.ma/data/api/3/action/package_search?q=sang&rows=50
+ma_ds_urg https://data.gov.ma/data/api/3/action/package_search?q=urgence&rows=50
+ma_ds_msps https://data.gov.ma/data/api/3/action/package_search?fq=organization:ministere-de-la-sante&rows=200
+ma_ds_orgs https://data.gov.ma/data/api/3/action/organization_list
+ma_sante_c409_raw https://www.sante.gov.ma/Pages/communiqu%C3%A9s.aspx?communiqueID=409
+ma_sante_search_raw https://www.sante.gov.ma/Pages/Recherche.aspx?k=transfusion
