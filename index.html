@@ -6033,6 +6033,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
         lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? pl.prec || "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
         thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined, st: i.st || undefined,
+        /* the outlet's own picture (its feed's thumbnail or the article's og:image), linked, never stored */
+        img: layer === "news" && /^https:\/\/[^\s<>"']{8,600}$/.test(i.img || "") ? i.img : undefined,
         leftOut: layer === "social" && i.left_out ? String(i.left_out) : undefined };
       rec[flag] = true; add(rec);
     });
@@ -6173,7 +6175,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return '<div class="sec" id="news-top"><h2>Top stories</h2><p class="obs">Ranked by fixed rules at each refresh (topic, how many outlets carry it, outlet type, recency); the points are shown on each story. ' +
       routine + " sport, entertainment or advertising headline" + (routine === 1 ? "" : "s") + " left out.</p>" +
       (top.length ? '<div class="tllist">' + top.map(function (x) {
-        return '<button type="button" class="tlrow" data-openrec="' + esc(x.r.id) + '"><span class="tlt">' + esc(fmtTs(x.r)) + ' · <b>' + x.score + " pts</b></span><span class=\"tln\">" + esc(x.r.title) + "</span>" +
+        var pic = x.r.img;
+        return '<button type="button" class="tlrow' + (pic ? " hasthumb" : "") + '" data-openrec="' + esc(x.r.id) + '">' + (pic ? '<img class="ytthumb" src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" width="96" height="54" onerror="this.style.visibility=\'hidden\'">' : "") + '<span class="tlt">' + esc(fmtTs(x.r)) + ' · <b>' + x.score + " pts</b></span><span class=\"tln\">" + esc(x.r.title) + "</span>" +
           '<span class="tlm"><span class="tls">' + esc(x.r.src.name) + (x.also.length ? " · also " + esc(x.also.slice(0, 3).join(", ")) + (x.also.length > 3 ? " +" + (x.also.length - 3) : "") : "") +
           (x.r.orig ? " · machine translation" : "") + '</span><span class="tls">' + esc(x.why.join(" · ")) + "</span></span></button>";
       }).join("") + "</div>" : '<p class="obs">No headline reaches 5 points in this period.</p>') +
