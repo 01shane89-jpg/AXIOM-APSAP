@@ -1,17 +1,62 @@
 [
- ["intro","OSAP Spotlight. Go deeper."],
- ["hook","One headline. Two hundred and one outlets. Where did it start?"],
- ["tap","Tap Go deeper."],
- ["story","OSAP sorts every report into five questions. What happened, why, what officials say, who is affected, and what comes next."],
- ["claims","Officials' statements are tagged as claims. Never as fact."],
- ["timeline","The timeline shows the first report of each strand, in Zulu and local time."],
- ["links","Links finds other headlines naming the same places and groups, at home and abroad."],
- ["mark","Mark them linked, or not."],
- ["follow","Then follow the trail into the connected story."],
- ["back","And step back any time."],
- ["reports","Reports lists every outlet that carried it, and where it's based."],
- ["about","Even who owns it, and who pays for it."],
- ["print","Every story is fingerprinted, so the record can be checked."],
- ["uses","Use it when a claim is everywhere, and you need to know who started it."],
- ["outro","OSAP. See beyond the headlines."]
+[
+"intro",
+"[OSAP](/ˈOsæp/) Spotlight. Go deeper."
+],
+[
+"hook",
+"One headline. Two hundred and one outlets. Where did it start?"
+],
+[
+"tap",
+"Tap Go deeper."
+],
+[
+"story",
+"[OSAP](/ˈOsæp/) sorts every report into five questions. What happened, why, what officials say, who is affected, and what comes next."
+],
+[
+"claims",
+"Officials' statements are tagged as claims. Never as fact."
+],
+[
+"timeline",
+"The timeline shows the first report of each strand, in Zulu and local time."
+],
+[
+"links",
+"Links finds other headlines naming the same places and groups, at home and abroad."
+],
+[
+"mark",
+"Mark them linked, or not."
+],
+[
+"follow",
+"Then follow the trail into the connected story."
+],
+[
+"back",
+"And step back any time."
+],
+[
+"reports",
+"Reports lists every outlet that carried it, and where it's based."
+],
+[
+"about",
+"Even who owns it, and who pays for it."
+],
+[
+"print",
+"Every story is fingerprinted, so the record can be checked."
+],
+[
+"uses",
+"Use it when a claim is everywhere, and you need to know who started it."
+],
+[
+"outro",
+"[OSAP](/ˈOsæp/). See beyond the headlines."
+]
 ]
