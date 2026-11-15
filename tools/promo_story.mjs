@@ -77,7 +77,9 @@ function kit(p, ctx, cdp, dir) {
   k.tapAt = async (x, y) => { await k.move(x, y); await k.wait(120); await p.mouse.down(); await k.wait(90); await p.mouse.up(); await k.wait(150); };
   k.glide = async (h) => {
     if (!h) return false;
-    const box = await h.boundingBox(); if (!box) return false;
+    let box = await h.boundingBox(); if (!box) return false;
+    // off screen: scroll it into view first (eased, recorded), as a person would
+    if (box.y < 0 || box.y + box.height > H || box.x < 0 || box.x + box.width > W) { await k.scrollTo(h, "center", 800); box = await h.boundingBox(); if (!box) return false; }
     await k.move(box.x + box.width / 2, box.y + box.height / 2);
     await k.wait(120); await p.mouse.down(); await k.wait(90); await p.mouse.up(); await k.wait(150);
     return true;
@@ -97,12 +99,19 @@ function kit(p, ctx, cdp, dir) {
   };
   k.type = async (sel, text) => { const h = await k.el(sel); if (!h) { console.log("  missing field", sel); return false; } await k.glide(h); for (const ch of text) { await p.keyboard.type(ch); await k.wait(70); } return true; };
   k.view = (at, z, fly, secs) => p.evaluate(([a, z, f, s]) => { const m = window.__asapMap; m.invalidateSize(false); try { if (f) m.flyTo(a, z, { duration: s }); else m.setView(a, z, { animate: false }); } catch (e) { m.setView(a, z, { animate: false }); return String(e.message); } return "ok"; }, [at, z, !!fly, secs || 2.4]).then((r) => { if (r !== "ok") console.log("  view fallback", r); });
-  k.fly = async (at, z, secs) => { await k.view(at, z, true, secs || 2.4); await k.wait((secs || 2.4) * 1000 + 300); };
+  // a flight: each frame also gets a little real time so the map pictures can load on the way, then it waits for the last ones
+  const tilesIn = () => !document.querySelector("#map .leaflet-tile-loading") && !document.querySelector("#map .leaflet-tile-container.leaflet-zoom-animated img:not(.leaflet-tile-loaded)");
+  k.fly = async (at, z, secs) => {
+    await k.view(at, z, true, secs || 2.4);
+    for (let i = Math.round((secs || 2.4) * FPS); i > 0; i--) { await k.frame(); await p.waitForTimeout(45); }
+    await k.until(tilesIn, null, 10000);
+    await k.wait(300);
+  };
   k.basemap = (b) => p.evaluate((b) => window.OSAP_BASEMAP && window.OSAP_BASEMAP.set(b), b);
   k.mapPt = (ll) => p.evaluate((ll) => { const m = window.__asapMap, c = m.latLngToContainerPoint(ll), r = document.getElementById("map").getBoundingClientRect(); return [r.left + c.x, r.top + c.y]; }, ll);
   // eased scrolling on the page's own (fake) clock: an element into view, or a scroll box by dy
   k.scrollTo = async (sel, block, ms) => {
-    const ok = await p.evaluate(([s, b, d]) => {
+    const fn = ([s, b, d]) => {
       const e = typeof s === "string" ? document.querySelector(s) : s; if (!e) return false;
       let sc = e.parentElement; while (sc && !(sc.scrollHeight > sc.clientHeight + 4 && /auto|scroll/.test(getComputedStyle(sc).overflowY))) sc = sc.parentElement;
       const box = sc || document.scrollingElement, er = e.getBoundingClientRect(), br = sc ? sc.getBoundingClientRect() : { top: 0, height: innerHeight };
@@ -110,7 +119,9 @@ function kit(p, ctx, cdp, dir) {
       const from = box.scrollTop, t0 = performance.now(), f = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
       const step = () => { const x = Math.min(1, (performance.now() - t0) / d); box.scrollTop = from + (to - from) * f(x); if (x < 1) requestAnimationFrame(step); };
       requestAnimationFrame(step); return true;
-    }, [sel, block || "start", ms || 900]);
+    };
+    if (typeof sel !== "string") { await sel.evaluate((e) => { document.querySelectorAll("[data-wt-to]").forEach((x) => x.removeAttribute("data-wt-to")); e.setAttribute("data-wt-to", "1"); }); sel = "[data-wt-to]"; }
+    const ok = await p.evaluate(fn, [sel, block || "start", ms || 900]);
     await k.wait((ms || 900) + 150); return ok;
   };
   k.scrollBy = async (dy, ms, fx, fy) => {
@@ -300,8 +311,8 @@ const SCENES = [
     await k.scrollBy(PHONE ? 300 : 340, 1400);
     await k.wait(1800);
     k.caption("Send it to the team before the call", "One tap makes a clean PDF, with the sources still clickable.");
-    await k.scrollTo("#td-daily", "start", 1000);
-    await k.wait(700);
+    await k.scrollTo("#td-daily [data-dlprint]", "center", 1100);
+    await k.wait(500);
     if (await k.click("#td-daily [data-dlprint]")) await k.pdf("daily-brief.pdf");
     await k.wait(1200);
   }],
