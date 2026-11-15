@@ -169,6 +169,8 @@ tests/medplan_hang_smoke.mjs
 tests/medplan_equiv.test.mjs
 tests/medplan_conflict_map_smoke.mjs
 tests/medplan_bkk_smoke.mjs
+# Morocco: road routes from the POI when no hospital fills a plan role (nearest hospitals, capability not documented)
+tests/medplan_ma_smoke.mjs
 # one hospital's standalone assessment: map popup, long-press Plans, Reports, planner's check, PDF, open plan untouched
 tests/hospital_assess_smoke.mjs
 tests/seatransit_smoke.mjs
