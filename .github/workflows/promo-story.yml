@@ -1,0 +1,37 @@
+# Scratch (claude/promo-video, never merged): records the scenario reels (tools/promo_story.mjs) where map tiles load,
+# and pushes the clips to media/story-<scene>. Writes nothing to main.
+name: Promo story clips
+on:
+  push:
+    branches: [claude/promo-video]
+    paths: [tools/promo_story.mjs, .github/workflows/promo-story.yml]
+permissions:
+  contents: write
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        scene: [trip]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - name: Use the newest app and data from main
+        run: git fetch -q --depth 1 origin main && git checkout FETCH_HEAD -- . ':(exclude)tools/promo_story.mjs' ':(exclude).github'
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg > /dev/null
+      - run: npm install --no-save --no-audit --no-fund playwright@1.63
+      - run: npx playwright install --with-deps chromium
+      - run: VIEW=phone OUT=pub ONLY=${{ matrix.scene }} node tools/promo_story.mjs 2>&1 | tee pub-log.txt
+      - name: Push the clips
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          cp pub-log.txt pub/log.txt && cd pub && ls -la
+          git init -q -b media/story-${{ matrix.scene }}
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898269+github-actions[bot]@users.noreply.github.com" commit -q -m "story clips (${{ matrix.scene }}) from ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" media/story-${{ matrix.scene }}
