@@ -109,6 +109,13 @@ function kit(p, ctx, cdp, dir) {
     await k.until(tilesIn, null, 10000);
     await k.wait(300);
   };
+  // a short hop: Leaflet's own quick zoom (no wide arc, so the map pictures stay sharp), then wait for the new ones
+  k.hop = async (at, z) => {
+    await p.evaluate(([a, z]) => { const m = window.__asapMap; m.invalidateSize(false); m.setView(a, z, { animate: true }); }, [at, z]);
+    for (let i = 0; i < 18; i++) { await k.frame(); await p.waitForTimeout(120); }
+    await k.until(tilesIn, null, 10000);
+    await k.wait(300);
+  };
   k.basemap = (b) => p.evaluate((b) => window.OSAP_BASEMAP && window.OSAP_BASEMAP.set(b), b);
   k.mapPt = (ll) => p.evaluate((ll) => { const m = window.__asapMap, c = m.latLngToContainerPoint(ll), r = document.getElementById("map").getBoundingClientRect(); return [r.left + c.x, r.top + c.y]; }, ll);
   // eased scrolling on the page's own (fake) clock: an element into view, or a scroll box by dy
@@ -369,7 +376,7 @@ const SCENES = [
     await k.wait(2600);
     if (top.n && top.g) {
       k.caption(`${top.n} gauges are over their banks right now`, `In ${top.np} provinces. Red means the river is over its bank.`);
-      await k.fly([top.g.lat, top.g.lon], 11, 2.4); await k.wait(1200);
+      await k.hop([top.g.lat, top.g.lon], 11); await k.wait(1200);
       const pt = await k.mapPt([top.g.lat, top.g.lon]);
       await k.tapAt(pt[0], pt[1]);
       await k.wait(400);
@@ -384,10 +391,10 @@ const SCENES = [
     } else k.caption("No gauge is over its bank right now", "Every gauge shows its latest official reading.");
     await p.evaluate(() => window.OSAP_DISASTERX && window.OSAP_DISASTERX.set("now", true));
     k.caption("See where water has spread", "NASA's satellite flood map from the last three days.");
-    await k.fly([13.6, 100.4], 7, 2.4); await k.wait(3000);
+    await k.hop([13.6, 100.4], 7); await k.wait(3000);
     if (top.r) {
       k.caption(`And where the rain is heaviest: ${Math.round(top.r.mm)} mm`, `In 24 hours at ${dist(top.r.a)}, ${top.r.p}.`);
-      await k.fly([top.r.lat, top.r.lon], 9, 2.4); await k.wait(2800);
+      await k.hop([top.r.lat, top.r.lon], 9); await k.wait(2800);
     }
     k.caption("Official numbers, not rumors", "Every reading dated and linked to who published it.");
     await k.wait(3800);
