@@ -10,7 +10,8 @@ function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 // every country the app lists has a currency
 const world = (() => { const t = fs.readFileSync("data/basemap/world-countries.js", "utf8"); return JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, "")); })();
 const ids = world.map((w) => w.id).filter((x) => /^[a-z]{2}$/.test(x));
-for (const m of fs.readFileSync("index.html", "utf8").matchAll(/\{ id: "([a-z]{2})", name: "([^"]+)", region: /g)) ids.push(m[1]);
+// (World, "ww", is the whole map, not a country: it has no currency and no Economy card, assets/osap-econ.js)
+for (const m of fs.readFileSync("index.html", "utf8").matchAll(/\{ id: "([a-z]{2})", name: "([^"]+)", region: /g)) if (m[1] !== "ww") ids.push(m[1]);
 const noCur = ids.filter((c) => !L.CURRENCY[c]);
 ok(noCur.length === 0, "every app country has a currency (" + ids.length + " countries; missing: " + noCur.join(" ") + ")");
 ok(Object.keys(L.A3).every((c) => /^[A-Z]{3}$/.test(L.A3[c])), "researched countries carry ISO alpha-3 codes");
