@@ -1,0 +1,33 @@
+{
+ "name": "site",
+ "view": "phone",
+ "w": 1080,
+ "h": 1512,
+ "frames": 780,
+ "start": 0,
+ "end": 26,
+ "caps": [
+  {
+   "t": 0,
+   "text": "The map picture is years old. What's there now?",
+   "sub": "Find the newest satellite pictures of the place."
+  },
+  {
+   "t": 9,
+   "text": "Every free source at once, newest first",
+   "sub": "Each one shows its date, its satellite and how cloudy it was."
+  },
+  {
+   "t": 12.6,
+   "text": "Pick a clear one and it goes on the map",
+   "sub": "With its date on it, so an old picture is never taken for today's."
+  },
+  {
+   "t": 21.3,
+   "text": "See the place as it is, before you go or decide",
+   "sub": "Sentinel-2, Landsat and NASA daily pictures, free for any place on earth."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}

@@ -1,0 +1,3 @@
+  imagery pick {"id":"s2:S2C_2026-11-13","n":41,"when":1794553356651}
+PASS 23 site {"secs":"26.0","caps":4,"pdfs":[]}
+all scenes recorded
