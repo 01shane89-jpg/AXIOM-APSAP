@@ -1,0 +1,3 @@
+  flood {"n":13,"np":6,"g":{"d":0.99,"a":"Bang Len District","p":"Nakhon Pathom","lat":14.05221,"lon":100.175087,"t":"2026-11-15 15:00"},"r":{"mm":93.5,"a":"Khao Phanom District","p":"Krabi","lat":8.309862,"lon":98.968714},"asof":"2026-11-15 15:40"}
+PASS 24 floodfam {"secs":"26.8","caps":6,"pdfs":[]}
+all scenes recorded

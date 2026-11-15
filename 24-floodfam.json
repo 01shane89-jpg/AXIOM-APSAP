@@ -1,0 +1,43 @@
+{
+ "name": "floodfam",
+ "view": "phone",
+ "w": 1080,
+ "h": 1512,
+ "frames": 804,
+ "start": 0,
+ "end": 26.8,
+ "caps": [
+  {
+   "t": 0,
+   "text": "Turn on the river gauges",
+   "sub": "Live readings from Thailand's official water telemetry."
+  },
+  {
+   "t": 4.833333333333333,
+   "text": "13 gauges are over their banks right now",
+   "sub": "In 6 provinces. Red means the river is over its bank."
+  },
+  {
+   "t": 8.3,
+   "text": "Check the gauge nearest them: 0.99 m over",
+   "sub": "Bang Len, Nakhon Pathom. Hydro-Informatics Institute, 15:00 local time."
+  },
+  {
+   "t": 14.9,
+   "text": "See where water has spread",
+   "sub": "NASA's satellite flood map from the last three days."
+  },
+  {
+   "t": 18.8,
+   "text": "And where the rain is heaviest: 94 mm",
+   "sub": "In 24 hours at Khao Phanom, Krabi."
+  },
+  {
+   "t": 22.5,
+   "text": "Official numbers, not rumors",
+   "sub": "Every reading dated and linked to who published it."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}
