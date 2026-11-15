@@ -1633,7 +1633,12 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
         .then(function (a) {
           if (self._map !== map) return;
           self._gl = new a[0].Map({ container: self._box, style: styleFor(self.options, a[1]), interactive: false, attributionControl: false,
-            center: [0, 0], zoom: 0, fadeDuration: 0, maxZoom: 22 });
+            center: [0, 0], zoom: 0, fadeDuration: 0, maxZoom: 22,
+            /* the engine follows the 2D map exactly. Left to itself it keeps the world filling its box: zoomed out (World
+               view, zoom 2-3) it moved its centre toward the equator and zoomed in when the box was taller than the world, so
+               the base map slid away from every overlay drawn by the 2D map (country borders off the coastlines, Shane
+               2026-11-15). Leaflet already decides where the map may go, so the engine takes the view as given */
+            transformConstrain: function (c, z) { return { center: c, zoom: z }; } });
           /* a missing tile is not fatal; the engine keeps drawing the rest. But when the tile host answers nothing at all
              (blocked, down), the plain tiles stand in so the map is never left blank and the loading bar can name the service */
           var errs = 0;

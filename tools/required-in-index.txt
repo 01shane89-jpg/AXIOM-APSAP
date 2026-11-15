@@ -216,3 +216,6 @@ window.OSAP_RISK.intoBrief(briefEl, CC, C.name)
 <script src="assets/osap-milmap.js"></script>
 <script src="assets/osap-protect.js"></script>
 openNear: function (pl, km) {
+
+# the 2D base map engine follows the Leaflet view exactly, never re-centres or zooms itself (World view drift, 2026-11-15)
+transformConstrain: function (c, z) { return { center: c, zoom: z }; } });

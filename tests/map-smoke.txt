@@ -129,6 +129,7 @@ tests/dataset_groups_smoke.mjs
 tests/privacy_smoke.mjs
 tests/vault_smoke.mjs
 tests/borders_smoke.mjs
+tests/vbase_sync_smoke.mjs
 tests/country_outline_smoke.mjs
 tests/wrap_smoke.mjs
 tests/evac_smoke.mjs
