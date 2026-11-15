@@ -345,15 +345,13 @@
          outlets had headed Thailand's list on 14 Nov 2026, above that morning's news) */
       if (!ev.reports || ev.reports.length < 2 || !isFinite(ev.to) || now - ev.to > EV_FRESH) return;
       var r0 = null; for (var i = 0; i < ev.reports.length && !r0; i++) r0 = recByUrl(ev.reports[i].url);
-      /* the story's picture: the first of its reports whose outlet gave one, unless the story's own headline is about deaths or
-         violence (window.OSAP_PICHIDE, index.html), when none shows */
-      var hide = !!(window.OSAP_PICHIDE && window.OSAP_PICHIDE(ev.title)), pic = "";
-      for (var j = 0; j < ev.reports.length && !pic && !hide; j++) { var rj = recByUrl(ev.reports[j].url); if (rj && rj.img) pic = rj.img; }
-      if (!hide && r0 && r0.picHidden) hide = true;
+      /* the story's picture: the first of its reports whose outlet gave one */
+      var pic = "";
+      for (var j = 0; j < ev.reports.length && !pic; j++) { var rj = recByUrl(ev.reports[j].url); if (rj && rj.img) pic = rj.img; }
       if (!aboutHere(r0 || { title: ev.title, url: ev.reports[0].url })) return;
       /* one outlet counts once, however it reached OSAP ("Amarin TV", "AmarinTV on MSN (via Bing News search)") */
       var srcs = {}; ev.reports.forEach(function (r) { srcs[outlet(r.source)] = 1; used[r.url] = 1; });
-      out.push({ ev: true, pic: pic, picHidden: hide, title: ev.title, n: Object.keys(srcs).length, ms: ev.to, rec: r0, url: ev.reports[0].url, src: Object.keys(srcs).slice(0, 3).join(", "), xb: ev.crossBorder,
+      out.push({ ev: true, pic: pic, title: ev.title, n: Object.keys(srcs).length, ms: ev.to, rec: r0, url: ev.reports[0].url, src: Object.keys(srcs).slice(0, 3).join(", "), xb: ev.crossBorder,
         status: ev.reports.every(function (r) { return r.status === "Observed"; }) ? "observation" : "event", sev: ev.sev || 1 });
     });
     out.sort(function (a, b) { return b.n - a.n || b.ms - a.ms; });
@@ -367,7 +365,7 @@
     var recent = news.filter(function (x) { return now - x.ms <= NEWS_RECENT; });
     (recent.length >= 3 ? recent : news).slice(0, 9 - out.length).forEach(function (x) {
       var r = x.r;
-      out.push({ pic: r.img, picHidden: !!r.picHidden, title: r.title, ms: x.ms, rec: r, url: r.url, src: r.src ? r.src.name : "", state: r.src && /State media/.test(r.src.kind || ""), mt: !!r.orig, status: r.type });
+      out.push({ pic: r.img, title: r.title, ms: x.ms, rec: r, url: r.url, src: r.src ? r.src.name : "", state: r.src && /State media/.test(r.src.kind || ""), mt: !!r.orig, status: r.type });
     });
     if (out.length < 4) {
       var F = xFeeds();
@@ -406,12 +404,10 @@
   }
   function storyHtml(s) {
       /* the outlet's own picture, linked from its site (never copied), small and lazy: a fixed 96 x 72 box, so the list does not
-         move as pictures arrive, and a picture that fails leaves the empty box. A violent story shows a plain "Picture withheld"
-         box instead of the outlet's picture. Stories with neither keep the full width for the headline. */
-      var h = "", pic = s.picHidden ? "" : s.pic || (s.rec && s.rec.thumb) || "", st = STATUS[s.status] || STATUS.event, url = safeUrl(s.url);
-      h += '<article class="tdst' + (pic || s.picHidden ? " haspic" : "") + '">' +
-        (pic ? '<span class="tdpic"><img src="' + esc(pic) + '" alt="" width="96" height="72" loading="lazy" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'"></span>'
-          : s.picHidden ? '<span class="tdpic tdpicx" role="img" aria-label="Picture withheld: a story about deaths or violence" title="Picture withheld: a story about deaths or violence"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8M9.9 5.2A9.7 9.7 0 0112 5c5 0 9 5 9 7a10.6 10.6 0 01-2.6 3.4M6.4 6.4C4.2 7.8 3 10.4 3 12c0 2 4 7 9 7a9.4 9.4 0 004.3-1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Picture withheld</span></span>' : "") +
+         move as pictures arrive, and a picture that fails leaves the empty box. Stories without one keep the full width. */
+      var h = "", pic = s.pic || (s.rec && s.rec.thumb) || "", st = STATUS[s.status] || STATUS.event, url = safeUrl(s.url);
+      h += '<article class="tdst' + (pic ? " haspic" : "") + '">' +
+        (pic ? '<span class="tdpic"><img src="' + esc(pic) + '" alt="" width="96" height="72" loading="lazy" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'"></span>' : "") +
         '<div class="tdstb">' + (s.rec ? '<button type="button" class="tdsth" data-rec="' + esc(s.rec.id) + '">' + esc(s.title) + "</button>"
           : url ? '<a class="tdsth" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(s.title) + "</a>" : '<span class="tdsth">' + esc(s.title) + "</span>") +
         '<span class="tdsub">' + (s.ev ? "<b>" + s.n + " sources</b>: " : "") + esc(s.src) + (isFinite(s.ms) ? " · " + esc(ago(s.ms) || when(s.ms)) : "") + "</span>" +
@@ -558,7 +554,6 @@
     ".tdtag.unv{color:var(--muted);border-color:transparent;background:var(--accent-soft,#D6E3EE);font-weight:500}.tdtag.claim{color:var(--accent)}.tdtag.obs{color:var(--ink)}.tdtag.mt{color:var(--muted)}.tdtag.xb{color:var(--near,#a60)}" +
     ".tdst{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--line-soft,var(--line))}.tdst:first-of-type{border-top:0}" +
     ".tdpic{width:96px;height:72px;flex:none;border-radius:6px;overflow:hidden;background:var(--surface2,var(--line))}.tdpic img{display:block;width:100%;height:100%;object-fit:cover}" +
-    ".tdpicx{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--muted);font-size:10.5px;text-align:center;line-height:1.15}" +
     ".tdstb{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}@media (max-width:380px){.tdpic{width:80px;height:60px}}" +
     ".tdsth{background:none;border:0;padding:0;text-align:left;font:inherit;font-weight:600;font-size:15px;color:var(--ink);cursor:pointer;text-decoration:none;overflow-wrap:anywhere}" +
     ".tdtags{display:flex;flex-wrap:wrap;gap:4px;align-items:center}.tdsrcl{font-size:12px}" +

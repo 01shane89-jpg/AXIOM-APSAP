@@ -5970,12 +5970,6 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     for (var k = 0; k < 2 && /&(#x?[0-9a-f]+|[a-z]+);/i.test(t); k++) { ENT.innerHTML = t; t = ENT.value; }
     return t.indexOf("<") < 0 ? t : t.replace(/<\/?[a-z][^>]*>/gi, " ").replace(/\s{2,}/g, " ").trim();
   }
-  /* A news picture is not shown for a story about deaths, killings, shootings, attacks, bombings, or injuries (English
-     headline): outlets' pictures for these can show casualties or graphic scenes. Kept wide on purpose: a picture left out costs
-     little, a graphic one on Today costs a lot. Today's grouped stories use the same test (window.OSAP_PICHIDE). */
-  var PIC_HIDE = /\b(kill(s|ed|er|ers|ing)?|dead|deadly|death|deaths|died|dies|dying|bod(y|ies)|corpses?|remains|fatal(ly|ity|ities)?|shoot(s|ing|ings|er|out)?|shot|gun(man|men|fire|point)|stab(s|bed|bing|bings)?|murder(s|ed|er)?|homicides?|slain|massacres?|bomb(s|ed|er|ing|ings)?|blasts?|explosions?|suicide|behead\w*|execut(ed|ion|ions)|terror\w*|attack(s|ed|er|ers)?|wound(s|ed)|injur(y|ies|ed|es)|casualt(y|ies)|victims?|toll|carnage|blood\w*|rap(e|ed|es|ist)|assault\w*|tortur\w*|hostages?|air ?strikes?|drone strikes?|shell(ed|ing)|mutilat\w*|lynch\w*|abuse[ds]?|graphic)\b/i;
-  function picHide(t) { return PIC_HIDE.test(String(t || "")); }
-  window.OSAP_PICHIDE = picHide;
   function addNewsRecords(key, layer, flag) {
     R = R.filter(function (r) { if (r[flag]) { delete byId[r.id]; r.src.n--; return false; } return true; });
     var w = window[key], H = ((window.ASAP_HIST || {})[CC] || {})[layer] || [];
@@ -6011,10 +6005,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         ts: i.date || w.asof.slice(0, 10), tsLabel: i.date ? i.date.replace("T", " ") + "Z" : "", place: pl ? pl.name : "", prov: "",
         lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, prec: pl ? pl.prec || "approx" : "none", sev: 1, src: s, url: i.link, issued: i.date, recorded: w.asof,
         thumb: /^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/[a-z]+\.jpg$/.test(i.thumb || "") ? i.thumb : undefined, st: i.st || undefined,
-        /* the outlet's own picture (its feed's thumbnail or the article's og:image), linked, never stored; left out for a story
-           about deaths, shootings, attacks or injuries, so no casualty or graphic picture shows (picHidden marks it) */
-        img: layer === "news" && /^https:\/\/[^\s<>"']{8,600}$/.test(i.img || "") && !picHide(en) ? i.img : undefined,
-        picHidden: layer === "news" && i.img && picHide(en) ? 1 : undefined,
+        /* the outlet's own picture (its feed's thumbnail or the article's og:image), linked, never stored */
+        img: layer === "news" && /^https:\/\/[^\s<>"']{8,600}$/.test(i.img || "") ? i.img : undefined,
         leftOut: layer === "social" && i.left_out ? String(i.left_out) : undefined };
       rec[flag] = true; add(rec);
     });

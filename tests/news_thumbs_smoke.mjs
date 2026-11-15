@@ -1,9 +1,9 @@
 // News pictures on Today's Top stories (assets/osap-today.js) and the News tab, on a 390 px phone. The US news file is served
 // with a picture link on every headline (the outlet's feed thumbnail or og:image, as tools/refresh_news.mjs stores it), each
 // pointing at a test host that returns a small picture. Checks: Top stories rows show the outlet's picture in a fixed 96 x 72
-// box (so the list does not move as pictures load), lazily and without a referrer; a story about deaths or violence shows the
-// "Picture withheld" box and its picture is never requested; a picture that fails leaves the box empty, not a broken icon;
-// http links are refused; the News tab's Top stories carry the same pictures; nothing scrolls sideways; no page errors.
+// box (so the list does not move as pictures load), lazily and without a referrer; every story shows its picture, violent
+// ones included (Shane 15 Nov: the audience is adults, nothing is withheld); a picture that fails leaves the box empty, not a
+// broken icon; http links are refused; the News tab's Top stories carry the same pictures; nothing scrolls sideways; no errors.
 // External hosts are blocked. Run from the repo root: node tests/news_thumbs_smoke.mjs   (SHOTS=dir saves screenshots)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -25,7 +25,7 @@ function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 // the US file with a picture on every item: most on pics.test (answers), every 7th on broken.test (fails), one http link
 const src = await readFile(join(root, "data/live/news/us.js"), "utf8");
 const data = JSON.parse(src.slice(src.indexOf("=") + 1).trim().replace(/;$/, ""));
-// a few recent headlines of each kind, so Today shows both whatever the snapshot holds
+// a few recent headlines, violent ones among them, so Today shows them whatever the snapshot holds
 const now = new Date(Date.now() - 30 * 60000).toISOString().slice(0, 16);
 data.items.us.unshift(
   { title: "Death toll rises after building collapse in New York", date: now, link: "https://example.org/a1", outlet: "Test Outlet A", lang: "en", via: "RSS", state: false, title_en: "Death toll rises after building collapse in New York" },
@@ -56,35 +56,30 @@ await p.waitForTimeout(1500);
 
 const recs = await p.evaluate(() => {
   const R = window.TSAP.records.filter((r) => r.news);
-  return { n: R.length, img: R.filter((r) => r.img).length, hid: R.filter((r) => r.picHidden).length, http: R.some((r) => /^http:/.test(r.img || "")),
-    hidImg: R.filter((r) => r.picHidden && r.img).length, gun: R.find((r) => /^Gunman opens fire/.test(r.title)) || null };
+  return { n: R.length, img: R.filter((r) => r.img).length, http: R.some((r) => /^http:/.test(r.img || "")), gun: R.find((r) => /^Gunman opens fire/.test(r.title)) || null };
 });
 ok(recs.img > 10, `news records carry the outlet's picture link (${recs.img} of ${recs.n})`);
 ok(!recs.http, "an http picture link is refused");
-ok(recs.hid >= 2 && recs.hidImg === 0, `stories about deaths or violence keep no picture link (${recs.hid} withheld)`);
-ok(recs.gun && recs.gun.picHidden === 1 && !recs.gun.img, "a shooting headline's picture is withheld");
+ok(recs.gun && /^https:\/\/pics\.test\//.test(recs.gun.img || ""), "a shooting headline keeps its picture (nothing withheld)");
 
 const g = await p.evaluate(() => {
   const rows = [...document.querySelectorAll(".tdnews .tdst")];
   return { rows: rows.map((a) => {
       const box = a.querySelector(".tdpic"), im = box && box.querySelector("img"), b = box && box.getBoundingClientRect();
-      return { t: (a.querySelector(".tdsth") || {}).textContent || "", pic: !!im, x: !!(box && box.classList.contains("tdpicx")), w: b ? Math.round(b.width) : 0, h: b ? Math.round(b.height) : 0,
+      return { t: (a.querySelector(".tdsth") || {}).textContent || "", pic: !!im, w: b ? Math.round(b.width) : 0, h: b ? Math.round(b.height) : 0,
         lazy: im ? im.loading : "", ref: im ? im.referrerPolicy : "", vis: im ? getComputedStyle(im).visibility : "", src: im ? im.src : "" };
     }),
     sx: document.getElementById("today").scrollWidth - document.getElementById("today").clientWidth };
 });
-const withPic = g.rows.filter((r) => r.pic), withheld = g.rows.filter((r) => r.x);
-console.log("  rows:", g.rows.map((r) => (r.pic ? "[pic] " : r.x ? "[withheld] " : "[none] ") + r.t.slice(0, 50)).join(" | "));
+const withPic = g.rows.filter((r) => r.pic);
+console.log("  rows:", g.rows.map((r) => (r.pic ? "[pic] " : "[none] ") + r.t.slice(0, 50)).join(" | "));
 ok(withPic.length >= 2, `Top stories show the outlet's picture (${withPic.length} of ${g.rows.length} rows)`);
 ok(withPic.every((r) => r.w === 96 && r.h === 72), "each picture sits in a fixed 96 x 72 box");
 ok(withPic.every((r) => r.lazy === "lazy" && r.ref === "no-referrer"), "pictures load lazily and send no referrer");
 const vio = g.rows.filter((r) => /Death toll|Gunman/.test(r.t));
-ok(vio.length >= 1 && vio.every((r) => r.x && !r.pic), `violent stories show "Picture withheld" instead (${vio.length} on screen)`);
-ok(withheld.every((r) => r.w === 96 && r.h === 72), "the withheld box is the same size");
+ok(vio.length >= 1 && vio.every((r) => r.pic), `violent stories show their picture too (${vio.length} on screen)`);
 await p.evaluate(() => { const t = document.getElementById("today"); t.scrollTop = t.scrollHeight; });
 await p.waitForTimeout(800);
-const vioAsked = asked.filter((a) => /\/(1|2)\.svg$/.test(a.u));
-ok(vioAsked.length === 0, "a withheld picture is never requested");
 ok(asked.length > 0 && asked.every((a) => !a.ref), `picture requests carry no referrer (${asked.length} requests)`);
 ok(!asked.some((a) => /^http:/.test(a.u)), "no http picture is requested");
 await p.evaluate(() => { const im = [...document.querySelectorAll(".tdpic img")].find((x) => /broken\.test/.test(x.src)); if (im) im.scrollIntoView({ block: "center" }); });
@@ -100,10 +95,8 @@ await p.evaluate(() => window.OSAP_TODAY.hide && window.OSAP_TODAY.hide());
 await p.evaluate(() => window.TSAP.setView("news"));
 await p.waitForFunction(() => document.querySelector("#news-top"), null, { timeout: 60000 });
 await p.waitForTimeout(800);
-const nt = await p.evaluate(() => { const rows = [...document.querySelectorAll("#news-top .tlrow")]; return { n: rows.length, pic: rows.filter((r) => r.querySelector("img.ytthumb")).length,
-  bad: rows.filter((r) => /Death toll|Gunman/.test(r.textContent) && r.querySelector("img")).length }; });
+const nt = await p.evaluate(() => { const rows = [...document.querySelectorAll("#news-top .tlrow")]; return { n: rows.length, pic: rows.filter((r) => r.querySelector("img.ytthumb")).length }; });
 ok(nt.n > 0 && nt.pic > 0, `News tab Top stories show pictures (${nt.pic} of ${nt.n})`);
-ok(nt.bad === 0, "News tab shows no picture on violent stories");
 if (process.env.SHOTS && nt.n) { await p.evaluate(() => document.querySelector("#news-top").scrollIntoView()); await p.waitForTimeout(600); await p.screenshot({ path: process.env.SHOTS + "/news-tab.png" }); }
 ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
 await ctx.close(); await browser.close(); server.close();
