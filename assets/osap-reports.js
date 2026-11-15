@@ -75,6 +75,9 @@
     /* one hospital on its own (no plan built): the hospitals round the map centre to pick from */
     ["hospital", "Point on the map", "Hospital assessment", "One hospital on its own: trauma level as sourced, capabilities with source and grade, helipad, contacts, gaps, data age and fingerprint",
       function () { return !!(W.OSAP_MEDPLAN && W.OSAP_MEDPLAN.hospital) || "Not available"; }, function () { W.OSAP_MEDPLAN.hospital({ pick: true }); }],
+    /* the whole country's medical picture (assets/osap-medcountry.js): every country, from OSAP's researched list and stored map data */
+    ["medcountry", "Country", "Country medical overview", "The country's medical picture on one report: health system, hospital levels, referral hospitals with capabilities, blood, evacuation airfields and ports, chambers, gaps, every source with its SHA-256",
+      function () { return !!W.OSAP_MEDCOUNTRY || "Not available"; }, function () { W.OSAP_MEDCOUNTRY.open(); }],
     ["seatransit", "Point on the map", "Sea transit medevac assessment", "A voyage corridor: distances to documented hospitals, ports and airfields, remote stretches, rescue centers, onboard triggers, a readiness sheet to print",
       function () { return !!W.OSAP_SEATRANSIT || "Not available"; }, function () { W.OSAP_SEATRANSIT.open(); }],
 
