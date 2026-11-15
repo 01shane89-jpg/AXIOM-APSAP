@@ -37,7 +37,9 @@ function kit(p, ctx, cdp, dir) {
   k.vt = () => k.n / FPS; // the video clock, in seconds
   k.pause = async () => {
     if (k.paused) return;
-    await ctx.clock.pauseAt((await p.evaluate(() => Date.now())) + 250);
+    const t = await p.evaluate(() => Date.now());
+    // the page's Date can trail the clock's own time by a little after a sync: step just past it
+    await ctx.clock.pauseAt(t + 250).catch(() => ctx.clock.pauseAt(Date.now() + 1000)).catch(() => ctx.clock.pauseAt(Date.now() + 60000));
     await setRate(rate); k.paused = true; tl = Date.now(); tn = k.n;
   };
   k.resume = async () => {
