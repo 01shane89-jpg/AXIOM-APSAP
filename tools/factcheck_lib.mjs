@@ -30,10 +30,13 @@ export function prepChecks(items, find) {
 }
 
 // offices, bodies and words for a people name no one event ("Prime Minister", "Senate", "Chinese")
-const GENERIC = /^(the )?(global voices|european commission|commission|fiscal[ií]a|ministerio p[uú]blico|procuradur[ií]a|gobierno|governo|presidente|ministro|polic[ií]a|prime minister|president|vice president|minister|ministry|senate|house|congress|parliament|government|cabinet|attorney general|prosecutor'?s? office|supreme court|high court|court|police|army|navy|military|white house|kremlin|pentagon|state department|democrats?|republicans?|opposition|united nations|un|nato|eu|european union|europe|asia|africa|middle east|west|western|world|international|national|federal|central bank|interior|foreign|defense|defence|health|election|elections|commission|council|committee|agency|department|office|governor|mayor|king|queen|pope|church)$/i;
+const GENERIC = /^(the )?(global voices|banco central|european commission|commission|fiscal[ií]a|ministerio p[uú]blico|procuradur[ií]a|gobierno|governo|presidente|ministro|polic[ií]a|prime minister|president|vice president|minister|ministry|senate|house|congress|parliament|government|cabinet|attorney general|prosecutor'?s? office|supreme court|high court|court|police|army|navy|military|white house|kremlin|pentagon|state department|democrats?|republicans?|opposition|united nations|un|nato|eu|european union|europe|asia|africa|middle east|west|western|world|international|national|federal|central bank|interior|foreign|defense|defence|health|election|elections|commission|council|committee|agency|department|office|governor|mayor|king|queen|pope|church)$/i;
 const DEMONYM = /^([A-Z][a-z]+(ese|ian|ish|ean|ic|i)|French|Dutch|Swiss|Greek|Thai|Welsh|Irish|British|English|Spanish|Turkish|Polish)$/;
 // words in so many headlines that sharing one says nothing ("Trump", "report", "war")
 const COMMON = stems("trump biden putin xi report reports says said new year years war people day days week world news live video videos update updates state states united unit country government official officials");
+
+// words found only in sports headlines (not "league", "goal" or "coach": the Arab League, climate goals, a coach crash)
+export const SPORT = /\b(?:football|soccer|futsal|FC|striker|midfielder|goalkeeper|world cup|olympic\w*|cricket|tennis|basketball|volleyball|rugby|grand prix|f[uú]tbol|futebol|golazo|champions league|premier league|la liga|serie a|bundesliga|ronaldo|messi)\b/i;
 
 /** Fact-checks that may relate to a thread, from the words of each check's headline:
  *  one that names one of the thread's own names (not a country, a people or an office: skipName and the lists above) and has
@@ -50,15 +53,26 @@ export function factMatch(t, prepped, opt = {}) {
   const N = new Set((t.names || []).map((x) => x[0]).filter((x) => x.length > 3 && !GENERIC.test(x) && !DEMONYM.test(x) && !skip(x))), W = new Set(t.w || []);
   const C = new Map((t.names || []).map((x) => [x[0], x[1]]));
   const lo = Date.parse(t.d0) - 45 * 864e5, hi = Date.parse(t.d) + 14 * 864e5;
+  // sport is out of news scope, so a sports story gets no checks (half its reports or more about a match, a goal or a league)
+  const rows = t.rows || [];
+  if (rows.length && rows.filter((r) => SPORT.test(String(r[6] || ""))).length * 2 >= rows.length) return [];
   const hits = [];
   for (const p of prepped) {
     if (!(p.ms >= lo && p.ms <= hi)) continue;
-    const sn = [...p.nm].filter((x) => N.has(x)), inName = stems(sn.join(" "));
+    // a thread's one-word name is shared when it ends a longer name of the check ("Sánchez" in "Pedro Sánchez")
+    const full = [...p.nm].filter((y) => /\s/.test(y)), ext = full.filter((y) => [...N].some((x) => !/\s/.test(x) && y.endsWith(" " + x)));
+    const sn = [...new Set([...[...p.nm].filter((x) => N.has(x)), ...[...N].filter((x) => !/\s/.test(x) && ext.some((y) => y.endsWith(" " + x)))])];
+    const inName = stems(sn.join(" "));
     if (opt.ctxOf) for (const x of sn) for (const w of opt.ctxOf(x) || []) inName.add(w);
-    const sw = [...W].filter((x) => p.w.has(x)), out = sw.filter((x) => !inName.has(x) && !COMMON.has(x) && x.length >= 4).length;
+    // the words of the check's other names (White House, Banco Central) are no more the event's words than the names are
+    const other = stems([...p.nm].filter((y) => !N.has(y) && !ext.includes(y)).join(" "));
+    const sw = [...W].filter((x) => p.w.has(x)), out = sw.filter((x) => !inName.has(x) && !other.has(x) && !COMMON.has(x) && x.length >= 4).length;
+    // shared names next to each other in the check's headline are one person ("Lula" and "Silva" in "Lula da Silva")
+    const hl = String(p.c[5] || p.c[2]).toLowerCase(), at = sn.map((x) => [hl.indexOf(x.toLowerCase()), x.length]).filter((a) => a[0] >= 0).sort((a, b) => a[0] - b[0]);
+    const people = sn.length - at.filter((a, k) => k > 0 && a[0] - (at[k - 1][0] + at[k - 1][1]) <= 4).length;
     // a name of two words or more (Abu Dhabi, Unknown Soldier) or an acronym (FAA) and one more of the event's words; a single
     // word (Bukele, Washington, John) is often someone or somewhere else, so it needs two more
-    const strong = sn.some((x) => /\s/.test(x) || /^[A-Z]{2,}$/.test(x)) || sn.length >= 2;
+    const strong = sn.some((x) => /\s/.test(x) || /^[A-Z]{2,}$/.test(x)) || people >= 2;
     // four words without a name: none of them may belong to a name the check carries (or go with it), so "Nvidia CEO Jensen
     // Huang did not say ..." is not four words of a story about his resignation
     const own = stems([...p.nm].join(" "));
@@ -66,7 +80,10 @@ export function factMatch(t, prepped, opt = {}) {
     // a check from the days of the event itself needs one word fewer
     // a check from the days of the event itself, on a name central to the story (in at least 15% of its reports), needs one word fewer
     const near = p.ms >= Date.parse(t.d0) - 2 * 864e5 && p.ms <= Date.parse(t.d) + 2 * 864e5 && sn.some((x) => (C.get(x) || 0) >= Math.max(2, (t.r || 0) * 0.15)) ? 1 : 0;
-    if (!((sn.length && out >= Math.max(1, (sn.length >= 2 ? 1 : strong ? 2 : 3) - near)) || (sw.filter((x) => !inName.has(x) && !own.has(x)).length >= 4 && sw.filter((x) => !inName.has(x) && !own.has(x) && x.length >= 5).length >= 3))) continue;
+    // one shared name always needs two more of the event's words (Shane 2026-11-15): a check on the same person is often about
+    // another claim (a Lula video check on his Manila visit)
+    if (SPORT.test(p.c[5] || p.c[2])) continue;
+    if (!((sn.length && out >= Math.max(people <= 1 ? 2 : 1, (people >= 2 ? 1 : strong ? 2 : 3) - near)) || (sw.filter((x) => !inName.has(x) && !own.has(x)).length >= 4 && sw.filter((x) => !inName.has(x) && !own.has(x) && x.length >= 5).length >= 3))) continue;
     hits.push([sn.length * 2 + sw.length, p.ms, [...p.c, sn]]);
   }
   return hits.sort((a, b) => b[0] - a[0] || b[1] - a[1]).slice(0, max).map((h) => h[2]);

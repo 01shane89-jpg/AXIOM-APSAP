@@ -12,6 +12,7 @@ const it = checkItem("x", { title: " A  claim ", link: "https://a.org/1", date: 
 assert.equal(checkItem("x", { title: "T", link: "https://a.org/2", date: "Thu, 13 Nov 2026 10:00:00 GMT", summary: "{{x.sep}} {{x.txt}} [EN PENDIENTE]" })[4], "", "a page-template summary is dropped");
 assert.deepEqual(it, ["x", "2026-11-13T10:00Z", "A claim", "https://a.org/1", "Text."]);
 
+const row = (d, t) => ["Outlet", "other", "dom", "us", d, "https://x/" + d, t, 0, 0];
 const find = (t) => ["Abu Dhabi", "Unknown Soldier", "Hegseth", "Washington", "Prime Minister", "Chinese", "FAA"].filter((n) => t.includes(n));
 const mk = (id, d, title, summary = "") => [id, d, title, "https://fc.example/" + encodeURIComponent(title), summary];
 const checks = prepChecks([
@@ -40,6 +41,18 @@ assert.equal(factMatch(tH, hu).length, 1, "without the name's usual words it mat
 assert.equal(factMatch({ ...tH, d0: "2026-11-01T00:00", d: "2026-11-02T00:00" }, hu, { ctxOf: () => ["nvidia", "ceo"] }).length, 0, "with them, a check about another claim by the same person is left out");
 assert.deepEqual(ids({ ...thread(["Abu Dhabi"], ["abu", "dhabi", "talk", "peace", "cancell"]), d0: "2026-08-10T00:00" }), ["a", "e"], "a check from up to 45 days before counts");
 
+// one person shared (even named twice, "Lula" and "Silva") needs two more event words; another name's words never count
+const lf = (t) => ["Lula", "Silva", "Lula da Silva", "Pedro Sánchez", "White House", "Donald Trump", "Ronaldo"].filter((n) => t.includes(n));
+const lu = prepChecks([["n", "2026-11-13T09:00Z", "This video of Lula da Silva with Pedro Sánchez is not current: he has yet to arrive in Spain", "https://fc.example/lu", ""],
+  ["o", "2026-11-13T09:00Z", "False: Donald Trump called Georgescu to the White House", "https://fc.example/wh", ""],
+  ["q", "2026-11-13T09:00Z", "This goal by Cristiano Ronaldo was not his first touch in the final", "https://fc.example/cr", ""]], lf);
+assert.deepEqual(factMatch(thread(["Lula", "Silva", "Manila"], ["lula", "silva", "arrive", "manila"]), lu).map((c) => c[0]), [], "Lula and Silva are one person: one more word is not enough");
+assert.deepEqual(factMatch(thread(["Lula", "Silva", "Sánchez"], ["lula", "silva", "pedro", "spain"]), lu).map((c) => c[0]), ["n"], "two people (Sánchez ends Pedro Sánchez) and one more word");
+assert.deepEqual(factMatch(thread(["Donald Trump", "Kremlin"], ["donald", "trump", "white", "house", "meet"]), lu).map((c) => c[0]), [], "White House is not two event words");
+assert.deepEqual(factMatch(thread(["Ronaldo"], ["ronaldo", "goal", "final", "touch", "first"]), lu).map((c) => c[0]), [], "sports checks are left out");
+const sp = { ...thread(["Lula", "Silva", "Sánchez"], ["lula", "silva", "pedro", "spain"]), rows: [row("2026-11-13T01:00", "Football: Lula watches the final"), row("2026-11-13T02:00", "Lula in Spain")] };
+assert.deepEqual(factMatch(sp, lu), [], "a story half about sport gets no checks");
+
 assert.equal(figureIn("At least 12 people killed in strike", "killed"), 12);
 assert.equal(figureIn("Twenty-two civilians killed and 10 abducted", "killed"), 22);
 assert.equal(figureIn("Clash death toll rises to six, 15 injured", "killed"), 6);
@@ -47,7 +60,6 @@ assert.equal(figureIn("Clash death toll rises to six, 15 injured", "injured"), 1
 assert.equal(figureIn("Over 1,200 people evacuated as typhoon nears", "displaced"), 1200);
 assert.equal(figureIn("2025 deaths recorded on roads", "killed"), 0, "a year is not a count");
 assert.equal(figureIn("Police arrest 15 in raid", "arrested"), 0);
-const row = (d, t) => ["Outlet", "other", "dom", "us", d, "https://x/" + d, t, 0, 0];
 const rows = [row("2026-11-12T01:00", "Brooklyn building collapse leaves one dead"), row("2026-11-12T02:00", "Kenya building collapse: six dead near Nairobi"),
   row("2026-11-12T09:00", "Eight dead after Brooklyn building collapse"), row("2026-11-12T05:00", "Two dead in Brooklyn building collapse")];
 const fg = figures(rows, ["brooklyn", "build", "collapse", "dead"], [["Brooklyn", 3]]);
