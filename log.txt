@@ -1,0 +1,2 @@
+PASS 26 countries {"secs":"37.1","caps":6,"pdfs":[]}
+all scenes recorded

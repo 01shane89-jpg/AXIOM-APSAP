@@ -1,0 +1,43 @@
+{
+ "name": "countries",
+ "view": "phone",
+ "w": 1080,
+ "h": 1512,
+ "frames": 1114,
+ "start": 0,
+ "end": 37.13333333333333,
+ "caps": [
+  {
+   "t": 0,
+   "text": "Start with the country you know",
+   "sub": "Today puts the weather, warnings and top stories on one screen."
+  },
+  {
+   "t": 3.2,
+   "text": "A daily summary, every line cited",
+   "sub": "The top lines and what to watch, each linked to its report."
+  },
+  {
+   "t": 8.266666666666667,
+   "text": "Switch to Japan: the news, in English",
+   "sub": "Translated, and grouped so one event is one story."
+  },
+  {
+   "t": 15.833333333333334,
+   "text": "Each story names its outlets",
+   "sub": "With the time, a status tag and a link to the original."
+  },
+  {
+   "t": 19.733333333333334,
+   "text": "Then Kenya and Brazil, the same way",
+   "sub": "News, warnings, hazards and weather for 198 countries."
+  },
+  {
+   "t": 33.13333333333333,
+   "text": "Every country you follow, every morning",
+   "sub": "Every item dated and linked to its source."
+  }
+ ],
+ "skips": [],
+ "pdfs": []
+}
