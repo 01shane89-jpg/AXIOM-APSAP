@@ -285,6 +285,213 @@ const SCENES = [
     if (!(await k.click("#wtoast [data-w-openhit]"))) console.log("  no open button");
     await k.wait(5200);
   }],
+  // Morning check-in: the country at a glance, the daily summary, then the PDF for the team
+  ["morning", { today: true, settle: 11000 }, async ({ k, p }) => {
+    k.caption("Open Today: the country at a glance", "Weather, official warnings and the top stories, on one screen.");
+    await k.wait(3200);
+    await k.scrollBy(PHONE ? 330 : 380, 1300);
+    await k.wait(1800);
+    k.caption("Read the daily summary in two minutes", "The top lines and what to watch, from the last 24 hours.");
+    await k.scrollTo("#td-daily", "start", 1100);
+    await k.wait(3000);
+    k.caption("Check any line against its source", "Numbered links go back to the original reports.");
+    await k.scrollBy(PHONE ? 300 : 340, 1400);
+    await k.wait(2200);
+    await k.scrollBy(PHONE ? 300 : 340, 1400);
+    await k.wait(1800);
+    k.caption("Send it to the team before the call", "One tap makes a clean PDF, with the sources still clickable.");
+    await k.scrollTo("#td-daily", "start", 1000);
+    await k.wait(700);
+    if (await k.click("#td-daily [data-dlprint]")) await k.pdf("daily-brief.pdf");
+    await k.wait(1200);
+  }],
+  // A site you need to see as it is now: the newest free satellite pictures, dated, on the map
+  ["site", { hash: "#th/timeline", z: 13, at: [25.117, 55.135], settle: 9000 }, async ({ k, p }) => {
+    k.caption("The map picture is years old. What's there now?", "Find the newest satellite pictures of the place.");
+    await k.wait(2200);
+    await k.tool("overlays"); await k.wait(1100);
+    if (!(await k.press("Find newest imagery"))) await p.evaluate(() => window.OSAP_NEWIMG.open());
+    await k.wait(900);
+    if (!(await p.evaluate(() => window.OSAP_NEWIMG.isOpen()))) await p.evaluate(() => window.OSAP_NEWIMG.open());
+    await k.until(() => !!document.querySelector("[data-nimg-show]"), null, 30000);
+    await k.wait(1500);
+    k.caption("Every free source at once, newest first", "Each one shows its date, its satellite and how cloudy it was.");
+    await k.wait(3600);
+    const pick = await p.evaluate(() => {
+      const L = (window.OSAP_NEWIMG.list && window.OSAP_NEWIMG.list()) || [];
+      const ok = (r) => r && r.cloud != null && r.cloud <= 15 && /sentinel/i.test(JSON.stringify(r));
+      const r = L.filter(ok)[0] || L.filter((x) => x && x.cloud != null && x.cloud <= 30)[0] || L[0];
+      return { id: r ? r.id : "", n: L.length, when: r ? (r.date || r.t || r.when || "") : "" };
+    });
+    console.log("  imagery pick", JSON.stringify(pick));
+    k.caption("Pick a clear one and it goes on the map", "With its date on it, so an old picture is never taken for today's.");
+    const sel = pick.id ? `[data-nimg-show="${pick.id.replace(/"/g, '\\"')}"]` : "[data-nimg-show]";
+    await k.scrollTo(sel, "center", 800);
+    await k.click(sel);
+    await k.wait(2000);
+    await p.evaluate(() => { window.OSAP_NEWIMG.close(); document.querySelectorAll("#atk-om .x, #atk-om [data-om=x], .chead .x").forEach((x) => { if (x.offsetParent) x.click(); }); });
+    await p.keyboard.press("Escape"); await k.wait(700);
+    await k.real(() => p.waitForTimeout(4000));
+    await k.fly([25.117, 55.135], 14, 2.2);
+    await k.wait(1500);
+    k.caption("See the place as it is, before you go or decide", "Sentinel-2, Landsat and NASA daily pictures, free for any place on earth.");
+    await k.wait(4200);
+  }],
+  // Family in a flood area: the official river gauges, rain and NASA's flood map, every reading dated
+  ["floodfam", { hash: "#th/map", z: 8, at: [14.0, 100.3], settle: 10000, prep: (p) => p.evaluate(() => {
+    ["lyr-flood", "lyr-expo", "lyr-infra"].forEach((id) => { const e = document.getElementById(id); if (e && e.checked) { e.checked = false; e.dispatchEvent(new Event("change")); } });
+  }) }, async ({ k, p }) => {
+    const top = await p.evaluate(() => {
+      const L = window.LIVE, o = L.over.map((i) => L.stations[i]).sort((a, b) => (b.d || 0) - (a.d || 0));
+      const r = L.rain.slice().sort((a, b) => b.mm - a.mm)[0];
+      const prov = {}; o.forEach((s) => { if (s.p) prov[s.p] = 1; });
+      return { n: o.length, np: Object.keys(prov).length, g: o[0] && { d: o[0].d, a: o[0].a, p: o[0].p, lat: o[0].lat, lon: o[0].lon, t: o[0].t },
+        r: r && { mm: r.mm, a: r.a, p: r.p, lat: r.lat, lon: r.lon }, asof: L.asof };
+    });
+    console.log("  flood", JSON.stringify(top));
+    const dist = (a) => String(a || "").replace(/ District$/, "");
+    k.caption("Turn on the river gauges", "Live readings from Thailand's official water telemetry.");
+    await k.wait(1200);
+    if (!(await k.click("[data-dsshow]"))) await p.evaluate(() => { const b = document.querySelector("[data-dsshow]"); if (b) b.click(); });
+    await k.wait(2600);
+    if (top.n && top.g) {
+      k.caption(`${top.n} gauges are over their banks right now`, `In ${top.np} provinces. Red means the river is over its bank.`);
+      await k.fly([top.g.lat, top.g.lon], 11, 2.4); await k.wait(1200);
+      const pt = await k.mapPt([top.g.lat, top.g.lon]);
+      await k.tapAt(pt[0], pt[1]);
+      await k.wait(400);
+      await p.evaluate(([a, b]) => { if (document.querySelector(".leaflet-popup")) return; const m = window.__asapMap; let hit = null;
+        Object.values(m._layers).forEach((l) => { if (!hit && l.getLatLng && l.getPopup && l.getPopup()) { const q = l.getLatLng(); if (Math.abs(q.lat - a) < 1e-5 && Math.abs(q.lng - b) < 1e-5) hit = l; } });
+        if (hit) hit.openPopup(); }, [top.g.lat, top.g.lon]);
+      k.caption(`Check the gauge nearest them: ${top.g.d.toFixed(2)} m over`, `${dist(top.g.a)}, ${top.g.p}. Hydro-Informatics Institute, ${top.g.t.slice(11)} local time.`);
+      await k.wait(5200);
+      const xb = (await p.evaluateHandle(() => [...document.querySelectorAll(".pkghead .x")].find((x) => x.offsetParent) || null)).asElement();
+      if (xb) { await k.glide(xb); await k.wait(400); }
+      await p.evaluate(() => { window.__asapMap.closePopup(); });
+    } else k.caption("No gauge is over its bank right now", "Every gauge shows its latest official reading.");
+    await p.evaluate(() => window.OSAP_DISASTERX && window.OSAP_DISASTERX.set("now", true));
+    k.caption("See where water has spread", "NASA's satellite flood map from the last three days.");
+    await k.fly([13.6, 100.4], 7, 2.4); await k.wait(3000);
+    if (top.r) {
+      k.caption(`And where the rain is heaviest: ${Math.round(top.r.mm)} mm`, `In 24 hours at ${dist(top.r.a)}, ${top.r.p}.`);
+      await k.fly([top.r.lat, top.r.lon], 9, 2.4); await k.wait(2800);
+    }
+    k.caption("Official numbers, not rumors", "Every reading dated and linked to who published it.");
+    await k.wait(3800);
+  }],
+  // A group hike: where to go if someone gets hurt, worked out before the trip
+  ["hike", { hash: "#th/timeline", z: 13, at: [18.7883, 98.9853], settle: 9000 }, async ({ k, p }) => {
+    const AT = [18.7883, 98.9853];
+    const stable = () => { const e = document.getElementById("mp-conop"), h = document.querySelector("#medplan .osheet-h"); if (!e) return false; const t = e.innerText;
+      return !/Still reading|Reading|Building/i.test(h ? h.innerText : "") && /STATUS\s*(AMBER|GREEN)/.test(t) && /GROUND EVAC\s*AVAILABLE/.test(t) && /min \/ [\d.]+ km road/.test(t); };
+    k.caption("Drop a pin where you'll be", "OSAP builds a medical plan for that spot in seconds.");
+    await k.wait(1200);
+    const c = await k.mapPt(AT);
+    await k.tapAt(c[0], c[1]);
+    await p.evaluate((a) => window.OSAP_MEDPLAN.open({ at: a }), AT);
+    await k.wait(1200);
+    await k.press("Full", "#medplan");
+    await k.until(stable, null, 60000);
+    const plan = await p.evaluate(() => { const t = (document.getElementById("mp-conop") || {}).innerText || ""; const m = t.match(/DEFINITIVE CARE[^\n]*\n([^\n]+)\n(\d+) min/); return { name: m ? m[1] : "", min: m ? m[2] : "" }; });
+    console.log("  medplan", JSON.stringify(plan));
+    await k.scrollTo("#mp-conop", "start", 800);
+    k.caption("The nearest hospital that can treat it", plan.name ? `${plan.name}: ${plan.min} min by road.` : "Ranked by what each one can treat, with the drive time.");
+    await k.wait(4800);
+    const tap = async (sel) => {
+      await k.scrollTo(`${sel}`, "center", 700);
+      const ok = await p.evaluate((s) => { const e = [...document.querySelectorAll(s)].find((x) => x.offsetParent); if (!e) return false; const b = e.getBoundingClientRect(); const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2); return hit === e || e.contains(hit); }, sel);
+      if (ok) await k.click(sel); else { console.log("  covered", sel); await p.evaluate((s) => { const e = [...document.querySelectorAll(s)].find((x) => x.offsetParent); if (e) e.click(); }, sel); }
+    };
+    k.caption("A fall? A burn? The plan changes with the injury", "Head injuries and burns need different hospitals.");
+    for (const id of ["cat.severe_tbi", "cat.major_burn", "cat.major_trauma"]) { await tap(`#medplan [data-mp-cat="${id}"]`); await k.until(stable, null, 30000); await k.wait(2000); }
+    k.caption("Emergency numbers, ready before you need them", "Published numbers, ambulance stations and air rescue services.");
+    await k.real(() => p.evaluate(() => { const e = [...document.querySelectorAll("#medplan h3")].find((x) => x.textContent.trim().startsWith("4. Emergency contacts")); if (e) e.setAttribute("data-wt-em", "1"); }));
+    await k.scrollTo("[data-wt-em]", "start", 1000); await k.wait(3600);
+    k.caption("The road route to each hospital", "First, second and third choice, with the drive time to each.");
+    const head = async (t) => { const h = (await p.evaluateHandle((t) => [...document.querySelectorAll("#medplan .osheet-h button")].find((b) => b.textContent.trim() === t && b.offsetParent) || null, t)).asElement(); if (!(await k.glide(h))) console.log("  missing head", t); };
+    await head("Map"); await k.wait(5000);
+    await head("Full"); await k.wait(900);
+    k.caption("Print it and put it in the first aid kit", "A page per hospital, with \"Not known\" wherever the data has a gap.");
+    await tap("#medplan [data-mp-assess]"); await k.wait(2000);
+    await k.scrollBy(260, 1200); await k.scrollBy(260, 1200);
+    k.caption("Built from open data, every source linked", "A draft to confirm with the hospital, never a guarantee.");
+    await k.wait(3500);
+  }],
+  // Three countries for work, in three languages: one place that reads them all in English
+  ["countries", { today: true, settle: 10000 }, async ({ k, p }) => {
+    const newsIn = () => { const n = document.querySelector(".tdnews"); return !!n && !/No reporting is held|Gathering top stories/.test(n.innerText) && n.querySelectorAll(".tdst").length > 2; };
+    const country = async (cc) => {
+      await p.evaluate(() => { window.scrollTo(0, 0); const b = document.getElementById("td-body"); if (b) b.scrollTo(0, 0); }); await k.wait(400);
+      const sel = await k.el("#td-cc"); if (!sel) { console.log("  no country select"); return false; }
+      await k.glide(sel); await k.wait(250);
+      const ok = await k.real(async () => {
+        const ok = await p.evaluate((cc) => { const s = document.getElementById("td-cc"); if (![...s.options].some((o) => o.value === cc)) return false; s.value = cc; s.dispatchEvent(new Event("change", { bubbles: true })); return true; }, cc);
+        if (!ok) return false;
+        await p.waitForTimeout(800); await p.waitForLoadState("load").catch(() => {});
+        await p.waitForFunction(newsIn, null, { timeout: 25000 }).catch(() => console.log("  news slow", cc));
+        await p.waitForTimeout(1500); await k.cursor(); return true;
+      });
+      if (!ok) console.log("  no option", cc);
+      await k.wait(500); return ok;
+    };
+    k.caption("Start with the country you know", "Today puts the weather, warnings and top stories on one screen.");
+    await k.wait(3200);
+    k.caption("A daily summary, every line cited", "The top lines and what to watch, each linked to its report.");
+    await k.scrollTo("#td-daily", "start", 1100); await k.wait(3800);
+    k.caption("Switch to Japan: the news, in English", "Translated, and grouped so one event is one story.");
+    await country("jp");
+    await k.real(() => p.evaluate(() => { const A = [...document.querySelectorAll(".tdnews .tdst")]; const a = A.find((x) => /\d+ sources/.test(x.innerText)) || A[0]; if (a) a.setAttribute("data-wt-st", "1"); }));
+    await k.scrollTo("[data-wt-st]", "center", 1300); await k.wait(3000);
+    k.caption("Each story names its outlets", "With the time, a status tag and a link to the original.");
+    await k.scrollBy(PHONE ? 260 : 320, 1300); await k.wait(1800);
+    k.caption("Then Kenya and Brazil, the same way", "News, warnings, hazards and weather for 198 countries.");
+    for (const cc of ["ke", "br"]) { if (!(await country(cc))) continue; await k.scrollBy(PHONE ? 320 : 380, 1300); await k.wait(1500); }
+    k.caption("Every country you follow, every morning", "Every item dated and linked to its source.");
+    await k.wait(3500);
+  }],
+  // Planning a group trip: the ground from above, the harbor traffic, a meeting point drawn on, then the climb in 3D
+  ["plan", { hash: "#th/timeline", z: 12, at: [1.2905, 103.852], settle: 9000 }, async ({ k, p }) => {
+    const MB = [1.2834, 103.8607];
+    const close = async () => {
+      const x = (await p.evaluateHandle(() => [...document.querySelectorAll('#atk-om [data-om="x"], button[aria-label="Close"]')].find((b) => b.offsetParent) || null)).asElement();
+      if (x) await k.glide(x); else await p.keyboard.press("Escape");
+      await k.wait(500); };
+    k.caption("Look at the place from above", "Switch the base map to satellite in one tap.");
+    await k.tool("basemap"); await k.wait(1000);
+    if (!(await k.press("Satellite"))) await k.basemap("sat");
+    await k.wait(1200); await close();
+    if (await p.evaluate(() => window.OSAP_BASEMAP.get()) !== "sat") await k.basemap("sat");
+    await k.real(() => p.waitForTimeout(3000));
+    await k.fly([1.25, 103.85], 11, 2.4); await k.real(() => p.waitForTimeout(3000)); await k.wait(800);
+    k.caption("See the harbor traffic as it moves", "Live ships and aircraft, from the positions they broadcast.");
+    await k.tool("overlays"); await k.wait(1100);
+    for (const t of ["sea", "air"]) {
+      const sel = `input[data-trf="${t}"]`;
+      await k.real(() => p.evaluate((s) => { const e = document.querySelector(s); if (e) e.closest("label").setAttribute("data-wt-" + s.match(/"(\w+)"/)[1], "1"); }, sel));
+      await k.scrollTo(`[data-wt-${t}]`, "center", 600);
+      if (!(await k.click(sel))) await p.evaluate((s) => { const e = document.querySelector(s); if (e && !e.checked) e.click(); }, sel);
+      await k.wait(500);
+    }
+    await close();
+    await k.until(() => { const L = window.OSAP_TRAFFIC.layers(); return L.sea && L.sea.getLayers && L.sea.getLayers().length > 5; }, null, 25000);
+    await k.wait(4200);
+    k.caption("Mark the meeting point and the way in", "Rings, shapes, arrows and labels, saved on your device.");
+    await p.evaluate(() => document.querySelectorAll("input[data-trf]").forEach((x) => { if (x.checked) x.click(); }));
+    await k.basemap("streets"); await k.fly(MB, 15, 2.2); await k.real(() => p.waitForTimeout(2500));
+    await p.evaluate((ll) => { window.OSAP_DRAW.add("rings", [ll], { name: "Meeting point", r: [200, 400, 600] }); }, MB);
+    await k.wait(1300);
+    await p.evaluate((ll) => { const D = window.OSAP_DRAW; D.add("arrow", [[ll[0] - 0.006, ll[1] - 0.012], [ll[0] - 0.0012, ll[1] - 0.0025]], { name: "Route in" }); D.close(); }, MB);
+    await k.wait(1300);
+    await k.fly(MB, 14, 1.6); await k.real(() => p.waitForTimeout(2000)); await k.wait(1800);
+    k.caption("Then look at the climb in 3D", "Real terrain you can tilt and turn, anywhere on earth.");
+    await k.basemap("sat"); await k.view([35.3606, 138.7274], 12, false); await k.real(() => p.waitForTimeout(2500));
+    await p.evaluate(() => window.OSAP_3D.open());
+    await k.wait(600);
+    await k.until(() => { const l = document.querySelector("#o3d .o3-load"); const t = l ? l.textContent : ""; const m = t.match(/(\d+)%/); return !l || l.hidden || (m && +m[1] >= 90); }, null, 40000);
+    await k.wait(6000);
+    k.caption("One map for the whole plan", "Every item dated and linked to its source.");
+    await k.wait(3200);
+  }],
 ];
 
 let fails = 0, n = 20;
