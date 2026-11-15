@@ -15,6 +15,7 @@ import { prepChecks, factMatch, figures } from "./factcheck_lib.mjs";
 import { ccsInText } from "./geo_cc.mjs";
 import { compileRelevance } from "./topics_lib.mjs";
 import { WW, PER_COUNTRY, worldStories, worldNews } from "./world_lib.mjs";
+import { loadPics, cachedPic } from "./news_pics.mjs";
 
 const IX = process.env.STORIES_IX || "data/live/news-index", OUT = process.env.STORIES_OUT || "data/live/stories";
 const FC = process.env.STORIES_FACTCHECKS || "data/live/factchecks.js";
@@ -123,7 +124,15 @@ for (const [cc, c] of built) {
   tw.add(WW + ".js");
   const NEWS = process.env.STORIES_NEWS || "data/live/news";
   const newsOf = (cc) => { try { return (readJs(NEWS + "/" + cc + ".js").items || {})[cc] || []; } catch (e) { return []; } };
-  if (fs.existsSync(NEWS)) fs.writeFileSync(NEWS + "/" + WW + ".js", "window.ASAP_NEWS=" + JSON.stringify(worldNews(world, newsOf, stamp)).replace(/<\//g, "<\\/") + ";\n");
+  // a lead headline that has left its country's snapshot keeps the outlet's picture from the picture cache or the history
+  const cache = loadPics(), hist = new Map();
+  const picOf = (u) => {
+    const c = cachedPic(cache, u); if (c) return c;
+    const s0 = world.stories.find((x) => x.u === u); if (!s0) return "";
+    if (!hist.has(s0.cc)) { const m = new Map(); try { for (const i of readJs("data/history/" + s0.cc + ".js").news || []) if (i.img) m.set(i.link, i.img); } catch (e) {} hist.set(s0.cc, m); }
+    return hist.get(s0.cc).get(u) || "";
+  };
+  if (fs.existsSync(NEWS)) fs.writeFileSync(NEWS + "/" + WW + ".js", "window.ASAP_NEWS=" + JSON.stringify(worldNews(world, newsOf, stamp, picOf)).replace(/<\//g, "<\\/") + ";\n");
   console.log(`stories: World ${world.stories.length} stories from ${world.countries} countries`);
 }
 for (const f of fs.readdirSync(TOUT)) if (/\.js$/.test(f) && !tw.has(f)) fs.rmSync(TOUT + "/" + f);

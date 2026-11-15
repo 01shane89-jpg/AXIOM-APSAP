@@ -57,8 +57,9 @@ export function worldStories(built, opt = {}) {
 
 // The World news list: the lead headline of each world story, as the country's own news file holds it (its English
 // translation, language, outlet and map place), so the timeline, the map and Today's Top stories read World like any
-// other area. newsOf(cc) returns that country's news items (data/live/news/<cc>.js items[cc]) or [].
-export function worldNews(world, newsOf, asof) {
+// other area. newsOf(cc) returns that country's news items (data/live/news/<cc>.js items[cc]) or []. picOf(link), when given,
+// returns the outlet's picture for a story whose news item is gone or has none (tools/news_pics.mjs cache, the history), or "".
+export function worldNews(world, newsOf, asof, picOf) {
   const items = [], seen = new Set();
   for (const s of world.stories || []) {
     if (seen.has(s.u)) continue; seen.add(s.u);
@@ -66,7 +67,8 @@ export function worldNews(world, newsOf, asof) {
     const lead = (s.src || []).find((r) => r[5] === s.u) || [];
     const base = i ? { ...i } : { title: s.t, date: String(lead[4] || s.d0 || s.d || "").slice(0, 16), link: s.u, outlet: s.s || lead[0] || "", via: "Story coverage", state: lead[1] === "state", geo: null };
     // the news pool's English headline wins over the story's; "n" (outlets on the story) and "cc" are added for World
-    items.push({ ...base, cc: s.cc, n: s.n });
+    const img = base.img || (picOf && picOf(s.u)) || "";
+    items.push({ ...base, ...(img ? { img } : {}), cc: s.cc, n: s.n });
   }
   return { asof, sources: [], coverage: { countries: world.countries || 0, world: true }, items: { [WW]: items } };
 }
