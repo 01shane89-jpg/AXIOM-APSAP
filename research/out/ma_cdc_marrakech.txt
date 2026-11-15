@@ -1,0 +1,1074 @@
+SOURCE https://www.courdescomptes.ma/wp-content/uploads/2023/01/15.-Hopital-regional-Marrakech.pdf
+                                Le centre hospitalier
+                               régional de Marrakech
+
+Le centre hospitalier régional (CHR) de Marrakech est composé de trois hôpitaux à savoir
+l’Hôpital Ibn Zohr (Hôpital général chef-lieu), l’Hôpital El Antaki (Hôpital de spécialité) et
+l’Hôpital psychiatrie Saada et du Centre régional de rééducation et d’appareillage orthopédique.
+La capacité litière globale du centre hospitalier s’élève à 445 lits pour une population régionale
+de 4.520.569 personnes.
+              Données relatives aux hôpitaux composant le CHR de Marrakech
+                                                                        Nombre de cas
+        Nom de         Nature de      Capacité litière Capacité litière
+                                                                         hospitalisés
+       l’Hôpital       prestations        théorique        effective
+                                                                         durant 2016
+ Ibn Zohr             Générales                   300                 200                 19783
+ ANTAKI               Ophtalmologie               85                   85                 2632
+                      Maladies
+ SAADA                                            160                 160                  160
+                      psychiatriques
+
+Le budget du centre hospitalier au titre de l'année 2016 s'élevait à 41.552.315,69 DH, soit une
+augmentation de 106% par rapport à l’année 2012.
+
+  I.     Observations et recommandations de la Cour des Comptes
+Les investigations entreprises par la Cour des comptes en partenariat avec le Cour régionale des
+comptes de Marrakech-Safi, ont permis de de noter plusieurs observations et émettre des
+recommandations se rapportant notamment aux axes suivants :
+    A. Gouvernance et organes de gestion
+Malgré l’existence d’une stratégie sectorielle propre au ministère de la Santé, stratégie 2012-2016,
+le CHRM en question, institué en SEGMA, ne dispose d’aucun document stratégique permettant
+de lisser ladite stratégie sectorielle au niveau local. Dans ce sens, le contrôle a relevé ce qui suit :
+    ➢ Non établissement du projet d’établissement hospitalier et du plan d’action
+Le CHRM est géré en l’absence du « projet d’établissement hospitalier » (PEH) prévu par les
+dispositions de l’article 8 du décret n° 2-06-656 du 13 avril 2007 relatif à l'organisation
+hospitalière. Ledit projet, dont l’élaboration incombe au directeur du centre hospitalier, est de
+nature à définir, pour une durée déterminée, les objectifs généraux de l'établissement, dans le
+domaine médical et des soins infirmiers, de la formation, de la gestion et du système
+d'information. Il détermine, également, les moyens d'hospitalisation, du personnel et
+d'équipement de toute nature dont l'hôpital doit disposer pour réaliser ses objectifs. En plus de
+l’absence de ce document à portée stratégique, ledit centre ne dispose pas de plans d’actions
+permettant la conduite de l’activité hospitalière et la canalisation des efforts à déployer par les
+différents acteurs.
+    ➢ Non mise en place de certaines instances de concertation et d’appui et carence
+      dans le fonctionnement de certaines autres
+Certaines instances prévues dans le cadre de l’article 13 du décret n° 2-06-656 du 13 avril 2007
+relatif à l’organisation hospitalière, n’ont pas été mises en place. Il s’agit, notamment, des comités
+suivants :
+
+
+
+
+                                                   1
+Comité d’établissement, chargée de se prononcer sur l’allocation des ressources aux services
+hospitaliers et le développement de mécanismes de synergie entre ses services, ainsi que sur les
+rapports d’activités et l’analyse de la performance et de la qualité des prestations rendues, eu
+égard aux objectifs préalablement fixés
+Comité de gestion chargé de l’évaluation de la performance du centre hospitalier et de définir les
+actions de coopération inter hospitalière et avec les établissements de soins de santé de base au
+niveau de la région ;
+Comité de suivi et d’évaluation chargé du suivi des activités de l’hôpital et de l’analyse mensuelle
+des indicateurs et résultats.
+Quant au Comité de lutte contre les maladies nosocomiales (CLIN), son rôle s’est limité selon les
+registres de ses réunions tenues pendant la période 2012-2016, aux propositions de formations
+dans certains domaines, sans mettre en place un plan d’action ou des propositions de concertations
+entre les services médicaux pour la lutte contre les maladies nosocomiales. En plus, ses réunions
+ne sont pas tenues de manière périodique et certains membres, notamment le directeur du centre
+hospitalier, ne s’y présentent pas.
+    ➢ Organisation hospitalière non conforme à la réglementation en vigueur
+Il est à signaler que la capacité litière au niveau de l’hôpital Ibn Zohr, qui est actuellement de 200
+lits (située entre 120 et 240 lits), devait permettre une organisation hospitalière en six
+départements cliniques et trois services, comme stipulé par les prescriptions de l’article 27 du
+règlement intérieur des hôpitaux. Or, il a été constaté que l’HIZ est organisé uniquement en
+services, ce qui est en désaccord avec la réglementation en vigueur.
+A cet effet, la Cour des comptes recommande ce qui suit :
+       -   Etablir le Projet d’établissement hospitalier (PEH) et le plan d’action ;
+       -   Mettre en place et activer le rôle des instances de concertation et d’appui ;
+       -   Adopter une organisation hospitalière conformément à la réglementation en
+           vigueur.
+    B. Gestion du système d’information
+Le Service d’accueil et d’admission (SAA), la régie des recettes ainsi que les différents services
+médicaux et médico-techniques sont les principaux acteurs qui interviennent dans la production
+de l’information hospitalière. Or, les constats suivants reflètent l’absence de communication
+efficace entre les acteurs précités.
+    ➢ Absence de système informatique intégré permettant l’exploitation optimale
+      de l’information hospitalière
+En effet, il a été constaté que certaines fonctions sont toujours gérées manuellement, à l’instar de
+la régie des recettes, des relances des débiteurs, de la gestion des décès, des archives et du circuit
+de production des statistiques et des états de performances. De même, les services de production
+des soins ne sont pas connectés à l’application du SAA. L’enregistrement des données relatives
+aux patients ayant bénéficiés des prestations au niveau desdites unités se fait manuellement sur
+des registres non authentifiés. Ces derniers ne sont ni cachetés par l’administration, ni paraphés.
+Dans le même sens, il a été relevé que les applications informatiques utilisées sont déconnectées
+les unes par rapport aux autres, et qu’elles n’ont pas été conçues dans une perspective de gestion
+intégrée de l’information hospitalière. A titre d’exemple, le SAA exploite trois applications
+informatiques sans aucune liaison entre elles. Il s’agit, d’abord, de l’application dénommée
+« Application de gestion du bureau d’admission et de facturation » gérée avec le même identifiant
+qui est attribué à tout le personnel du service y compris les stagiaires avec de larges attributions
+(facturation, annulation de la facture, manipulation de la base de données, etc.), l’autre application
+
+
+
+
+                                                  2
+est conçue pour la gestion des rendez-vous des patients pour consultations spécialisées, et, enfin,
+une autre application est réservée à la section sociale.
+Il a été constaté aussi l’absence d’une procédure claire et verrouillée permettant la remontée d’une
+information fiable relative aux statistiques et données de nature à évaluer la performance de
+l’hôpital. En effet, l’application en question ne permet pas la production de données fiables quant
+aux droits constatés au profit de l’hôpital.
+    ➢ Ecart entre le nombre réel de certaines prestations octroyées au niveau de
+      l’HIZ et celui enregistré sur le système informatique du SAA
+L’examen des statistiques réelles des prestations médicales réalisées à titre externe a permis de
+constater l’existence d’écarts assez significatifs entre le nombre de prestations effectivement
+effectuées et celui enregistré sur le système informatique géré par le SAA. A titre d’exemple, le
+nombre réel de consultations médicales effectuées en 2016 au service des urgences est de 99 675
+consultations tandis que le système d’information n’informe que sur 34 403 consultations. Même
+constat pour le service de dermatologie qui enregistre pour la même année 1 093 consultations et
+343 actes médicaux tandis que le système n’informe respectivement que sur 702 consultations et
+42 actes médicaux.
+    ➢ Carence dans la gestion et la conservation des archives hospitalières
+Sur ce point, il a été constaté que les archives hospitalières de l’HIZ sont éparpillées entre trois
+locaux différents, et ce dans de mauvaises conditions de conservation (humidité et risque
+d’inondation) et sans aucune logique de répartition (au niveau de la morgue, au niveau du sous-
+sol du bloc opératoire de la chirurgie infantile, et enfin au niveau d’un local vétuste et difficile
+d’accès égaré aux alentours de l’hôpital). Par ailleurs, du point de vue organisation desdites
+archives, il est relevé qu’aucune logique de classement n’a été adoptée.
+Ainsi, la Cour des comptes recommande de prendre toutes les mesures nécessaires afin de
+garantir la fiabilité de l’information hospitalière, à travers notamment :
+       -   La mise en place d’un système d’information hospitalière intégré ;
+       -   La qualification du personnel en charge de l’exploitation du système informatique ;
+       -   L’établissement de procédures claires au niveau de chaque service et veiller à leur
+           respect.
+    C. Activité des services hospitaliers
+Il est à noter que le contrôle s’est concentré sur l'hôpital Ibn Zohr, le chef lieu du Centre
+Hospitalier Régional de Marrakech. Sur ce plan, les observations suivantes ont été relevées :
+    ➢ Régression de l’activité globale de l’HIZ
+Les statistiques ont montré une diminution significative de l'activité hospitalière, le nombre de
+patients hospitalisés est passé de 18 141 cas en 2013 à 15 673 cas en 2016, soit une diminution
+de 35,6% et ce, malgré les capacités financières allouées à l'hôpital. Passant sur la même période
+de 22 930 394,83 DH à 41 552 315,69 DH. Cette situation peut s'expliquer par plusieurs facteurs
+dont le plus important est la mauvaise gestion des ressources humaines placées et l’arrêt d’activité
+au niveau du service de pneumologie, (depuis début 2016), et de sa baisse dans d’autres services
+comme la cardiologie.
+    ➢ Prestations de base non dispensées au niveau du CHRM
+Il a été constaté que le CHRM ne remplit pas les conditions relatives au panier des prestations
+hospitalières qu’il doit assurer, en vertu des prescriptions du décret n°2-14-562 du 24/07/2015
+pris pour application de la loi cadre n°34-09 relative au système de santé et à l’offre de soins
+(annexe n°1). Plusieurs prestations ne sont pas dispensées, il s’agit des spécialités suivantes :
+chirurgie générale/viscérale ; neurochirurgie ; admission au service de pneumologie ; (service en
+arrêt d’activité depuis le début de l’année 2016). En outre, certaines autres spécialités sont, certes,
+
+
+
+
+                                                  3
+disponibles, mais leur effectif en personnel médical empêche, le plus souvent, l’admission des
+malades en hospitalisation. L’exemple en est les services de cardiologie et d’endocrinologie, qui
+ne dispose que d’un seul médecin pour chacune de ces spécialités.
+    ➢ Défaillances au niveau de l’activé des services hospitaliers
+            a. Service de cardiologie
+Il a été relevé que les cas admis en hospitalisation au niveau de ce service se font de plus en plus
+rares. En effet, les statistiques hospitalières traduisent une baisse d’activité assez considérable en
+2016 par rapport aux années antérieures. S’agissant des admissions en hospitalisation, leur
+nombre est passé de 810 en 2014, à 160 en 2016, soit une baisse de 80%. La capacité litière du
+service en question a également baissé, passant de 19 en 2014 à 12 uniquement en 2016. La durée
+moyenne de séjour (DMS) quant à elle, est passée de 4,96 en 2014 à 6,33 en 2016, soit une hausse
+de 27,6%.
+            b. Service de réanimation médicale
+Le contrôle a révélé que les admissions en hospitalisation au niveau du service de réanimation
+médicale sont en baisse continue, passant de 598 en 2013 à 381 en 2016, soit une baisse de 36%.
+Il est à signaler, à cet égard, que ledit service subit la défaillance des autres services médicaux
+récepteurs, notamment, les services de pneumologie (en arrêt depuis début 2016), de cardiologie
+et d’endocrinologie, qui ne comptent dans leur effectif qu’un seul médecin chacun. De ce fait, le
+service de réanimation médicale, déjà en manque de moyens, se trouve obligé à prolonger ses
+durées de séjours (hausse de la DMS de 39% en 2016 par rapport à 2015) en vue de garantir les
+soins nécessaires en attendant de trancher sur l’éventualité du transfert du cas au niveau du CHU.
+Il est, également, à noter que le service ne compte qu’un seul médecin et six infirmiers après le
+départ d’un réanimateur en retraite au mois de septembre 2016.
+            c. Service de la chirurgie infantile
+Il a été constaté que l’activité du service a régressé en 2016, en enregistrant 927 admissions soit
+une baisse de 11% par rapport à 2015 (1041 admissions). La capacité litière a, également, chuté,
+passant de 28 à 25 entre 2015 et 2016. Par ailleurs, il a été relevé que le service en question ne
+compte que trois infirmières, ce qui handicape l’amélioration de son activité, sachant que le
+fonctionnement du bloc opératoire, à lui seul, nécessite une équipe paramédicale type constituée
+d’une anesthésiste, une panseuse et une aide panseuse. Quant aux moyens techniques disponibles,
+il y a lieu de signaler l’absence de l’amplificateur de brillance et ce, depuis début 2016. Ce
+matériel est jugé par le personnel médical comme étant indispensable. Ce dernier réclame,
+également, la fréquence assez élevée des pannes des autoclaves destinés à la stérilisation du
+matériel nécessaire au bloc. Il a été relevé à cet égard, qu’un seul autoclave est fonctionnel parmi
+trois existants, alors que ceux en panne ne sont plus utilisés depuis plus d’une année, sachant
+qu’ils figurent toujours parmi la liste du matériel de stérilisation à maintenir, annexée au marché
+contracté par la délégation préfectorale.
+            d. Service de pédiatrie
+L’analyse des données sur l’activité du service confirme le constat général relevé au niveau de
+l’HIZ, relativement à la baisse notable de l’activité hospitalière en 2016. En effet, le nombre des
+admissions a baissé de 42 % en passant de 3199 en 2013 à seulement 1844 en 2016. La capacité
+litière, quant à elle, a connu une baisse notable, passant de 50 en 2013 à 39 en 2016. Il y a lieu de
+noter que la mortalité au niveau des moins de un mois est toujours élevée (59 en 2016) malgré le
+recul qu’elle a enregistré en 2016, avec une baisse de 24% par rapport à 2013. De même, il a été
+constaté l’existence d’une quantité importante de matériels neufs livrés depuis plus de sept ans et
+non encore exploités. Le tableau suivant illustre les principaux matériels recensés.
+
+
+
+
+                                                  4
+                Matériel neuf inutilisé au niveau du service de la pédiatrie
+          Désignation              Marque        Modèle/type         Série             Date entrée
+                                                            ASBD-0089                   02/09/2010
+Respirateur de réanimation pour                Babylog 8000
+                                Drager Médical              ASBD-0090                   02/09/2010
+nouveaux nés
+                                                            ASBD-0091                   02/09/2010
+
+Respirateur de réanimation pour
+                                Event Médical        Babylog 8000 2011W030246           27/12/2011
+nouveaux nés
+
+Respirateur volumétrique léger    Serio plus         Inspiration LS 5420111             27/03/2002
+
+Radio mobile                      BMI                Tolly 30 plus   JP1210/196         11/08/2010
+
+Il a été relevé aussi que certaines analyses, considérées par le service comme élémentaires dans
+l’exercice de ses attributions, sont souvent indisponibles au niveau du laboratoire de l’hôpital. Il
+s’agit, notamment, de la « NFS », l’ « Ionogramme sanguin » et le « CRP » qui sont des analyses
+complémentaires que les patients sont souvent appelés à effectuer en dehors de l’hôpital au secteur
+privé.
+            e. Service de maternité
+L’analyse des statistiques relatives au service en question permet de confirmer une fois encore la
+tendance baissière de l’activité hospitalière au niveau de l’HIZ. En effet, le nombre des
+admissions a baissé d’environ 35 % en passant de 8589 en 2014 à 5553 en 2016. Toutefois, en
+2016, une légère hausse du nombre des actes « césariennes » a été enregistrée par rapport à 2014,
+soit +2,2 %. De même, il a été relevé que la mortalité des néonataux demeure importante, avec
+un nombre de 14 décès enregistrés en 2016. Par ailleurs, il a été constaté au niveau du même
+service ce qui suit :
+   - Le manque du personnel médical : En effet, le service fonctionne, depuis plus de 7 mois
+     avec un effectif de deux médecins (un seul médecin en 2018) y compris le chef du service
+     après le départ en retraite d’un troisième. La marche normale du service, l’instauration de
+     l’astreinte et la garde sont difficiles à mettre en œuvre avec un tel effectif. L’hôpital ne
+     dispose pas de médecin spécialiste en chirurgie générale, ce dernier est souvent sollicité en
+     cas d’incidents en cours d’opération.
+   - Défaillance des locaux du service, et ce malgré leur récente rénovation. Les sanitaires et
+     les salles de bains ne sont pas opérationnels, le sol des couloirs est fissuré. Ces derniers
+     connaissent une fréquentation importante aussi bien du personnel que des parturientes. Cet
+     état risque de leur porter préjudice ou de nuire à leur sécurité, en plus du risque d’infection
+     vue la difficulté du nettoyage du sol.
+   - Absence d’une liaison contigüe entre le bloc opératoire et les composantes de l’unité
+     technique d’accouchement et entre cette dernière et l’unité d’hébergement. De même, les
+     composantes de l’unité technique d’accouchement sont dispersées, la salle d’examen est
+     très loin du secteur naissance et du bloc opératoire. Par conséquent, le transfert des patientes
+     examinées est difficile. En général, la conception spatiale du service ne répond pas au
+     principe de la marche en avant de la patiente d’un seuil à un autre.
+
+
+
+
+                                                 5
+   - Défaillance au niveau du matériel et des équipements à savoir le matériel d’aspiration, les
+     moniteurs (4), le système d’aspiration mural, les nanomètres régulateurs de vide, ainsi que
+     la non utilisation du filtre antibactérien. Dans le même sens, il a été constaté le non
+     branchement des adoucisseurs aux autoclaves de stérilisation ce qui expose ces derniers
+     aux pannes récurrentes (présence de calcaire) ;
+            f. Service de médecine
+Ce service renferme entre autres les spécialités de neurologie, de gastrologie, de rhumatologie,
+médecine interne et d’endocrinologie. Les statistiques relatives au service en question illustrent
+le constat général relevé au niveau du CHRM, à savoir la baisse de l’activité hospitalière en 2016.
+En effet, les admissions sont passées de 1172 en 2013 à seulement 792 en 2016, soit une baisse
+de 32%. Par ailleurs, il est à noter que la durée moyenne de séjour est importante, soit 8,4 jours
+en moyenne. Par ailleurs, le contrôle de ce service a permis de relever les observations suivantes :
+   - Insuffisance du personnel médical. Par exemple, la spécialité d’endocrinologie ne compte
+     qu’un seul médecin. Ce dernier ne peut prendre tout au long de la durée d’hospitalisation
+     tous les patients admis au service ;
+   - Manque de matériel et équipements médicaux de diagnostic. Il a été constaté que le service
+     réclame la difficulté d’effectuer les diagnostics qui s’imposent antérieurement à
+     l’admission des patients au niveau du service de neurologie. En effet, les diagnostics
+     radiologiques (« imagerie par résonnance magnétique », dont l’orientation se fait
+     automatiquement vers le CHU avec des délais moyens de rendez-vous pouvant aller jusqu’à
+     une année, le « scanner », disponible au niveau de l’hôpital mais qui est souvent en panne
+     et l’électromyogramme EMG) sont difficiles à effectuer. De même pour les diagnostics
+     biologiques, dont l’essentiel est indisponible comme il a été signalé auparavant. De plus,
+     la réanimation médicale fait défaut au niveau du service.
+   - Recensement d’un électroencéphalogramme (EEG) neuf inventorié sous le n° 7199 non
+     installé au niveau du service depuis sa réception de la délégation préfectorale de Marrakech
+     le 21/05/2010. A noter que le kit d’EEG comprend toutes les composantes nécessaires à sa
+     mise en marche ;
+   - Indisponibilité de certaines analyses de laboratoire et rupture récurrente de stock de certains
+     médicaments vitaux ; Il s’agit, notamment, de la « NFS », « TSH », « CRP », ainsi que les
+     bilans hormonaux et hépatiques, qui sont des analyses complémentaires que les patients
+     sont fréquemment appelés à effectuer en dehors de l’hôpital.
+            g. Cabinet dentaire
+L’examen des documents remis par l’administration, l’entretien avec les médecins du service et
+les visites du cabinet ont permis de relever ce qui suit :
+   - Une seule infirmière est affectée au niveau du service dont les taches d’accueil,
+     d’enregistrement et gestion de rendez-vous lui sont attribuées. Le service ne dispose
+     d’aucune assistante dentaire, seule l’agent de brancardage, affecté au niveau cabinet
+     dentaire, se charge de cette tache ;
+   - La distribution spatiale du service est inconvenable : un seul bureau de consultation est
+     disponible pour sept médecins, ce bureau est situé en plein salle de soins, ce qui pose le
+     problème d’intimité des patients et de dérangement pour les médecins traitants. De même,
+     le cabinet dentaire ne dispose pas d’une salle d’accueil et d’attente des patients ;
+   - Les délais de rendez-vous sont longs et peuvent atteindre huit mois, cette situation est
+     aggravée par l’absence de coordination entre la direction du CHR, celle du CHU Med VI
+     et celle de l’hôpital ANTAKI causant ainsi l’afflux et le transfert massif des patients vers
+     l’hôpital Ibn Zohr malgré la présence de cabinets dentaires au sein de ces structures.
+            h. Service d’hémodialyse
+
+
+
+                                                 6
+Le service d’hémodialyse comprend neuf générateurs et une salle de traitement d’eau. En termes
+de ressources humaines, le service dispose d’un médecin néphrologue et neuf infirmiers.
+L’activité du service est presque stable vu le nombre limité de générateurs et des patients. Ce
+service est marqué par les insuffisances suivantes :
+   - Non intervention à temps pour la réparation des pannes au niveau des générateurs
+     d’hémodialyse et ce, malgré la nature spéciale de cette prestation et l’impact que peut avoir
+     tout ajournement des séances d’hémodialyse sur la santé des patients. La lecture du courrier
+     en provenance du service d’hémodialyse renseigne sur la fréquence des pannes des
+     générateurs et la difficulté de récusation des patients en raison de l’absence d’examens
+     biologiques sur place permettant de décider l’ajournement de la prise en charge de certains
+     patients dans l’attente de la réparation.
+   - Mauvaise conservation du concentré. Une partie du concentré est mise dans une sale sans
+     climatisation, l’autre partie est entassée dans les escaliers menant au sous-sol de l’hôpital.
+     Ces conditions de stockage, sous une température élevée surtout pendant l’été, risque
+     d’impacter négativement la qualité du concentré et donc la santé des patients.
+   - Défaillances au niveau de distribution spatiale du service. La visite du service a permis de
+     constater qu’il ne dispose pas des aménagements nécessaires tels que la salle d’attente pour
+     les patients par nature fragiles ; le bureau du médecin néphrologue ; la salle de bain ; la
+     salle des infirmiers et des climatiseurs bien placés, les deux existants sont entassés l’un à
+     côté de l’autre privant la majeure partie de la salle de traitement de l’air frais.
+             i. Laboratoire régional
+Les prestations du laboratoire régional sont trop sollicitées au sein du CHR, que ce soit par les
+différents services de l’HIZ et les autres entités relevant du CHR ou par les citoyens dans le cadre
+des prestations externes.
+L’analyse des statistiques relatives à l’activité du laboratoire a permis d’identifier une baisse
+malgré l’augmentation de son effectif technique qui est passé de cinq techniciens en 2012 à huit
+en 2016. Le nombre de prélèvements effectués au niveau du laboratoire est passé de 21841
+prélèvements en 2014 à simplement 18042 en 2016 soit une baisse de 17,4%. De même, le nombre
+de prélèvements des malades hospitalisés a passé de 8907 à 5521 prélèvements entre 2014 et 2016
+soit une baisse de 38%. Sur cinq types d’examens, quatre ont enregistré une baisse entre la période
+2014-2016. Par ailleurs, il a été constaté au niveau du laboratoire le manque d’une liaison internet.
+De même, pour la liaison téléphonique avec les autres services de l’HIZ. Cette situation impacte
+négativement le travail au niveau du laboratoire, non seulement pour le partage d’informations
+avec les autres partenaires, mais aussi en ce qui concerne l’accès aux bases de données partagées
+pour utilisation et alimentation.
+             j. Service de l’imagerie médicale
+Sur la période 2013-2016, l'activité du service d’imagerie médicale a été marquée par une baisse
+significative du niveau de l'ensemble des prestations fournies. Au niveau du scanner, le nombre
+de services fournis est passé de 1231 analyses à seulement 933 analyses soit une réduction de plus
+de 24%. De même pour l'activité de l’échographique qui a été considérablement diminué sur la
+même période de 2596 bilans réalisés à seulement 1314 bilans, soit une baisse de près de 50%.
+Pour ce qui est de la radiologie standard, il a été remarqué, pour la même période, que le nombre
+des films ratés est élevé enregistrant 4379 bilans ratés sur un total de 43693 bilans réalisés soit un
+pourcentage de 10% du total des films utilisés.
+Outre ces observations, il a été relevé ce qui suit :
+   - Manque en personnel médical. Un seul médecin est en service, le deuxième est en congé
+     pour maladie de longue durée, une troisième radiologue a été provisoirement affectée au
+     niveau du CHU. En effet, la garde est assurée simplement par du personnel non médical
+     qui manipule du matériel de radiographie et effectue des examens au patients. Cette
+
+
+
+                                                   7
+      manipulation est irrégulière selon les dispositions de l’article 8 du décret n°2-97-132
+      suscité ;
+   - Les examens de la mammographie ont enregistré une nette baisse ces dernières années pour
+     cesser d’être dispensés définitivement à partir de 2015. Les deux mammographes,
+     disponibles au niveau du service figurent toujours dans la liste, rattachée au marché
+     n°7/2015 ordonnancé par la délégation préfectorale, des équipements bénéficiant de la
+     maintenance préventive et corrective. A noter, qu’un mammographe est non opérationnel
+     et ce, depuis plus de deux ans. A signaler aussi, que les deux mammographes coûtent
+     annuellement 84.000,00 DH pour leur maintenance ;
+   - L’ensemble du personnel du service n’est pas doté de dosimètres, ce qui constitue un risque
+     pour leur santé.
+A cet effet, la Cour des comptes recommande de :
+       -   Veiller à ce que le CHR offre les différents services requis par la réglementation en
+           vigueur ;
+       -   Doter les différents services du matériel nécessaires pour leur bon fonctionnement
+           notamment au niveau de la chirurgie infantile, de la maternité, de l’imagerie et du
+           laboratoire ;
+       -   Assurer la mise en marche du matériel non opérationnel notamment au niveau du
+           service de la maternité, de la pédiatrie, de la réanimation et de l’unité de neurologie ;
+       -   Assurer la bonne réparation et maintenance des équipements médicaux.
+    D. Gestion de la pharmacie hospitalière
+Cette entité médicotechnique est appelée à gérer un volume important de produits pharmaceutique
+(793 articles à gérer en 2016) avec un budget global pour la période 2012-2016 s’élevant à
+64.254.395,00 DH. Les investigations sur place ont permis de constater ce qui suit :
+    ➢ Absence de pharmacien spécialisé au niveau de la pharmacie hospitalière
+Il a été constaté que cette entité est gérée par un infirmier (préparateur en pharmacie) en l’absence
+de pharmacien spécialisé, et ce en contradiction avec les dispositions de l’article 69 du code du
+médicament et de la pharmacie précitée, qui stipule que cette entité doit être placée sous la
+responsabilité d’un pharmacien autorisé à exercer sa profession. Cette situation est également en
+désaccord avec les dispositions de l’article 34 du règlement intérieur des hôpitaux précité, et celles
+de la circulaire n°16 du 24 mai 2005, relative aux attributions des pharmaciens affectés au niveau
+des centres hospitaliers régionaux, provinciaux et préfectoraux. Ces références légales et
+réglementaires attribuent au pharmacien, officiellement chargé de la gestion de la pharmacie d’un
+centre hospitalier régional, l’entière responsabilité de cette pharmacie.
+    ➢ Ecarts entre les quantités annuelles commandées des produits
+      pharmaceutiques et celles réellement consommées au niveau du CHRM
+L’analyse des données, ci-après, permet de conclure que l’évaluation des quantités de
+médicaments et dispositifs médicaux (MDM) à commander annuellement, n’est pas basée sur une
+analyse prévisionnelle sincère des besoins réels des entités consommatrices. En effet, les
+commandes annuelles exprimées et engagées, dépassent largement les consommations réelles. Au
+cours de l'année 2016, le besoin exprimé du CHRM s’élevait à 16.638.000,00 DH, le total des
+commandes engagées à son profit s’élevait à 8.377.474,00 DH, alors que la consommation
+annuelle n’avait enregistré que 5.810.663,90 DH.
+
+
+
+
+                                                  8
+                    Comparaison entre la commande annuelle de produits
+                          pharmaceutique et leur consommation
+               Nature de la commande                            2014             2015            2016
+
+Besoins annuels exprimés du CHRM (1)                       13 714 000,00 14 500 000,00 16 638 000,00
+
+Commandes annuelles engagées (2)                           13 004 795,00 13 549 105,00        8 377 474,00
+
+Consommation annuelle du CHR (3)                             5 687 333,43     8 964 062,12    5 810 663,90
+
+Ecart (1)-(3) : commande exprimée/consommation               8 026 666,57     5 535 937,88 10 827 337,00
+
+Ecart (2)-(3) : commande engagée/consommation                7 317 461,57     4 585 042,80    2 566 810,10
+
+    ➢ Gestion de certains médicaments et dispositifs médicaux en dehors de la
+      pharmacie hospitalière
+Contrairement aux dispositions de l’article 34 du règlement intérieur des hôpitaux précité, et
+celles de la circulaire n°16 précitée, certains services médicaux au sein de l’hôpital Ibn Zohr
+procèdent à la réception, le stockage et la dispensation de quantités importantes de médicaments,
+en dehors de la pharmacie hospitalière prévue pour cette gestion, et en l’absence de pharmacien
+dument habilité. Il s’agit, en l’occurrence, du service des maladies infectieuses qui reçoit et gèrent
+sa dotation en médicaments indépendamment de la pharmacie hospitalière et le service de la
+pédiatrie qui reçoit, depuis l’an 200, directement des dons de médicaments sans passer par ladite
+pharmacie.
+    ➢ Défaillances au niveau des conditions de stockage des médicaments et
+      dispositifs médicaux
+Il a été constaté que le stockage des médicaments et dispositifs médicaux propres à la pharmacie
+hospitalière du CHRM, est assuré au niveau de plusieurs locaux (local principal, local dénommé
+Riad, Local dénommé Sahrij, Sous-Sol de l’hôpital, service cardiologie, Local mitoyen à
+l’ancienne administration, La cuisine, Bureau du directeur) répartis dans l’enceinte de l’HIZ. Il a,
+également, été relevé que les endroits de stockage précités ne réunissent pas les conditions
+minimales exigibles d’une pharmacie hospitalière, et qui permettent, notamment, le bon stockage
+et la bonne conservation des produits pharmaceutiques. Dans ce sens, il y a lieu de soulever que
+lesdits locaux souffrent de l’absence des moyens logistiques et du matériel nécessaire pour assurer
+la manutention, le transport et le stockage des produits pharmaceutiques.
+Le tableau suivant montre un échantillon de médicaments recensés stockés au Riad, en plein air
+sans climatisation sous une température élevé.
+                         Médicaments en stock au niveau du « Riad »
+   [vide sur patio, exposant l’intérieur du « Riad » aux aléas climatiques (soleil et pluie)]
+                     Désignation                                Quantité en stock
+ DIAZEPAM 10mg injectable                                                  1680
+ ACICLOVIR 250mg injectable                                                 580
+ LIDOCAINE 2% GEL ORAL                                                      319
+ FUMARATE FERREUX comprimé                                               259850
+ NEOSTIGMINE 0,5mg injectable                                              1223
+ BUPIVACAINE 0,5% injectable                                               2125
+ METHYLPREDNISOLONE 500mg                                                   186
+
+
+
+
+                                                  9
+ METHYLPREDNISOLONE 40mg injectable                                       2120
+ METHYLPREDNISOLONE 120mg injectable                                       513
+    ➢ Absence de planning régulier de livraison des MDM et retards dans les
+      livraisons des commandes annuelles
+Il a été relevé que les livraisons des médicaments et dispositifs médicaux, au profit du CHRM,
+s’effectuent avec un grand retard, les dotations relatives à plusieurs années sont ainsi reçues d’un
+seul coup, ce qui engendre pour la pharmacie hospitalière des difficultés de stockage des quantités
+reçues. A titre d’exemple, il a été constaté qu’en date du 27/01/2017, une quantité importante de
+Sérums relatives aux exercices 2013, 2014 et 2015 a été livré d’un seul coup.
+Le tableau suivant illustre cette situation :
+       Situation des livraisons des MDM effectuées jusqu’au mois de janvier 2017
+                  Nombre de produits       Quantité restante à      Taux des restes à
+    Année de
+                  non encore livrés au  livrer (unité de Base) au    livrer /quantités
+   commande
+                       30/01/2017              30/01/2017              commandées
+ 2013                          79                       975 958                37 %
+ 2014                         213                     2 595 953                64 %
+ 2015                         301                     3 748 399                95 %
+ 2016                         791                   Commande non encore livrée
+                                                Source : service de la pharmacie régionale du CHRM
+    ➢ Ecarts constatés au niveau du stock de certains médicaments
+Suite aux travaux d’inventaire du stock de certains médicaments effectués le 30 janvier 2017, en
+présence du préparateur en pharmacie, seul chargé de la gestion de la pharmacie hospitalière
+durant la période de contrôle, et de l’ancien pharmacien chef de service de cette entité, les écarts
+suivants ont été relevés.
+                        Ecart entre le stock réel et le stock théorique
+                Désignation                    Stock réel       Stock théorique          Ecart
+ CAPTOPRIL 25mg comprimé                                3030            3720                690
+ BISOPROLOL 5mg comprimé                                4890           84600              79710
+ AMIODARONE 200mg comprimé                             14720           23080               8360
+ PROPRANOLOL 40mg comprimé                             17170           26160               8990
+    ➢ Anomalies dans la gestion des psychotropes et des stupéfiants
+La gestion de ces produits a suscité les observations suivantes :
+   - Tenue irrégulière du registre spécial des stupéfiants : En dépit de l’obligation légale et
+     réglementaire de la tenue régulière d’un registre spécial pour les stupéfiants dans lequel est
+     consigné, en temps réel, l’ensemble des mouvements de ces produits pharmaceutiques
+     critiques, notamment ceux relevant du tableau B, il a été constaté que cette attribution
+     propre au pharmacien hospitalier, n’est pas respectée. Cette situation est en infraction aux
+     dispositions de l’article 27 du dahir du 2 décembre 1922 précité, de l’article 70 du code du
+     médicament et de la pharmacie et de l’article 34 du règlement intérieur des hôpitaux.
+   - le rangement d’une grande quantité de médicaments, classés comme stupéfiants, dans des
+     rayonnages parmi les d’autres médicaments qualifiés de standards, en dehors de toute
+     mesure spéciale de sécurisation. Les produits, en question, sont accessibles aux personnels
+     de l’hôpital, et la porte du local principal de la pharmacie est en bois, facile à enfoncer. Il
+     s’agit d’une quantité de 990 ampoules de « FENTANYL 500 µg/10ml injectable » ;
+   - Discordance entre le stock théorique et le stock réel des stupéfiants. Suite aux travaux
+     d’inventaire du stock de certains produits stupéfiants effectués pendant les journées du 24
+
+
+
+
+                                                  10
+      et 25 janvier 2017, en présence des responsables concernés, des écarts ont été relevé. Le
+      tableau suivant illustre cette situation :
+     Comparaison entre le stock théorique et le stock réel de certains stupéfiants
+        Désignation               Quantité enregistrée        Quantité       Différence
+FENTANYL 100µg/2ml injectable              812                calculée
+                                                                  820      8 Ampoules
+FENTANYL 500µg/10ml                               3465                    3885        420
+injectable
+ISOFLURANTE liquide pour                              42                     77       Ampoules
+                                                                                      35 Flacons
+inhalation
+    ➢ Carence dans la gestion des produits thermolabiles
+A cet égard, il a été relevé que la pharmacie hospitalière ne dispose pas de chambres froides, et
+ne dispose que de quatre réfrigérateurs à caractère domestique, avec une capacité ne permettant
+pas le stockage de l’ensemble des produits gérés. Par conséquent, il a été constaté qu’une quantité
+assez importante d’INSULINE est stockée en dehors des lieux appropriés, au niveau du rayonnage
+propre aux médicaments à conditions normales de stockage. Il s’agit d’une quantité de 1040
+flacons MIXTAR, et de 282 flacons RAPID. Cette situation est en infractions aux normes en
+vigueur en matière de stockage de cette catégorie de médicaments qui doivent être conservés à
+des températures contrôlées (+2 à +8°C), dans des réfrigérateurs ou des chambres froides, selon
+les prescriptions du guide d’organisation et de fonctionnement des pharmacies hospitalières.
+A cet effet, la Cour des comptes recommande ce qui suit :
+       -   Doter la pharmacie hospitalière régionale des moyens nécessaires pour assurer son
+           bon fonctionnement ;
+       -   Assurer le suivi et le contrôle de la traçabilité de tous les médicaments et les
+           fongibles fournis au CHR, ainsi que la mise à niveau urgente des locaux de la
+           pharmacie hospitalière régionale ;
+       -   Aménager un local pour la pharmacie selon les normes en vigueur ;
+       -   Adapter de manière urgente les commandes aux besoins réels du CHRM ;
+       -   Améliorer la gestion des produits stupéfiants.
+    E. Gestion des ressources de l’hôpital Ibn Zohr
+1. Gestion des ressources humaines de l’HIZ
+L’examen des dossiers du personnel a permis de relever les observations suivantes :
+    ➢ Affectation du personnel médical au sein de l’HIZ en l’absence du service
+      approprié
+L’examen des dossiers du personnel médical a permis de constater l’affectation de quatre
+médecins spécialistes en médecine nucléaire. Une telle spécialité n’a jamais été présente au sein
+du CHR. De plus, l’article 27 de l’arrêté de la ministre de la santé n°456-11 du 6 juillet 2010
+portant règlement intérieur des hôpitaux ne prévoit pas l’existence de cette spécialité dans une
+structure telle que le CHR. A noter que ces medecins ne peuvent pas exerçer leur pleines
+compétences vu l’indisponibilité du matériel requis (gamma caméra). Leurs taches consistent
+normalement en la réalisation des examens scintigraphiques (95% de leur activité) et la
+consultation (5% de leur activité). Il est à signaler, que, selon les bilans annuels de l’activité de
+consultations effectuées par les médecins nucléaires au niveau du CHRM, ces derniers n’ont
+effectué qu’une seule consultation en 2015 et 71 en 2016.
+    ➢ Manque de services et de spécialités indispensables
+Il a été constaté que des spécialités prévues par le décret n° 2.06.656 précité ne sont pas disponible
+au niveau du CHR, telles que la chirurgie générale, l’urologie, la traumato-orthopédie et
+
+
+
+
+                                                 11
+l’anatomie pathologique. Les médecins spécialistes dans ces domaines ont été mis à la disposition
+d’autres structures hospitalières.
+
+
+    ➢ Absence injustifiée de certains médecins spécialistes
+Il a été constaté que certains médecins affectés au niveau de l’hôpital Ibn Zohr n’ont jamais exercé
+leurs fonctions depuis leur affectation à cette structure. C'est le cas du Dr B., Urologue affecté au
+niveau du l’hôpital Ibn Zohr le 28 décembre 2011 mais il n'a pas exercé ses fonctions depuis le
+19 janvier 2012 et ce, jusqu’au 30 septembre 2016, date à laquelle il a obtenu un jugement en sa
+faveur pour démission.
+De même, il a été relevé que certains médecins ne respectent pas la durée maximale d’affectation
+provisoire de trois mois non renouvelable prévue par la circulaire n°31 du 08 mai 2014 relative
+au mouvement des fonctionnaires du ministère de la santé notamment celles du deuxième chapitre
+relatif aux mutations exceptionnelles. En fait, les responsables régionaux et préfectoraux
+établissent d’autres notes de service et ce, pour prolonger l’affectation provisoire des médecins.
+La circulaire susvisée précise qu’après la fin de la période d’affectation provisoire l’intéressé doit
+rejoindre son lieu d’affectation initiale ;
+2. Gestion des ressources financières de l’HIZ
+Les investigations ont permis de noter ce qui suit :
+    ➢ Non exhaustivité d’enregistrement de facturation effectuée au niveau du
+      SAA
+En vertu de l’article 35 du règlement intérieur des hôpitaux, le service d’accueil et d’admission
+(SAA) est chargé, entre autres, d’établir la facturation des prestations et services rendus par
+l’hôpital sur la base de la classification des maladies, des nomenclatures des actes et des tarifs en
+vigueur.
+Toutefois, il a été constaté que, dans plusieurs cas, la prestation payante rendue au sein de l’hôpital
+est non appréhendée par le SAA. Il s’agit des cas suivants :
+    •   Liquidation des prestations et encaissement des sommes dues sans intervention du SAA :
+        Il s’agit, le plus souvent, du service des urgences médicales, ainsi que certains examens
+        externes ;
+    •   Prestations payantes rendues au sein de l’hôpital non recouvrées et non appréhendées par
+        le SAA comme étant en instance de recouvrement.
+La confrontation des recettes qui ont été déclarées au niveau de cette ligne budgétaire, avec le
+montant des recettes reconstitué à partir des données issues des services médicaux concernés
+(service de dermatologie et service des urgences médicales) et de la base de données propre au
+SAA, pour la période 2013-2016, a révélé que le total des recettes à déclarer était de
+12.300.040,00 DH tandis que celui effectivement recouvré était simplement de 4.188.100,00 DH,
+soit une différence de 8.334.362,00 DH. A noter que les cas pris en charge dans le cadre du
+RAMED et les autres exonérations ne sont pas pris en compte dans le calcul dudit montant.
+    ➢ Anomalies au niveau de la facturation des dossiers des patients hospitalisés
+Dans ce cadre, il a été révélé que la facturation prend en considération une seule prestation à
+savoir le nombre des journées de séjours, toutes les autres prestations (actes biologiques, actes
+chirurgicaux, diagnostics, réanimation, imagerie) ne sont pas facturées. Parmi les 84 330 cas
+admis entre 2013 et 2016, 69138 cas ont été facturés sur la base simplement du nombre de jours
+d'hébergement, soit environ 82% de tous les cas. Par conséquent, sur la période 2013-2016, un
+montant total de 1.038.585,00 DH relatifs aux examens standards effectués pour les malades
+hospitalisés n’a pas été facturé.
+
+
+
+
+                                                  12
+Par ailleurs, il faut citer le problème de la facturation nulle et ce, malgré le bénéfice des patients
+hospitalisés de prestations payantes. Le problème réside, d’une part, dans la facturation au séjour
+qui est automatiquement nulle lorsque le séjour ne dépasse pas une journée, et d’autre part, dans
+l’insuffisance des renseignements sur les actes et prestations desquels le patient a bénéficié durant
+son passage par l’hôpital. En effet, l’agent chargé de la facturation se limite à prendre en
+considération la facturation au séjour qui est dans ce cas gratuite selon la conception du logiciel
+adopté, et se passe de la facturation à l’acte ou à la prestation fournie. A titre d’illustration,
+Au niveau de l’hôpital de jour, le nombre de factures à 0 DH, était de 12241 factures, pour la
+seule période 2013-2016, sur un total de 27360 factures éditées, soit un pourcentage d’environ
+44,74%.
+    ➢ Non facturation de plusieurs consultations médicales spécialisées
+Il a été relevé que, en dehors des consultations spécialisées rendues au niveau du centre de
+diagnostic spécialisé créé dans l’objectif d’assurer ce genre de prestations à l’extérieur de
+l’enceinte hospitalière selon un calendrier de rendez-vous fixé au préalable, certaines de ces
+consultations spécialisées continuent d’être assurées au niveau de l’hôpital. Il s’agit par exemple
+de 2016 consultations effectuées au niveau du service de la chirurgie infantile durant la période
+2013-2016 et de 1346 consultations effectuées au niveau du service de la cardiologie durant
+l’année 2016.
+Ainsi, la Cour des comptes recommande de :
+       -   Doter le CHR de moyens pour mettre en place et assurer la bonne marche des
+           différents services médicaux manquants et ce, afin de permettre au CHR d’assurer
+           toutes les missions qui lui sont dévolues par la réglementation en vigueur ;
+       -   Exiger le respect, par le personnel médical et paramédical, des horaires de travail et
+           veiller, le chas échéant, à la prise de mesures disciplinaires nécessaires ;
+       -   Faire respecter les attributions du SAA en matière de liquidation et facturation des
+           prestations dispensées par les déférents services médicaux et médico-techniques de
+           l’HIZ ;
+       -   Assurer la facturation de l’intégralité des prestations fournies par les services du
+           CHRM.
+    F. Gestion des prestations externalisées par le CHR
+Pour subvenir aux différents besoins du CHR en termes de produits, équipements, matériel,
+fournitures, prestations de services, la direction du CHR a contracté des marchés et des bons de
+commandes avec plusieurs prestataires du secteur privé. Le total des mandats de paiement émis
+relatifs aux différents marchés conclus sur la période 2012-2016 a atteint le montant total de
+44.308.088,20 Dh.
+L’examen des documents remis et les investigations sur place ont permis de constater ce qui suit :
+    ➢ Non contrôle de nombre d’agents chargés de l’exécution des services objets des
+      marchés
+A cet égard, Il a été constaté que le CHRM procède à une liquidation sur des bases incorrecte des
+dépenses relatives aux prestations de nettoyage, de propreté et l’hygiène des locaux et jardins,
+aux prestations de gardiennage et de surveillance ainsi qu'au prestation du brancardage des
+patients sur la base du fait que le service est effectué par un certain nombre d'agents de nettoyage.
+En se référant aux dispositions des différents cahiers des charges relatifs aux marchés des
+prestations précitées, la liquidation doit être faite sur la base du nombre des journées ouvrières
+effectivement exécutées, calculé en multipliant le nombre de journée de travail effectif par le
+nombre réel d’agents mis en service. Contrairement à ces disposition, l’administration procède de
+manière systématique à la multiplication du total des journées de l’année civile, soit 365 jours et
+
+
+
+
+                                                 13
+d’un autre côté du nombre d’agents prévus au CPS. Or le nombre d’agents mis en service différent
+selon les jours –jour férié ou normal, et selon qu’il s’agit d’un poste de jour ou de nuit puisque
+plusieurs services sont fermés ou réduisent leur activité en jour férié ou la nuit et par conséquent
+les agents ne sont mis à leur disposition, c’est le cas du cabinet dentaire, le laboratoire et service
+de la radiologie.
+Ainsi, entre 2012 et 2016, en ce qui concerne les prestations de nettoyage, de propreté et l’hygiène
+des locaux et jardins, aux prestations de gardiennage et de surveillance ainsi qu'au prestation du
+brancardage des patients, le total des paiements indus a été estimé à 2 283 032,27 dirhams.
+    ➢ Non-respect par les titulaires des marchés de nettoyage de leurs engagements
+      contractuels relatifs aux produits et aux matériels à utiliser
+Les différents marchés de nettoyage stipulent que « Le titulaire du marché est tenu de disposer
+sur place et en permanence du matériel nécessaire à l’exécution des prestations conformément à
+la liste indicative du matériel. Les appareils devront satisfaire aux règlements de sécurité et de la
+prévention des accidents du travail. Ils devront également être dans un bon état de
+fonctionnement. L’entrepreneur sera tenu d’adapter son matériel aux caractéristiques de
+l’alimentation électrique qui sera mise à sa disposition. Les rallonges, prolongateurs et fiches
+seront à fournir par le titulaire ». De même, les articles 45 et 46 des différents marchés conclus
+durant la période 2012-2016 listent l’ensemble des produits et matériel requis pour le nettoyage
+en bonne et due forme. Les visites des lieux et les déclarations des responsables du service
+d’hygiène ont permis de constater la non fourniture des différents produits stipulé à l’article 45
+susvisé, seules des quantités limitées en détergent désinfectant et en désodorisant liquide de
+mauvaise qualité ont été livrées. De même, la grande majorité du matériel listé par l’article 46
+susvisé n’a pas été utilisé par les titulaires des marchés de nettoyage.
+    ➢ Insuffisances dans les conditions de prélèvement et livraison du linge
+A cet égard, il a été noté que la majorité des services médicaux ne tiennent pas le registre de
+prélèvement du linge sale et de livraison du linge propre. En plus, le linge sale est déposé en plein
+air dans de mauvaises conditions.
+    ➢ Recours aux agents brancardiers pour assurer d’autres taches
+Contrairement aux dispositions des CPS relatifs aux marchés du brancardage, il a été constaté que
+les brancardiers, mis à la disposition du CHRM, remplissent des tâches autres que celles pour
+lesquelles ils ont été affectés. Ces agents exercent des fonctions administratives et techniques, ce
+qui fait que, les malades sont souvent transportés par leurs proches
+Au niveau de l’hôpital Ibn Zohr, on a compté 10 agents brancardiers, représentant 50 % de
+l’effectif des brancardiers, exerçant des fonctions administratives et techniques.
+    ➢ Défaillance dans la gestion des déchets médicaux et pharmaceutiques (DMP)
+Il a été relevé l’irrespect par le titulaire de ses obligations contractuelles notamment celles
+relatives a :
+   - L’enlèvement et le transport des DMP dans des délais raisonnables en fonction de la
+     température des saisons (5 jours au maximum, en périodes de froid, et 48 heures au
+     maximum en saison chaude). Ce délai était d’une moyenne de 15 jours antérieurement au
+     moi 4/2015 et il a été ramené à 7 jours ces derniers mois, toutes saisons confondues.
+   - La fourniture d’une balance de code à barres électronique de pesage et à système de lecture,
+     et ce au niveau du lieu d’entreposage intermédiaire. Le lieu d’entreposage n’est muni que
+     d’une balance normale permettant un affichage électronique du poids.
+
+
+
+
+                                                 14
+    ➢ Défaillance au niveau de la gestion de la prestation de fourniture des produits
+      chimiques et biologiques
+A cet égard, il a été relevé ce qui suit :
+   - Non stipulation au niveau des CPS de l’obligation de livraison du réactif concomitamment
+     avec son calibrant. A noter que l’analyse ne peut être effectuée que si le kit d’analyse est
+     complet comprenant le réactif et son calibrant. Dans plusieurs cas, le réactif est livré sans
+     calibrant ou le contraire. A titre d’illustration, l’examen des documents relatifs au marché
+     n° 09/2016 des produits chimiques et biologiques d’un montant de 498.867,60 Dh a relevé
+     que la réception du Ferritin Kit de 50 ML en date du 21/06/2016 sans Ferritin calibrant et
+     du Kit CRP en date du 02/05/2016 sans CRP calibrant. De même, il a été constaté la non
+     livraison du kit de dosage des hormones thyroïdiennes nécessaires pour les bilans
+     thyroïdiens.
+   - Défaut de mention dans plusieurs bons de livraison de la date de livraison de ces produits.
+     Cette information s’avère intéressante dans la vérification du respect par le prestataire de
+     ses engagements en termes de délais de livraison des produits. Même constat pour les
+     procès-verbaux d’intervention des sociétés chargées de la maintenance des équipements du
+     laboratoire où il n’est pas fait mention de la nature ou la date de l’intervention.
+   - Réception d’un automate de biochimie objet du marché n° 10/2013 d’un montant de
+     884.760,00 Dh sans respect du fournisseur de ses engagements contractuels notamment
+     celle relative l’obligation de produire un manuel d’utilisation en français ce qui a empêché
+     les techniciens du laboratoire, selon leur déclaration, à le manier correctement et à exploiter
+     toutes ses fonctionnalités.
+Pour cela, la Cour des comptes recommande de faire respecter les clauses des cahiers des
+charges des marchés relatifs aux différentes prestations externalisées.
+
+
+
+
+                                                15
+II.     Réponse du Ministre de la santé
+       (Texte intégral)
+    A. Gouvernance et instances de gestion
+    ➢ Non élaboration du Projet d’Etablissement Hospitalier (PEH) et le plan
+      d’action
+L’Administration du CHR Marrakech a procédé par l’élaboration du plan d’action pour l’année
+2018, validé par le comité de gestion tenu le 19/03/2018. Parmi les axes stratégiques de ce plan
+figure l’élaboration du projet d’établissement hospitalier pour la période 2019-2023.
+    ➢ Non création de certaines instances de coordination et d’appui et manque
+      de travail d’autres
+Concernant les instances de concertation et d’appui, la Direction a constitué :
+   - Le conseil des médecins, chirurgiens, dentistes et pharmaciens (CMDP) le 08/01/2018
+     et a procédé à l’élection de la Présidente ;
+   - Le conseil des infirmiers et infirmières (CII) et l’élection du Président ;
+   - La proposition du Chef du pôle des affaires médicales (PAM) dans l’attente de sa
+     nomination par le Directeur régional de la Santé ;
+   - La préparation au niveau régional d’un appel à candidature pour le poste de chef de pôle
+     des affaires administratives et la nomination d’un pharmacien responsable de la
+     pharmacie hospitalière.
+Soit, sur les 09 membres du comité d’établissement du CHR, l’administration a pu officialiser
+07 membres (au lieu de 04 membres en 2017).
+    ➢ L’Organisation hospitalière ne respecte pas les exigences réglementaires :
+Concernant la capacité litière du CHR, le comité de gestion lors de sa réunion du 19/03/2018 a
+recommandé le retour à l’ancienne capacité litière soit 300 lits pour Ibn Zohr et 122 lits pour
+El Antaki.
+La Direction envisage l’organisation de l’hôpital en départements conformément au Règlement
+Intérieur des Hôpitaux.
+    B. Gestion du système informatique
+L’administration a organisé plusieurs réunions avec le service d’accueil et d’admission dont
+l’objectif est de renforcer la coordination avec les services médicaux et hospitaliers, afin de
+surmonter les contraintes liées au déficit aigu en ressources humaines et insuffisances des
+équipements.
+Dans ce sens, la Direction a procédé par la formation du personnel du SAA sur la nouvelle
+application en concertation avec l’observatoire régional de la santé (ORS).
+    ➢ Absence de système informatique intégré permettant une bonne
+      production et gestion des informations
+La Direction a procédé à l’installation de la nouvelle application intégrée du SAA reliée à la
+régie. Cette application est très sécurisée et ne peut être utilisée que par des agents ayant un
+compte et un mot de passe, aussi, elle permet à la Direction d’exercer un contrôle sur ses
+utilisateurs.
+Aussi, tout le personnel de ce service a bénéficié d’une formation. La Direction a également
+procédé aux achats des équipements informatiques requis par cette d’application.
+
+
+
+
+                                               16
+    ➢ Absence de coordination entre le Service d’accueil et d’Admission et les
+      reste des services médicaux :
+En matière de coordination entre le SAA et les autres services de l’hôpital, la direction a exigé
+l’utilisation de la « fiche de prestation » pour recenser les prestations présentées à chaque
+patient hospitalisé et permettre ainsi une facturation correcte.
+    ➢ Discordance entre les données réelles concernant les prestations dont
+      bénéficient les patients hospitalisés et celles enregistrées dans le système
+      d’information :
+En ce qui concerne la gestion de l’information hospitalière (GIH), la direction a incité lors des
+réunions de coordination tous les infirmiers chefs et les médecins chefs des services à accorder
+une grande importance aux données étant donné que c’est l’indicateur objectif qui reflète le
+travail du service, et l’acheminement des rapports périodiques (mensuel, trimestriel,
+semestriels et annuels) à l’unité de GIH sise au SAA qui procédera par la suite à la production
+des indicateurs de production.
+En ce qui concerne l’informatisation et le réseautage des services, la Direction procédera à sa
+généralisation après l’organisation des départements au niveau de l’hôpital, aussi l’organisation
+d’un cycle de formation des médecins et infirmiers responsables des départements à
+l’utilisation de l’outil informatique.
+    C. Les activités des services de l’hôpital
+Le 19/03/2018 s’est tenu la réunion du comité de gestion du CHR présidée par Mme La
+Déléguée du MS, une présentation des indicateurs de production du CHR avec leur analyse et
+discussion a permis aux membres de dégager des recommandations
+Concernant la pénurie en ressources humaines, la Direction a procédé à son évaluation à
+travers l’élaboration du « plan d’effectif » qui a permis de relever les besoins réels en
+personnels (y compris les besoins en médecins spécialistes : Endocrinologie, Pédiatrie,
+Gynécologie). Ce plan d’effectif est envoyé à l’administration centrale dans l’attente de sa
+satisfaction.
+Concernant les insuffisances dans l’activité des services hospitaliers :
+                                                        Capacité
+                        Ressources humaines                           Indicateurs de production
+                                                         litière
+    Services
+                    Médicales     Paramédicales
+                                                       2016   2017       2016           2017
+                   2016   2017    2016    2017
+                                                                     TOM : 8.44     TOM : 11.14
+ Cardiologie        1       2       5         5         12     12
+                                                                     DMS : 6.33     DMS : 10.4
+
+ Chirurgie                                                           TOM : 27.29    TOM : 47.54
+                    3       3       6         6         25     24
+ infantile                                                           DMS : 4.09     DMS : 7.09
+ Réanimation                                                         TOM :27.50     TOM : 55.50
+ (médicale et       5       5       5         5         16     16
+ chirurgicale)                                                       DMS : 6.67     DMS : 3.75
+
+ Gynéco-                                                             TOM : 50.12    TOM : 45.06
+                    2       1      34       34          50     50
+ obstétrique                                                         DMS : 1.65     DMS : 2.2
+                                                                     TOM : 29.37    TOM : 34.39
+ Pédiatrie          3       3      10       10          39     28
+                                                                     DMS : 0.78     DMS : 2.42
+
+
+
+
+                                                  17
+   Concernant les équipements :
+   - La Direction du CHR a procédé au recensement des besoins des services hospitaliers
+     avec priorisation en fonction du budget de fonctionnement pour l’année 2018. Ces
+     besoins seront satisfaits par l’achat des équipements à travers un appel d’offre.
+   - Au cours de l’année 2018, la Direction de l’hôpital a reçu des équipements qui entrent
+     dans la cadre des achats effectués au niveau central par la Direction des Equipements et
+     de Maintenance. La Direction se prépare à la réception de l’IRM à travers la
+     restructuration du service de radiologie.
+   - Concernant la maintenance des équipements biomédicaux et techniques, le contrat de
+     maintenance est géré par la Délégation du MS et prendra fin en Juillet 2018 (…).
+   Concernant l’unité de néonatalogie :
+Liste des équipements à programmer dans le cadre du plan d’équipement de l’hôpital relatifs à
+la néonatalogie (…).
+   Concernant le service dentaire :
+   - Le CHR de Marrakech dispose de 02 services dentaires dont un à l’hôpital Ibn Zohr et
+     le second à l’hôpital El Antaki.
+               Ressources humaines                                                    Délais de
+                                                                Indicateurs
+ Service    Médicales     Paramédicales    Equipements                               rendez-vous
+
+           2016   2017    2016     2017                         2016          2017   2016      2017
+                                                           Nombre       de
+ Ibn                                                       consultations :           Non
+           7      7       1       1        05 fauteuils
+ Zohr                                                      Nombre                    disponible
+                                                           d’actes :
+                                                           Nombre       de
+ El                                                        consultations :
+           2      2       1       1        02 fauteuils                       Non disponible
+ Antaki                                                    Nombre
+                                                           d’actes :
+   Concernant les services de pneumologie et de cardiologie :
+   - La direction a procédé par l’ouverture d’une unité d’exploration de pneumologie. Pour
+     la cardiologie, la direction envisage la fusion du service de cardiologie avec le service
+     de médecine au sein du département de médecine.
+   Service Anesthésie réanimation :
+   - Le service de réanimation dispose actuellement de 05 Médecins réanimateurs (dont 04
+     en anesthésie réanimation) et 19 infirmiers en anesthésie-réanimation
+   - La direction envisage l’augmentation de la capacité litière à 6 lits au lieu de 4 avec tous
+     les équipements nécessaires.
+   Service de chirurgie infantile :
+   - Le service dispose de 03 Chirurgiens, 04 infirmiers et 06 infirmiers anesthésistes
+   - La capacité litière est de 25 lits et sera augmentée à 28 lits.
+
+
+
+
+                                               18
+   - Activités du service :
+           Période                    ICM*/Chirurgien            ICM/Salle opératoire
+  er
+ 1 trimestre 2017                             69                          138
+ 1er trimestre 2018                           60                          100
+*ICM : Intervention chirurgicale majeure
+   Service de dialyse :
+La Direction envisagera l’élaboration d’un partenariat avec le conseil régional de la région
+Marrakech-Safi pour la réalisation d’un projet relatif à :
+   - Restructuration du service de dialyse
+   - Rénovation des générateurs de dialyse
+   Le Laboratoire :
+   - Activités du laboratoire :
+         Indicateurs                         2016                         2017
+ Ressources humaines :
+ Médicale :                                    1                            1
+ Techniciens :                                 6                            6
+ Assistants médicaux :                         3                            3
+ Les types d’examens              Hématologie-Biochimie-      Hématologie-Biochimie-
+ disponibles                      Bactériologie-Sérologie     Bactériologie-Sérologie
+ Nombre total des examens
+                                             56087                       61711
+ effectués
+
+   Service de Radiologie :
+   - Activités la radiologie :
+         Indicateurs                          2016                        2017
+ Ressources humaines :
+ Médicales :                                   1                            2
+ Techniciens :                                 7                            7
+ Examens de radiologie                       10226                        9692
+ Examens d’échographie                        1314                        1330
+ Nombre de Scanner                            933                          796
+ Nombre de mammographie                        0                            0
+Concernant la mammographie, la Direction va évaluer sa fonctionnalité pour prévoir son
+remplacement ou sa réparation.
+
+
+
+
+                                              19
+        D. Gestion de la pharmacie hospitalière
+       Concernant la pharmacie :
+    Le pharmacien préfectoral pour assurer provisoirement la gestion de la pharmacie du CHR Ibn
+    Zohr dans l’attente de l’affectation d’un pharmacien.
+       Système informatique :
+    La Direction du CHR a acquis tout le matériel informatique nécessaire pour l’installation de
+    l’application de la gestion des médicaments et des produits pharmaceutiques au niveau des
+    hôpitaux Ibn Zohr et el Antaki.
+       Concernant l’aménagement du site de la pharmacie de l’hôpital Ibn Zohr :
+    La Direction a entamé la procédure pour la résiliation du contrat avec la société qui n’a pas
+    honoré ses engagements, dans le but de relancer un nouveau marché pour compléter les travaux.
+       Concernant la détermination des besoins et l’élaboration des commandes :
+    Une commission est désignée à cette fin, présidée par le pharmacien.
+       En matière de gestion des drogues d’anesthésie :
+    L’utilisation d’un registre est d’un carnet à souches servent à assurer la traçabilité des sorties
+    aux services (blocs opératoires).
+       Pour la chambre froide
+    Le nouveau site de la pharmacie comprend la construction d’une chambre froide qui sera
+    opérationnelle après l’achèvement des travaux.
+        E. La gestion des ressources de l’hôpital Ibn Zohr
+       - Planning des consultations spécialisées externes au CCS BabLakhmis (copie en
+         annexes1) ;
+       - Bilan des consultations spécialisées par spécialiste (voir annexes2) ;
+       - Concernant l’opérationnalisation des autres spécialités de la chirurgie et dans l’attente
+         d’un réaménagement et l’équipement du bloc opératoire, la direction s’est engagée à :
+              - Pour l’urologie : implantation de la consultation au CCS à raison de 02
+                consultations par semaine ;
+              - Pour l’anatomopathologie : le CHR dispose de deux spécialistes qui exercent au
+                niveau du CHU Mohammed VI et vu la réception en 2018 des équipements pour
+                le laboratoire d’anatomopathologie, vu que les locaux du laboratoire sont
+                insuffisants pour implanter le laboratoire d’anatomopathologie la Direction a
+                décidé son implantation à l’hôpital El Antaki (Liste du matériel
+                d’anatomopathologie reçu de la DEM) ;
+              - Concernant le suivi des prestations externalisées, la Direction de l’hôpital a
+                renouvelé la constitution du comité de suivi de la restauration au niveau des
+                hôpitaux de Saada et d’Ibn Zohr. Aussi la Direction envisage la création d’autres
+                comités pour le suivi de l’exécution de toutes les prestations externalisées.
+
+
+
+1
+  Des annexes montrant planning des consultations spécialisées au titre du mois de mars 2018 ont été jointes
+à la réponse du Ministre de la santé.
+2
+   Les annexes jointes à la réponse du Ministre de la santé ne contiennent pas de bilan des consultations
+spécialisées par spécialiste.
+
+
+
+
+                                                    20
+       Commentaires du Ministre de l’économie et des finances au
+         sujet du contrôle de la gestion des centres hospitaliers
+                                       (Texte intégral)
+    ➢ Concernant le volet relatif à la gouvernance et le pilotage
+Vu l’importance de ce volet et son rôle pour assurer une meilleure gestion et veiller à la
+performance de ses résultats. Il est proposé, d’analyser l’ensemble des volets afférents à cet
+axe, dont notamment les points relatifs à :
+   - Améliorer le cadre de gouvernance des ressources humaines et instaurer un système de
+     gestion de la performance de ses ressources ;
+   - Mettre en place un plan d’action de renforcement de la capacité de gestion des
+     gestionnaires pour une meilleure allocation des ressources.
+    ➢ S’agissant du Projet d'établissement hospitalier
+Il est proposé d’ajouter au niveau des recommandations les points suivants :
+   - Tenir compte des volets relatifs à la formation, à la gestion et également au système
+     d’information qui revêt une importance particulière en tant qu’outil permettant une prise
+     en charge sécurisée des patients et d’aide à la prise de décision ;
+   - Respecter les objectifs du schéma régional de l’offre de soins, et déterminer les moyens
+     d’hospitalisation, de personnel et d’équipement dont chacun des établissements
+     hospitaliers le composant doit disposer pour réaliser ses objectifs ;
+   - Intégrer des fiches projets indiquant les actions envisagées pour chaque objectif
+     stratégique avec un échéancier de réalisation et les structures responsables et associées,
+     le coût estimatif, les ressources humaines et financières nécessaires et les indicateurs de
+     suivi et d’évaluation.
+Aussi, et en vue de répondre aux objectifs assignés à la nouvelle loi organique relative à la loi
+de finances, notamment en matière de renforcement de la programmation budgétaire
+pluriannuelle permettant aux gestionnaires une meilleure visibilité dans la gestion de leurs
+programmes, il est également proposé d’adosser à ce PEH un budget triennal indiquant
+les ressources et dépenses nécessaires pour la mise en œuvre des différentes activités de
+ce projet.
+    ➢ En ce qui concerne le système d’information hospitalier
+Tenant compte que la fiabilité des données et l’efficacité des systèmes d’informations est un
+préalable nécessaire à mettre en place notamment au niveau des hôpitaux publics en vue
+d’accompagner les réformes dans le domaine de la santé notamment la réforme de la
+Couverture Médicale de Base (AMO et RAMED), il est proposé d’ajouter une
+recommandation portant sur la mise à niveau des Services d’Accueil et d’Admission
+(SAA) des hôpitaux, notamment en ce qui concerne les outils informatiques et de
+facturation.
+    ➢ Pour le volet relatif à la gestion financière, et notamment la partie afférente
+      à la gestion des dépenses
+Il est à remarquer l’absence des données sur l’exécution financière des dépenses, à travers un
+examen des taux d’engagement et d’émissions des différentes rubriques budgétaires et de la
+situation de trésorerie. Ainsi, il est proposé d’intégrer également ce volet et de
+recommander la nécessité de veiller à améliorer les indicateurs de performance financière
+pour assurer l’efficacité et l’efficience des dépenses.
+
+
+
+
+                                               21
+    ➢ En ce qui concerne les structures d’accueil, d’accès aux soins, services
+      cliniques et médico techniques
+Les centres hospitaliers doivent fournir beaucoup d’efforts pour améliorer la qualité des
+services notamment l’accueil et de veiller à assurer des prestations sanitaires de qualité aux
+populations. Egalement des efforts sont à faire pour l’optimisation des structures (salles de
+consultations, équipements...) et une meilleure exploitation des ressources existantes.
+    ➢ En matière de déblocage des subventions
+La Direction du Budget veille au déblocage des différentes subventions dans les meilleurs
+délais dès qu’elle reçoit les pièces nécessaires de la part des services compétents du Ministère
+de la Santé.
+A noter également que ce déblocage reste tributaire du disponible de trésorerie des centres
+hospitaliers concernés et des capacités de consommation des crédits, sachant que certains
+centres dénotent de faibles taux d’engagement et d’émission des crédits mis à leur disposition.
+Il est à préciser que le non versement des subventions d’investissement en 2013 et 2016 est une
+décision qui a concerné l’ensemble des hôpitaux SEGMA, et ce tenant compte qu’en 2013
+c’était une proposition émanant du Ministère de la Santé suite à la décision gouvernementale
+du gel de ses crédits d’investissement, et en 2016 le non déblocage de la subvention a été
+compensé par le programme de mise à niveau des hôpitaux qui a bénéficié d’un montant de 1
+milliard de dirhams dans le cadre du budget d’investissement du Ministère de la Santé.
+    ➢ En matière de gestion des prestations externalisées
+La Direction du Budget adhère parfaitement à la recommandation émise dans ce sens et insiste
+sur la nécessité de revoir la politique des centres hospitalier en matière de gestion des marchés
+en se conformant à la réglementation en vigueur et à travers la veille au respect des clauses des
+cahiers de prescriptions spéciales par les titulaires des différents marchés.
+
+
+
+
+                                               22
+

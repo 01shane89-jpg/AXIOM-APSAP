@@ -437,3 +437,24 @@ bkk_bnh_img 200 text/html 521199
 bkk_bnh_surg 200 text/html 570317
 bkk_bnh_about 200 text/html 510775
 bkk_sv_centers 200 text/xml 107959
+ma_chu_decree 000 cannot open `/tmp/ma_chu_decree.bin' (No such file or directory) 
+ma_who_pnsts 200 application/pdf 1472974
+ma_fcdo_page 200 application/json 18581
+ma_fcdo_covid 200 application/json 10820
+ma_fcdo_odt 200 application/vnd.oasis.opendocument.text 40030
+ma_msps_hosp2024 200 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet 16573
+ma_msps_ds 200 application/json 74613
+ma_au_medlist 200 application/pdf 250963
+ma_bo_6388 200 application/pdf 18936751
+ma_cdc_rabat_rh_laayoune 200 application/pdf 864254
+ma_cdc_tanger 200 application/pdf 994634
+ma_cdc_marrakech 200 application/pdf 921909
+ma_cdc_ibnkhatib 200 application/pdf 734948
+ma_cdc_eljadida 200 application/pdf 948827
+ma_cdc_berkane 200 application/pdf 871548
+ma_cdc_temara 200 application/pdf 971172
+ma_cdc_mohammedv_casa 200 application/pdf 470746
+ma_ourairports 200 text/csv 12761365
+ma_ourrunways 200 text/csv 3975349
+ma_who_sara 200 text/html 646520
+ma_cnts 000 cannot open `/tmp/ma_cnts.bin' (No such file or directory) 

@@ -1,0 +1,110 @@
+SOURCE https://www.gov.uk/api/content/government/publications/morocco-list-of-medical-facilities/hospitals-mobilised-for-covid-19-in-morocco
+{"analytics_identifier":null,"base_path":"/government/publications/morocco-list-of-medical-facilities/hospitals-mobilised-for-covid-19-in-morocco","content_id":"e89f3047-d006-4072-9444-305296a50437","description":null,"details":{"body":" Disclaimer
+\n\n The Foreign, Commonwealth & Development Office (FCDO) does not accept any liability to any person or company for any financial loss or damage arising from the use of this information or from any failure to give information.
+\n\n List of private laboratories authorised by the Ministry of Health to test for COVID-19
+\n\n Casablanca-Settat
+\n\n \n \n \n City
+\n Centre
+\n Phone
+\n 
+\n \n \n \n Mohammedia
+\n Laboratoire central d’analyses medicales Mohammedia
+\n +212 5233-12547
+\n 
+\n \n Eljadida
+\n Laboratoire Semlali d’analyses medicales et de biologie de la reproduction
+\n +212 5233-43742
+\n 
+\n \n Casblanca
+\n Laboratoire d’analyses medicales DERB SULTAN
+\n +212 5228-15936
+\n 
+\n \n Casablanca
+\n Centre de biologie medicale Glab
+\n +212 5228-60910
+\n 
+\n \n Casablanca
+\n Biolam
+\n +212 5222-67267
+\n 
+\n \n Casablance
+\n Laboratoire international d’analyses medicales
+\n +212 5224-23960
+\n 
+\n \n Casablanca
+\n Laboratoire d’analyses medicales Anoual
+\n +212 5228-60336
+\n 
+\n \n Casablanca
+\n Laboratoire d’analyses medicales LABOMAC
+\n +212 5222-07422
+\n 
+\n \n \n\n Tanger-Tetouan-Alhoceima
+\n\n \n \n \n City
+\n Centre
+\n Phone
+\n 
+\n \n \n \n Tetouan
+\n Laboratoire Ibn Nafis d’analyes medicales generales et specialisees reproduction humaine
+\n +212 5399-61151
+\n 
+\n \n Laboratoire Fassi-Fehri d’analyses medicales
+\n +212 5397-03898
+\n 
+\n 
+\n \n Tanger
+\n Laboratoire derdabi
+\n +212 5393-43814
+\n 
+\n \n \n\n Rabat-Sale Kenitra
+\n\n \n \n \n City
+\n Centre
+\n Phone
+\n 
+\n \n \n \n Rabat
+\n Laboratoire de cytogenetique
+\n +212 5377-20835
+\n 
+\n \n Temara-Harhoura
+\n Laboratoire international d’analyses medicales
+\n +212 5374-04404
+\n 
+\n \n Meknes
+\n Laboratoire Chbibeb d’analyses medicales
+\n 002125354-4526
+\n 
+\n \n \n\n Agadir
+\n\n \n \n \n City
+\n Centre
+\n Phone
+\n 
+\n \n \n \n Agadir
+\n Laboratoires d’analyses medicales Mahfoud
+\n +212 5288-20210
+\n 
+\n \n \n\n Marrakech
+\n\n \n \n \n City
+\n Centre
+\n Phone
+\n 
+\n \n \n \n Marrakech
+\n Laboratoire Gueliz
+\n +212 5244-23322
+\n 
+\n \n Marrakech
+\n Laboratoire Dar El Baroud
+\n +212 5244-45849
+\n 
+\n \n \n\n Feedback
+\n\n If you use any of the organisations in this list, we would like to hear from you. While there is no obligation on your part to provide feedback, any information you can give us is helpful.
+\n\n Please send your feedback or complaint to the Embassy by post:
+\n\n \nBritish Embassy Rabat
+28 Avenue S.A.R. Sidi Mohammed
+Souissi 10105 (BP 45),
+Rabat
+Morocco\n
+\n\n or send us details of your feedback or complaint using our online feedback form . Thank you for your help.
+\n\n
+","first_published_version":false,"headers":[{"id":"disclaimer","level":2,"text":"Disclaimer"},{"headers":[{"id":"casablanca-settat","level":3,"text":"Casablanca-Settat"},{"id":"tanger-tetouan-alhoceima","level":3,"text":"Tanger-Tetouan-Alhoceima"},{"id":"rabat-sale-kenitra","level":3,"text":"Rabat-Sale Kenitra"},{"id":"agadir","level":3,"text":"Agadir"},{"id":"marrakech","level":3,"text":"Marrakech"}],"id":"list-of-private-laboratories-authorised-by-the-ministry-of-health-to-test-for-covid-19","level":2,"text":"List of private laboratories authorised by the Ministry of Health to test for COVID-19"},{"id":"feedback","level":2,"text":"Feedback"}],"political":false,"public_timestamp":"2020-11-27T08:45:20.000+00:00"},"document_type":"html_publication","first_published_at":"2020-11-27T08:45:20+00:00","links":{"available_translations":[{"api_path":"/api/content/government/publications/morocco-list-of-medical-facilities/hospitals-mobilised-for-covid-19-in-morocco","api_url":"https://www.gov.uk/api/content/government/publications/morocco-list-of-medical-facilities/hospitals-mobilised-for-covid-19-in-morocco","base_path":"/government/publications/morocco-list-of-medical-facilities/hospitals-mobilised-for-covid-19-in-morocco","content_id":"e89f3047-d006-4072-9444-305296a50437","document_type":"html_publication","links":{},"locale":"en","public_updated_at":"2020-11-27T08:45:20Z","schema_name":"html_publication","title":"Hospitals mobilised for COVID-19 in Morocco","web_url":"https://www.gov.uk/government/publications/morocco-list-of-medical-facilities/hospitals-mobilised-for-covid-19-in-morocco","withdrawn":false}],"government":[{"api_path":"/api/content/government/2016-to-2019-may-conservative-government","api_url":"https://www.gov.uk/api/content/government/2016-to-2019-may-conservative-government","base_path":"/government/2016-to-2019-may-conservative-government","content_id":"2255f51d-aff3-4854-8f66-8e4021d29f08","details":{"current":false,"ended_on":"2016-07-24T00:00:00+00:00","started_on":"2016-07-13T00:00:00+00:00"},"document_type":"government","links":{},"locale":"en","title":"2016 to 2019 May Conservative government","web_url":"https://www.gov.uk/government/2016-to-2019-may-conservative-government"}],"organisations":[{"analytics_identifier":"D1315","api_path":"/api/content/government/organisations/foreign-commonwealth-development-office","api_url":"https://www.gov.uk/api/content/government/organisations/foreign-commonwealth-development-office","base_path":"/government/organisations/foreign-commonwealth-development-office","content_id":"f9fcf3fe-2751-4dca-97ca-becaeceb4b26","details":{"acronym":"FCDO","brand":"foreign-commonwealth-development-office","default_news_image":{"high_resolution_url":"https://assets.publishing.service.gov.uk/media/621e4de4e90e0710be0354d7/s960_fcdo-main-building.jpg","url":"https://assets.publishing.service.gov.uk/media/621e4de48fa8f5490aff83b4/s300_fcdo-main-building.jpg"},"logo":{"crest":"single-identity","formatted_title":"Foreign, Commonwealth
+& Development Office"},"organisation_govuk_status":{"status":"live","updated_at":null,"url":null}},"document_type":"organisation","links":{},"locale":"en","schema_name":"organisation","title":"Foreign, Commonwealth & Development Office","web_url":"https://www.gov.uk/government/organisations/foreign-commonwealth-development-office","withdrawn":false}],"parent":[{"api_path":"/api/content/government/publications/morocco-list-of-medical-facilities","api_url":"https://www.gov.uk/api/content/government/publications/morocco-list-of-medical-facilities","base_path":"/government/publications/morocco-list-of-medical-facilities","content_id":"05e3df07-8186-4056-9f66-ec073f0657f7","document_type":"guidance","links":{},"locale":"en","public_updated_at":"2020-11-27T08:45:20Z","schema_name":"publication","title":"Morocco: doctors","web_url":"https://www.gov.uk/government/publications/morocco-list-of-medical-facilities","withdrawn":false}],"primary_publishing_organisation":[{"analytics_identifier":"D1315","api_path":"/api/content/government/organisations/foreign-commonwealth-development-office","api_url":"https://www.gov.uk/api/content/government/organisations/foreign-commonwealth-development-office","base_path":"/government/organisations/foreign-commonwealth-development-office","content_id":"f9fcf3fe-2751-4dca-97ca-becaeceb4b26","details":{"acronym":"FCDO","brand":"foreign-commonwealth-development-office","default_news_image":{"high_resolution_url":"https://assets.publishing.service.gov.uk/media/621e4de4e90e0710be0354d7/s960_fcdo-main-building.jpg","url":"https://assets.publishing.service.gov.uk/media/621e4de48fa8f5490aff83b4/s300_fcdo-main-building.jpg"},"logo":{"crest":"single-identity","formatted_title":"Foreign, Commonwealth
+& Development Office"},"organisation_govuk_status":{"status":"live","updated_at":null,"url":null}},"document_type":"organisation","links":{},"locale":"en","schema_name":"organisation","title":"Foreign, Commonwealth & Development Office","web_url":"https://www.gov.uk/government/organisations/foreign-commonwealth-development-office","withdrawn":false}]},"locale":"en","phase":"live","public_updated_at":"2020-11-27T08:45:20+00:00","publishing_app":"whitehall","publishing_request_id":"21-1763996290.565-10.13.22.247-2506","publishing_scheduled_at":null,"rendering_app":"frontend","scheduled_publishing_delay_seconds":null,"schema_name":"html_publication","title":"Hospitals mobilised for COVID-19 in Morocco","updated_at":"2026-11-12T12:24:32+00:00","withdrawn_notice":{}}

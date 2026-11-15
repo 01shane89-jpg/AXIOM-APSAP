@@ -1,0 +1,1017 @@
+SOURCE https://www.courdescomptes.ma/wp-content/uploads/2023/01/CH-Regional-Ibn-Al-Khatib.pdf
+             Centre hospitalier Ibn Al Khatib Fès
+Placé sous la tutelle du Ministère de la Santé, le centre hospitalier regional de Fès Boulemane
+(CHR) est un établissement géré de manière autonome (SEGMA) qui regroupe les structures
+suivantes :
+    -   L’Hôpital Ibn al Khatib (HIK : inauguré en 1912 et chef lieu du Centre hospitalier
+        régional. Il a été Centre hospitalier provincial (CHP) de 1998 à 2007 avant d’être érigé
+        en CHR en 2007 ;
+    -   L’Hôpital Ibn al Baitar (HIB), rattaché au CHP Ibn Al Khatib en 2005 ;
+    -   Le Centre Régional de Transfusion Sanguine (CRTS), rattaché au CHP Ibn Al Khatib en
+        2006.
+La population desservie par le CHR est de prés de 1813000 selon le recensement de2014.
+La cour des comptes a effectué une mission de contrôle de la gestion du CHR qui a porté sur les
+exercices 2010-2014 avec pour objectifs :
+    -   évaluer les résultats et les performances du CHR au regard des objectifs stratégiques et
+        organisationnels ;
+    -   apprécier l’efficience de la prise en charge des patients et des soins ;
+    -   apprécier la qualité du service rendu et la sécurité des patients ;
+    -   s’assurer de l’utilisation optimale des moyens du CHR.
+L’étendue de la mission a été délimitée au regard des objectifs et du temps qui lui sont impartis.
+Ainsi, le contrôle a porté sur deux structures hospitalières du CHR, à savoir l’HIK et l’HIB, et a
+couvert les domaines suivants :
+    -   Les aspects stratégiques et organisationnels ;
+    -   Le système d’information ;
+    -   Les ressources humaines et financières ;
+    -   Les activités de dispensation des soins ;
+    -   La pharmacie et le laboratoire ;
+    -   Les activités de soutien (nettoyage, gardiennage, restauration et brancardage) ;
+    -   L’hygiène et la sécurité des patients ;
+    -   Les équipements biomédicaux.
+L’effectif du personnel de l’HIK s’est élevé à 272 cadres et agents repartis entre 51 médecins,
+157 infirmiers et 64 cadres et agents administratifs et techniques. Les ressources du CHR sont
+constituées de recettes propres, composées essentiellement des produits des actes et prestations
+rendus - hospitalisations, consultations, imagerie et analyses médicales, de la vente des produits
+dérivés du sang et de la subvention de fonctionnement. Ces recettes propres ont enregistré une
+diminution de 44,50 % entre de 2010 à 2014, passant de 11 502 855,00 DH à 6 383 756,00 DH.
+Cette baisse s’explique essentiellement par l’entrée en vigueur du RAMED en 2012. Le budget
+de fonctionnement a été affecté et a connu une baisse de 43,48 % sur la même période passant de
+32 894 780,00 DH à 18 591 460,00 DH.
+
+
+
+
+                                                  1
+I. Observations et recommandations de la cour des comptes
+La mission de contrôle de la gestion mené en partenariat entre la cour des comptes et la cour
+régionale des comptes de la région Fès-Meknès a abouti à un ensemble d’observations et de
+recommandations dont les principales sont présentées ci-dessous :
+
+     A. Aspects stratégiques et organisationnels
+A cet égard, il a été constaté ce qui suit :
+     1. Planification stratégique
+Sur les périodes 2008-2012 et 2013-2016, et suivant les orientations des plans stratégiques
+nationaux sur les mêmes périodes, le CHR a établi deux plans d’actions stratégiques qui se
+caractérisent par une redondance annuelle des actions sans indicateurs de mesure des résultats.
+Sur la période 2011- 2014, les actions prioritaires à répercussions financières ne sont pas adossées
+à un plan de financement. Elles sont de ce fait reprises dans les plans annuels sans jamais être
+concrétisées.
+En outre, le CRH a préparé à la demande du ministère de la santé un budget programme
+comprenant huit actions prioritaires pour une enveloppe de 3.875.000,00 dhs. Le CRH n’a reçu
+aucune réponse du ministère depuis le 05/06/2013, date d’envoi de ce projet qui repose en totalité
+sur un financement du ministère.
+En l’absence d’indicateurs de performance permettant d’évaluer la pertinence des objectifs et des
+résultats, le CHR se contente de la présentation annuelle des résultats au comité de gestion. Les
+recommandations de ce comité ne font d’ailleurs pas l’objet de suivi et d’évaluation.
+Au vu de ce qui précède, la Cour des comptes recommande au CHR d’améliorer sa
+planification stratégique en :
+ -    fixant des prévisions en termes de performance ;
+ -    fixant pour ses actions, devant être issus d’une vision stratégique, un échéancier et un
+      montage financier favorisant la collaboration et garantissant leur conduite à terme ;
+ -    améliorant le fonctionnement et l’effectivité du rôle du comité de gestion dans l’évaluation
+      des choix stratégiques et organisationnels du CHR et en instaurant un mécanisme de suivi
+      de ses recommandations.
+     2. Système d’information et contrôle interne
+        2.1 Gestion de l’information hospitalière
+Le service d’accueil et d’admission (SAA), à travers des relations fonctionnelles avec l’ensemble
+des centres d’activité de l’hôpital, s’occupe de toutes les formalités administratives d’admission,
+de facturation et de recouvrement. Il utilise à cette fin un système d’information non intégré et
+composé principalement d’une application informatique « DIMBAF » et d’un système
+d’information papier : L’application informatique, mise en place par la division de l’informatique
+et des méthodes relevant du ministère de la santé, traite à la fois les informations recueillies par
+le service de l’enregistrement et des entrées et celles renseignées par les services médicaux, dans
+les fiches relatives à l’hospitalisation, à l’ambulatoire (actes de consultation et de diagnostic) et
+aux urgences;
+L’examen du fonctionnement de ces systèmes d’information a permis de relever des insuffisances
+parmi lesquelles :
+      Application non sécurisée et non fiable
+L’accès est ouvert à tous les utilisateurs sans définition de niveau d’accès. Il a ainsi été relevé que
+les agents du service admission et facturation peuvent modifier des factures préalablement
+enregistrées et sans que l’opération génère des traces sur l’application. Le système permet en outre
+
+
+
+
+                                                  2
+d’éditer la fiche de sortie aux malades sans que la date soit renseignée. Ceci ne permet pas d’avoir
+des informations fiables sur la durée d’hospitalisation.
+     Défaut de la qualité de certaines informations
+Le code CIM10 se rapportant au diagnostic d’admission et actes projetés n’est pas
+systématiquement renseigné par les services producteurs de soins. L’application ne peut donc pas
+restituer des statistiques épidémiologiques.
+A travers l’examen des situations d’entrées et de sorties des patients hospitalisés en 2014, il est
+apparu que 357 malades ont quitté l’hôpital sans effectuer leurs démarches de sortie et sans que
+les services hospitaliers ne déclarent ces sorties et leur contexte.
+De plus, l’application permet l’attribution de plusieurs « identifiant patient (IP) » pour le même
+patient. Il a été relevé, en effet, qu’au cours de la même année, pour le même patient et pour la
+même spécialité plusieurs dossiers d’hospitalisations sont ouverts. Cette insuffisance ne permet
+pas d’avoir l’historique du patient à partir d’un « IP » unique.
+     Des faiblesses du contrôle interne du système de facturation
+Les codes « NJAP» des actes et prestations de soins, qui sont à la base de la facturation, ne sont
+pas toujours portés sur les fiches des prestations. Ceci entraine un risque de sous ou surfacturation.
+De plus, les factures établies par la section de la facturation sont sujettes à des modifications sans
+aucune traçabilité, et en l’absence d’une fonction de contrôle et validation de ces factures.
+Les payants directs ne sont pas enregistrés au service d’accueil et d’admission et ne reçoivent pas
+de factures concernant les prestations rendues. Il n’y a aucune traçabilité sur ce type de débiteurs.
+Ce qui dénote l’absence de contrôle interne à ce niveau qui aurait du se baser sur des
+rapprochements entre la section enregistrement, la section facturation et la régie. De même, les
+assurés couverts par l’assurance maladie obligatoire(AMO) versent au caissier 20% de la
+tarification appliquée sans factures préalablement établies. De telles pratiques, non conformes par
+ailleurs aux prescriptions du guide du fonctionnement du SAA, constituent des risques d’erreurs
+ou de fraudes.
+En somme le système de facturation est marqué par des faiblesses du contrôle interne. Les
+pratiques liées à la fonction de la facturation au niveau de la SAA ne permettent pas une maitrise
+des risques et, partant, ne permettent pas de garantir la fiabilité des informations financières.
+     Manque du contrôle de la fiabilité et de la qualité des informations
+La gestion de l’information hospitalière au niveau du SAA ne prévoit pas une fonction de contrôle
+ayant pour objectif de vérifier la cohérence des informations de la section d’information et des
+statistiques du SAA et celles émanant des différents services hospitaliers.
+       2.2 Gestion des rendez-vous des patients
+ La gestion des rendez-vous s’appuie sur l’application informatique « mawidi » mise en place par
+le ministère de la santé. L’examen du fonctionnement de cette application a donné lieu aux
+observations suivantes :
+     Une application non sécurisée
+Les utilisateurs du SAA chargés de l’enregistrement des rendez-vous ainsi que ceux du centre de
+diagnostic chargés de valider les consultations ont l’accès à toutes les fonctionnalités de
+l’application, sans affectation des droits d’accès ou rôles pour chaque profil (annulation,
+confirmation, visualisation de liste des rendez-vous). Ce qui montre que l’application n’est pas
+sécurisée contre toute modification ou utilisation abusive. A ce propos, il a été constaté que
+l’informaticien responsable de la gestion de l’application procède régulièrement au « balayage »
+des rendez-vous dont les noms sont enregistrés plusieurs fois ou des rendez- vous suspectés d’être
+fictifs. Or, le remplacement des noms balayés profite à des patients, jusqu’alors non enregistrés,
+qui obtiennent des rendez-vous avec des dates rapprochées. De ce fait, on se retrouve avec des
+
+
+
+
+                                                  3
+rendez-vous ayant la même date pour des dates d’enregistrement de demandes de RDV bien
+décalés. Ce qui contrevient au principe de l’égalité de l’accès aux soins.
+      Carences dans le fonctionnement de l’application informatique
+Le fonctionnement de l’application soulève en outre les insuffisances suivantes :
+     -   Absence d’interface avec l’application DIMBAF susvisée ;
+     -   Absence de la validation systématique des consultations au centre de diagnostic ;
+     -   Absence d’un état de rapprochement entre les consultations programmées et celles
+         réalisés ;
+     -   Absence d’une interface adaptée à la nature de la prestation.
+En conséquent, la Cour des comptes recommande au CHR de :
+ -    Mettre en place, avec l’appui du ministère de la santé, un système d’information intégré
+      et sécurisé qui intègre l’ensemble des informations administratives, médico-
+      administratives et financières, et ce pour une gestion efficace de l’information
+      hospitalière ;
+ -    Procéder à l’attribution d’un « identifiant patient (IP) » unique pour chaque patient quel
+      que soit le nombre des admissions à l’hôpital, et ce pour avoir un historique sur le patient
+      à partir de cet identifiant ;
+ -    Généraliser la facturation préalable pour l’ensemble des actes relevant de l’ambulatoire
+      (actes de consultation et de diagnostic) et des urgences ;
+ -    Mettre en place un système de contrôle interne au niveau du SAA, basé sur un
+      organigramme définissant les relations hiérarchiques et fonctionnelles des sections et des
+      procédures permettant l’automatisation des contrôles et des recoupements nécessaires, et
+      ce dans l’objectif de maitriser les risques liés notamment aux fonctions de facturation et
+      d’encaissement ;
+ -    Veiller sur le respect du principe de l’équité de l’accès aux soins dans la gestion des
+      rendez-vous des patients.
+     3. Ressources humaines
+Concernant cet aspect il a été relevé ce qui suit :
+      Effectif insuffisant du personnel paramédical
+L’effectif du personnel paramédical a connu une régression sur la période 2010 à 2014 passant de
+176 à 157, soit une baisse de 10%. Ceci tient, d’une part, aux départs en retraite -, anticipés ou
+par limite d’âge et non remplacés, et d’autre part, au changement de cadre « infirmier » au
+cadre « administrateur » pour 13 infirmiers. Cet effectif, rapporté à la capacité litière de chaque
+service de médecine, montre que la majorité de ces services souffre d’un besoin en personnel
+paramédical. Le nombre de lits par infirmier se situe entre 10 et 20 le jour et entre 20 et 60 la nuit.
+Ce qui n’est pas conforme aux dispositions de l’article 38 de l’arrêté du Ministre de la santé
+n°1693-00 du 02 novembre 2000, fixant les normes techniques des cliniques, qui précise que l’on
+doit disposer, au minimum et à temps complet, pour les soins, d’un infirmier diplômé d’Etat et
+d’un infirmier auxiliaire pour 10 lits.
+      Vieillissement de la pyramide des âges du personnel paramédical
+La pyramide d’âge du personnel infirmier révèle un vieillissement de cette catégorie de personnel.
+En effet, 57% du personnel paramédical est âgé entre 51 et 60 ans, 36% entre 31 et 50 ans et 7%
+entre 20 et 30 ans. Cette tendance conjuguée à la régression des effectifs est de nature à affecter
+la qualité des prestations hospitalières.
+
+
+
+
+                                                  4
+La Cour des comptes recommande au CHR d’élaborer un plan des effectifs basé sur l’analyse
+des postes, le réajustement des effectifs entre structures hospitalières et la programmation de
+nouveaux recrutements.
+
+    B. Prise en charge des patients et production des soins
+Les observations suivantes ont été relevées :
+   1. Gestion des rendez-vous
+            a. Hôpital ibn al khatib
+Les délais de rendez-vous moyen (DRVM) pour l’année 2014 ont été extrêmement longs pour la
+chirurgie générale, l’endocrinologie et la dermatologie (entre 4 mois et 7 mois), très longs pour
+la cardiologie, la néphrologie, la médecine interne et l’ophtalmologie (entre 1 mois 23j et 2 mois
+23j), et relativement peu élevés pour la gynéco-obstétrique, la pédiatrie et la pneumologie (entre
+7j et 16j). Durant la période 2010-2014, le DRVM a connu des fluctuations. Il a atteint son pic en
+2013 (6 mois après l’entrée en vigueur du RAMED), quasiment toutes spécialités confondues,
+avec une moyenne de 105,5 jours. Cette moyenne a été impactée par des délais extrêmement
+élevés observés au niveau de la dermatologie et de l’endocrinologie ayant atteint respectivement
+9 mois et 7 mois 21j. De 2013 à 2014, l’augmentation du nombre de médecins de ces spécialités,
+passant de 25 médecins à 29 médecins, ainsi que les gains en productivité des médecins de 12,86%
+en moyenne ont ramené le DRVM de 150,5j à 73j. Ceci reste insuffisant car en deçà des
+réalisations de 2012, (45j pour un effectif de 28 médecins).
+            b. Hôpital ibn al baitar
+La gestion informatique des rendez-vous n’ayant démarré qu’en 2015, les informations pour la
+période 2010-2014 ne sont pas disponibles. En juin 2015, les DRVM se sont situés à 6mois pour
+la rhumatologie, à 4 mois pour la neurologie et à un mois pour la médecine physique et la
+réadaptation.
+   2. Indicateurs de l’efficience de prise en charge des patients
+            a. Hôpital ibn al khatib
+     Taux d’occupation moyen faible pour les services de pneumologie, de
+      cardiologie, de chirurgie et de réanimation
+ Les services de pneumologie, de cardiologie, de chirurgie et de réanimation, qui ont
+respectivement une capacité d’accueil fonctionnelle de 60, 30, 22 et 10 lits présentent le TOM le
+moins élevé pour les années 2012, 2013 et 2014, avec des moyennes respectives de 52%, 43,5%,
+33,12% et 13%. Ces taux restent inférieurs à la moyenne nationale de l’année 2013 qui est de
+63,60 %, ce qui dénote une sous-utilisation des structures de ces services. Les services
+d’endocrinologie et de maternité affichent le TOM le plus élevé dépassant 100% pour certains
+mois de l’année. Pour le service de l’endocrinologie, le surplus de patients à hospitaliser est
+orienté au service de médecine générale. Tandis que le service de maternité garde le surplus au
+niveau de ses locaux.
+     DMS élevée pour la pneumologie, l’endocrinologie et la médecine interne
+Les services de pneumologie, d’endocrinologie et de médecine interne affichent, pour les années
+2012, 2013 et 2014, la DMS la plus élevée avec des moyennes respectives de 12jours, 10jours et
+9jours. Les investigations menées sur place et les entretiens avec les différents chefs de services
+ont permis de relever des facteurs tant d’ordre organisationnel que d’ordre médico- techniques,
+expliquant cette hausse de la DMS, qui se résument dans ce qui suit :
+       Hôpital du jour non pratiqué : Il a été constaté que les activités de l’hôpital du jour ne
+        sont pas pratiquées pour la majorité des services, et ce à cause de la non définition des
+        pathologies et actes pouvant être pris en charge par l’hôpital du jour et du manque du
+        personnel paramédical qualifié et des équipements médicotechniques.
+
+
+
+
+                                                5
+        Non instauration de la garde résidentielle : L’absence du médecin de garde au niveau
+         du service ne permet pas la prise de décision rationnelle quant à l’hospitalisation du
+         patient. En effet, l’orientation des patients passant par les urgences en dehors des horaires
+         administratifs pour hospitalisation aux services, notamment de médecine générale et
+         médecine interne, s’avère parfois sans fondement comme l’ont déclaré les médecins chefs
+         de ces services et fait augmenter par conséquent la DMS. Ce constat est d’autant vrai pour
+         les patients hospitalisés la nuit du vendredi, qui doivent attendre le lundi pour que le
+         médecin du service se prononce sur la pertinence de l’hospitalisation.
+        Absence de salles de gestes au niveau du centre de diagnostic : Le centre de diagnostic
+         ne dispose pas de salles de gestes pour la prise en charge des malades. La présence de
+         cette salle est de nature à assurer les actes de petite chirurgie et les soins non compliqués,
+         sans passer par l’hospitalisation. Il importe de signaler que l’immobilisation des lits par
+         des patients pour une période élevée est de nature à accroitre le coût d’hospitalisation.
+         D’ailleurs, la DMS élevée des services de pneumologie, d’endocrinologie et de médecine
+         interne a toujours fait l’objet de recommandations du comité de gestion sans que le CHR
+         ne prenne les dispositions nécessaires pour fluidifier la prise en charge et réduire la DMS.
+             b. Hôpital ibn al baitar
+La mission a constaté qu’au niveau de cet hôpital, le TOM n’a pas dépassé 28% pendant les quatre
+années considérées. Le taux le plus important a été enregistré en 2014 avec 36,84 %. La DMS
+s’est situé à 16,15 jours. Force est de constater que l’HIB affiche un TOM très bas et très en deçà
+des 63.60% de moyenne nationale en 2013. Ceci est dû à l’absence en son sein des examens
+biologiques et radiologiques nécessaires pour une bonne prise en charge des hospitalisés. Cette
+structure d’hospitalisation est donc sous utilisée.
+La Cour des comptes recommande :
+ -    D’agir en vue de diminuer les délais de rendez vous longs, en particulier pour la chirurgie
+      générale, l’endocrinologie, la dermatologie, la cardiologie, la néphrologie et la médecine
+      interne, et ce en améliorant la productivité des médecins et, si nécessaire, en renforçant
+      l’effectif des médecins dans ces disciplines ;
+ -    D’optimiser l’utilisation des lits pour réduire le coût d’hospitalisation, et ce en agissant
+      sur les paramètres suivants :
+ -    Réduire la DMS en particulier pour les services de pneumologie, d’endocrinologie et de
+      médecine interne et ce, en mettant en place l’hôpital du jour pour les pathologies et actes
+      pouvant être pris en charge par cette unité et, parallèlement, en dotant les services
+      cliniques du personnel paramédical qualifié, des équipements médicotechniques et des
+      examens biologiques nécessaires ;
+ -    Regrouper les services d’hospitalisation ayant un TOM faible et ne présentant pas une
+      incompatibilité clinique. Ce qui permettrait de disposer des lits qui seront mobilisés pour
+      répondre à la demande en hospitalisation pour les services qui affichent un TOM élevé ;
+ -    Doter l’HIB d’un service de radiologie pour assurer les examens nécessaires pour une
+      bonne prise en charge des patients hospitalisés.
+     3. Conditions d’accueil et d’hospitalisation
+      Manque d’espace d’accueil et d’attente à l’hôpital Ibn Al Khatib
+Le CHR souffre de l’absence des espaces d’accueil et d’attente appropriés. En effet, les patients
+accompagnés de leurs familles qui se présentent au SAA, soit pour l’enregistrement soit pour le
+règlement des prestations rendues, ne s’installent pas dans un espace d’accueil et d’attente
+adéquat. Ils restent à l’extérieur du service, exposés aux aléas climatiques. De même, au niveau
+
+
+
+
+                                                   6
+des services cliniques et médicotechniques de l’hôpital, l’attente se fait dans les couloirs dans le
+même circuit du personnel ; chose qui dérange les professionnels de l’hôpital.
+     Le transport des patients ne se fait pas par les brancardiers
+Le brancardage des patients se fait par leurs accompagnants. Ceci tient au fait que les brancardiers
+affectés à l’hôpital dans le cadre du marché relatif au service externalisé de brancardage,
+effectuent d’autres tâches administratives et techniques à l’hôpital.
+     Circulation non maitrisée des véhicules et des personnes à l’intérieur de
+      l’hôpital affectant le bien être des patients
+L’existence d’une seule porte d’accès à l’hôpital, l’emplacement du centre du diagnostic à
+l’intérieur de l’hôpital, du siège de la délégation de la santé de la province de « Moulay Yaacoub»,
+de l’annexe de l’ISPITS et de 37 logements domaniaux, sont autant d’éléments qui ne permettent
+pas la séparation des circuits : Personnel, malades, patients, locataires, visiteurs et logistiques, et
+rendent fréquemment la circulation des véhicules et des personnes à l’intérieur de l’hôpital non
+maitrisable, causant ainsi un désagrément, affectant le bien être des patients.
+     Conditions d’hospitalisation ne favorisant pas l’humanisation de la prise en
+      charge des patients
+L’hospitalisation se fait dans des salles de 8 lits alors que l’arrêté du ministre de la santé n° 1693-
+00 du 2 novembre 2000 fixant les normes techniques des cliniques stipule dans son article 16 que
+l’hébergement des malades doit se faire soit dans des chambres individuelles soit dans des
+chambres à deux lits. Au niveau de la majorité des services, ces salles ne sont dotées ni de lits
+articulés ni de lits adaptés aux besoins des cas particuliers, et les blocs sanitaires sont en général
+mal entretenus, dégagent des odeurs nauséabondes et leurs équipements de plomberie et sanitaires
+sont dans un état de dégradation avancée. Les patients porteurs de maladies contagieuses
+partagent la même chambre avec les autres patients par manque de salles d’isolement. De même,
+le bloc opératoire ne dispose pas de salles de préparation à l’intervention distinctes pour hommes
+et pour femmes.
+     Le déménagement des structures médicales de l’HIB a impacté le niveau de
+      d’activités
+Les services d’hospitalisation de l’HIB ont été contraints à abandonner, fin 2014, leur bâtiment.
+Celui-ci, construit récemment par la Fondation Mohamed V, a révélé des graves défaillances et
+anomalies de construction graves. Les services d’hospitalisation sont actuellement logés à titre
+provisoire au niveau de l’hôpital provincial « Al Ghassani ». Cette situation qui dure depuis plus
+d’un an a eu un impact négatif sur l’activité. Ainsi, les journées d’hospitalisation sont passées de
+783j à 296j entre septembre 2014 et mai 2015 soit une diminution de 62 %. Le nombre d’actes de
+rééducation a quant à lui régressé de 16,10%, en passant de 7762 actes 6512 actes entre en juin
+2014 et mai 2015. Et dans rubrique, les actes de psychomotricité ont été les plus affectés du fait
+de l’impossibilité pour cette unité d’utiliser tous ses équipements ; la salle ne se prêtant pas à cela.
+   4. Production des soins
+L’analyse des indicateurs de performance ainsi que les questions soulevées dans le comité de
+gestion ont montré que certaines fonctions de soins au niveau l’HIK connaissent des problèmes
+impactant la dispensation, l’efficience et la qualité des soins. Lesdits problèmes et leurs causes
+ont été identifiés et analysés. Ci après certaines d’entre elles :
+             a. Les urgences
+Avec 9 médecins et 13 infirmiers, le service des urgences a réalisé en 2014 48304 consultations
+dont 5483 à caractère chirurgicale soit 11.35%. Ceci dénote des limites de la fonction d’urgence
+dans un hôpital ayant une vocation régionale.
+
+
+
+
+                                                   7
+     Prise en charge limitée
+Les cas urgents présentant un risque vital ou fonctionnel ne sont pas tous pris en charge. Ce constat
+est illustré dans les cas suivants :
+    -    Les personnes victimes des accidents de la voie publique sont orientés vers d’autres
+         structures sans passer par le service des urgences ;
+    -    Les pathologies nécessitant une intervention chirurgicale d’urgence ne sont pas prises en
+         charge à cause de l’absence de la garde résidentielle au service de la chirurgie générale,
+         de l’ORL et de l’ophtalmologie ainsi que l’absence des spécialités de la neurochirurgie,
+         de la traumato-orthopédie et de la chirurgie pédiatrique ;
+    -    Les pathologies nécessitant une réanimation médicale ne sont pas prises en charge à
+         cause de l’absence de cette spécialité ;
+    -    La salle de déchoquage n’est pas fonctionnelle pour manque de personnel qualifié.
+ Dans pareils cas, le service des urgences procède au transfert des patients concernés vers d’autres
+structures de soins.
+            b. Service de réanimation
+Le service de réanimation compte 3 médecins et 8 infirmiers. Sa capacité litière fonctionnelle
+(CAF) est de 10 lits alors que son TOM n’a été que de 13% en moyenne sur les trois dernières
+années.
+ Les patients des urgences ou hospitalisés dans les services qui nécessitent une réanimation
+médicale ne sont pas pris en charge par le service de réanimation et sont transférés au CHU. Dans
+cette situation, le nombre de décès enregistré dans les services est très élevé par rapport à celui
+du service de la réanimation, En effet, la moyenne de décès sur les deux dernières années,
+enregistrée au niveau de tous les services, a atteint 329 décès, alors que celle du service
+réanimation était seulement de 3 décès. Le comité de gestion dans sa réunion du 30/03/2015 a
+soulevé le caractère paradoxal de cette situation, en concluant que le service de réanimation ne
+joue pas le rôle qui lui est assigné.
+            c. Service de chirurgie
+Le service de la chirurgie de l’HIK dispose d’une capacité théorique de 62 lits. Toutefois la
+capacité fonctionnelle n’est que de 22 lits. Le TOM en 2014 n’a pas dépassé 32%. Ce service
+compte actuellement un chirurgien viscéral qui pratique seulement des interventions
+programmées (à froid) et un médecin spécialisé en ORL qui, par manque de matériel chirurgical
+spécifique, n’effectue principalement que les actes relatifs à la glande thyroïde qui nécessite le
+même matériel que la chirurgie générale. Les autres disciplines chirurgicales à savoir, la traumato-
+orthopédie, la chirurgie infantile, la neurochirurgie, la chirurgie réparatrice et l’urologie ne sont
+pas pratiqués au niveau de ce service. De même, La productivité des médecins de ce service est
+en régression continue. Elle est passée de 5 ICM/semaine en 2010 à 3 en 2014. Tous ces éléments
+reflètent le déclin de la chirurgie et le manque de visibilité quant à sa continuité et pérennité dans
+un hôpital à vocation régionale.
+            d. Service de maternité
+Le service de gynéco-obstétrique dispose de 5 médecins répartis entre la gynécologie et
+l’obstétrique, de 25 sages-femmes et accoucheuses et d’une CAF de 55 lits dont 47 pour
+l’hospitalisation.
+     Mauvaises conditions de prise en charge des naissances
+Le service de gynéco-obstétrique affiche un TOM très élevé, dépassant parfois le taux de 100%.
+A titre d’exemple, pour les mois de novembre et décembre 2014, celui-ci a atteint respectivement
+142 % et 135 %, En cas de dépassement de la capacité litière du service, les paturientes en surplus
+partagent les lits avec d’autres paturientes ou s’installent à même le sol dans des conditions
+
+
+
+
+                                                  8
+inhumaines. De même, les suites de couches ne dépassent pas 24 heures, au lieu des 48 heures
+recommandées par le plan d’action 2012-2016 visant la réduction des mortalités maternelle et
+néonatale. En plus, les parturientes présentant des complications sont transférées au CHU dans de
+mauvaises conditions. La seule ambulance à la disposition de l’hôpital n’est pas médicalisée. De
+même, l’HIK n’a aucun retour d’information sur les cas transférés.
+     Non observation de la garde résidentielle par les médecins
+Malgré le flux intense que connait le service de gynéco-obstétrique, les cinq médecins n’observent
+pas le système de garde résidentielle. Ceci constitue un grand risque pour les pathologies
+nécessitant une intervention rapide, notamment les cas des hémorragies et d’accouchement
+dystociques.
+     Nombre de césariennes en régression et nombre de mort-nés élevé
+Le nombre d’accouchement a connu une diminution de 20% entre 2010 et 2013, puis un
+accroissement entre 2013 et 2014, dans la même proportion, pour s’établir à 7529. En revanche
+le nombre de césariennes a accusé une régression nette de 34%, en passant de 1064 opérations à
+701 opérations. De même, La productivité des médecins a enregistré une contre-performance de
+21%, en passant de 177 césariennes/médecin/an à 141cesariennes/médecin/an.
+Le nombre de mort nés pour mille a enregistré une diminution de 40,47%, entre 2010 et 2013, en
+passant de 19 à 11,31, ensuite, il s’est accru de 22,10 % pour s’établir à 13,81 en 2014.
+            e. Service de pédiatrie
+     Nombre de décès alarmant au niveau du service de la pédiatrie
+Le service de pédiatrie enregistre un nombre élevé de décès avec un taux moyen annuel de 88
+pour mille sur les quatre dernières années. Le nombre de décès néonataux, a enregistré un
+accroissement de 8% entre 2011 et 2013, en passant de 197 à 214, il a ensuite régressé de 11%
+pour s’établir à 190 en 2014. Le nombre de décès à un âge inférieur à 24 heures reste très
+préoccupant, il a augmenté de 36% pour atteindre 86 décès en 2014.
+Le nombre des prématurés hospitalisés est en progression continue. Il est passé de 95 admissions
+en 2011 à 136 admissions en 2014, soit un accroissement de 43%. Cependant, le taux de mortalité
+des prématurés est extrêmement élevé. Il a atteint 419/1000 en 2014. Il importe de signaler que le
+taux de décès des prématurés reste extrêmement élevé par rapport à la moyenne nationale ; les
+chiffres publiés en 2012 montrent que le taux moyen national n’a pas dépassé 26 %, alors que le
+taux enregistré à l’HIK est de 45%.
+Le taux de décès élevé enregistré dans le service de la pédiatrie s’explique principalement par la
+non-conformité des conditions d’hygiène aux normes requises. En effet, une enquête menée, suite
+à des épidémies nosocomiales en 2010 au niveau du service, a révélé des insuffisances dans les
+mesures d’hygiène et d’entretien des couveuses, constituant des facteurs de risques. Ces
+insuffisances se résument comme suit :
+    -   Le nettoyage et la désinfection des couveuses et des tables chauffantes n’est pas
+        conformes aux exigences d’hygiène ;
+    -   Les mesures d’hygiène et d’asepsie ne sont pas observées (port de gant, tenue appropriée)
+        dans les salles de néonatalogie et de réanimation ;
+    -   L’accès aux salles de néonatalogie n’obéit pas à des règles rigoureuses.
+A cet effet, des recommandations ont été émises par l’équipe d’enquête en vue de pallier à ces
+insuffisances. Or, en 2014 une autre enquête menée, suite à une épidémie nosocomiale qui a causé
+11 décès en 72 heures, a de nouveau mis en cause les conditions d’hygiène et d’entretien dans ce
+service, et a reconduit les mêmes recommandations. Ce qui dénote que depuis 2010, l’HIK n’a
+pas réussi à mettre en place les mesures et les dispositifs de sécurité pour se prémunir contre les
+
+
+
+
+                                                9
+risques d’infections nosocomiales. Aux facteurs de risques décelés par l’enquête susvisée,
+s’ajoutent d’autres facteurs soulevés par les médecins de services :
+     -   Les salles de néonatalogie et de réanimation ne sont pas isolées des salles
+         d’hospitalisation du service de la pédiatrie ;
+     -   L’absence d’un incubateur pour transporter les prématurés et manque de couveuses
+         suffisantes pour les prématurés ;
+     -   Le manque de formation du personnel paramédical en néonatalogie et en hygiène ;
+     -   La structure du bâtiment n’est pas adaptée. Elle souffre d’un manque d’aération et
+         l’évacuation des eaux du ménage se fait dans les salles d’hospitalisation ;
+     -   L’absence d’une salle d’isolation pour les cas contagieux ;
+     -   Le service de la pédiatrie ne dispose pas d’une unité de réanimation et d’une unité de
+         néonatologie équipées du matériel médicotechnique
+     -   L’absence au niveau du laboratoire de l’examen bactériologique du liquide
+         céphalorachidien. Ce qui peut induire à des diagnostics erronés et des traitements à
+         l’aveugle ;
+     -   L’absence de service de chirurgie infantile au niveau de l’hôpital devant prendre en
+         charge les cas nécessitant une intervention en urgence.
+            f. Le bloc opératoire central
+Le bloc opératoire central, disposant de trois salles dont deux fonctionnelles, ne répond pas aux
+normes prévues par les articles 32 et 33 de l’arrêté du Ministre de la santé n°1693-00 du 02
+novembre 2000, fixant les normes techniques des cliniques.
+La Cour des comptes recommande au CHR :
+Au niveau des urgences :
+ -   De doter le service des urgences en équipements médicotechniques nécessaires ;
+ -   D’œuvrer pour prendre en charge les cas urgents chirurgicaux, en mettant en place les
+     mesures d’accompagnement nécessaires, notamment la mise en place des disciplines
+     chirurgicales prévues par le décret n° 2-06-656 du 13 avril 2007 relatif à l’organisation
+     hospitalière, en vue de conforter la fonction chirurgicale de l’hôpital afin qu’il soit à la
+     hauteur de sa vocation régionale.
+Au niveau de la réanimation : D’œuvrer pour prendre en charge les patients nécessitant
+une réanimation médicale tout en instaurant un système de garde au niveau du laboratoire et
+de la radiologie ;
+Au niveau de la chirurgie :
+ -   De doter le service de moyens humains nécessaires pour assurer la garde résidentielle, et
+     mettre en place les autres disciplines chirurgicales avec les équipements médicotechniques
+     nécessaires et aménager un bloc central répondant aux normes.
+Au niveau de la maternité :
+ -   De prévoir l’extension du service, pour augmenter la capacité d’accueil, et l’aménagement
+     d’une salle d’accouchement, d’une salle de consultation « post partum » et des locaux de
+     consultations et d’exploration fonctionnelle répondant aux normes sanitaires avec des
+     circuits différents pour l’ensemble des usagés (personnel, patients et visiteurs) ;
+ -   D’instaurer la garde résidentielle des médecins et aménager à cet effet une salle de garde ;
+Au niveau de la pédiatrie :
+
+
+
+
+                                                10
+ -   De procéder à l’aménagement du service répondant aux normes sanitaires, notamment en
+     ce qui concerne l’aération et l’éclairage dans les couloirs et les salles d’hospitalisation ;
+ -   De procéder à l’aménagement de nouvelles unités de néonatologie et de réanimation
+     pédiatrique conformément aux normes relatives à l’hygiène hospitalière ;
+ -   D’instaurer la garde résidentielle des pédiatres et aménager à cet effet une salle de garde ;
+ -   De veiller scrupuleusement à l’application des règles d’hygiène pour prévenir les
+     infections nosocomiales afin de réduire le taux de mortalité néonatale.
+
+     C. Hygiène hospitalière et sécurité des patients
+      Insuffisances dans le contrôle de la qualité des repas
+Il a été constaté ce qui suit :
+     -   Les prélèvements d’environnement dans la chambre froide n’ont jamais été effectués, et
+         les prélèvements des surfaces de contacts (lieu de préparation des repas) n’ont pas été
+         effectués depuis 2011. Ce qui n’est pas conforme aux prescriptions du manuel d’hygiène
+         hospitalière et de prévention des infections nosocomiales préparé en 2009 par le
+         ministère de la santé en collaboration avec l’OMS ;
+     -   Les prélèvements ne sont pas effectués au lit du patient, surtout que les repas prennent
+         du temps avant d’être distribués au niveau des unités de soins éloignées (HIB) et en
+         l’absence des équipements isothermes de transports des aliments ;
+     -   La distribution spatiale de la cuisine ne permet pas le respect du principe de la marche
+         en avant (séparation des circuits sales et propres).
+      Défaillances dans le nettoyage et la désinfection des locaux des services
+       hospitaliers et absence du contrôle des agents infectieux manu portés
+ Il a constaté des contraintes liées à l’environnement interne de l’HIK, impactant la qualité de
+nettoyage et d’hygiène. Ces contraintes résident dans la persistance de quelques fosses septiques
+au niveau de l’HIK et des bouches d’évacuation des eaux du ménage dans les salles
+d’hospitalisation de certains services ainsi que l’abondance des chats errants au niveau de
+l’hôpital. D’un autre côté, les prélèvements de surfaces et d’air au niveau des zones à risque, ne
+sont pas programmés suivant une périodicité définie par le CLIN, et ce afin de satisfaire les
+conditions d’une bonne application des procédures de bio nettoyage.
+En dépit des actions de sensibilisation sur la prévention du risque de transmission des agents
+infectieux manu portés, il a été constaté qu’il y a un manque de zones de lavage des mains et de
+distributeurs de savon à proximité des malades (au niveau de chaque secteur et au niveau des
+grandes salles). Celles-ci étant nécessaires pour diminuer les transmissions croisées et la
+contamination manu portée. De plus, aucun prélèvement ne se fait au niveau des mains des
+professionnels, de leurs blouses et du matériel qu’ils utilisent, en vue d’évaluer le risque de
+transmission des infections manu portées et de prendre les mesures qui s’imposent.
+      Défaillance dans la gestion des déchets hospitaliers
+La mission a constaté que le tri des déchets hospitaliers ne se fait pas à la source. Il se fait à la fin
+de la journée par une femme de ménage. Ce qui peut causer la contamination de l’environnement
+et la propagation des infections dans l’entourage. De plus, ceci n’est pas conforme aux
+prescriptions de l’article 42 du marché cadre n°01/2012 relatif à l’hygiène et nettoyage des locaux
+du CHR Fès Boulemane, qui précise que « il est interdit aux agents de nettoyage de toucher ou
+d’évacuer des sacs contenant des déchets hospitaliers tels que : du matériel médical contaminé,
+des pansements utilisés, des fournitures souillées… ». De même, les agents de la société de
+nettoyage, empruntent le circuit des malades et professionnels au niveau des services hospitaliers
+et aux salles de prélèvements et de tests au niveau du laboratoire. Ce qui n’est pas conforme aux
+
+
+
+
+                                                   11
+exigences de sécurité sanitaire et de protection contre la propagation des infections au niveau de
+l’hôpital.
+La Cour des comptes recommande au CHR :
+ -    De renforcer l’intervention du CLIN en matière de lutte contre les infections nosocomiales
+      et ce conformément aux prescriptions de l’article 21 du règlement général des hôpitaux
+      du 6 juillet 2010 ;
+ -    D’améliorer les conditions de préparation et de distribution des repas en respectant les
+      normes d’hygiène ;
+ -    De veiller à ce que les prélèvements des surfaces, d’air, de l’eau et des aliments soient
+      programmés suivant une périodicité définie par le CLIN ;
+ -    De renforcer le contrôle d’exécution des marchés relatifs à la préparation et fourniture
+      des repas et à l’hygiène et le nettoyage des locaux, et ce en précisant au niveau des cahiers
+      de charges la fréquence des contrôles, les paramètres à contrôler, les outils de contrôle et
+      les critères de choix des zones et services comme lieux de contrôle ;
+ -    De renforcer les capacités des responsables d’hygiène par des formations en matière
+      d’hygiène hospitalière ;
+ -    De prévenir la contamination manu portée en prenant les mesures nécessaires en matière
+      d’hygiène vestimentaire et d’hygiène des mains
+ -    De mettre en place un procédé adéquat de tri des déchets hospitaliers à la source et prévoir
+      des niches de stockage de ces déchets dans le cadre de la séparation des circuits sales et
+      propres ;
+
+     D. Gestion des produits pharmaceutiques, du laboratoire et des
+        équipements biomédicaux
+     1. Gestion des produits pharmaceutiques
+Les investigations menées sur place par la mission de contrôle, concernant l’organisation de la
+pharmacie hospitalière et la gestion des produits pharmaceutiques, a permis de relever des écarts
+par rapport aux prescriptions du guide d’organisation et de fonctionnement de la pharmacie
+hospitalière (G.O.F.P.H), élaboré en 2013 par le ministère de la santé, et aux bonnes pratiques,
+que l’on présente dans ce qui suit :
+      Non respect des normes de conservation des produits pharmaceutiques
+Les conditions de conservation et de sécurité des produits pharmaceutiques présentent les
+dysfonctionnements suivants :
+      -   La vétusté et le délabrement des locaux de la pharmacie ne permettent pas le nettoyage,
+          et la désinfection aisée des sols, des murs et des plafonds ;
+      -   Les locaux de stockage sont dépourvus de systèmes de surveillance et de sécurité
+          (systèmes d’alarmes et de vidéosurveillance) et système de secours préventif capable de
+          faire face aux défaillances ;
+      -   Les niveaux d’éclairage, de la température et de la ventilation des locaux ne sont pas
+          contrôlés, à cause de l’absence de thermomètre pour la mesure de la température
+          ambiante, et de l’absence de l’Hygromètre de mesure de l'humidité résiduelle ; ce qui ne
+          permet pas d'assurer, outre la conservation et la protection des produits pharmaceutiques,
+          de bonnes conditions de travail du personnel ;
+
+
+
+
+                                                 12
+     -   Parmi les trois sites de stockage, deux sont dépourvus de rayonnages et de climatisation.
+         Les caisses des produits pharmaceutiques sont déposées directement sur le sol, en
+         l’absence des palettes et des transpalettes ;
+     -   Les surfaces apparentes des locaux de stockage présentent par endroits, des fissures, et
+         des infiltrations d’humidité.
+      Défaillances dans la gestion des stocks
+La pharmacie ne dispose pas d’un système d’information intégré à celui de l’hôpital pour assurer
+la traçabilité des médicaments et dispositifs, ni même d’une application informatique approprié
+pour la gestion des stocks. En outre, Les tâches ne sont pas bien définies. A titre d’exemple, le
+préparateur effectue plusieurs taches en même temps. Il réceptionne les livraisons, prépare les
+commandes des services, range les produits pharmaceutiques, assure le suivi des consommations
+d’oxygène pour les services cliniques et remplit les fiches de stocks. Il est par ailleurs nommé
+surveillant général à l’hôpital. Ce qui ne permet pas un bon contrôle interne basé sur la séparation
+des tâches ;
+      Des Médicaments et dispositifs périmés
+La mission a constaté l’existence des quantités de médicaments et dispositifs périmés. En 2014,
+la valeur des médicaments et dispositifs périmés déclarée par le pharmacien chef est de
+424.932,58 DH. Outre les défaillances relatives à la gestion des stocks, la péremption des
+médicaments s’explique par les causes suivantes :
+     -   Des livraisons en dehors de tout planning : la pharmacie reçoit ainsi chaque année des
+         livraisons en retard de médicaments et dispositifs, au titre de reliquat des années
+         antérieurs. Ceci crée souvent des situations soit de ruptures en médicaments et dispositifs,
+         soit des surstocks.
+     -   La livraison de médicaments et dispositifs dépassant les besoins des services. A titre
+         d’exemple, l’Hôpital a reçu en 2014 814 implants oculaires et n’a utilisé que 20.
+     -   La réception et la détention de médicaments et dispositifs périmés ou proche périmés,
+     -   La diminution de l’activité de certains services cliniques pour départ des médecins,
+         exemple le cas du service de chirurgie ;
+     -   La mauvaise estimation des besoins en médicaments et dispositifs. Celle-ci se base sur
+         les consommations antérieures des services sans intégrer les changements des protocoles
+         thérapeutiques et les éléments de la morbidité,
+     -   Les délais brefs accordés par le ministère de la santé aux responsables pour établir les
+         commandes des produits pharmaceutiques.
+La Cour recommande au CHR :
+ -   De mettre en place une solution informatique pour la gestion des stocks, dans le cadre
+     d’un système intégré entre la pharmacie et les différents services de soins ;
+ -   D’éviter la péremption des médicaments et dispositifs, et ce en exigeant de la pharmacie
+     centrale d’établir un planning d’approvisionnement qui tient compte des capacités de
+     stockage et des besoins réels ;
+ -   De renforcer les mesures de conservation et de sécurité au niveau des locaux de stockage,
+     moyennant la mise en place d’un système de contrôle de la température, de l’humidité et
+     du niveau d’éclairage et de ventilation ;
+ -   De doter la pharmacie de personnel qualifié pour assurer la gestion des médicaments avec
+     rigueur et efficacité.
+
+
+
+
+                                                 13
+ -    La Cour des comptes recommande également la mise en place d’une pharmacie régionale
+      chargée de la distribution réglementée des médicaments en fonction des besoins réels et,
+      le cas échéant, assurer l’échange des médicaments entres les pharmacies régionales.
+     2. Gestion du laboratoire d’analyses
+      Personnel de laboratoire insuffisant
+Le laboratoire dispose d’un seul médecin biologiste qui cumule le travail de chef du laboratoire
+et assure la validation des résultats des analyses biologiques. En son absence, les résultats sont
+délivrés sans validation. De même, La culture du bacille de Koch (BK), technique nécessaire pour
+le diagnostic de la tuberculose, ne s’effectue pas, faute d’un technicien bacilloscopiste.
+      Indisponibilité de certaines analyses indispensables
+La mission a constaté que certaines analyses jugées indispensable par les médecins, ne sont pas
+effectuées au niveau du laboratoire, il s’agit :
+      -   Des analyses bactériologiques en l’occurrence l’examen bactériologique du liquide
+          céphalorachidien ;
+      -   De la coproculture et l’examen parasitologique des selles ;
+      -   De la sérologie en l’occurrence HIV ;
+      -   De la culture du BK.
+      Défaillances dans la gestion des réactifs
+La mission a constaté que le service du laboratoire ne tient pas une comptabilité matière et les
+réactifs sont stockés dans de simples réfrigérateurs (non équipés de thermomètres médicaux
+étalonnés) éparpillés dans différentes salles du laboratoire.
+Des pertes de réactifs ont été enregistrées au niveau du laboratoire. Elles sont dues, selon les
+déclarations du médecin responsable :
+      -   Aux pannes répétitivités des automates ;
+      -   A l’instabilité des réactifs ;
+      -   A la mauvaise qualité des réactifs ;
+      -   Au nombre de tests inférieurs à la quantité de réactifs utilisée ;
+      Défaillance dans l’acquisition des fongibles
+Les cahiers de charge et les règlements de consultations relatifs aux marchés d’acquisition des
+fongibles (marché n°15/2014) ne prévoient pas l’examen des échantillons lors de la sélection des
+offres. L’absence de cette prescription a eu comme conséquences :
+      -   L’acquisition de tubes de prélèvements non adaptés aux appareils utilisés ;
+      -   La réception et l’utilisation des anticoagulants jugés de mauvaise qualité, par le médecin
+          responsable, suite aux tests qu’il a effectués.
+La Cour des comptes recommande de :
+ -    Elargir la gamme des analyses biologiques pour répondre aux besoins spécifiques des
+      services hospitaliers ;
+ -    Instaurer une solution informatique adaptée au service du laboratoire pour une gestion
+      efficace et productive des stocks interfacé à la gestion des patients, aux requêtes d’analyse
+      et des prélèvements et aux équipements dans le cadre d’un système d’information
+      hospitalier intégré ;
+ -    Doter le laboratoire en ressources humaines qualifiées et suffisantes et en équipements et
+      instaurer la garde résidentielle au sein du service.
+
+
+
+                                                  14
+    3. Gestion des équipements biomédicaux
+               a. Exploitation des équipements
+      Des équipements acquis en 2011 et non affectés s à ce jour
+ Certains équipements biomédicaux acquis par le ministère de la santé (DEM), et mis à la
+ disposition du CHR en 2011, sont toujours stockés dans le magasin. Il s’agit de :
+     -     Trois tables chauffantes enregistrées successivement sous les numéros d’inventaire
+           10072, 10073 et 10074, acquises en date du 31/05/2011 ; alors que le service de gynéco-
+           obstétrique exprime un besoin urgent en tables chauffantes ;
+     -     Un respirateur de réanimation enregistré sous le n° d’inventaire 10078/1, acquis en date
+           du 22/06/2011.
+      Des équipements affectés mais inutilisés
+ Des équipements acquis pendant la période sous revue sont inexploités pour différentes causes.
+ Ces équipements sont présentés dans le tableau suivant :
+                             N°                                    Date           Causes de non
+   Désignation                         Lieu d’affectation
+                        d’inventaire                           d’affectation       utilisation
+                                                                               Absence du logiciel de
+Echocardiodoppler          10547       Centre de diagnostic     07/03/2012
+                                                                               fonctionnement
+Matériel           de                                                          Absence du technicien
+                           3586        Centre de diagnostic        2004
+puvathérapie                                                                   spécialisé
+Analyseur gaz de                           Service de                          Besoin non exprimé
+                           9692                                 10/12/2010
+sang                                       laboratoire                         par le service
+                                            Service de
+Appareil        radio                                                          Absence de technicien
+                           9989            réanimation          30/12/2010
+mobile                                                                         spécialisé
+                                           chirurgicale
+                                         Bloc opératoire
+                                                                               Non disponibilité de
+Phacoémulsificateur       10615/1      (opérations relatives    15/02/2013
+                                                                               cassettes
+                                          à la cataracte)
+ En outre, ne disposant que d’une seule ambulance non médicalisée, acquise en 2011. L’hôpital
+ Ibn Al Khatib a reçu le 02 avril 2014, deux ambulances médicalisées (unités mobiles) dans le
+ cadre du programme du Service d’Aide Médicale Urgente –Service Mobile d’Urgence et de
+ Réanimation (SAMU-SMUR) relevant du Ministère de la santé. Cependant, jusqu’au 30 juin
+ 2015, ces deux véhicules n’ont pas encore été utilisés, faute d’affectation du personnel nécessaire
+ (chauffeurs, techniciens et infirmiers). De plus, en absence d’un local approprié pour les abriter,
+ ces ambulances se trouvent à présent exposées aux aléas climatiques.
+      Radiologie surexploitée
+ En raison des pannes fréquentes des deux radios standards (celle du service de radiologie et celle
+ du service des urgences) la radiologie numérique est surexploitée, d’où le risque de non
+ disponibilité de ces prestations en cas de panne de cet appareil. Il en est de même du scanner au
+ niveau du service de radiologie qui dispose seulement d’une unité.
+      Vétusté de certains équipements
+ Sur 361 équipements, 74 (soit 20%) dépassent l’âge de 10 ans (dont 15 dépasse l’âge de 15 ans).
+ De plus, 18 équipements sont en panne depuis le 31/12/2014 et quatre machines sont déclarés
+ obsolètes pour manque d’accessoires, et ce malgré le fait qu’elles n’ont été acquises qu’en 2009.
+
+
+
+
+                                                  15
+            b. Maintenance des équipements biomédicaux
+      Inefficacité de l’unité biomédicale au niveau du CHR
+Avec trois techniciens, l’unité biomédicale ne dispose ni de plan de maintenance claire et précis
+ni d’inventaire mis à jour (comme précisé précédemment) pas plus que d’une proposition de plan
+de renouvellement des équipements. Elle se limite à un rôle d’intermédiaire entre les services
+hospitaliers en transmettant les demandes d’intervention en cas de panne et à la certification des
+services faits après lors des interventions des sociétés de maintenance. Cependant, elle ne dispose
+pas d’une base de données pour le suivi des pannes et des interventions internes et externes
+effectuées sur chaque équipement, et faute de personnel qualifié, ne peut évaluer la qualité des
+interventions des sociétés de maintenance.
+Pour les équipements non couverts par des contrats de maintenance, l’unité biomédicale prend
+attache avec le service régional de maintenance pour l’entretien ou la réparation de l’équipement
+en question. Ce service ne disposant que d’un seul ingénieur biomédical polyvalent, n’intervient
+pas d’une façon rapide et efficace. A titre d’exemple, la mission a constaté, que cinq des six
+autoclaves d’un montant de 222.000,00 DH, acquis par marché n°32/2010, et affectés en 2011
+aux services de médecine interne, de médecine générale, de pneumo-Phtisiologie, de gynéco-
+obstétrique, du centre du diagnostic et réanimation chirurgicale, sont tombés en panne depuis fin
+2014 et n’ont bénéficié d’aucune intervention du service régional de maintenance malgré que
+l’hôpital souffre d’une insuffisance en matériel de stérilisation.
+      Inefficacité des interventions des sociétés de maintenance
+Les interventions des sociétés de maintenance ne sont pas efficaces. Ceci est du à l’éloignement
+de leurs sièges, au manque de personnel qualifié en matière de maintenance d’équipements
+biomédicaux de haute technologie ; ce qui entrave le fonctionnement normal des services
+hospitaliers.
+La Cour recommande au CHR :
+ -   D’œuvrer pour doter les deux ambulances médicalisées immobilisées du personnel
+     nécessaire (chauffeurs, techniciens et infirmiers) pour leur fonctionnement ;
+ -   De trouver des solutions aux problèmes des équipements affectés non utilisés ;
+ -   De renforcer le service de radiologie par l’acquisition d’un autre scanner et de la
+     radiologie numérique pour éviter l’arrêt de l’activité en cas de panne ;
+ -   De renforcer les capacités professionnelles des techniciens de l’unité biomédicale du CHR
+     pour contribuer à la maintenance des équipements et assurer le suivi et l’évaluation des
+     interventions des sociétés de maintenance.
+Elle recommande, également, au ministère de la santé :
+ -   D’améliorer l’action de maintenance externe en attirant l’attention de la direction
+     régionale de la santé sur le manque d’efficacité des interventions des sociétés de
+     maintenance, pour qu’elle prenne les mesures qui s’imposent vis-à-vis des sociétés
+     défaillantes ;
+ -   D’établir en concertation avec le CHR un plan de renouvellement des équipements
+     biomédicaux ;
+ -   De généraliser les contrats de maintenance à tous les équipements biomédicaux vitaux.
+
+
+
+
+                                                16
+II.        Réponse du Ministre de de la Santé
+          (Texte réduit)
+A partir du premier Janvier 2016, l’Hôpital Ibn al-Khatib n’est plus considéré comme un Centre
+Hospitalier Régional, mais une structure rattachée au Centre Hospitalier Régional de Fès, dont
+le siège est situé à l’hôpital Al Ghassani, comme c’est le cas pour l’hôpital Ibn Al-Baitar et le
+Centre Régional de Transfusion Sanguine.
+
+      A. 1. Aspects stratégiques et organisationnels
+      -    Système de facturation : l'hôpital a procédé à la généralisation de la pré-facturation
+          de tous les services fournis, y compris les règlements par paiements directs,
+          conformément aux observations de la Cour des Comptes. (…)
+      -   Système d’information : dernièrement, les services centraux ont doté l’hôpital d’un
+          système d’information informatisé basé sur la technique du WEB, qui intègre la
+          gestion des données administratives et médicales essentielles pour l’amélioration de la
+          qualité de l'information, comme a été soulevé dans votre rapport. C’est un système
+          sécurisé dont l’accès nécessite un identifiant pour chaque utilisateur, ce qui permet de
+          faciliter les opérations de monitoring et de contrôle interne. Ce système exige
+          également le renseignement du code diagnostic selon la classification internationale
+          de maladies (CIM10). (…)
+      -   Renforcement des mécanismes de contrôle interne :
+      -   Le système de facturation est basé sur la Nomenclature Générale des Actes
+          Professionnelles (NGAP) ; le renseignement du code NGAP de chaque acte, est
+          obligatoire pour tous les médecins. Ainsi, tout dossier médical ne disposant pas du
+          code, est renvoyé par le service d’accueil et d’admission au service hospitalier
+          concerné pour compléter les informations manquantes, en particulier le code NGAP.
+          En outre, le nouveau système d'information, qui a été mis en place à partir du
+          17/11/2016 est devenu plus efficace, en comportant obligatoirement le code de
+          diagnostic CIM 10.
+Concernant les payants directs, le service d’accueil et d’admission procède d’une part à leur
+enregistrement et d’autre part, à la pré-facturation de toutes les prestations fournies
+(consultation, diagnostic et urgences). Cette procédure est appliquée également aux montants
+restant à la charge des malades pris en charge dans le cadre de l’AMO.
+      -   Ressources humaines : la détermination des besoins en ressources humaines est
+          effectuée sur la base du plan des effectifs (2015 -2019) de l’hôpital. Or, les postes
+          attribués annuellement à l’hôpital ne suffisent même pas pour couvrir les départs à la
+          retraite, ce qui accentue le déficit d’année en année.
+
+      B. 2. Prise en charge des malades et production des soins
+      -   Gestion des rendez- vous : les rendez-vous sont gérés actuellement par une
+          application informatique, accessible directement via le Web, ce qui permet aux
+          patients d’accéder directement aux rendez-vous sans déplacement à l'hôpital et sans
+          fournir des documents prouvant le besoin de conseils médicaux spécialisés
+          nécessaires. Le Ministère de la Santé a mis en place ce système, au niveau de tous les
+          hôpitaux du Royaume, pour renforcer la transparence et afin de faciliter l'accès aux
+          services de consultations médicales externes.
+
+
+
+
+                                                17
+-   Le service d’accueil et d’admission procède actuellement à la réalisation des
+    statistiques sur la gestion de RDV (demandes de RDV, RDV honorés.) et les transmets
+    sous forme de rapports mensuels à la Direction Régionale de la Santé.
+-   Les délais des rendez-vous sont liés directement au nombre de médecins spécialistes
+    exerçant au niveau de l’hôpital. Ainsi, l’augmentation du nombre de médecin diminue
+    les délais des RDV. Dans ce cadre, le rôle de l’administration serait le suivi et
+    l’accompagnement des médecins spécialistes pour l’amélioration de leur productivité.
+-   Baisse de la capacité litière au niveau de certains services : Le projet
+    d’établissement de l’hôpital IBN Al Khatib a recommandé la nécessité de regrouper
+    les services hospitaliers disposant de faible taux d’occupation moyen des lits, faisant
+    passer ainsi la capacité litière de 322 lits à 299 lits.
+-   Augmentation de la durée moyenne de séjour : la durée moyenne de séjour au
+    niveau de l’hôpital varie d’année en année, elle est de l’ordre de 4.16 (2010), 3,99
+    (2011), 4,8 (2012) 4,9 (2013) et 4,86 (2014). Cette moyenne varie selon les spécialités
+    et les types de pathologies prises en charge ; Elle atteint 10 à 12 jours au niveau des
+    services des maladies chroniques vue la spécificité de ces pathologies ; c’est le cas du
+    service de diabète et des maladies endocriniennes, le service de médecine interne et le
+    service des maladies respiratoires et de la tuberculose. Par contre, cette moyenne de
+    séjour est courte au niveau des services de chirurgie où elle varie entre deux à quatre
+    jours : c’est le cas du service de gynécologie- obstétrique, le service d’ORL et le
+    service de chirurgie générale. Cependant, d’autres facteurs participent à
+    l’augmentation de la DMS, notamment l’absence de certaines spécialités, obligeant
+    ainsi le transfert des patients, pendant leurs séjours, vers d’autres hôpitaux pour des
+    avis spécialisés.
+-   Non instauration d’un système de garde médicale résidentielle : La mise en place
+    du système de garde médicale au niveau des services hospitaliers, permettra sans doute
+    d'améliorer la qualité de prise en charge des malades hospitalisés, mais ceci nécessite
+    la disponibilité de ressources humaines médicales avec un minimum de cinq médecins
+    pour chaque service. Or, ces effectifs ne sont pas disponibles au niveau de l'hôpital.
+-   Cependant, l'hôpital a instauré un système d’astreinte qui permet d’avoir les avis des
+    médecins spécialistes par téléphones, voir leur déplacement et présence sur place, si
+    nécessaire.
+-   Insuffisance des espaces d’accueil et d’attente : consciente de l’importance de
+    l’accueil, la direction de l'hôpital a procédé à l’aménagement en 2016 de quatre espaces
+    d’accueil, notamment au niveau des services les plus fréquentés à savoir, le service des
+    urgences, la maternité, le service de radiologie et le laboratoire des analyses médicales.
+    (…)
+-   Transport des patients n’est pas assuré par des brancardiers : La sous-traitance de
+    la prestation de brancardage au sein de l'hôpital a commencé en 2013. L'hôpital
+    dispose actuellement de 08 personnes dont deux sont chargés du transport des patients
+    admis au niveau des urgences et de la maternité vers les autres services de l’hôpital.
+    En cas de nécessité et pour assurer la bonne marche du service d’accueil et
+    d’admission, la direction de l’hôpital recours parfois au service de certains éléments
+    pour appuyer l’équipe du SAA.
+-   Mouvement non maitrisé des véhicules et des personnes : Pour maitriser le
+    mouvement des personnes et des véhicules au sein de l'hôpital et en raison des
+    contraintes de architecturales du bâtiment, l’administration a mis en place des portes
+
+
+
+
+                                           18
+         séparant les services des urgences et la maternité du reste des services hospitaliers, ces
+         portes sont fermées après les horaires de travail administratif. (…)
+    -    Les conditions d’hospitalisation ne permettent pas l’humanisation de la prise en
+         charge des malades :
+    -    L’hôpital Ibn Al-Khatib a été construit en 1912, la plupart des salles d'hospitalisation
+         dispose de 08 lits, contrairement aux normes techniques actuellement en vigueur.
+         Cependant, chaque service dispose d’une salle d'isolement composée d’un lit ou plus
+         en fonction de l'infrastructure du service.
+En 2015, l’hôpital a procédé à l’acquisition de 55 lits de haute qualité au niveau de la maternité,
+et 08 lits au niveau de la pédiatrie. Il procédera aussi au renouvellement des autres lits dans les
+années à venir. En plus, des travaux de réhabilitation ont été réalisés au service de la maternité,
+de la pédiatrie, de la médecine générale et des maladies endocriniennes. (…)
+    -    Insuffisance dans la prise en charge des malades : L'hôpital Ibn Al-Khatib est une
+         structure à vocation médicale plus que chirurgicale. Il ne dispose pas de spécialité
+         chirurgicales d’urgences à savoir la traumatologie, la rhumatologie, la neurochirurgie
+         et la chirurgie générale avec tout ce que cela peut entrainer en matière de prise en
+         charge des cas urgents en chirurgie et qui sont à l’occasion transféré à l’hôpital Al
+         Ghassani. Ceci explique la réduction des consultations chirurgicales au niveau des
+         urgences à 11.33%.
+Pour la spécialité ORL, l’hôpital dispose actuellement de trois médecins ORL et a procédé à
+l’acquisition, sur le budget de l'hôpital au titre de l'année 2015, de tous les équipements relatifs
+à cette spécialité.
+Au niveau du service de la maternité : 55 nouveaux lits ont été acquis, en plus de l’extension
+de la salle d’accouchement, constituée actuellement de neuf salles au lieu de quatre (...).
+Cependant l’équipe médicale est composée uniquement de trois médecins après la démission
+de deux médecins gynécologues.
+    -    Le nombre élevé de décès des nouveau-nés prématurés : ceci n’est pas lié aux
+         conditions de prise en charge, mais plus au fait que le service reçoit des prématurés en
+         provenance des établissements de soins publics et privés de l’intérieur et de l’extérieur
+         de la province, dont les prématurés ayant un poids inférieur à 1500 g, qui ont moins de
+         chances de survie.
+    -    Il est à noter que le projet d’établissement a insisté sur la priorité de mise à niveau du
+         service de pédiatrie pour l’adapter aux normes sanitaires et fonctionnelles, en
+         particulier l’unité de néonatologie et de réanimation néonatale.
+    -    La fonction de réanimation : les services de laboratoire et de radiologie disposent
+         d’un système de garde assuré par le personnel technique.
+
+    C. Les conditions sanitaires hospitalières
+    -    Insuffisance dans le contrôle de la qualité de l’alimentation des malades :
+         L’administration de l’hôpital a désigné une commission pour le contrôle et le suivi de
+         la réalisation des activités effectuées par la société de sous traitance chargée de la
+         préparation et de la distribution de l’alimentation aux malades. Cette commission
+         technique spécialisée dans la protection de l’environnement, procède aux
+         prélèvements des échantillons et des aliments destinés à la préparation des repas. (…)
+    -    Défaillance dans la propreté des locaux : L’hôpital a été construit en 1912, son
+         système d’évacuation des eaux usées reposait sur des fausses septiques présentes au
+         niveau de l’ensemble des services hospitaliers. L’hôpital n’utilise plus ce système, la
+
+
+
+
+                                                19
+        dernière fausse septique existante au niveau du service de la médecine générale a été
+        assainie en 2015.
+En ce qui concerne la présence de chats dans l’hôpital, l’administration a procédé à l’évacuation
+des chats de l’enceinte de l’hôpital, en coordination avec les services du bureau municipal
+d’hygiène.
+    -   Défaillance dans la gestion des déchets : L’hôpital a sous traité la gestion des déchets
+        médicaux à une société spécialisé dans la collecte et le traitement des déchets
+        médicaux de l’hôpital. Cette société a mis à la disposition de l’hôpital un employé
+        chargé de la collecte des déchets de l’ensemble des services de l’hôpital. Ces déchets
+        sont acheminés vers l’unité de stockage, où ils sont pesés et contrôlés sous la
+        supervision du comité technique spécialisé dans la protection de l’environnement.
+
+    D. Gestion des médicaments, de laboratoire d’analyses médicales
+       et des équipements biomédicaux
+    -   Défaillance dans l’approvisionnement en consommables : S’agissant du marché
+        n°15/2014 relatif à l’approvisionnement en consommables pour le laboratoire
+        d’analyses médicales, le règlement de consultation ne prévoit pas l’examen des
+        échantillons pour le choix des offres, vu que le trésorier provincial a refusé son
+        intégration conformément à l’article 34 du décret du décret n ° 349-12-2 en date du 8
+        mai 1434 (20 Mars 2013) relatif aux marchés publics. Seulement le comité de
+        réception est souverain pour la non acceptation des consommables qui ne répondent
+        pas aux clauses prescrites dans le cahier des charges. Le pourcentage de refus avoisine
+        les 15%.
+    -   Équipements acquis depuis 2011 stockés dans le magasin : En 2011, les services
+        centraux ont doté l’hôpital de neuf tables chauffantes, qui ont été réparties entre le
+        service de la maternité et de la pédiatrie en fonction des besoins prononcés et la
+        capacité litière de chaque service.
+    -   Equipements non fonctionnels :
+         -    La couveuse sera cédée à l’hôpital Al Ghassani (CHR actuel), en accord avec
+              l’administration et après consultation des médecins pédiatres du service de
+              néonatologie ;
+         -    L’appareil "Echocardiodopller" reçu des services centraux en date du 07/03/2012,
+              sous inventaire n°10547, ne dispose pas d’une application informatique, il est
+              utilisé dans les cas d’urgence par les maladies cardio-vasculaires ;
+         -    Matériel de puvathérapie qui a été acquis en 2004 est encore fonctionnel, mais
+              son utilisation est restreinte, vu que cette technologie est devenue obsolète et
+              l’hôpital ne dispose pas d’un technicien pour assurer son fonctionnement ;
+         -    Radio mobile a été acquis sur le budget de l’hôpital en 2010, à la demande du
+              service de réanimation pour la prise en charge des malades qui ne peuvent pas
+              être transférés vers d’autres structures et dont la mise en fonction est assurée par
+              le technicien du service de radiologie
+         -    « Phacoémulsificateur» : cet appareil a été livré en 2013 par les services centraux
+              après l’intégration de l’ophtalmologie au niveau de l’hôpital Ibn Al Khatib en
+              2012. Il est utilisé actuellement dans le bloc opératoire par les ophtalmologues.
+              Il a servi pour (69) opérations chirurgicales en 2013, (62) en 2014, (490) en 2015
+              et (61) en 2016.
+
+
+
+
+                                               20
+L’acquisition du matériel de fonctionnement du Phacoémulsificateur sera intégrée dans le
+budget de 2017 afin de subvenir aux besoins prévisibles.
+Les 2 ambulances équipées mis à la disposition de l’hôpital par les services centraux à Rabat
+dans le cadre du SAMU-SMUR n’ont pas été utilisées faute de ressources humaines
+spécialisées. Elles ont été livrées à la délégation du Ministère de la Santé à Fès le 07/12/2015
+en vue de leur utilisation dans le cadre du SAMU-SMUR.
+
+
+
+
+                                              21
+
