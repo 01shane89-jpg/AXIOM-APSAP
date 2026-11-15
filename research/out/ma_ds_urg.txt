@@ -1,0 +1,2 @@
+SOURCE https://data.gov.ma/data/api/3/action/package_search?q=urgence&rows=50
+{"help": "https://data.gov.ma/data/api/3/action/help_show?name=package_search", "success": true, "result": {"count": 0, "facets": {}, "results": [], "sort": "score desc, metadata_modified desc", "search_facets": {}}}

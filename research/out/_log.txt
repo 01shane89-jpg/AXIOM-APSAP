@@ -458,3 +458,13 @@ ma_ourairports 200 text/csv 12761365
 ma_ourrunways 200 text/csv 3975349
 ma_who_sara 200 text/html 646520
 ma_cnts 000 cannot open `/tmp/ma_cnts.bin' (No such file or directory) 
+ma_msps_hosp2025 200 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet 17522
+ma_msps_priv2025 200 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet 10091
+ma_ds_sang 200 application/json 216
+ma_ds_urg 200 application/json 216
+ma_ds_msps 200 application/json 48977
+ma_ds_orgs 200 application/json 2016
+ma_sante_c409_raw 200 text/html 857231
+ma_sante_search_raw 404 text/html 665
+ma_geonames_ma 200 application/zip 4201044
+ma_geonames_eh 200 application/zip 70065
