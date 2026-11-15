@@ -113,6 +113,7 @@ tests/period14_smoke.mjs
 tests/search_smoke.mjs
 tests/search_all_smoke.mjs
 tests/news_speed_smoke.mjs
+tests/neighbour_redraw_smoke.mjs
 tests/grid_smoke.mjs
 tests/comms_smoke.mjs
 tests/commsplan_smoke.mjs
