@@ -345,10 +345,13 @@
          outlets had headed Thailand's list on 14 Nov 2026, above that morning's news) */
       if (!ev.reports || ev.reports.length < 2 || !isFinite(ev.to) || now - ev.to > EV_FRESH) return;
       var r0 = null; for (var i = 0; i < ev.reports.length && !r0; i++) r0 = recByUrl(ev.reports[i].url);
+      /* the story's picture: the first of its reports whose outlet gave one */
+      var pic = "";
+      for (var j = 0; j < ev.reports.length && !pic; j++) { var rj = recByUrl(ev.reports[j].url); if (rj && rj.img) pic = rj.img; }
       if (!aboutHere(r0 || { title: ev.title, url: ev.reports[0].url })) return;
       /* one outlet counts once, however it reached OSAP ("Amarin TV", "AmarinTV on MSN (via Bing News search)") */
       var srcs = {}; ev.reports.forEach(function (r) { srcs[outlet(r.source)] = 1; used[r.url] = 1; });
-      out.push({ ev: true, title: ev.title, n: Object.keys(srcs).length, ms: ev.to, rec: r0, url: ev.reports[0].url, src: Object.keys(srcs).slice(0, 3).join(", "), xb: ev.crossBorder,
+      out.push({ ev: true, pic: pic, title: ev.title, n: Object.keys(srcs).length, ms: ev.to, rec: r0, url: ev.reports[0].url, src: Object.keys(srcs).slice(0, 3).join(", "), xb: ev.crossBorder,
         status: ev.reports.every(function (r) { return r.status === "Observed"; }) ? "observation" : "event", sev: ev.sev || 1 });
     });
     out.sort(function (a, b) { return b.n - a.n || b.ms - a.ms; });
@@ -362,7 +365,7 @@
     var recent = news.filter(function (x) { return now - x.ms <= NEWS_RECENT; });
     (recent.length >= 3 ? recent : news).slice(0, 9 - out.length).forEach(function (x) {
       var r = x.r;
-      out.push({ title: r.title, ms: x.ms, rec: r, url: r.url, src: r.src ? r.src.name : "", state: r.src && /State media/.test(r.src.kind || ""), mt: !!r.orig, status: r.type });
+      out.push({ pic: r.img, title: r.title, ms: x.ms, rec: r, url: r.url, src: r.src ? r.src.name : "", state: r.src && /State media/.test(r.src.kind || ""), mt: !!r.orig, status: r.type });
     });
     if (out.length < 4) {
       var F = xFeeds();
@@ -400,9 +403,11 @@
     return h;
   }
   function storyHtml(s) {
-      var h = "", pic = s.rec && (s.rec.img || s.rec.thumb), st = STATUS[s.status] || STATUS.event, url = safeUrl(s.url);
+      /* the outlet's own picture, linked from its site (never copied), small and lazy: a fixed 96 x 72 box, so the list does not
+         move as pictures arrive, and a picture that fails leaves the empty box. Stories without one keep the full width. */
+      var h = "", pic = s.pic || (s.rec && s.rec.thumb) || "", st = STATUS[s.status] || STATUS.event, url = safeUrl(s.url);
       h += '<article class="tdst' + (pic ? " haspic" : "") + '">' +
-        (pic ? '<img src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : "") +
+        (pic ? '<span class="tdpic"><img src="' + esc(pic) + '" alt="" width="96" height="72" loading="lazy" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'"></span>' : "") +
         '<div class="tdstb">' + (s.rec ? '<button type="button" class="tdsth" data-rec="' + esc(s.rec.id) + '">' + esc(s.title) + "</button>"
           : url ? '<a class="tdsth" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(s.title) + "</a>" : '<span class="tdsth">' + esc(s.title) + "</span>") +
         '<span class="tdsub">' + (s.ev ? "<b>" + s.n + " sources</b>: " : "") + esc(s.src) + (isFinite(s.ms) ? " · " + esc(ago(s.ms) || when(s.ms)) : "") + "</span>" +
@@ -419,7 +424,8 @@
     if (!W || !W.keyOf) return h + '</div><p class="tdobs">Loading…</p></section>';
     if (!s || !Array.isArray(s.base)) return h + '</div><p class="tdobs">This is your first visit to ' + esc(countryName()) + " on this device. Next time, reports added since then show here.</p></section>";
     var base = {}; s.base.forEach(function (k) { base[k] = 1; });
-    var N = recs().filter(function (r) { return !base[W.keyOf(r)]; }).map(function (r) { return { r: r, ms: recMs(r) }; });
+    /* one row per story, the same list and count as "What's new" (a headline is also filed under its topic layer) */
+    var N = (W.fresh ? W.fresh(recs(), base) : recs().filter(function (r) { return !base[W.keyOf(r)]; })).map(function (r) { return { r: r, ms: recMs(r) }; });
     N.sort(function (a, b) { return (b.ms || 0) - (a.ms || 0); });
     h += '<span class="tdcount">' + N.length + " new since " + esc(s.baseAt ? when(s.baseAt) : "your last visit") + "</span></div>";
     if (!N.length) h += '<p class="tdobs">Nothing new since you last looked.</p>';
@@ -548,7 +554,8 @@
     ".tdtag{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.02em;border:1px solid currentColor;border-radius:9px;padding:0 7px;line-height:17px;margin-right:4px;color:var(--muted)}" +
     ".tdtag.unv{color:var(--muted);border-color:transparent;background:var(--accent-soft,#D6E3EE);font-weight:500}.tdtag.claim{color:var(--accent)}.tdtag.obs{color:var(--ink)}.tdtag.mt{color:var(--muted)}.tdtag.xb{color:var(--near,#a60)}" +
     ".tdst{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--line-soft,var(--line))}.tdst:first-of-type{border-top:0}" +
-    ".tdst img{width:96px;height:72px;object-fit:cover;border-radius:6px;flex:none;background:var(--surface2,var(--line))}.tdstb{display:flex;flex-direction:column;gap:3px;min-width:0}" +
+    ".tdpic{width:96px;height:72px;flex:none;border-radius:6px;overflow:hidden;background:var(--surface2,var(--line))}.tdpic img{display:block;width:100%;height:100%;object-fit:cover}" +
+    ".tdstb{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}@media (max-width:380px){.tdpic{width:80px;height:60px}}" +
     ".tdsth{background:none;border:0;padding:0;text-align:left;font:inherit;font-weight:600;font-size:15px;color:var(--ink);cursor:pointer;text-decoration:none;overflow-wrap:anywhere}" +
     ".tdtags{display:flex;flex-wrap:wrap;gap:4px;align-items:center}.tdsrcl{font-size:12px}" +
     ".tdfoot{margin-top:14px;font-size:12px;color:var(--muted)}.tdhome{display:flex;gap:6px;align-items:center;flex-wrap:wrap;color:var(--ink);font-size:13px}.tdhome button{min-height:34px;padding:3px 12px}" +

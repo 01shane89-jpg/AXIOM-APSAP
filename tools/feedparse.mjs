@@ -28,13 +28,14 @@ function image(b) {
   const u = raw ? raw[1].replace(/&amp;/g, "&").trim() : "";
   return /^https:\/\/[^\s<>"]+$/i.test(u) && u.length < 600 && !/(pixel|spacer|1x1|blank|feedburner\.com\/~r|doubleclick)/i.test(u) ? u : "";
 }
-export function parseFeed(xml) {
+// opt.image: also return the item's own picture link (the news job asks for it; other jobs' items stay as they were)
+export function parseFeed(xml, opt) {
   const blocks = xml.match(/<(item|entry)\b[\s\S]*?<\/\1>/gi) || [];
   return blocks.map((b) => {
     const href = (b.match(/<link\b[^>]*href="([^"]+)"/i) || [])[1];
     return { title: tag(b, ["title", "headline"]), summary: tag(b, ["description", "summary", "content", "areaDesc"]).slice(0, 400),
       date: tag(b, ["pubDate", "updated", "published", "sent", "effective", "date"]), link: href || tag(b, ["link", "guid", "id"]),
-      severity: tag(b, ["severity"]), source: tag(b, ["source"]), expires: tag(b, ["expires"]) };
+      severity: tag(b, ["severity"]), source: tag(b, ["source"]), expires: tag(b, ["expires"]), ...(opt && opt.image && image(b) ? { image: image(b) } : {}) };
   }).filter((i) => i.title);
 }
 
