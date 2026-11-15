@@ -6088,16 +6088,21 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var w = window.ASAP_NEWS, asof = w && w.asof ? new Date(w.asof.replace(" ", "T").replace(/Z?$/, "Z")).getTime() : Date.now();
     var here = new RegExp("\\b(" + (NDEM[CC] || C.name) + ")\\b", "i");
     var others = R.filter(function (r) { return r.social && inPeriod(r); });
-    var all = recs.concat(others).map(function (r) { return { r: r, words: nWords(r.title), outlet: r.src.name }; });
+    var all = recs.concat(others).map(function (r) { var w = nWords(r.title); return { r: r, words: w, nw: Object.keys(w).length, outlet: r.src.name }; });
     /* which stories share each headline word: a story can only match one that shares two words or more with it (nSame), so
        only those are compared, in the same order as before (comparing every pair took seconds on a phone for a big country) */
     var byW = Object.create(null);
     all.forEach(function (o, j) { for (var k in o.words) (byW[k] || (byW[k] = [])).push(j); });
+    /* nearCnt[j]: how many words story j shares with the story last passed to near(), so nSame's test is made from that count
+       (the same sum: shared words, and shared over all the words of both) without walking both word lists again */
+    var nearCnt = null;
     function near(i) {
       var cnt = Object.create(null), out = [];
       for (var k in all[i].words) { var l = byW[k]; for (var q = 0; q < l.length; q++) { var j = l[q]; if (j !== i && (cnt[j] = (cnt[j] || 0) + 1) === 2) out.push(j); } }
+      nearCnt = cnt;
       return out.sort(function (a, b) { return a - b; });
     }
+    function sameNear(me, j) { var n = nearCnt[j], u = me.nw + all[j].nw - n; return n >= 2 && n / Math.max(1, u) >= 0.3; }
     return recs.map(function (r, i) {
       var me = all[i], why = [], score = 0;
       var topics = NTOP.filter(function (t) { return t[1].test(r.title); }).map(function (t) { return t[0]; });
@@ -6111,7 +6116,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (routine) { score -= 2; why.push("sport or entertainment wording −2"); }
       if (here.test(r.title) || placeFor(r.title)) { score += 2; why.push("names " + C.name + " or a place in it +2"); }
       var also = [];
-      near(i).forEach(function (j) { var o = all[j]; if (o.outlet !== me.outlet && also.indexOf(o.outlet) < 0 && nSame(me.words, o.words)) also.push(o.outlet); });
+      near(i).forEach(function (j) { var o = all[j]; if (o.outlet !== me.outlet && also.indexOf(o.outlet) < 0 && sameNear(me, j)) also.push(o.outlet); });
       if (also.length) { var c = Math.min(3, also.length); score += 2 * c; why.push((also.length + 1) + " outlets or accounts +" + 2 * c); }
       if (/State media/.test(r.src.kind || "")) { score += 1; why.push("state outlet +1"); }
       var t = new Date(String(r.issued || r.ts).replace(" ", "T") + (/Z$|[+-]\d\d:?\d\d$/.test(r.issued || "") ? "" : "Z")).getTime();
@@ -6120,11 +6125,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
   }
   /* one line per story: the best-scored headline stands for the others that carry it */
-  function topStories(recs, rank) {
+  /* max: only the first max stories are wanted. A story's place depends only on the stories before it, so stopping there gives
+     the same first max; comparing every ranked headline with every other one took about 5 s on a phone (Thailand, News tab) */
+  function topStories(recs, rank, max) {
     var ranked = (rank || newsRank(recs)).filter(function (x) { return x.score >= 5; }).sort(function (a, b) { return b.score - a.score || (a.r.ts < b.r.ts ? 1 : -1); });
     var out = [], used = {}, W = ranked.map(function (x) { return nWords(x.r.title); });
     ranked.forEach(function (x, i) {
-      if (used[x.r.id]) return;
+      if (used[x.r.id] || out.length >= (max || Infinity)) return;
       var mw = W[i];
       ranked.forEach(function (y, j) { if (y !== x && nSame(mw, W[j])) used[y.r.id] = 1; });
       used[x.r.id] = 1; out.push(x);
@@ -6133,7 +6140,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   }
   var newsAll = false;
   function topHtml(recs) {
-    var ranked = newsRank(recs), routine = ranked.filter(function (x) { return x.routine; }).length, top = topStories(recs, ranked).slice(0, 12);
+    var ranked = newsRank(recs), routine = ranked.filter(function (x) { return x.routine; }).length, top = topStories(recs, ranked, 12);
     return '<div class="sec" id="news-top"><h2>Top stories</h2><p class="obs">Ranked by fixed rules at each refresh (topic, how many outlets carry it, outlet type, recency); the points are shown on each story. ' +
       routine + " sport, entertainment or advertising headline" + (routine === 1 ? "" : "s") + " left out.</p>" +
       (top.length ? '<div class="tllist">' + top.map(function (x) {
@@ -8581,7 +8588,31 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var nv = evFind({ m: v.m.filter(function (o) { return o !== r; }) });
     if (nv) evOpen(nv, boxId); else select(r.id, false, boxId);
   }
-  function evRefresh() { EVC.sig = ""; if (current === "timeline") render(); rvSoon(); }
+  /* Today (assets/osap-today.js) covers the whole screen, so while it is open the list and the report list behind it are not
+     drawn again on every change (each neighbour check used to redraw both, about 0.7 s on a phone each time); they are drawn
+     once, at the next quiet moment or when Today closes (OSAP_LISTUP below). force: draw now even behind Today */
+  var EV_BEHIND = false, EV_BEHIND_T = 0, UI_INPUT_AT = 0;
+  if (!SCAN) ["pointerdown", "keydown", "wheel", "touchstart"].forEach(function (t) { window.addEventListener(t, function () { UI_INPUT_AT = Date.now(); }, { capture: true, passive: true }); });
+  /* true once nobody has touched the screen or keys for ms: background redraws and checks wait for that, so they do not land
+     on a tap or a scroll */
+  function uiQuiet(ms) { return Date.now() - UI_INPUT_AT >= ms; }
+  function evRefresh(force) {
+    EVC.sig = "";
+    if (!force && !SCAN && window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) {
+      EV_BEHIND = true;
+      if (!EV_BEHIND_T) EV_BEHIND_T = setTimeout(function behind() {
+        if (!EV_BEHIND) { EV_BEHIND_T = 0; return; }
+        if (!uiQuiet(2500)) { EV_BEHIND_T = setTimeout(behind, 1000); return; }
+        /* in two pieces, so neither holds the page for long: the grouping first, then the lists drawn from it */
+        EV_BEHIND_T = 0;
+        var idle = function (fn) { (window.requestIdleCallback || setTimeout)(fn, { timeout: 2000 }); };
+        idle(function () { if (!EV_BEHIND) return; evBuild(); idle(function () { if (!EV_BEHIND) return; EV_BEHIND = false; if (current === "timeline") render(); rvSoon(); }); });
+      }, 1000);
+      return;
+    }
+    EV_BEHIND = false;
+    if (current === "timeline") render(); rvSoon();
+  }
   /* the switch sits under the Timeline filters; it also groups the report list beside the map */
   (function () {
     var cnt = document.getElementById("tl-count"); if (!cnt || document.getElementById("ev-on")) return;
@@ -9053,7 +9084,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     L.DomEvent.disableClickPropagation(d); return d; } });
   if (!SCAN) { new WatchCtl().addTo(map); wBtn = document.getElementById("watch-btn"); wBtn.addEventListener("click", wOpen); }
   /* scans: each watched country rebuilt in a hidden copy of this page (index.html?watchscan=1), one at a time */
-  var wScanBusy = false, wTimer = 0, W_EVERY = 15 * 60 * 1000;
+  var wScanBusy = false, wTimer = 0, W_EVERY = 15 * 60 * 1000, W_QUIET = 3000, W_QUIET_MAX = 20000;
   function wScanAll() {
     if (wScanBusy) { XA_PEND = true; return; }
     XA_PEND = false;
@@ -9062,10 +9093,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     xaStale().forEach(function (cc) { if (ccs.indexOf(cc) < 0) ccs.unshift(cc); });
     if (!ccs.length || !/^https?:$/.test(location.protocol)) return;
     wScanBusy = true;
+    var nbDirty = false, waitFrom = Date.now();
     var keepView = null; try { keepView = localStorage.getItem("tw-view"); } catch (e) {}
     (function next() {
       var cc = ccs.shift();
-      if (!cc) { wScanBusy = false; try { if (keepView != null) localStorage.setItem("tw-view", keepView); } catch (e) {} wBadge(); if (XA_PEND) setTimeout(wScanAll, 300); return; }
+      if (!cc) { wScanBusy = false; try { if (keepView != null) localStorage.setItem("tw-view", keepView); } catch (e) {} if (nbDirty) { nbDirty = false; xbLoad(); evRefresh(); } wBadge(); if (XA_PEND) setTimeout(wScanAll, 300); return; }
+      /* each check boots a hidden copy of the app on this page's own thread (a few seconds of work on a phone), so it waits
+         until the person has not touched the screen or keys for W_QUIET (at most W_QUIET_MAX in all) */
+      if (!uiQuiet(W_QUIET) && Date.now() - waitFrom < W_QUIET_MAX) { ccs.unshift(cc); setTimeout(next, 1000); return; }
+      waitFrom = Date.now();
       var f = document.createElement("iframe"), done = false, gotRecs = false;
       f.setAttribute("aria-hidden", "true"); f.tabIndex = -1; f.title = "watch check";
       f.style.cssText = "position:fixed;left:-10000px;top:0;width:1100px;height:700px;border:0;visibility:hidden";
@@ -9079,7 +9115,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       }
       function onMsg(e) {
         if (e.source !== f.contentWindow || !e.data || e.data.osapWatchScan !== cc) return;
-        if (e.data.recs) { gotRecs = true; delete XA_FAIL[cc]; xbPut(cc, e.data.recs); if (NB.indexOf(cc) >= 0 || ADDED.indexOf(cc) >= 0) { xbLoad(); evRefresh(); if (ADDED.indexOf(cc) >= 0) xaChanged(false); } }
+        /* an added country is on the map, so it is drawn at once; neighbours are drawn once at the end of the round (nbDirty) */
+        if (e.data.recs) { gotRecs = true; delete XA_FAIL[cc]; xbPut(cc, e.data.recs); if (ADDED.indexOf(cc) >= 0) xaChanged(false); else if (NB.indexOf(cc) >= 0) nbDirty = true; }
         fin(e.data.fresh || []);
       }
       window.addEventListener("message", onMsg);
@@ -9415,7 +9452,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* the list is drawn once, here; when the app opens on Today (assets/osap-start.js set this tab's "osap-today" to "1"), the
      list is hidden behind Today, so it is drawn just after Today is on screen rather than before (about 1.2 s on a phone,
      tests/speed_budget.mjs), or at once when Today closes (window.OSAP_LISTUP, assets/osap-today.js hide) */
-  var listUp = (function () { var did = false; return function () { if (did) return; did = true; renderHeld(); evRefresh(); }; })();
+  var listUp = (function () { var did = false; return function () { if (did) { if (EV_BEHIND) evRefresh(true); return; } did = true; renderHeld(); evRefresh(true); }; })();
   window.OSAP_LISTUP = listUp;
   var todayFirst = false;
   try { todayFirst = !SCAN && !/[?&](watchscan|wopen)=/.test(location.search) && sessionStorage.getItem("osap-today") === "1"; } catch (e) {}
