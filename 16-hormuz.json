@@ -1,0 +1,62 @@
+{
+ "name": "hormuz",
+ "view": "phone",
+ "w": 1080,
+ "h": 1620,
+ "frames": 1157,
+ "start": 10.723,
+ "end": 88.207,
+ "caps": [
+  {
+   "t": 10.723,
+   "text": "The Strait of Hormuz",
+   "sub": "About a fifth of the world's seaborne crude passed through it before the war (EIA)."
+  },
+  {
+   "t": 15.226,
+   "text": "Down to about 4 ships a day",
+   "sub": "IMF PortWatch: 3.9 transits a day in the week to 8 Nov, against 87 a day a year earlier."
+  },
+  {
+   "t": 48.242,
+   "text": "Ships broadcasting near the strait",
+   "sub": "Positions ships broadcast themselves (AIS), as OSAP receives them."
+  },
+  {
+   "t": 52.746,
+   "text": "Announced zones, as claimed",
+   "sub": "Iran's restricted zone, the US blockade of Iranian ports and an Iran-Oman route. Drawn from reporting."
+  },
+  {
+   "t": 63.021,
+   "text": "Mines: Iran's claim",
+   "sub": "Iran's navy and IRGC say tankers hit mines on 13 and 14 Nov (IRNA). Not independently confirmed."
+  },
+  {
+   "t": 70.731,
+   "text": "UN: 25 seafarers killed",
+   "sub": "The IMO's count in and around the strait since February, reported 14 Nov."
+  },
+  {
+   "t": 74.535,
+   "text": "Food supplies at stake",
+   "sub": "A UN official urged Iran and the US to let fertiliser shipments through the strait (14 Nov)."
+  },
+  {
+   "t": 82.923,
+   "text": "Reported, not verified",
+   "sub": "Each side's statements are claims. Every item is dated and linked to its source."
+  }
+ ],
+ "skips": [
+  [
+   21.119999999999997,
+   45.738
+  ],
+  [
+   52.946000000000005,
+   55.055
+  ]
+ ],
+ "pdfs": []
+}

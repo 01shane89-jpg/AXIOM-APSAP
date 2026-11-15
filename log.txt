@@ -1,0 +1,7 @@
+  ships slow
+  ships in view 0
+  item tankers? .*mine|mine.*tanker -> "Iranian navy: three oil tankers hit mines in the Strait of Hormuz"
+  item 25 seafarer -> "UN says 25 seafarers killed in, around Hormuz since US-Israel war on Iran"
+  item fertili[sz] -> "UN Official Urges Iran, US to Let Fertilizers Through Hormuz Strait"
+PASS 16 hormuz {"caps":8,"pdfs":[]}
+all clips recorded
