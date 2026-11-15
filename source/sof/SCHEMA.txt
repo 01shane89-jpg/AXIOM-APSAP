@@ -110,3 +110,15 @@ Source caveats (2026-09-26 run):
 - trauma_level is set only where a source used that wording (e.g. Hong Kong designated trauma
   centres, Australian/NZ major trauma centres); Wikipedia-only claims were moved to notes.
 - Exercise records marked "announced" may not have happened; several have null dates.
+
+Morocco data package (added 2026-11-15, tools/snapshot_ma_medical.py -> source/morocco/medical-2026.json -> tools/build_ma_medical.py):
+  hospitals ids sof:ma:msps:* (and sof:eh:msps:* for the Ministry's hospitals in Western Sahara): the Ministry of Health and
+    Social Protection's 2025 list of public hospitals (data.gov.ma, ODbL). Extra fields: "ma_category" (HIR, HR, HP, HPr),
+    "ma_category_name", "ma_level" (Decree 2-14-562 level 1-3), "std_basis" (what the caps_std rest on, shown by the plan).
+    Positions only from the OpenStreetMap hospital the name matched (coord_basis says which and how), else lat/lon null.
+    caps_std from Decree 2-14-562 annexes 1-3 per category (cap_refs ma_*, each with the decree URL and SHA-256). Do not edit by hand.
+  airfields: every open aerodrome and heliport OurAirports lists for the country, with its longest open runway ("airfields_src").
+  medical (schema "osap-medical/1"): the country medical overview block: "summary" statements (each with src, sha256, quote:
+    government text is a claim), "levels" (hospital categories with counts, placed counts and the emergency standard),
+    "levels_src", "blood" (blood services named by an official source), "blood_std", "sources" (id, title, url, sha256,
+    retrieved, licence) and "gaps". Read by the Country medical overview (assets/osap-medcountry.js) when present.
