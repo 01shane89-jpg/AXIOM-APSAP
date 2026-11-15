@@ -1,4 +1,5 @@
-// World start (Shane 2026-11-15 "start new users in a global view"): the first open on a device lands on World ("ww"), the whole
+// World start (Shane 2026-11-15 "start new users in a global view"): the first open on a new device (no OSAP setting saved) lands
+// on World ("ww"), the whole
 // map with every country's most-covered stories and the global feeds; a returning user keeps the last country viewed; a link
 // that names a country keeps it; an old bare "#tab" link is still Thailand. World fills a phone screen with no sideways scroll.
 // Run from the repo root: node tests/world_start_smoke.mjs   (needs the playwright package and Chromium)
@@ -62,6 +63,15 @@ async function open(hash, opt = {}) {
   const { ctx, page } = await open("", { last: "fr" });
   await page.waitForTimeout(1500);
   ok(await page.evaluate(() => location.hash === "#fr/timeline" && window.TSAP.country === "fr"), "a returning user opens on the last country viewed (France)");
+  await ctx.close();
+}
+// 2b. a device that has used OSAP before (a setting saved) but never saved a country stays on Thailand, where it always opened
+{
+  const ctx = await browser.newContext({ serviceWorkers: "block" }), page = await ctx.newPage();
+  await page.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  await page.addInitScript(() => { if (!sessionStorage.getItem("osap-today")) localStorage.setItem("osap-theme", JSON.stringify("dark")); });
+  await page.goto(base); await page.waitForFunction(() => window.TSAP, null, { timeout: 30000 }).catch(() => {});
+  ok(await page.evaluate(() => window.TSAP.country === "th"), "a device that used OSAP before, with no country saved, stays on Thailand");
   await ctx.close();
 }
 // 3. a link that names a country keeps it; an old bare "#tab" link is Thailand
