@@ -109,7 +109,7 @@ const testFlag = () => { window.OSAP_SETUP_TEST = 1; };
   await p.click('#mycc-setup [data-mcs="skip"]');
   ok(!(await sheetOpen(p)), "Skip closes it");
   ok(await ls(p, "osap-setup") === "skipped", "Skip is saved");
-  ok(await p.evaluate(() => window.TSAP.country) === "th", "Skip leaves the default country");
+  ok(await p.evaluate(() => window.TSAP.country) === "ww", "Skip leaves the default area (World)");
   await p.reload({ waitUntil: "domcontentloaded" });
   await ready(p); await p.waitForTimeout(2000);
   ok(!(await sheetOpen(p)), "after Skip a reload does not show the sheet");

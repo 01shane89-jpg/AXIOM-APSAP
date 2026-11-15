@@ -1996,7 +1996,10 @@ if (window.OSAP_SYM) Array.prototype.forEach.call(document.querySelectorAll("[da
     function load(cb) {
       if ((D = data()) || failed) return cb();
       waiting.push(cb);
-      if (loading) return; loading = true;
+      if (loading) return;
+      /* World has no terrain file */
+      if (cc === "ww") { failed = true; waiting = []; return cb(); }
+      loading = true;
       var s = document.createElement("script"); s.src = "data/terrain/" + cc + ".js";
       function fin() { loading = false; var w = waiting; waiting = []; w.forEach(function (f) { f(); }); }
       s.onload = function () { D = data(); if (!D) failed = true; fin(); };
@@ -3279,7 +3282,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* news and social posts: the refresh job writes one file per country (tools/split_country.mjs) */
   src.push("data/live/news/" + cc + ".js", "data/live/social/" + cc + ".js");
   /* feeds that cover every country but are too big to load whole: sanctions lists and UCDP events (tools/refresh_more.mjs) */
-  src.push("data/live/sanctions/" + cc + ".js", "data/live/ucdp/" + cc + ".js");
+  /* (World, "ww", reads the whole-world ucdp.js and lists no sanctions, so it asks for neither) */
+  if (cc !== "ww") src.push("data/live/sanctions/" + cc + ".js", "data/live/ucdp/" + cc + ".js");
   /* automatic layer reports from the news pool (tools/refresh_layerfeed.mjs) */
   src.push("data/live/layerfeed/" + cc + ".js");
   document.write(src.map(function (s) { return '<script src="' + s + '"><\/script>'; }).join(""));
@@ -3342,6 +3346,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   var LIVE = window.LIVE, CF = window.CONFLICT, PROV = window.PROVINCES;
   /* ---------- country: one page, one country at a time. The hash is "#<cc>/<view>"; Thailand has no prefix ---------- */
   var COUNTRIES = [
+    /* the whole world: where a first open starts (assets/osap-start.js), every country's reports and the global feeds together */
+    { id: "ww", name: "World", region: "World", ne: null, bounds: [[-58, -180], [84, 180]], world: true, global: true },
     { id: "th", name: "Thailand", region: "Mainland Southeast Asia", ne: "Thailand", bounds: [[5.5, 97.2], [20.6, 105.8]] },
     { id: "vn", name: "Vietnam", region: "Mainland Southeast Asia", ne: "Vietnam", bounds: [[8.3, 101.8], [23.6, 109.7]] },
     { id: "kh", name: "Cambodia", region: "Mainland Southeast Asia", ne: "Cambodia", bounds: [[10.1, 102.0], [15.0, 107.9]] },
@@ -3374,7 +3380,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* every other country (UN members plus Taiwan's neighbours already above, Kosovo, Palestine and Western Sahara): automatic
      global feeds only, no hand-researched layers yet. Their entries live in data/basemap/world-countries.js */
   (function () {
-    var ORDER = ["Mainland Southeast Asia", "Maritime Southeast Asia", "East Asia", "Oceania", "South Asia", "Western and Central Asia",
+    var ORDER = ["World", "Mainland Southeast Asia", "Maritime Southeast Asia", "East Asia", "Oceania", "South Asia", "Western and Central Asia",
       "Europe", "Africa", "North America and Caribbean", "South America"];
     var seen = {}; COUNTRIES.forEach(function (c) { seen[c.id] = 1; });
     (window.ASAP_WORLD || []).forEach(function (w) { if (!seen[w.id] && /^[a-z]{2}$/.test(w.id)) COUNTRIES.push({ id: w.id, name: w.name, region: w.region, ne: w.ne, a3: w.a3, bounds: w.bounds, world: true }); });
@@ -3382,8 +3388,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     COUNTRIES.sort(function (a, b) { var ra = ORDER.indexOf(a.region), rb = ORDER.indexOf(b.region); return ra - rb || (a.world ? 1 : 0) - (b.world ? 1 : 0) || (a.world && b.world ? a.name.localeCompare(b.name) : pos[a.id] - pos[b.id]); });
   })();
   var CBY = {}; COUNTRIES.forEach(function (c) { CBY[c.id] = c; });
+  /* the real countries, without World (its box is the whole map, so it would "contain" every point): what finds a country
+     from a place, lists neighbours or offers countries to add uses this list */
+  var PLACES = COUNTRIES.filter(function (c) { return !c.global; });
   /* the country list for assets/osap-locate.js ("Use my location" finds the country from the outlines) */
-  window.OSAP_COUNTRIES = COUNTRIES;
+  window.OSAP_COUNTRIES = PLACES;
   var HASH = (location.hash || "").replace("#", "").split("/");
   var CC = HASH.length > 1 && CBY[HASH[0]] ? HASH[0] : "th", C = CBY[CC], TH = CC === "th";
   /* a country code the list does not know opens Thailand: start again as Thailand, so its flood files load (OSAP_TH, near the top) */
@@ -3738,6 +3747,18 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         kinds: { other: { label: "Automatic report", color: "--muted" } }, kpis: [{ type: "all", label: "Automatic reports (not reviewed)", hot: true }] };
     });
   })();
+  /* World ("ww", where a first open starts): no researched records of its own. Public safety, Weather and Public health open
+     as layers filled only by the live global feeds (earthquakes, tsunami bulletins, volcanoes, cyclones, official warnings,
+     WHO and CDC notices), every one of them worldwide */
+  if (C.global) ["safety", "weather", "health"].forEach(function (lid) {
+    if (TD[lid]) return;
+    var day = new Date().toISOString().slice(0, 10);
+    TD[lid] = { asof: day, from: new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), color: "--muted", auto: true, events: [], tableAll: true, unit: "reports", unitShort: "Reports",
+      srcline: "Live global feeds · official agencies' own notices",
+      status: "<b>Live global feeds only.</b> Earthquakes, tsunami bulletins, volcanic activity, cyclones, official warnings and health notices worldwide, each from the agency that issued it. Pick a country for its researched records.",
+      chartTitle: "Reports by month", chartSub: "Live feed reports by month.",
+      kinds: { other: { label: "Live feed report", color: "--muted" } }, kpis: [{ type: "all", label: "Live feed reports", hot: true }] };
+  });
   if (!TH) LAYERS = LAYERS.filter(function (l) { var n = (AREA_NAMES[CC] || {})[l.id]; return C.world ? !!TD[l.id] || l.id === "timeline" : n !== null || !!TD[l.id]; });
   /* the feed-only topics are listed only where the feed has reports for them */
   LAYERS = LAYERS.filter(function (l) { return (l.id !== "protest" && l.id !== "politics" && l.id !== "migration") || !!TD[l.id]; });
@@ -5493,7 +5514,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* earthquakes in this area become Public safety observations, so they reach Timeline and Alerts */
   function addQuakeRecords() {
     R = R.filter(function (r) { if (r.quake) { delete byId[r.id]; r.src.n--; return false; } return true; });
-    if (LBY.safety && HZ.q) HZ.q.filter(function (q) { return inArea(q.lat, q.lon); }).forEach(function (q) {
+    /* World keeps magnitude 4.5 and up as records (every quake is still on the Earthquakes and hazards map) */
+    if (LBY.safety && HZ.q) HZ.q.filter(function (q) { return inArea(q.lat, q.lon) && (!C.global || q.mag >= 4.5); }).forEach(function (q) {
       var d = new Date(q.time), iso = d.toISOString();
       add({ layer: "safety", type: "observation", cat: "Earthquake (USGS)", kind: "earthquake", quake: true, live: true,
         title: "M" + q.mag.toFixed(1) + " earthquake, " + q.place,
@@ -5862,7 +5884,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     for (var k = 0; k < by.length; k++) if (by[k][0].test(s)) return by[k][1];
     return "language";
   }
-  function warnItems() { var w = window.ASAP_WARN; return w && w.items ? (w.items[CC] || []) : []; }
+  /* World: every country's severe and extreme warnings (all of them, about 800 at a time, would bury the rest) */
+  function warnItems() {
+    var w = window.ASAP_WARN; if (!w || !w.items) return [];
+    if (!C.global) return w.items[CC] || [];
+    var out = []; Object.keys(w.items).forEach(function (k) { (w.items[k] || []).forEach(function (i) { if (/extreme|severe|特別警報/i.test(i.title + " " + i.severity)) out.push(i); }); });
+    return out;
+  }
   function addWarnRecords() {
     R = R.filter(function (r) { if (r.warn) { delete byId[r.id]; r.src.n--; return false; } return true; });
     if (!LBY.weather) return;
@@ -5907,7 +5935,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      Every item is an unverified report. A headline that names a known place in this area is placed there, approximately. */
   LCOL.news = "--accent";
   var GAZ = null, CNAMES = {};
-  COUNTRIES.forEach(function (c) { CNAMES[c.name.toLowerCase()] = 1; });
+  PLACES.forEach(function (c) { CNAMES[c.name.toLowerCase()] = 1; });
   /* a wire dateline names where the reporter filed, not where the story happened ("SEOUL, Sept. 30 (Yonhap) --", "(Seoul = Yonhap)",
      "MANILA (AP) —", "MANILA, Philippines-The"); its words are blanked before a place is read. Same patterns as tools/gazetteer.mjs DATELINE. */
   var AGENCY = "Reuters|AP|AFP|Yonhap|Xinhua|Bernama|Kyodo|Jiji|ANI|PTI|IANS|UNI|dpa|EFE|Antara|ANTARA|PNA|VNA|TASS|RIA|Anadolu|AA|KCNA|UPI|Lusa|ANSA|Sputnik|WAM|SPA|BSS|APP|IRNA|IPS|CNA|NNA";
@@ -6040,7 +6068,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   addNewsRecords("ASAP_NEWS", "news", "news");
   addNewsRecords("ASAP_SOCIAL", "social", "social");
   /* feed history for this area only, loaded after the page is up so it never delays the first view */
-  if (/^https?:$/.test(location.protocol)) window.addEventListener("load", function () {
+  /* (World keeps no feed history of its own: its stories are each country's) */
+  if (/^https?:$/.test(location.protocol) && !C.global) window.addEventListener("load", function () {
     var hs = document.createElement("script");
     hs.src = "data/history/" + CC + ".js";
     hs.onload = function () {
@@ -6201,7 +6230,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* ---------- further free sources (15-minute snapshots, data/live): advisories, tsunami, volcanoes, outbreaks, displacement,
      internet outages, maritime security, sanctions. Every item is its publisher's statement or an automated signal. ---------- */
   function snapBadge(g) { return g ? '<span class="badge stale">SNAPSHOT</span> ' + esc(window.OSAP_TIME.asofT(g.asof)) + (window.OSAP_EMPTY ? window.OSAP_EMPTY.ageNote(g.asof, 360) : "") + " · every 15 min" : '<span class="badge stale">NO DATA</span> Filled by the GitHub job every 15 minutes once the app is hosted.'; }
-  function hasCC(x) { return (x.ccs || []).indexOf(CC) >= 0; }
+  /* World takes every country's items */
+  function hasCC(x) { return C.global || (x.ccs || []).indexOf(CC) >= 0; }
   function fmtN(v) { return v == null ? "–" : Math.round(v).toLocaleString("en-GB"); }
   function advNow() {
     var a = (SOF && SOF.advisory) || {}, L = window.ASAP_ADV && window.ASAP_ADV.items && window.ASAP_ADV.items[CC];
@@ -6319,7 +6349,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 
   /* Security view: internet outages, maritime security, sanctions */
   /* the open country's list comes from data/live/sanctions/<cc>.js; sanctions.js itself carries only the time stamp and counts */
-  function sancFor() { var S1 = window.ASAP_SANC, S2 = window.ASAP_SANC_CC; return S2 && S2.items ? S2.items.filter(hasCC) : S1 && S1.entries ? S1.entries.filter(hasCC) : []; }
+  function sancFor() { if (C.global) return []; var S1 = window.ASAP_SANC, S2 = window.ASAP_SANC_CC; return S2 && S2.items ? S2.items.filter(hasCC) : S1 && S1.entries ? S1.entries.filter(hasCC) : []; }
   /* full UCDP records for the open country (data/live/ucdp/<cc>.js); ucdp.js holds a slim copy of every event for the world views */
   function ucdpFull() { var U2 = window.ASAP_UCDP_CC, U = window.ASAP_UCDP; return U2 && U2.items ? U2.items : (U && U.items) || []; }
   var sancPat = null, sancPatCC = null;
@@ -6354,7 +6384,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       add({ layer: "health", type: "claim", cat: "CDC travel health notice", kind: "other", more2: true, live: true, title: x.title, detail: x.summary || "", ts: x.date, place: "", prov: "",
         lat: null, lon: null, prec: "none", sev: x.level >= 3 ? 3 : x.level === 2 ? 2 : 1, src: SOURCES.cdc, url: x.link, issued: x.date, recorded: D.asof });
     });
-    if (lay && U) ucdpFull().filter(hasCC).forEach(function (e) {
+    /* World keeps events with 5 or more deaths (best estimate) as records, about 250 of 2,000; Conflict events lists them all */
+    if (lay && U) ucdpFull().filter(function (e) { return hasCC(e) && (!C.global || e.best >= 5); }).forEach(function (e) {
       add({ layer: lay, type: "report", cat: "Conflict event (UCDP, " + e.type + ")", kind: "other", more2: true, live: true,
         title: window.OSAP_ACTORS(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict) + (e.where ? ", " + e.where : ""),
         detail: (e.headline ? "Source headline: " + e.headline + ". " : "") + "Deaths: best estimate " + e.best + " (range " + e.low + " to " + e.high + "). " + (e.conflict ? "Conflict: " + window.OSAP_ACTORS(e.conflict) + ". " : "") +
@@ -6784,8 +6815,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var u = e.target.closest && e.target.closest("[data-xurl]"); if (u && u.getAttribute("data-xurl")) window.open(u.getAttribute("data-xurl"), "_blank", "noopener,noreferrer");
   });
   function xLoad() {
-    var n = 0, done = function () { if (++n === 2 && current === "opendata") showOpenData(); };
-    ["data/live/x/feeds.js", "data/live/x/" + CC + ".js"].forEach(function (p) {
+    /* World reads the feed list only; each country's items are in its own file */
+    var P = C.global ? ["data/live/x/feeds.js"] : ["data/live/x/feeds.js", "data/live/x/" + CC + ".js"];
+    var n = 0, done = function () { if (++n === P.length && current === "opendata") showOpenData(); };
+    P.forEach(function (p) {
       var s = document.createElement("script"); s.src = p; s.onload = done; s.onerror = function () { xLoadFailed = true; n++; if (current === "opendata") showOpenData(); }; document.body.appendChild(s);
     });
   }
@@ -8274,9 +8307,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* countries whose outline box touches this one's (with half a degree to spare), nearest first; fewer on a phone */
   var NB = (function () {
     var b = C.bounds, pad = 0.5, out = [];
-    if (!b) return out;
+    /* World already holds every country: no neighbours */
+    if (!b || C.global) return out;
     var cx = (b[0][0] + b[1][0]) / 2, cy = (b[0][1] + b[1][1]) / 2;
-    COUNTRIES.forEach(function (c) {
+    PLACES.forEach(function (c) {
       var o = c.bounds; if (c.id === CC || !o) return;
       if (CC === "oki" && c.id === "jp" || CC === "jp" && c.id === "oki") { out.push({ id: c.id, d: 0 }); return; }
       if (o[0][0] <= b[1][0] + pad && o[1][0] >= b[0][0] - pad && o[0][1] <= b[1][1] + pad && o[1][1] >= b[0][1] - pad)
@@ -9210,7 +9244,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   cseg.parentNode.insertBefore(xaBar, cseg.nextSibling);
   var xaOpts = (function () {
     var out = "", reg = "";
-    COUNTRIES.forEach(function (c) {
+    PLACES.forEach(function (c) {
       if (c.id === CC) return;
       if (c.region !== reg) { out += (reg ? "</optgroup>" : "") + '<optgroup label="' + esc(c.region) + '">'; reg = c.region; }
       out += '<option value="' + esc(c.id) + '">' + esc(c.name) + "</option>";
@@ -9345,7 +9379,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     function ccsOf(x) { return (x.ccs || []).filter(function (c) { return CBY[c]; }); }
     function at(lat, lon, pad) {
       var hit = null, area = 1e9;
-      COUNTRIES.forEach(function (c) {
+      PLACES.forEach(function (c) {
         var b = c.bounds; if (!b) return;
         if (lat < b[0][0] - pad || lat > b[1][0] + pad || lon < b[0][1] - pad || lon > b[1][1] + pad) return;
         var a = (b[1][0] - b[0][0]) * Math.abs(b[1][1] - b[0][1]); if (a < area) { area = a; hit = c.id; }

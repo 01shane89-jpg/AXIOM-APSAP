@@ -86,6 +86,9 @@
     var k = s.k || {}, o = s.o || {}, parts = [];
     ["state", "public", "other"].forEach(function (x) { if (k[x]) parts.push('<span class="cvdot cvk-' + x + '"></span>' + k[x] + " " + (x === "other" ? "private or independent" : x === "state" ? "state media" : "public")); });
     var where = [];
+    /* World: each story is told against its own country */
+    if (CC === "ww" && s.cc) { var cn = cName(s.cc); if (o.dom) where.push(o.dom + " in " + esc(cn)); if (o.out) where.push(o.out + " elsewhere"); if (o.unk) where.push(o.unk + " not placed");
+      return esc(cn) + " · " + parts.join(" ") + (where.length ? " · " + where.join(", ") : ""); }
     if (o.dom) where.push(o.dom + " in " + esc(NAME));
     if (o.out) where.push(o.out + " elsewhere");
     if (o.unk) where.push(o.unk + " not placed");
@@ -106,7 +109,7 @@
         ' <span class="cvo">· ' + esc(KIND[r[1]] || "") + (r[1] === "state" ? " (a claim)" : "") + " · " + esc(place) + " · " + esc(when(r[4])) + "</span>" +
         (r[6] && r[6] !== s.t ? '<div class="cvo">' + esc(txt(r[6])) + (r[7] ? " (machine translated)" : "") + "</div>" : r[7] ? '<div class="cvo">Machine translated headline</div>' : "") +
         (W.OSAP_OUTLETFACTSQ ? W.OSAP_OUTLETFACTSQ.html(r[5]) : "") + "</li>";
-    }).join("") + '</ul><div class="cvo">Record fingerprint (SHA-256 of the links): ' + esc(String(s.fp || "").slice(0, 16)) + "…</div></details></li>";
+    }).join("") + (s.srcMore ? '<li class="cvo">and ' + s.srcMore + " more: open " + esc(cName(s.cc)) + " for the full list</li>" : "") + '</ul><div class="cvo">Record fingerprint (SHA-256 of the links): ' + esc(String(s.fp || "").slice(0, 16)) + "…</div></details></li>";
     return h;
   }
   /* a story thread: one event however it was worded, with what the layers hold and the button that opens them */
@@ -142,7 +145,7 @@
     var all = S.stories || [], nb = all.filter(function (s) { return s.b; }).length, L = list();
     h += '<span class="cvsub">Last ' + esc(S.hours) + " hours · " + plural(S.outlets || 0, "outlet") + " · " + plural(S.reports || 0, "headline") + " · built " + esc(when(String(S.asof).replace(" ", "T"))) + "</span></div>";
     h += '<div class="cvtabs" role="group" aria-label="Show"><button type="button" data-cvview="top" aria-pressed="' + (view === "top") + '">Most covered</button>' +
-      '<button type="button" data-cvview="blind" aria-pressed="' + (view === "blind") + '">Blindspots (' + nb + ")</button></div>";
+      (CC === "ww" ? "" : '<button type="button" data-cvview="blind" aria-pressed="' + (view === "blind") + '">Blindspots (' + nb + ")</button>") + "</div>";
     if (view === "blind") {
       h += '<div class="cvtabs cvkinds" role="group" aria-label="Blindspot kind"><button type="button" class="cvsm" data-cvb="" aria-pressed="' + (!bsel) + '">All</button>' +
         Object.keys(BLIND).map(function (k) { var n = all.filter(function (s) { return s.b === k; }).length;
@@ -154,9 +157,9 @@
     var sd = S.sides || {}, a = sd.active || {};
     h += '<div class="cvfoot"><p><span class="cvdot cvk-state"></span>State media <span class="cvdot cvk-public"></span>Public broadcaster <span class="cvdot cvk-other"></span>Private or independent. ' +
       "Ownership is from OSAP's outlet list, not a judgment of the reporting; state media lines are that government's claims.</p>" +
-      "<p>" + (sd.stateRead && sd.stateRead.length ? "State media OSAP reads for " + esc(NAME) + ": " + esc(sd.stateRead.join(", ")) + (a.state ? "" : " (too few headlines in the window to call it silent)") + ". "
+      (CC === "ww" ? "" : "<p>" + (sd.stateRead && sd.stateRead.length ? "State media OSAP reads for " + esc(NAME) + ": " + esc(sd.stateRead.join(", ")) + (a.state ? "" : " (too few headlines in the window to call it silent)") + ". "
         : "OSAP reads no state media for " + esc(NAME) + ", so there is no state-media-silent check. ") +
-      (sd.home ? plural(sd.home, esc(NAME) + " outlet") + " with " + plural(sd.homeReports || 0, "headline") + " in the window." : "") + "</p>" +
+      (sd.home ? plural(sd.home, esc(NAME) + " outlet") + " with " + plural(sd.homeReports || 0, "headline") + " in the window." : "") + "</p>") +
       "<p>" + esc(S.method || "") + "</p></div>";
     el.innerHTML = h; el.hidden = false;
   }

@@ -115,7 +115,7 @@
         '<div class="spcmp">' + badge(p.lvl) + " " + esc(NAME) + "<br>" + cmpText(p) + "</div>" + chart(S, p) + "</div>";
       if (p.lvl === "below") h += '<p class="tdobs">Fewer headlines than normal. This is more often a feed outage at OSAP\'s end than a quiet day: check Data health.</p>';
       if (p.top && p.top.length) h += why(S, "c:" + CC, p);
-    } else h += '<p class="tdobs">No headlines for ' + esc(NAME) + " in OSAP's news pool in the last " + esc(S.base + 1) + " days.</p>";
+    } else if (CC !== "ww") h += '<p class="tdobs">No headlines for ' + esc(NAME) + " in OSAP's news pool in the last " + esc(S.base + 1) + " days.</p>";
     /* this country's own data sets that are up */
     var mine = Object.keys(S.datasets || {}).filter(function (id) { var s = S.sets[id], q = S.datasets[id]; return s && s[1] && s[1].indexOf(CC) >= 0 && (q.lvl === "spike" || q.lvl === "above"); });
     if (mine.length) h += '<div class="sph3">' + esc(NAME) + " data sets above normal</div>" + '<ul class="splist">' + mine.map(function (id) { return row(S, "s", id, S.datasets[id]); }).join("") + "</ul>";

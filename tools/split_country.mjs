@@ -18,7 +18,8 @@ export function splitByCountry(file, globalName, pad = []) {
     fs.writeFileSync(path.join(dir, cc + ".js"), "window." + globalName + "=" + JSON.stringify(part).replace(/<\//g, "<\\/") + ";\n");
     keep.add(cc + ".js");
   }
-  for (const f of fs.readdirSync(dir)) if (/^[a-z]{2,3}\.js$/.test(f) && !keep.has(f)) fs.rmSync(path.join(dir, f));
+  // ww.js is the World list (tools/world_lib.mjs), written by tools/news_stories.mjs from every country's stories: kept
+  for (const f of fs.readdirSync(dir)) if (/^[a-z]{2,3}\.js$/.test(f) && f !== "ww.js" && !keep.has(f)) fs.rmSync(path.join(dir, f));
   return keep.size;
 }
 

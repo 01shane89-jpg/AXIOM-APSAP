@@ -287,6 +287,8 @@
   var redraw = {};
   function cardHtml(cc, onReady) {
     cc = cc || curCc(); if (onReady) redraw.today = onReady;
+    /* World ("ww"): key dates are each country's own */
+    if (cc === "ww") return "";
     var c = load(cc, null), L = build(cc, c.data, localToday(cc)), up = L.items.filter(function (i) { return (i.end || i.date) >= L.today; });
     var h = '<section class="tdcard tdkd" aria-label="Key dates"><div class="tdh"><h2>Key dates</h2><span class="tdcount">next ' + AHEAD + " days, local date · Zulu start</span></div>";
     var note = stateNote(c) || noHol(c); if (note) h += '<p class="tdobs">' + note + "</p>";

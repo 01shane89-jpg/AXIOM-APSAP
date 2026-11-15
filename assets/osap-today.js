@@ -122,7 +122,8 @@
       var c = b.cloneNode(true), n = c.querySelector(".n"); if (n) n.remove();
       out.push({ id: b.getAttribute("data-cc"), name: c.textContent.trim() || b.getAttribute("data-cc").toUpperCase() });
     });
-    out.sort(function (a, b) { return a.name.localeCompare(b.name); });
+    /* World first, then the countries by name */
+    out.sort(function (a, b) { return (b.id === "ww") - (a.id === "ww") || a.name.localeCompare(b.name); });
     return out;
   }
   function countryName() {
@@ -182,7 +183,7 @@
     var X = window.OSAP_WX, RL = X && X.regions ? X.regions(CC, function () { if (open) render(); }) : null;
     var rsel = RL && RL.length ? '<select class="tdreg" data-tdreg aria-label="Choose a region"><option value="">Other region…</option>' +
       RL.map(function (n, i) { return '<option value="' + i + '">' + esc(n) + "</option>"; }).join("") + "</select>" : "";
-    if (!P.length) return '<section class="tdcard"><div class="tdh"><h2>Weather</h2>' + rsel + '</div><p class="tdobs">No forecast point is set up for this area yet.</p></section>';
+    if (!P.length) return '<section class="tdcard"><div class="tdh"><h2>Weather</h2>' + rsel + '</div><p class="tdobs">' + (CC === "ww" ? "The world has no single forecast: pick a country for its weather. Cyclones and severe warnings worldwide are under Warnings and alerts." : "No forecast point is set up for this area yet.") + '</p></section>';
     if (wxSel >= P.length) wxSel = 0;
     var p = P[wxSel], L = wxLive[wxKey(p)], cur = L && L.cur, days = (L && L.days && L.days.length ? L.days : p.days).slice(0, 6);
     var h = '<section class="tdcard tdwx"><div class="tdh"><h2>Weather</h2>' +
@@ -329,6 +330,8 @@
     var v = aboutHere0(r); HERE.set(r, { s: sig, v: v }); return v;
   }
   function aboutHere0(r) {
+    /* World: every country's story is about here */
+    if (CC === "ww") return true;
     var P = placeFilters(), t = r.title || "", all = t + " " + (r.detail || "") + " " + (r.place || "");
     if (P.here.test(t)) return true;
     if (P.here.test(all)) return true;
