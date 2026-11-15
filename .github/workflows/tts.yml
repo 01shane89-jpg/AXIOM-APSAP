@@ -3,7 +3,7 @@ on:
   push:
     branches: [claude/voice-tts]
 permissions:
-  contents: read
+  contents: write
 jobs:
   tts:
     runs-on: ubuntu-latest
@@ -16,7 +16,6 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y espeak-ng
       - run: pip install "kokoro>=0.9.4" soundfile
       - run: python tts/gen.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: narration
-          path: out/
+      - run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add out && git commit -m "Narration audio [skip ci]" && git push
