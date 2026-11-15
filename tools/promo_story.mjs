@@ -197,7 +197,9 @@ const SCENES = [
     await k.wait(1400);
     console.log("  sheet", await p.evaluate(() => document.documentElement.getAttribute("data-sheet")));
     k.caption("Tap a report: what happened, and who said so", "The outlet, the time in Zulu and local, and a link to the original.");
-    const card = await p.evaluate(() => { const A = [...document.querySelectorAll("#rv-list .rvcard")].filter((x) => x.offsetParent); const c = A.find((x) => /Bangkok/i.test(x.innerText)) || A[0]; if (!c) return ""; c.setAttribute("data-wt-pick", "1"); return c.innerText.slice(0, 120); });
+    const card = await p.evaluate(() => { const A = [...document.querySelectorAll("#rv-list .rvcard")].filter((x) => x.offsetParent); const M = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], d = (o) => { const t = new Date(Date.now() - o * 864e5); return t.getUTCDate() + " " + M[t.getUTCMonth()] + " " + t.getUTCFullYear(); };
+      const recent = A.filter((x) => { const t = (x.querySelector(".rvt") || x).innerText; return t.includes(d(0)) || t.includes(d(1)); });
+      const c = recent.find((x) => /news/i.test((x.querySelector(".rvm") || x).innerText) && /Bangkok/i.test(x.innerText)) || recent.find((x) => /news/i.test((x.querySelector(".rvm") || x).innerText)) || recent[0] || A[0]; if (!c) return ""; c.setAttribute("data-wt-pick", "1"); return c.innerText.slice(0, 120); });
     console.log("  card", JSON.stringify(card));
     if (card) { await k.scrollTo("[data-wt-pick]", "center", 700); await k.click("[data-wt-pick]"); }
     await k.wait(4800);
