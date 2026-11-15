@@ -1,4 +1,4 @@
-{"cc":"ye","at":"2026-10-11T10:25:07Z","base":"2026-05-31T22:37:44Z","m":[
+{"cc":"ye","at":"2026-11-15T11:33:57Z","base":"2026-11-15T11:32:02Z","m":[
 ["n1013586155",13.63623,44.12174,{"man_made":"tower","name":"Radio Ta'izz","tower:type":"communication"}],
 ["n1013586212",13.53949,44.04779,{"man_made":"tower","tower:type":"communication"}],
 ["n1013586420",13.51792,44.05227,{"man_made":"tower","name":"Radio Ta'izz","tower:type":"communication"}],
@@ -128,6 +128,8 @@
 ["n11907001539",14.83545,43.15714,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n13250745527",12.68414,43.48718,{"man_made":"tower","tower:type":"communication"}],
 ["n13723065001",18.19422,49.16649,{"man_made":"communications_tower"}],
+["n13993319601",15.33538,44.22085,{"man_made":"communications_tower"}],
+["n14057773501",17.05329,43.63106,{"man_made":"communications_tower","name":"الاحرس","operator":"جبل"}],
 ["n1835433798",14.75469,42.96299,{"man_made":"tower","tower:construction":"lattice","tower:type":"communication"}],
 ["n1835433799",14.77853,42.95592,{"man_made":"tower","tower:type":"communication"}],
 ["n1837064881",12.82074,44.91305,{"man_made":"tower","tower:type":"communication"}],
