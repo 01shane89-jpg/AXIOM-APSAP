@@ -38,7 +38,7 @@ async function run(scroll) {
   });
   const p = await ctx.newPage(), errs = [];
   p.on("pageerror", (e) => errs.push(e.message));
-  await p.goto(base);
+  await p.goto(base + "#th"); /* Thailand and its neighbours (a new device would start on World) */
   await p.waitForFunction(() => window.OSAP_TODAY && window.OSAP_TODAY.isOpen(), null, { timeout: 60000 });
   const t0 = Date.now(), keys = () => p.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("asap-xrecs-")).map((k) => k.slice(11)).sort());
   let got = [];
