@@ -79,10 +79,11 @@ const feeds = listed.flatMap((f) => (f.covers ? [...(f.covers.includes(f.cc) ? [
   ...f.covers.map((cc) => ({ ...f, cc, covers: undefined, names: true }))] : [f]));
 // Dates of the items the last run wrote, by link: an item its outlet publishes without a date (a web-page list, a feed with no
 // dates) keeps the time OSAP first saw it instead of looking new on every run.
-const seenAt = new Map(), seenDetail = new Map();
+// The pictures found last run, by link: an article page read for its og:image once is not read again every hour.
+const seenAt = new Map(), seenDetail = new Map(), seenImg = new Map();
 try {
   const t = fs.readFileSync("data/live/news.js", "utf8"), prev = JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, ""));
-  for (const l of Object.values(prev.items || {})) for (const i of l) if (i.link && i.date) { seenAt.set(i.link, i.date); if (i.detail) seenDetail.set(i.link, i); }
+  for (const l of Object.values(prev.items || {})) for (const i of l) if (i.link && i.date) { seenAt.set(i.link, i.date); if (i.detail) seenDetail.set(i.link, i); if (i.img) seenImg.set(i.link, i.img); }
 } catch (e) {}
 const nowIso = new Date().toISOString().slice(0, 16);
 // a date with no time zone is the outlet's local time: tz in tools/news_feeds.json, e.g. "+08:00"
@@ -97,7 +98,7 @@ async function readFeed(f) {
     if (f.search && !(await robotsAllow(f.url))) throw new Error("robots.txt does not allow this search");
     const body = await (bodies[f.url] = bodies[f.url] || getFeed(f.url, !!f.plainUa));
     // html: an agency's news list on a web page (links matching f.match), read like a feed
-    const list = (f.html ? parseList(body, f.url, f.match) : parseFeed(body)).slice(0, f.max || 25).map((i) => {
+    const list = (f.html ? parseList(body, f.url, f.match) : parseFeed(body, { image: true })).slice(0, f.max || 25).map((i) => {
       const link = f.search ? unwrap(i.link) : i.link;
       let outlet = f.outlet;
       if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via Bing News search)"; } catch (e) {} }
@@ -106,6 +107,8 @@ async function readFeed(f) {
       let date = onClock(iso(zoned(i.date, f.tz)), f.clock), seen = false;
       if (!date) { date = seenAt.get(link) || nowIso; seen = true; }
       const o = { title: i.title, summary: i.summary.slice(0, 280), date, link, outlet, lang, via: f.search ? "search" : f.html ? "web page" : "RSS", state: !!f.state };
+      // the picture the outlet's own feed offers for the item (media:thumbnail, media:content, an image enclosure): its link only
+      if (i.image) o.img = i.image;
       if (seen) o.date_seen = true;          // the outlet gives no date: this is when OSAP first saw it
       if (f.nc) o.nc = true;
       if (f.relevance === "exempt") o.exempt = true;   // every item kept by the relevance check
@@ -238,14 +241,19 @@ async function ogImage(url) {
 }
 {
   const t1 = Date.now();
-  const need = Object.entries(items).filter(([k]) => !k.includes(":")).flatMap(([, l]) => l).filter((i) => !i.img && /^https:\/\//.test(i.link || "")).slice(0, OG_MAX);
+  const lack = Object.entries(items).filter(([k]) => !k.includes(":")).flatMap(([, l]) => l).filter((i) => !i.img && /^https:\/\//.test(i.link || ""));
+  // a picture read from the page on an earlier run is kept; the page reads left go to the newest items first (before this, the
+  // same first 400 items in country order were read every run, so most countries never had a picture)
+  let reused = 0;
+  for (const i of lack) { const u = seenImg.get(i.link); if (u) { i.img = u; reused++; } }
+  const need = [...new Set(lack.filter((i) => !i.img))].sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0)).slice(0, OG_MAX);
   let got = 0;
   // 16 pages at a time (different outlets, first 96 KB only): with 8 at a time, a few slow sites in each batch held the rest
   for (let k = 0; k < need.length; k += 16) {
     const res = await Promise.all(need.slice(k, k + 16).map((i) => ogImage(i.link)));
     res.forEach((u, j) => { if (u) { need[k + j].img = u; got++; } });
   }
-  console.log("article-page pictures:", got, "of", need.length, "items without a feed picture; timing", took(t1));
+  console.log("article-page pictures:", reused, "kept from the last run,", got, "new of", need.length, "pages read; timing", took(t1));
 }
 const all = [...new Set(Object.values(items).flat())];
 // The model translates about 400 texts a run and the cache holds 6,000, so with every country's outlets the order matters:

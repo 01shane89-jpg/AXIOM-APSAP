@@ -230,3 +230,5 @@ tests/speed_budget.mjs
 tests/boolq_smoke.mjs
 # source grading: picker with Save, per-source default only pre-fills, badges, exports carry the grade
 tests/grade_smoke.mjs
+# news pictures: outlet picture on Today Top stories and the News tab (violent stories too), phone fit
+tests/news_thumbs_smoke.mjs
