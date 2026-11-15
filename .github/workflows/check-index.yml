@@ -132,6 +132,8 @@ jobs:
       - run: node tests/milref.test.mjs
       - run: node tests/medplan_decide.test.mjs
       - run: node tests/medplan_air.test.mjs
+      # Morocco medical data package (tools/build_ma_medical.py): sources, SHA-256, inferred capabilities, no names or phones
+      - run: node tests/ma_medical.test.mjs
       - run: node tests/seatransit.test.mjs
       # machine translation: invented lines rejected, and a translation stays with its item
       - run: node tests/mt_guard.test.mjs

@@ -49,6 +49,9 @@
       function () { return !!(W.OSAP_WX && W.OSAP_WX.report) || "Weather is still loading"; }, function () { W.OSAP_WX.report(); }],
     ["illum", "Country", "Night illumination", "Sunset, twilight (BMNT/EENT), moonrise and set, moon phase and percent lit, night by night, with a chart",
       function () { return !!(W.OSAP_ILLUM && W.OSAP_ILLUM.open) || "Still loading"; }, function () { W.OSAP_ILLUM.open(); }],
+    /* the whole country's medical picture (assets/osap-medcountry.js): every country, from OSAP's researched list and stored map data */
+    ["medcountry", "Country", "Country medical overview", "The country's medical picture on one report: health system, hospital levels, referral hospitals with capabilities, blood, evacuation airfields and ports, chambers, gaps, every source with its SHA-256",
+      function () { return !!W.OSAP_MEDCOUNTRY || "Not available"; }, function () { W.OSAP_MEDCOUNTRY.open(); }],
 
     ["timeline", "On screen now", "Timeline report", "Chronology, key events, map and sources for the period and topic shown",
       function () { return !!(W.OSAP_TLREPORT && W.OSAP_TLREPORT.eligible()) || "Needs at least 3 dated reports in the period; widen the period"; },
