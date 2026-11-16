@@ -8,3 +8,4 @@ desktop/dist/
 _site/
 .netlify/
 netlify/node_modules/
+android/project/

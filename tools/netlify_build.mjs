@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 // the repository is the folder above this file; the output goes in the folder the build runs in (the repository for the app,
 // old-address/ for the stand-in copy on the old netlify.app address, whose netlify.toml lives there)
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."), OUT = path.join(process.cwd(), "_site");
-const KEEP = ["index.html", "reset.html", "sw.js", "manifest.webmanifest", "assets", "LICENSE", "NOTICE.md", "terms.html", "privacy.html", "refunds.html"];
+const KEEP = [".well-known", "index.html", "reset.html", "sw.js", "manifest.webmanifest", "assets", "LICENSE", "NOTICE.md", "terms.html", "privacy.html", "refunds.html"];
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT);
 let n = 0;
