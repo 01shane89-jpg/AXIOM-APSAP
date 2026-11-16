@@ -144,6 +144,33 @@ export function trustMt(i, now) {
   if (!/m/.test(i.flags || "") || !i.orig || !mtSuspect(i.orig, i.title, now)) return i;
   return { ...i, title: i.orig, orig: "", flags: String(i.flags).replace(/m/g, ""), mt_rejected: true };
 }
+// A summary already written (the last KEEP days are kept as they were) is checked again with today's guard: a source headline whose
+// machine translation now fails it is shown in its original words, the rules-made lines that quote it quote the original, and an
+// AI-written line that cites it is dropped, since it may repeat what the translation invented (2026-11-16: "10 injured in
+// explosion at Christmas market in Belgium" led the Netherlands summary; the outlets said "Vijf gewonden", five injured). An AI
+// summary left with no top line falls back to its rules top lines. Returns the number of source headlines changed.
+export function scrubDay(d, now) {
+  if (!d || !Array.isArray(d.refs)) return 0;
+  const bad = [];
+  for (const r of d.refs) {
+    if (!/m/.test(r.flags || "") || !r.orig) continue;
+    const t = trustMt(r, now);
+    if (t.mt_rejected) { bad.push({ n: r.n, en: r.title, orig: r.orig }); r.title = r.orig; delete r.orig; r.flags = t.flags; r.mt_rejected = true; }
+  }
+  if (!bad.length) return 0;
+  const nums = new Set(bad.map((b) => b.n));
+  const swap = (p) => { if (p && p.text) for (const b of bad) for (const en of [b.en, b.en.replace(/[.\s]+$/, "")]) if (en) p.text = p.text.split(en).join(b.orig); };
+  for (const sec of ["events", "rules_bluf", "watch"]) (d[sec] || []).forEach(swap);
+  if (d.method === "ai") {
+    const keep = (p) => !(p.refs || []).some((n) => nums.has(n));
+    const before = (d.bluf || []).length + (d.ai_watch || []).length;
+    d.bluf = (d.bluf || []).filter(keep); d.ai_watch = (d.ai_watch || []).filter(keep);
+    d.ai_dropped = (d.ai_dropped || 0) + before - d.bluf.length - d.ai_watch.length;
+    if (!d.bluf.length) { d.bluf = d.rules_bluf || []; d.method = "rules"; }
+  } else (d.bluf || []).forEach(swap);
+  d.mt_rechecked = (d.mt_rechecked || 0) + bad.length;
+  return bad.length;
+}
 function pick(items, from, to, R, cc) {
   return (items || []).map((i) => trustMt(i)).filter((i) => i.url && /^https?:\/\//.test(i.url) && i.title && i.date >= from && i.date <= to && !softSection(i.url))
     .map((i) => ({ ...i, _s: score(R, i, cc) })).filter((i) => i._s > -3);

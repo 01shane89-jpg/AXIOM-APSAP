@@ -19,6 +19,7 @@ import { ccsAt } from "./geo_cc.mjs";
 import { zonesFront } from "./front_zones.mjs";
 import { tgItems } from "./tg_preview.mjs";
 import { stripOutletText, postOnly } from "./outlet_text.mjs";
+import { dropSuspectMt } from "./mt_guard.mjs";
 
 const PROBE = process.env.PROBE === "1", ONLY = (process.env.CONFLICTS || "").split(",").filter(Boolean);
 const TIMEOUT = 25000, KEEP_DAYS = 180, CAP = 900, UCDP_DAYS = 400, OUT = "data/live/conflicts";
@@ -416,6 +417,12 @@ for (const c of LIST) {
   const oldRe = c.old_stories && c.old_stories.length ? new RegExp(c.old_stories.join("|"), "i") : null;
   const stale = items.filter((i) => i.via === "search" && staleSearchResult([i.title, i.summary].join(" "), i.date, 60, { link: i.link, old: oldRe }));
   if (stale.length) { const st = new Set(stale); items = items.filter((i) => !st.has(i)); console.log(c.id + ": " + stale.length + " search results dropped as old stories re-dated: " + stale.map((i) => i.link).join(" ")); }
+  // a kept report's machine translation passes today's guard (tools/mt_guard.mjs) again: one that fails is dropped, with the
+  // casualty figures read from it, and not asked for again (on 2026-11-16 conflict tabs carried "10 killed" headlines whose
+  // originals give no count)
+  let mtDrop = 0;
+  for (const i of items) if (i.mt && i.title_en && dropSuspectMt(i)) { if (!i.title_en) i.mt_rejected = true; mtDrop++; }
+  if (mtDrop) console.log(c.id + ": " + mtDrop + " stored machine translations failed the guard; their original headlines are used");
   if (!PROBE && translateAll) {
     const todo = items.filter((i) => !/^en\b/i.test(i.lang || "") && !i.title_en && !i.mt_rejected && i.via !== "Telegram" && !i.notext);
     if (todo.length) {
