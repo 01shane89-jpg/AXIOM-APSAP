@@ -3324,6 +3324,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 })();
 </script>
 <script>/* the feeds a plan may not include (Mid and Full in tools/tiers.mjs; OSAP_WRITE, near the top); the Free feeds stay plain tags below */ window.OSAP_WRITE("feeds");</script>
+<script>/* signed out on the Netlify site (assets/osap-datagate.js, behind the sign-in screen) the gate refuses these free feeds too:
+   left out, up to the end marker below */ if (window.OSAP_DATA && window.OSAP_DATA.dark()) document.write("<!--");</script>
 <script src="data/live/quakes.js"></script>
 <script src="data/live/gdacs.js"></script>
 <script src="data/live/warnings.js"></script>
@@ -3338,6 +3340,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="data/basemap/world-countries.js"></script>
 <script>/* hidden areas: left out of the country list while locked (assets/osap-lock.js) */ if (window.OSAP_LOCK) window.OSAP_LOCK.prune();</script>
 <script src="data/basemap/world-outlines.js"></script>
+<!-- end of the free feeds left out when signed out -->
 <script>
 /* ================= AXIOM TSAP: layer switcher, shared timeline, source traceability =================
    Every flood and border item the page already carries is normalised into one record shape
