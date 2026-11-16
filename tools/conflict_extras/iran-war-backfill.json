@@ -2043,5 +2043,312 @@
   "place": "Jebel Dukhan, Bahrain",
   "lat": 26.03788,
   "lon": 50.54224
+ },
+ {
+  "t": "2026-04-25T00:00:00Z",
+  "kind": "diplomacy",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran war updates: Trump cancels Witkoff, Kushner trip to Pakistan for talks",
+  "source": "Al Jazeera",
+  "url": "https://www.aljazeera.com/news/liveblog/2026/4/25/iran-war-live-tehrans-fm-in-islamabad-us-says-envoys-to-travel-for-talks",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-04-27T00:00:00Z",
+  "kind": "diplomacy",
+  "actor": "",
+  "side": "neutral",
+  "title": "Top US officials review Iran’s proposal to end war and open Hormuz Strait",
+  "source": "Al Jazeera",
+  "url": "https://www.aljazeera.com/news/liveblog/2026/4/27/iran-war-live-araghchi-to-meet-putin-trump-says-tehran-can-call-for-talks",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-04-29T00:00:00Z",
+  "kind": "diplomacy",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran war updates: Trump tells Iran to ‘get smart soon’ amid stalled talks",
+  "source": "Al Jazeera",
+  "url": "https://www.aljazeera.com/news/liveblog/2026/4/29/iran-war-live-trump-says-tehran-wants-end-to-blockade-israel-kills-medics",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-04-30T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran war updates: Trump doesn’t rule out resuming attacks",
+  "source": "Al Jazeera",
+  "url": "https://www.aljazeera.com/news/liveblog/2026/4/30/iran-war-live-trump-urges-tehran-to-just-give-up-as-oil-prices-surge",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-05-16T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report, May 16, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-may-16-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-05-19T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report: May 19, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-may-19-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-05-20T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report, May 20, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-may-20-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-05-31T00:00:00Z",
+  "place": "Iran",
+  "cc": "ir",
+  "lat": 32.4,
+  "lon": 53.7,
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran digs out underground missile sites after strikes - CNN",
+  "source": "Iran International",
+  "url": "https://www.iranintl.com/en/202605317774",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-06-04T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report: June 4, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-june-4-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-06-05T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report, June 5, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-june-5-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-06-06T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report, June 6, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-june-6-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-06-12T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report, June 12, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-june-12-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-06-16T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report: June 16, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-june-16-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-06-22T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report, June 22, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-june-22-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-06-23T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report, June 23, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-june-23-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-06-24T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report, June 24, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-june-24-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-06-29T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report: June 29, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-june-29-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-07-03T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran war updates: Day one of Khamenei funeral ends, Israel bombs Lebanon",
+  "source": "Al Jazeera",
+  "url": "https://www.aljazeera.com/news/liveblog/2026/7/3/iran-war-live-tehran-slams-us-ahead-of-huge-funeral-for-ali-khamenei",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-07-04T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran war updates: Millions expected in Tehran for funeral of Ali Khamenei",
+  "source": "Al Jazeera",
+  "url": "https://www.aljazeera.com/news/liveblog/2026/7/4/iran-war-live-millions-expected-in-tehran-for-funeral-of-ali-khamenei",
+  "gap_fill": true,
+  "site": "Tehran"
+ },
+ {
+  "t": "2026-07-05T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran war updates: Israel strikes Lebanon; Iran holds Khamenei’s funeral",
+  "source": "Al Jazeera",
+  "url": "https://www.aljazeera.com/news/liveblog/2026/7/5/iran-war-live-huge-crowds-mourn-khamenei-trump-vows-calm-during-funeral",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-07-06T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran war updates: Khamenei funeral draws millions; Israel bombs Lebanon",
+  "source": "Al Jazeera",
+  "url": "https://www.aljazeera.com/news/liveblog/2026/7/6/iran-war-live-tehran-set-for-khameneis-procession-israel-bombs-lebanon",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-07-10T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran updates: Trump says agreed to talks with Tehran, but ceasefire ‘over’",
+  "source": "Al Jazeera",
+  "url": "https://www.aljazeera.com/news/liveblog/2026/7/10/iran-war-live-fresh-attacks-on-iran-as-us-says-talks-still-on",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-08-09T00:00:00Z",
+  "kind": "diplomacy",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran war updates: Trump says US ‘only semi-negotiating’ with Tehran",
+  "source": "Al Jazeera",
+  "url": "https://www.aljazeera.com/news/liveblog/2026/8/9/iran-war-live-tehran-demands-end-to-us-blockade-to-reopen-strait-of-hormuz",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-08-21T00:00:00Z",
+  "kind": "diplomacy",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran updates: Iran, Oman discuss Hormuz; Tehran dismisses Trump’s threats",
+  "source": "Al Jazeera",
+  "url": "https://www.aljazeera.com/news/liveblog/2026/8/21/iran-war-live-us-vows-toughest-iran-sanctions-urges-china-support",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-09-30T00:00:00Z",
+  "site": "Strait of Hormuz",
+  "cc": "ir",
+  "kind": "naval",
+  "actor": "IRGC",
+  "side": "ir",
+  "title": "IRGC says it targets ships in daily Hormuz clashes with no US response",
+  "source": "Iran International",
+  "url": "https://www.iranintl.com/en/202609306509",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-10-02T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update, October 2, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-october-2-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-10-03T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update: October 3, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-october-3-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-10-13T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update, October 13, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-october-13-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-10-15T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update, October 15, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-october-15-2026",
+  "gap_fill": true
+ },
+ {
+  "t": "2026-05-02T00:00:00Z",
+  "kind": "other",
+  "actor": "",
+  "side": "neutral",
+  "title": "Iran Update Evening Special Report, May 2, 2026",
+  "source": "Critical Threats (ISW and AEI)",
+  "url": "https://www.criticalthreats.org/analysis/iran-update-evening-special-report-may-2-2026",
+  "gap_fill": true
  }
 ]

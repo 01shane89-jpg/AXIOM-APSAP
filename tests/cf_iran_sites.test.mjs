@@ -55,9 +55,29 @@ ok(/None in the chosen period\. Choose All/.test(T.placeHtml(dome, recs)), "an e
 period = null;
 
 // a place without aliases or reporting shows no reporting section
-const hormuz = X.places.find((p) => p.name === "Strait of Hormuz");
-ok(!/Reporting on this site/.test(T.placeHtml(hormuz, recs)), "a place with no reporting has no reporting section");
+const quiet = X.places.find((p) => !T.atPlace(recs, p).length && !recs.some((r) => r.site === p.id || (r.place === p.name && r.prec === "site")));
+ok(!!quiet && !/Reporting on this site/.test(T.placeHtml(quiet, recs)), "a place with no reporting has no reporting section");
 // every backfill record that names a site resolves to a place, and its fingerprint covers the site
 ok(X.records.filter((r) => r.site).every((r) => X.places.some((p) => p.id === r.site && p.lat === r.lat && p.lon === r.lon)), "site records sit on their place");
 ok(X.records.every((r) => r.claim_status === "Reported, not verified"), "every earlier report stays a claim");
+
+// the history is complete: every day from the war's first day to the end of the imported history has at least one report
+const H = X.history, days = new Set(X.records.map((r) => String(r.t).slice(0, 10)));
+ok(!!H && H.from === "2026-02-28" && H.to >= "2026-11-11", "the imported history runs from 28 February to the live window (" + (H && H.to) + ")");
+const missing = [];
+for (let d = Date.parse(H.from + "T00:00:00Z"); d <= Date.parse(H.to + "T00:00:00Z"); d += 864e5) { const k = new Date(d).toISOString().slice(0, 10); if (!days.has(k)) missing.push(k); }
+ok(!missing.length, "every day since 28 February has at least one report" + (missing.length ? " (missing " + missing.join(", ") + ")" : ""));
+ok(X.records.every((r) => /^https?:\/\//.test(r.url)) && X.records.filter((r) => r.via).every((r) => !/wikipedia\.org/.test(r.url)), "every report has a link, and an imported one links to its outlet, never to Wikipedia");
+ok(X.records.every((r) => /^[0-9a-f]{64}$/.test(r.fp)), "every report has a SHA-256 fingerprint");
+ok(X.records.filter((r) => r.via).every((r) => /^(Cited in Wikipedia: |OSAP news index, )/.test(r.via)), "every imported report says where it came from");
+ok(X.records.filter((r) => r.lat == null).every((r) => r.prec === "none" && !r.place), "a report that names no place has no position");
+ok(X.records.every((r) => r.lat == null || (isFinite(r.lat) && isFinite(r.lon))), "placed reports have a position");
+const ids = new Set(X.records.map((r) => r.id)), urls = new Set(X.records.map((r) => r.url));
+ok(ids.size === X.records.length && new Set(X.records.map((r) => r.url + "|" + r.title)).size === X.records.length, "no report is listed twice");
+ok(T.allRecords({ items: [] }, X).filter((r) => !r.live).length === X.records.length, "the panel lists every earlier report, including two updates of one live blog");
+ok(!X.records.some((r) => r.via && !/Iran|Hormuz|Tehran|IRGC|strike|missile|war|attack|Israel|Gulf/i.test(r.title + " " + (r.place || "")) && /midterm|Democratic majority/i.test(r.title)), "headlines that are not about the war are left out");
+const qeshm = X.records.filter((r) => r.place === "Qeshm Island" || /Qeshm/.test(r.place || ""));
+ok(qeshm.length > 0, "reports on Qeshm are placed on it (" + qeshm.length + ")");
+const note = T.histNote ? T.histNote(X) : "";
+ok(/Every day since 28 Feb/i.test(note) || /Every day since/.test(note), "the panel says every day is covered");
 process.exit(bad ? 1 : 0);

@@ -36,7 +36,9 @@ const STOP = new Set(["police", "mobile", "split", "nice", "reading", "bath", "h
   "whites", "blacks", "nations", "america", "europe", "africa", "asia", "pacific", "atlantic", "arctic", "alliance", "senate", "congress",
   "parliament", "court", "crown",
   // oil-market words that are also towns: "Brent crude" is not Brent, Florida (Iran war audit 2026-11-16)
-  "brent", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "christmas", "easter"]);
+  "brent",
+  // headline words that are also US towns, read wrongly in Iran war reports (audit 2026-11-16): "Airport", "Surprise strike", "Supreme Leader"
+  "airport", "surprise", "supreme", "english", "oracle", "hercules", "summit", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "christmas", "easter"]);
 // Accents folded, so a region spelled like its own country in the local language ("México" state, "Panamá" province) is not
 // read when a text names the country: Spanish headlines saying "México" were pinned on the State of Mexico (audit 2026-11-14).
 const fold = (s) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
@@ -128,14 +130,19 @@ export function metonymOnly(text, name) {
 }
 // Named sites of one conflict (tools/conflict_extras/<id>-places.json entries that list aliases): a text that names one is placed
 // on that site, before any town. sites: [{ name, lat, lon, aliases: [..] }]. Returns { name, lat, lon, prec: "site", kind, basis } or null.
+// A site marked weak (a strait, a sea area) is used only when the text names no town or region ("tanker hit off Fujairah in the
+// Strait of Hormuz" stays at Fujairah): the matcher's .weak(text) gives those.
 export function siteMatcher(sites) {
-  const list = (sites || []).filter((x) => x && isFinite(x.lat) && isFinite(x.lon) && (x.aliases || []).length).map((x) => ({ ...x,
+  const all = (sites || []).filter((x) => x && isFinite(x.lat) && isFinite(x.lon) && (x.aliases || []).length).map((x) => ({ ...x,
     re: new RegExp("(?<![\\p{L}\\p{N}])(?:" + x.aliases.map((a) => String(a).replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/[\s-]+/g, "[\\s-]+")).join("|") + ")(?![\\p{L}\\p{N}])", "iu") }));
-  return (text) => {
+  const find = (list) => (text) => {
     const t = stripDatelines(text || ""); let best = null, at = Infinity;
     for (const x of list) { const m = x.re.exec(t); if (m && m.index < at) { at = m.index; best = x; } }
     return best ? { name: best.name, lat: +(+best.lat).toFixed(5), lon: +(+best.lon).toFixed(5), prec: "site", kind: "site", basis: "A named site of this conflict (curated list), named in the text" } : null;
   };
+  const strong = find(all.filter((x) => !x.weak)), weak = find(all.filter((x) => x.weak));
+  strong.weak = weak;
+  return strong;
 }
 // Last resort for a conflict tab: a text that names exactly one of the given countries (and no town or region placed it) is shown
 // at that country's capital with precision "country", drawn as a rough ring, so a report that only says "Bahrain" is still on the
@@ -152,16 +159,19 @@ export function placeCountry(gz, text, ccs, skip = []) {
 export const partyCcs = (parties) => (parties || []).map((p) => ccFromName(p)).filter(Boolean);
 // Placement of one conflict report (tools/refresh_conflicts.mjs). PLACE_V is the rule version kept on each report as geo_c:
 // 1 towns and regions, 2 with villages, 3 (2026-11-16) with named sites first, government stand-ins skipped and the
-// one-country fallback. A report placed under an older version is placed once more under the new one; a pin the new rules no
+// one-country fallback, 4 (2026-11-16) with place_countries and more stop words. A report placed under an older version is placed once more under the new one; a pin the new rules no
 // longer give is kept unless its name was only a government stand-in ("Tehran says").
-export const PLACE_V = 3;
+export const PLACE_V = 4;
 export function placeConflictReport(gz, item, conf, site) {
   const small = !!(gz && gz.__small), v = small ? PLACE_V : 1, i = item;
   if (!gz || (i.geo_c || 0) >= v) return { changed: false };
   const text = [i.title_en, i.title, i.summary_en, i.summary].filter(Boolean).join(" \u2022 ");
   const before = i.geo ? i.geo.n + "@" + i.geo.la + "," + i.geo.lo : "";
-  let p = (site && site(text)) || placeIn(gz, text, conf.countries);
-  if (!p) p = placeCountry(gz, text, conf.countries, partyCcs(conf.parties));
+  // place_countries (optional): the countries whose towns may place a report. The Iran war leaves out the US: its towns in these
+  // reports are ships, people and stand-ins ("USS Abraham Lincoln", "Tucker Carlson", "Washington says"), not where things happened.
+  const pc = conf.place_countries || conf.countries;
+  let p = (site && site(text)) || placeIn(gz, text, pc) || (site && site.weak && site.weak(text));
+  if (!p) p = placeCountry(gz, text, pc, partyCcs(conf.parties));
   if (p) i.geo = { n: p.name, la: p.lat, lo: p.lon, p: p.prec, b: p.kind === "small" ? "gazetteer-small" : p.kind === "site" ? "site" : p.kind === "country" ? "country" : "gazetteer" };
   else if (i.geo && metonymOnly(text, i.geo.n)) delete i.geo;
   i.geo_c = v;
