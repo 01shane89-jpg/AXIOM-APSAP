@@ -55,9 +55,49 @@ ok(/None in the chosen period\. Choose All/.test(T.placeHtml(dome, recs)), "an e
 period = null;
 
 // a place without aliases or reporting shows no reporting section
-const hormuz = X.places.find((p) => p.name === "Strait of Hormuz");
-ok(!/Reporting on this site/.test(T.placeHtml(hormuz, recs)), "a place with no reporting has no reporting section");
+const quiet = X.places.find((p) => !T.atPlace(recs, p).length && !recs.some((r) => r.site === p.id || (r.place === p.name && r.prec === "site")));
+ok(!!quiet && !/Reporting on this site/.test(T.placeHtml(quiet, recs)), "a place with no reporting has no reporting section");
 // every backfill record that names a site resolves to a place, and its fingerprint covers the site
 ok(X.records.filter((r) => r.site).every((r) => X.places.some((p) => p.id === r.site && p.lat === r.lat && p.lon === r.lon)), "site records sit on their place");
 ok(X.records.every((r) => r.claim_status === "Reported, not verified"), "every earlier report stays a claim");
+
+// the history is complete: every day from the war's first day to the end of the imported history has at least one report
+const H = X.history, days = new Set(X.records.map((r) => String(r.t).slice(0, 10)));
+ok(!!H && H.from === "2026-02-28" && H.to >= "2026-11-11", "the imported history runs from 28 February to the live window (" + (H && H.to) + ")");
+const missing = [];
+for (let d = Date.parse(H.from + "T00:00:00Z"); d <= Date.parse(H.to + "T00:00:00Z"); d += 864e5) { const k = new Date(d).toISOString().slice(0, 10); if (!days.has(k)) missing.push(k); }
+ok(!missing.length, "every day since 28 February has at least one report" + (missing.length ? " (missing " + missing.join(", ") + ")" : ""));
+ok(X.records.every((r) => /^https?:\/\//.test(r.url)) && X.records.filter((r) => r.via).every((r) => !/wikipedia\.org/.test(r.url)), "every report has a link, and an imported one links to its outlet, never to Wikipedia");
+ok(X.records.every((r) => /^[0-9a-f]{64}$/.test(r.fp)), "every report has a SHA-256 fingerprint");
+ok(X.records.filter((r) => r.via).every((r) => /^(Cited in Wikipedia: |OSAP news index, )/.test(r.via)), "every imported report says where it came from");
+ok(X.records.filter((r) => r.lat == null).every((r) => r.prec === "none" && !r.place), "a report that names no place has no position");
+ok(X.records.every((r) => r.lat == null || (isFinite(r.lat) && isFinite(r.lon))), "placed reports have a position");
+const ids = new Set(X.records.map((r) => r.id)), urls = new Set(X.records.map((r) => r.url));
+ok(ids.size === X.records.length && new Set(X.records.map((r) => r.url + "|" + r.title)).size === X.records.length, "no report is listed twice");
+ok(T.allRecords({ items: [] }, X).filter((r) => !r.live).length === X.records.length, "the panel lists every earlier report, including two updates of one live blog");
+ok(!X.records.some((r) => r.via && !/Iran|Hormuz|Tehran|IRGC|strike|missile|war|attack|Israel|Gulf/i.test(r.title + " " + (r.place || "")) && /midterm|Democratic majority/i.test(r.title)), "headlines that are not about the war are left out");
+const qeshm = X.records.filter((r) => r.place === "Qeshm Island" || /Qeshm/.test(r.place || ""));
+ok(qeshm.length > 0, "reports on Qeshm are placed on it (" + qeshm.length + ")");
+const note = T.histNote ? T.histNote(X) : "";
+ok(/Every day since 28 Feb/i.test(note) || /Every day since/.test(note), "the panel says every day is covered");
+// the US sites reported damaged since 28 Feb (AP, Washington Post, CNN, NBC/AEI, Pentagon IG): each is a named place with its reporting
+const all0 = T.allRecords({ items: [] }, X), P = (n) => X.places.find((p) => p.name.startsWith(n));
+const BASES = ["NSA Bahrain", "Jebel Dukhan", "Riffa Air Base", "Ali Al Salem", "Camp Buehring", "Camp Arifjan", "Shuaiba Port", "Al Udeid", "Al Dhafra", "Ruwais (US", "Prince Sultan", "Muwaffaq Salti", "Erbil Air Base"];
+const noRep = BASES.filter((n) => !P(n) || !T.atPlace(all0, P(n)).length);
+ok(!noRep.length, "every reported damaged US site has reporting listed on it" + (noRep.length ? " (none on " + noRep.join(", ") + ")" : ""));
+const survey = all0.find((r) => /intellinews\.com\/how-tehran/.test(r.url));
+ok(!!survey && BASES.filter((n) => T.atPlace(all0, P(n)).includes(survey)).length === 11, "one report that names many sites (NBC's AEI count) is listed on each site it names, once per site");
+ok(X.records.filter((r) => /intellinews\.com\/how-tehran/.test(r.url)).length === 1, "and is still one record with one fingerprint");
+ok(X.records.filter((r) => r.also).every((r) => r.site && r.also.every((a) => a !== r.site && X.places.some((p) => p.id === a))), "a record's other sites are real places, different from its first");
+const apAt = (n) => T.placeHtml(P(n), all0);
+ok(/about 11 Jun 2026/.test(apAt("Jebel Dukhan")) && !/about 11 Jun 2026/.test(apAt("Camp Arifjan")), "a report's 'about' date shows only on the site it is about, not on the other sites it names");
+ok(/covers \d+ sites/.test(apAt("Camp Arifjan")), "a report on several sites says so");
+const riffa = T.placeHtml(P("Riffa Air Base"), all0);
+ok(/aljazeera\.com\/news\/2026\/11\/15/.test(riffa) && /claim/.test(riffa) && /Reported, not verified/.test(riffa), "the 15 Nov IRGC claim is on Riffa Air Base, the base it names, as a claim");
+ok(!T.atPlace(all0, P("Isa Air Base")).some((r) => /2026\/11\/15/.test(r.url)), "and is not moved onto Isa Air Base, a different base");
+ok(!T.atPlace(all0, P("Ruwais (US")).some((r) => /refinery|ADNOC/i.test(r.title)), "reports on the Ruwais refinery stay off the US site at Ruwais");
+ok(["Military Times", "Defense News"].every((src) => T.atPlace(all0, P("Muwaffaq Salti")).some((r) => r.source === src)), "the 18 Jul and 10 Sep Jordan base reports are linked to Muwaffaq Salti");
+ok(X.places.filter((p) => p.side === "us" && p.prec === "site").every((p) => p.basis), "a US site placed on the site itself says where its position comes from");
+ok(X.records.filter((r) => r.prec === "site" && !r.site).every((r) => { const p = X.places.find((q) => q.name === r.place); return !p || (p.lat === r.lat && p.lon === r.lon); }), "imported reports on a named site sit on its current position");
+ok(X.records.filter((r) => /militarytimes\.com\/news\/pentagon-congress\/2026\/09\/15|iran-destroyed-hundreds/.test(r.url)).every((r) => r.lat == null && r.prec === "none"), "the Pentagon IG and Washington Post tallies name countries, not one base, so they are listed but not mapped");
 process.exit(bad ? 1 : 0);

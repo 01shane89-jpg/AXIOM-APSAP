@@ -390,7 +390,7 @@ const SITES = {};
 function sitesOf(c) {
   if (c.id in SITES) return SITES[c.id];
   let list = [];
-  try { list = JSON.parse(fs.readFileSync("tools/conflict_extras/" + c.id + "-places.json", "utf8")).places.map(([name, , , , lat, lon, , , o]) => ({ name, lat, lon, aliases: (o && o.aliases) || [] })); } catch (e) {}
+  try { list = JSON.parse(fs.readFileSync("tools/conflict_extras/" + c.id + "-places.json", "utf8")).places.map(([name, , , , lat, lon, , , o]) => ({ name, lat, lon, aliases: (o && o.aliases) || [], weak: !!(o && o.weak) })); } catch (e) {}
   return (SITES[c.id] = list.some((x) => x.aliases.length) && siteMatcher ? siteMatcher(list) : null);
 }
 if (!PROBE) {

@@ -32,6 +32,8 @@ const cities = [
   row("Washington", 38.895, -77.036, "PPLC", "US", "DC", 690000),
   row("Brent", 30.469, -87.236, "PPL", "US", "FL", 27000),
   row("Manama", 26.228, 50.586, "PPLC", "BH", "16", 150000),
+  row("Bandar Abbas", 27.186, 56.281, "PPLA", "IR", "11", 530000),
+  row("Lincoln", 40.8, -96.667, "PPLA", "US", "NE", 290000),
   row("Riffa", 26.13, 50.555, "PPL", "BH", "17", 110000),
 ].join("\n");
 const admin = ["US.UT\tUtah\tUtah\t1", "US.HI\tHawaii\tHawaii\t2", "US.TX\tTexas\tTexas\t3", "US.IL\tIllinois\tIllinois\t4",
@@ -177,6 +179,20 @@ for (const [t, cc, want, prec] of [
     placeConflictReport(gz, i, conf, site);
     const ok = (i.geo ? i.geo.n : null) === want && (!want || i.geo.p === prec) && i.geo_c === PLACE_V; if (!ok) bad++;
     console.log(ok ? "ok  " : "FAIL", "report:", JSON.stringify(i.title), "->", i.geo ? i.geo.n + " " + i.geo.p : null, "v" + i.geo_c);
+  }
+  // a weak site (a wide strait) gives way to a town the report names; alone it still places the report
+  const site2 = siteMatcher([{ name: "Strait of Hormuz", lat: 26.57, lon: 56.25, aliases: ["Strait of Hormuz"], weak: true }, { name: "Qeshm Island", lat: 26.85, lon: 55.9, aliases: ["Qeshm", "Keshm"] }]);
+  const conf2 = { countries: ["ir", "us", "bh"], place_countries: ["ir", "bh"], parties: ["Iran", "United States", "Israel"] };
+  for (const [title, want, prec] of [
+    ["US strikes boats off Bandar Abbas in the Strait of Hormuz", "Bandar Abbas", "approx"],
+    ["IRGC seizes tanker in the Strait of Hormuz", "Strait of Hormuz", "site"],
+    ["Explosions heard on Keshm island", "Qeshm Island", "site"],
+    // place_countries: a town in a party's own country (Lincoln, Tucker, Surprise in the US) is not read out of a headline
+    ["USS Lincoln heads back to the Gulf as Tucker Carlson warns of a surprise attack", null],
+  ]) {
+    const i = { title }; placeConflictReport(gz, i, conf2, site2);
+    const ok = (i.geo ? i.geo.n : null) === want && (!want || i.geo.p === prec); if (!ok) bad++;
+    console.log(ok ? "ok  " : "FAIL", "report:", JSON.stringify(title), "->", i.geo ? i.geo.n + " " + i.geo.p : null);
   }
   // already placed under the current rules: left alone (placement runs once per rule version)
   const done = { title: "Iran claims strike on US radar on Jebel Dukhan", geo: { n: "Elsewhere", la: 0, lo: 0 }, geo_c: PLACE_V };

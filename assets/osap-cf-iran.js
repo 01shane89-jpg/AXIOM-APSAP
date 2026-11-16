@@ -71,27 +71,40 @@
         source: i.outlet || "", url: i.link, fp: i.fp || "", claim: !!i.state, live: true });
     });
     ((X && X.records) || []).forEach(function (r) {
-      if (!r.url || seen[r.url]) return; seen[r.url] = 1;
-      out.push({ t: r.t, lat: r.lat, lon: r.lon, place: r.place, prec: r.prec || "", site: r.site || "", about: r.about || "", kind: BK[r.kind] || r.kind, side: r.side, actor: r.actor, title: r.title, source: r.source, url: r.url, fp: r.fp, claim: r.side !== "neutral", live: false });   // "claim": a party's own statement
+      // a live blog can be cited twice, for two of its updates: one entry per headline, but never a live report again
+      if (!r.url || seen[r.url] === 1 || seen[r.url + "|" + r.title]) return; seen[r.url + "|" + r.title] = 2; if (!seen[r.url]) seen[r.url] = 2;
+      out.push({ t: r.t, lat: r.lat, lon: r.lon, place: r.place, prec: r.prec || "", site: r.site || "", also: r.also || [], about: r.about || "", kind: BK[r.kind] || r.kind, side: r.side, actor: r.actor, title: r.title, source: r.source, url: r.url, fp: r.fp, via: r.via || "", outlets: r.outlets || 0, claim: r.side !== "neutral", live: false });   // "claim": a party's own statement
     });
     out.sort(function (a, b) { return ms(b.t) - ms(a.t); });
     return out;
   }
 
+  /* where the earlier reports come from, and how many have no place on the map */
+  function histNote(X) {
+    var H = X.history, n = X.records.filter(function (r) { return r.lat == null; }).length;
+    if (!H || !H.sources) return " found by web search (headlines only; date known, time not; place approximate).";
+    var wp = 0, ni = 0;
+    X.records.forEach(function (r) { if (/^Cited in Wikipedia/.test(r.via || "")) wp++; else if (/^OSAP news index/.test(r.via || "")) ni++; });
+    return ": " + H.backfill + " found by web search, " + wp + " cited by Wikipedia's pages on the war (the outlets' own headlines and links; Wikipedia's text is not used), and " + ni +
+      " from OSAP's own news index. Every day since " + day(H.from) + " has at least one. Headlines and links only; the date is known, the time is not; " + n + " name no place, so they are listed here but not on the map.";
+  }
+
   /* the reports about one place: earlier reports that name it as their site, and live reports the refresh job pinned on it
      (by its names, tools/gazetteer.mjs siteMatcher), in the chosen period, newest first */
+  /* a report that names several sites (a survey of damage across bases) is listed on each of them ("also") */
+  function onSite(r, p) { return (r.site ? r.site === p.id : r.place === p.name && r.prec === "site") || (!!r.also && r.also.indexOf(p.id) >= 0); }
   function atPlace(recs, p) {
-    return recs.filter(function (r) { return (r.site ? r.site === p.id : r.place === p.name && r.prec === "site") && inP(r.t); });
+    return recs.filter(function (r) { return onSite(r, p) && inP(r.t); });
   }
   function placeHtml(p, recs) {
-    var at = atPlace(recs, p), all = recs.filter(function (r) { return r.site ? r.site === p.id : r.place === p.name && r.prec === "site"; });
+    var at = atPlace(recs, p), all = recs.filter(function (r) { return onSite(r, p); });
     var h = "<b>" + esc(p.name) + "</b><br><small>" + esc(KIND_LBL[p.kind] || p.kind) + " · " + esc((SIDE[p.side] || SIDE.neutral).name) + "</small><br>" + esc(p.why) +
       ' <span class="aitag" title="' + esc(p.why_status) + '">AI generated</span><br><small>' + link(p.src, p.srcname) + " · " +
       (p.prec === "site" ? (p.basis ? esc(p.basis) : "position of the site itself") : "position approximate") + fpShort(p.fp) + "</small>";
     if (all.length) {
       h += '<div class="cfi-at"><b>Reporting on this site</b> <span class="cfi-claim">Reported, not verified</span>' + (at.length < all.length ? " <small>(" + at.length + " of " + all.length + " in the chosen period)</small>" : "") +
         '<ul class="cfi-ev">' + at.slice(0, 8).map(function (r) {
-          return "<li><small>" + day(r.t) + (r.about ? " · about " + day(r.about) : "") + (r.actor ? " · " + esc(r.actor) : "") + "</small><br>" + link(r.url, r.title) + " <small>(" + esc(r.source) + ")</small>" +
+          return "<li><small>" + day(r.t) + (r.about && r.site === p.id ? " · about " + day(r.about) : "") + (r.also && r.also.length ? " · covers " + (r.also.length + 1) + " sites" : "") + (r.actor ? " · " + esc(r.actor) : "") + "</small><br>" + link(r.url, r.title) + " <small>(" + esc(r.source) + ")</small>" +
             (r.claim ? ' <span class="cfi-claim">claim</span>' : "") + (r.live ? "" : ' <span class="cfi-claim">earlier report</span>') + fpShort(r.fp) + "</li>";
         }).join("") + (at.length > 8 ? "<li><small>and " + (at.length - 8) + " more in the history list</small></li>" : "") +
         (!at.length ? "<li><small>None in the chosen period. Choose All to see them.</small></li>" : "") + "</ul></div>";
@@ -157,7 +170,7 @@
       h += '<h3>More on the map</h3><div class="cfi-tog">' +
         tog("places", "Bases, facilities and chokepoints (" + X.places.length + ")", "#2F6FB5", true) +
         tog("navw", "Navigational warnings in the area (live, NGA)", "#1D5A86", false) +
-        tog("hist", "Earlier reports in the chosen period (web search)", "#B3261E", false) + "</div>";
+        tog("hist", "Earlier reports in the chosen period", "#B3261E", false) + "</div>";
 
       var ph = X.phases || [];
       if (ph.length) {
@@ -179,7 +192,7 @@
       h += '<h3>History since 28 February <span class="cfi-claim">Reported, not verified</span></h3><div class="cfi-filt" role="group" aria-label="Filter the history">' +
         FILT.map(function (f, i) { return '<button type="button" data-k="' + f[0] + '" aria-pressed="' + (i === 0) + '">' + f[1] + "</button>"; }).join("") +
         '</div><ul class="cfi-ev" id="cfi-list"></ul><button type="button" class="cfi-more refresh more" hidden>Show more</button>' +
-        "<p><small>" + recs.length + " reports: the live ones plus " + X.records.length + " earlier reports found by web search (headlines only; date known, time not; place approximate). " + esc(X.note) + "</small></p></div>";
+        "<p><small>" + recs.length + " reports: the live ones plus " + X.records.length + " earlier reports" + histNote(X) + " " + esc(X.note) + "</small></p></div>";
       box.innerHTML = h;
 
       var kind = "", shown = 40, list = box.querySelector("#cfi-list"), more = box.querySelector(".cfi-more");
@@ -187,7 +200,8 @@
         var rs = recs.filter(function (r) { return (!kind || r.kind === kind) && inP(r.t); });
         list.innerHTML = rs.slice(0, shown).map(function (r) {
           return '<li><span class="cfi-dot" style="background:' + (SIDE[r.side] || SIDE.neutral).col + '"></span><small>' + day(r.t) + (r.about ? " (about " + day(r.about) + ")" : "") + (r.place ? " · " + esc(r.place) : "") + (r.actor ? " · " + esc(r.actor) : "") + "</small><br>" +
-            link(r.url, r.title) + " <small>(" + esc(r.source) + ")</small>" + (r.claim ? ' <span class="cfi-claim">claim</span>' : "") + (r.live ? "" : ' <span class="cfi-claim">earlier report</span>') + fpShort(r.fp) + "</li>";
+            link(r.url, r.title) + " <small>(" + esc(r.source) + (r.outlets > 1 ? ", and " + (r.outlets - 1) + " more outlet" + (r.outlets > 2 ? "s" : "") : "") + ")</small>" + (r.claim ? ' <span class="cfi-claim">claim</span>' : "") + (r.live ? "" : ' <span class="cfi-claim">earlier report</span>') +
+            (r.via ? '<br><small>' + esc(r.via) + "</small>" : "") + fpShort(r.fp) + "</li>";
         }).join("") || "<li><small>No reports of this kind in the chosen period.</small></li>";
         more.hidden = rs.length <= shown;
       }
@@ -226,7 +240,7 @@
           return L.layerGroup(recs.filter(function (r) { return !r.live && inP(r.t) && isFinite(r.lat) && isFinite(r.lon); }).map(function (r) {
             var ho = { pane: "cfpane", radius: 5, color: "#fff", weight: 1, fillColor: (SIDE[r.side] || SIDE.neutral).col, fillOpacity: 0.8 };
             return (sym() ? W.OSAP_SYM.mark([r.lat, r.lon], W.OSAP_SYM.classify(r.title), L.extend(ho, { badge: ho.fillColor, scale: 0.6 })) : L.circleMarker([r.lat, r.lon], ho))
-              .bindPopup("<small>" + day(r.t) + " · " + esc(r.place) + "</small><br>" + link(r.url, r.title) + " <small>(" + esc(r.source) + ") · reported, not verified" + fpShort(r.fp) + "</small>", { maxWidth: 320 });
+              .bindPopup("<small>" + day(r.t) + " · " + esc(r.place) + (r.prec === "country" ? " (only the country is named)" : "") + "</small><br>" + link(r.url, r.title) + " <small>(" + esc(r.source) + ") · reported, not verified" + fpShort(r.fp) + "</small>", { maxWidth: 320 });
           }));
         }
       };
@@ -268,5 +282,5 @@
 
   W.OSAP_CF_PANELS = W.OSAP_CF_PANELS || {};
   W.OSAP_CF_PANELS[ID] = panel;
-  W.OSAP_CF_PANELS[ID]._t = { allRecords: allRecords, atPlace: atPlace, related: related, placeHtml: placeHtml };   /* pure helpers for tests */
+  W.OSAP_CF_PANELS[ID]._t = { allRecords: allRecords, atPlace: atPlace, related: related, placeHtml: placeHtml, histNote: histNote };   /* pure helpers for tests */
 })();

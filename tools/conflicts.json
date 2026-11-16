@@ -68,7 +68,7 @@
    "note_data": "Ukraine's and Russia's official statements (General Staff, Air Force, regional administrations, Ministry of Defence, state news agencies) are each side's own claims; pro-Kremlin military channels Rybar and WarGonzo are sanctioned entities and their posts are claims. Front line: DeepStateMap, a Ukrainian volunteer project, as mirrored daily; it is one side's reported depiction."
   },
   {
-   "id": "iran-war", "name": "Iran war (US and Israel against Iran)", "short": "Iran war", "countries": ["ir", "il", "us", "iq", "ae", "sa", "qa", "bh", "kw", "om", "jo"], "since": "2026-02-28", "kind": "interstate war", "tier": 1, "cap": 3000,
+   "id": "iran-war", "name": "Iran war (US and Israel against Iran)", "short": "Iran war", "countries": ["ir", "il", "us", "iq", "ae", "sa", "qa", "bh", "kw", "om", "jo"], "since": "2026-02-28", "kind": "interstate war", "tier": 1, "cap": 3000, "place_countries": ["ir", "il", "iq", "ae", "sa", "qa", "bh", "kw", "om", "jo"],
    "parties": ["Iran", "United States", "Israel"],
    "bounds": [[12.0, 32.0], [40.0, 64.0]],
    "terms": ["Iran\\w*", "Tehran", "Hormuz", "IRGC", "Revolutionary Guard\\w*", "Isfahan", "Natanz", "Fordow", "Bandar Abbas", "Kharg", "Qeshm", "Larak", "Jask", "Bushehr", "Sirik", "Fifth Fleet", "Al Udeid", "Muwaffaq Salti", "Project Freedom", "Araghchi", "Pezeshkian", "ایران", "تهران", "سپاه", "هرمز", "איראן"],
