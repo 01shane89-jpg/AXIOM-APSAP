@@ -60,5 +60,19 @@ ok(g.nx === 8 && g.ny === 4 && g.ll.length === 32, "grid nodes every 16 px plus 
 ok(Math.abs(g.ll[0][0] - 50.55) < 1e-9 && Math.abs(g.ll[0][1] - 30.4) < 1e-9 && Math.abs(g.ll[31][0] - 50.3) < 1e-9 && Math.abs(g.ll[31][1] - 30.7) < 1e-9, "grid corners on the bbox corners");
 ok(T.cloudTxt(0.3) === "<1% cloud" && T.cloudTxt(12.6) === "13% cloud" && T.cloudTxt(null) === "cloud ?", "cloud text");
 const k = T.sizeKm([30.4, 50.3, 30.7, 50.55]); ok(Math.abs(k[0] - 21.3) < 0.3 && Math.abs(k[1] - 27.6) < 0.3, "area size in km " + k.map((x) => x.toFixed(1)).join(" x "));
+
+// bright ground: the 16-bit bands of an item, the L2A offset and the one fixed stretch (Jebel Dukhan, Bahrain, 2026-11-16: 90 % of
+// the TCI pixels around the radar were 255; the B04 / B03 / B02 values there ran 1300 to 6500)
+const it0 = P.find((p) => p.date === "2026-10-13").items[0];
+ok(JSON.stringify(it0.bands) === JSON.stringify(["B04", "B03", "B02"].map((b) => "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/x/S2B_36UUA_20261013_1_L2A/" + b + ".tif")), "bands next to TCI.tif when the item lists none");
+const fb = { id: "S2B_39RVJ_20261114_0_L2A", properties: { datetime: "2026-11-14T07:07:00Z" }, assets: { visual: { href: "https://h/a/TCI.tif" }, red: { href: "https://h/a/B04.tif" }, green: { href: "https://h/a/B03.tif" }, blue: { href: "javascript:x" } } };
+ok(JSON.stringify(T.bandsOf(fb, "https://h/a/TCI.tif")) === '["https://h/a/B04.tif","https://h/a/B03.tif","https://h/a/B02.tif"]', "listed band links used, an unsafe one replaced by the file next to TCI.tif");
+ok(T.bandsOf({ assets: {} }, "https://h/a/visual.tif") === null, "no bands when unsure where they are");
+ok(T.boaOffset({ "s2:processing_baseline": "05.11" }, 0) === 1000 && T.boaOffset({ "s2:processing_baseline": "03.01" }, Date.now()) === 0, "offset 1000 from processing baseline 04.00");
+ok(T.boaOffset({}, Date.parse("2026-11-14")) === 1000 && T.boaOffset({}, Date.parse("2021-06-01")) === 0 && T.boaOffset({ "earthsearch:boa_offset_applied": true, "s2:processing_baseline": "05.11" }, 0) === 0, "offset by date when the baseline is missing, none when already applied");
+ok(T.stretch(0, 1000) === 0 && T.stretch(900, 1000) === 1 && T.stretch(3500, 1000) === 128 && T.stretch(6000, 1000) === 255 && T.stretch(9000, 1000) === 255, "stretch: 0 is no data, reflectance 0 to 50 % onto 1..255");
+
+// pixel edges: a box widened to the tile's 10 m grid (tile corner 399960, 2790240)
+ok(JSON.stringify(T.snap([454203.2, 2879951.7, 454398.9, 2880100], [399960, 2790240, 509760, 2900040], 10)) === "[454200,2879950,454400,2880100]", "box snapped outward to whole pixels");
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);
