@@ -144,6 +144,8 @@ jobs:
       - run: node tests/mt_confidence.test.mjs
       - run: node tests/mt_cache_lanes.test.mjs
       - run: node tests/mt_prepare.test.mjs
+      # casualty counts and deaths a translation may not add, and the re-check of daily summaries already written
+      - run: node tests/mt_facts.test.mjs
       # licence: outlet summaries are read by the jobs but never stored
       - run: node tests/outlet_text.test.mjs
       # sold-version switch: non-commercial sources come out in one step (tools/nc_strip.mjs)

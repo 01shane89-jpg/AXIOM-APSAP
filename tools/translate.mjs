@@ -80,7 +80,7 @@ export async function translateAll(items, opts = {}) {
     // no language given and nothing outside Latin script: taken as English (Telegram channels carry no language tag)
     if (!it.lang && !/[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F\u20A0-\u20CF\u2100-\u214F\uFE00-\uFE0F\u{1F000}-\u{1FAFF}]/u.test(it.text)) return { en: orig[i].text, tool: null };
     const k = key(it.text, it.lang), c = cache[k];
-    if (c && c.en && mtSuspect(it.text, c.en)) { if (c.tool === MT_TOOL) put(k, { en: null, rejected: MT_TOOL, at: c.at }); else delete cache[k]; return null; }
+    if (c && c.en && mtSuspect(it.text, c.en, undefined, it.lang)) { if (c.tool === MT_TOOL) put(k, { en: null, rejected: MT_TOOL, at: c.at }); else delete cache[k]; return null; }
     return c && c.en ? { en: c.en, tool: c.tool } : null;
   });
   const todo = items.map((it, i) => (out[i] ? -1 : i)).filter((i) => i >= 0);
@@ -111,7 +111,7 @@ function localModel(items, todo, out, beam) {
   pick.forEach((k, j) => {
     const en = tidy(res[j]); if (!en) return;
     const low = lowConfidence(scores[j]); if (low) unsure++;
-    if (low || mtSuspect(items[k].text, en)) { put(key(items[k].text, items[k].lang), { en: null, rejected: MT_TOOL, beam: beam ? 4 : undefined, at: Date.now() }); bad.push(k); return; }
+    if (low || mtSuspect(items[k].text, en, undefined, items[k].lang)) { put(key(items[k].text, items[k].lang), { en: null, rejected: MT_TOOL, beam: beam ? 4 : undefined, at: Date.now() }); bad.push(k); return; }
     out[k] = { en, tool: MT_TOOL }; put(key(items[k].text, items[k].lang), { en, tool: MT_TOOL, at: Date.now() }); n++;
   });
   console.log("MADLAD-400" + (beam ? " (beam search, texts the quick pass got wrong)" : "") + ": translated " + n + " of " + pick.length + " texts in " +
