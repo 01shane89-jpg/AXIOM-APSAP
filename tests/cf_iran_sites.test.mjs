@@ -80,4 +80,24 @@ const qeshm = X.records.filter((r) => r.place === "Qeshm Island" || /Qeshm/.test
 ok(qeshm.length > 0, "reports on Qeshm are placed on it (" + qeshm.length + ")");
 const note = T.histNote ? T.histNote(X) : "";
 ok(/Every day since 28 Feb/i.test(note) || /Every day since/.test(note), "the panel says every day is covered");
+// the US sites reported damaged since 28 Feb (AP, Washington Post, CNN, NBC/AEI, Pentagon IG): each is a named place with its reporting
+const all0 = T.allRecords({ items: [] }, X), P = (n) => X.places.find((p) => p.name.startsWith(n));
+const BASES = ["NSA Bahrain", "Jebel Dukhan", "Riffa Air Base", "Ali Al Salem", "Camp Buehring", "Camp Arifjan", "Shuaiba Port", "Al Udeid", "Al Dhafra", "Ruwais (US", "Prince Sultan", "Muwaffaq Salti", "Erbil Air Base"];
+const noRep = BASES.filter((n) => !P(n) || !T.atPlace(all0, P(n)).length);
+ok(!noRep.length, "every reported damaged US site has reporting listed on it" + (noRep.length ? " (none on " + noRep.join(", ") + ")" : ""));
+const survey = all0.find((r) => /intellinews\.com\/how-tehran/.test(r.url));
+ok(!!survey && BASES.filter((n) => T.atPlace(all0, P(n)).includes(survey)).length === 11, "one report that names many sites (NBC's AEI count) is listed on each site it names, once per site");
+ok(X.records.filter((r) => /intellinews\.com\/how-tehran/.test(r.url)).length === 1, "and is still one record with one fingerprint");
+ok(X.records.filter((r) => r.also).every((r) => r.site && r.also.every((a) => a !== r.site && X.places.some((p) => p.id === a))), "a record's other sites are real places, different from its first");
+const apAt = (n) => T.placeHtml(P(n), all0);
+ok(/about 11 Jun 2026/.test(apAt("Jebel Dukhan")) && !/about 11 Jun 2026/.test(apAt("Camp Arifjan")), "a report's 'about' date shows only on the site it is about, not on the other sites it names");
+ok(/covers \d+ sites/.test(apAt("Camp Arifjan")), "a report on several sites says so");
+const riffa = T.placeHtml(P("Riffa Air Base"), all0);
+ok(/aljazeera\.com\/news\/2026\/11\/15/.test(riffa) && /claim/.test(riffa) && /Reported, not verified/.test(riffa), "the 15 Nov IRGC claim is on Riffa Air Base, the base it names, as a claim");
+ok(!T.atPlace(all0, P("Isa Air Base")).some((r) => /2026\/11\/15/.test(r.url)), "and is not moved onto Isa Air Base, a different base");
+ok(!T.atPlace(all0, P("Ruwais (US")).some((r) => /refinery|ADNOC/i.test(r.title)), "reports on the Ruwais refinery stay off the US site at Ruwais");
+ok(["Military Times", "Defense News"].every((src) => T.atPlace(all0, P("Muwaffaq Salti")).some((r) => r.source === src)), "the 18 Jul and 10 Sep Jordan base reports are linked to Muwaffaq Salti");
+ok(X.places.filter((p) => p.side === "us" && p.prec === "site").every((p) => p.basis), "a US site placed on the site itself says where its position comes from");
+ok(X.records.filter((r) => r.prec === "site" && !r.site).every((r) => { const p = X.places.find((q) => q.name === r.place); return !p || (p.lat === r.lat && p.lon === r.lon); }), "imported reports on a named site sit on its current position");
+ok(X.records.filter((r) => /militarytimes\.com\/news\/pentagon-congress\/2026\/09\/15|iran-destroyed-hundreds/.test(r.url)).every((r) => r.lat == null && r.prec === "none"), "the Pentagon IG and Washington Post tallies name countries, not one base, so they are listed but not mapped");
 process.exit(bad ? 1 : 0);
