@@ -1,5 +1,5 @@
 // Newest imagery helpers (assets/osap-newimg.js): the search box, the source queries, Landsat / HLS / Sentinel-2 / NASA daily
-// rows (dates, cloud, licence, tile addresses), the merged newest-first list and the age text. Run: node tests/newimg.test.mjs
+// rows, Sentinel-1 radar and night lights (dates, cloud, licence, tile addresses), the merged newest-first list and the age text. Run: node tests/newimg.test.mjs
 import { createRequire } from "node:module";
 const req = createRequire(import.meta.url);
 const T = req("../assets/osap-newimg.js"), SAT = req("../assets/osap-sat.js");
@@ -59,6 +59,34 @@ const sameDay = T.merge([{ id: "a", src: "daily", t: Date.parse("2026-11-02T12:0
 ok(sameDay[0].id === "b", "on the same day the sharper scene comes before the daily picture");
 const M20 = T.merge([...LR, ...HR, ...SR, ...DR], 20);
 ok(M20.every((r) => r.cloud == null || r.cloud <= 20) && !M20.some((r) => r.src === "s2"), "cloud filter keeps 20% or less (and daily, which has no figure)");
+
+// Sentinel-1 radar (OPERA RTC-S1 granules from CMR, pictures from GIBS)
+ok(T.s1Url([100.55, 13.75], from, to) === "https://cmr.earthdata.nasa.gov/search/granules.json?short_name=OPERA_L2_RTC-S1_V1&point=100.55,13.75&temporal=2026-09-24T00:00:00Z,2026-11-08T12:00:00Z&sort_key=-start_date&page_size=60", "CMR OPERA radar query at the map's middle");
+const op = { feed: { entry: [
+  { id: "G4404703269-ASF", title: "OPERA_L2_RTC-S1_T062-132019-IW2_20261106T230856Z_20261107T144332Z_S1D_30_v1.0", time_start: "2026-11-06T23:08:56Z" },
+  { id: "G4404703213-ASF", title: "OPERA_L2_RTC-S1_T062-132019-IW1_20261106T230855Z_20261107T144332Z_S1C_30_v1.0", time_start: "2026-11-06T23:08:55Z" },
+  { id: "bad id", title: "OPERA_L2_RTC-S1_T172-367373-IW2_20261102T112827Z_20261103T050949Z_S1D_30_v1.0", time_start: "2026-11-02T11:28:27Z" },
+  { id: "G1", time_start: "nope" }] } };
+const S1 = T.s1Rows(op);
+ok(S1.length === 2 && S1[0].n === 2 && S1[0].sat === "Sentinel-1D + Sentinel-1C radar" && S1[1].sat === "Sentinel-1D radar", "radar: one row a UTC day, satellites of that day folded: " + S1.map((r) => r.sat).join(" | "));
+ok(S1[0].tiles === "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/OPERA_L2_Radiometric_Terrain_Corrected_SAR_Sentinel-1/default/2026-11-06/GoogleMapsCompatible_Level12/{z}/{y}/{x}.png" && S1[0].nz === 12, "radar GIBS tile address for that UTC day");
+ok(S1[0].cloud === null && S1[0].lic === "opera" && S1[0].res === "30 m" && S1[0].link === "https://cmr.earthdata.nasa.gov/search/concepts/G4404703269-ASF.html" && S1[1].link === "", "radar row: no cloud figure, OPERA licence, granule link only for a good id");
+ok(T.s1Rows(null).length === 0 && T.s1Rows({ feed: {} }).length === 0, "no radar rows from an empty answer");
+ok(T.merge([...S1, { id: "c", src: "hls", t: Date.parse("2026-11-05T03:00:00Z"), cloud: 90 }], 20).filter((r) => r.src === "s1").length === 2, "the cloud filter never hides radar (it sees through cloud)");
+
+// Night lights: newest night from GIBS DescribeDomains, the usual lag when it does not answer, baselines always
+ok(T.ddUrl("VIIRS_NOAA20_GapFilled_BRDF_Corrected_DayNightBand_Radiance", from, to) === "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/VIIRS_NOAA20_GapFilled_BRDF_Corrected_DayNightBand_Radiance/default/GoogleMapsCompatible_Level8/all/2026-09-24--2026-11-08.xml", "DescribeDomains address");
+ok(T.domainEnd("<Domains><DimensionDomain><ows:Identifier>time</ows:Identifier><Domain>2026-10-01/2026-11-03/P1D,2026-11-05/2026-11-11/P1D</Domain></DimensionDomain></Domains>") === "2026-11-11" && T.domainEnd("<x/>") === "" && T.domainEnd(null) === "", "newest day of a time domain");
+const n13 = Date.parse("2026-11-13T02:00:00Z"), NR = T.nightRows(n13, { VIIRS_NOAA20_GapFilled_BRDF_Corrected_DayNightBand_Radiance: "2026-11-11", VIIRS_NOAA21_DayNightBand_At_Sensor_Radiance: "2099-01-01" });
+ok(NR.length === 14 && NR.filter((r) => r.kind === "base").length === 2 && NR.every((r) => r.src === "night" && r.lic === "nasa" && r.nz === 8), "night: 4 layers x 3 nights + 2 baselines, NASA licence, zoom 8 tiles");
+const day = (id) => NR.filter((r) => r.scene.indexOf(id + " ") === 0).map((r) => r.day).join(",");
+ok(day("VIIRS_NOAA20_GapFilled_BRDF_Corrected_DayNightBand_Radiance") === "2026-11-11,2026-11-10,2026-11-09", "gap-filled nights from DescribeDomains");
+ok(day("VIIRS_NOAA21_GapFilled_BRDF_Corrected_DayNightBand_Radiance") === "2026-11-11,2026-11-10,2026-11-09" && day("VIIRS_NOAA20_DayNightBand_At_Sensor_Radiance") === "2026-11-12,2026-11-11,2026-11-10", "the usual lag when DescribeDomains did not answer (gap-filled 2 days, at-sensor 1 day)");
+ok(day("VIIRS_NOAA21_DayNightBand_At_Sensor_Radiance") === "2026-11-13,2026-11-12,2026-11-11", "a future date from the server is capped at today");
+ok(NR.find((r) => r.id === "night:VIIRS_Black_Marble").tiles === "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_Black_Marble/default/2016-01-01/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png" &&
+  /VIIRS_CityLights_2012\/default\/2012-01-01\/GoogleMapsCompatible_Level8\/\{z\}\/\{y\}\/\{x\}\.jpg$/.test(NR.find((r) => r.id === "night:VIIRS_CityLights_2012").tiles), "baseline tile addresses (Black Marble 2016 PNG, Earth at Night 2012 JPEG)");
+const MN = T.merge([...NR, { id: "h", src: "hls", t: Date.parse("2026-11-11T03:00:00Z"), cloud: 5 }], 100), d11 = MN.filter((r) => r.day === "2026-11-11" || r.id === "h");
+ok(d11[0].id === "h", "on the same day a scene comes before the night lights");
 
 // age text
 ok(T.ageTxt(now - 20 * 60e3, now) === "under an hour old" && T.ageTxt(now - 5 * 36e5, now) === "5 h old" && T.ageTxt(now - 3 * 864e5, now) === "3 days old" && T.ageTxt(now - 40 * 36e5, now) === "2 days old", "age text");
