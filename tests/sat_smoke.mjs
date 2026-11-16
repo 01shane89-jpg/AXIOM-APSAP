@@ -31,7 +31,14 @@ function cog(rgb) {
   return Buffer.from(G.writeArrayBuffer(v, { width: w, height: h, BitsPerSample: [8, 8, 8], SamplesPerPixel: 3, PhotometricInterpretation: 2, PlanarConfiguration: 1,
     ModelPixelScale: [100, 100, 0], ModelTiepoint: [0, 0, 0, 300000, 5610000, 0], ProjectedCSTypeGeoKey: 32636, GTModelTypeGeoKey: 1, GTRasterTypeGeoKey: 1 }));
 }
-const COGS = { RED: cog([200, 30, 30]), GREEN: cog([30, 180, 40]), BLUE: cog([30, 40, 200]) };
+const COGS = { RED: cog([200, 30, 30]), GREEN: cog([30, 180, 40]), BLUE: cog([30, 40, 200]), WHITE: cog([255, 255, 250]) };
+// bright ground (desert): the 8-bit picture clipped white, the 16-bit bands with room left (L2A values, offset 1000)
+function band(v) {
+  const w = 400, h = 400, a = new Uint16Array(w * h).fill(v);
+  return Buffer.from(G.writeArrayBuffer(a, { width: w, height: h, BitsPerSample: [16], SamplesPerPixel: 1, SampleFormat: [1],
+    ModelPixelScale: [100, 100, 0], ModelTiepoint: [0, 0, 0, 300000, 5610000, 0], ProjectedCSTypeGeoKey: 32636, GTModelTypeGeoKey: 1, GTRasterTypeGeoKey: 1 }));
+}
+const BANDS = { "B04.tif": band(3500), "B03.tif": band(2250), "B02.tif": band(1500) };   // -> 128, 64, 26
 const S3 = "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/36/U/UA/";
 const feat = (id, dt, cc, col) => ({ type: "Feature", id, properties: { datetime: dt, "eo:cloud_cover": cc, platform: id.startsWith("S2B") ? "sentinel-2b" : "sentinel-2a", "grid:code": "MGRS-36UUA" },
   assets: { visual: { href: S3 + id.replace(/[^\w]/g, "") + "/" + col + "/TCI.tif" } }, links: [{ rel: "self", href: "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/" + encodeURIComponent(id) }] });
@@ -43,7 +50,7 @@ const FEATS = [
   feat("S2B_36UUA_X4_0_L2A", iso(34), 8, "RED"),                   // clear, about 30 days before After -> Before
   feat("S2A_36UUA_X5<img src=x onerror=window.__xss=1>_0_L2A", iso(60), 1, "BLUE")
 ];
-const STAC = { type: "FeatureCollection", features: FEATS, links: [] };
+let STAC = { type: "FeatureCollection", features: FEATS, links: [] };
 
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
@@ -56,7 +63,7 @@ async function context(opts) {
     const q = r.request(), u = q.url();
     if (/^https:\/\/earth-search\.aws\.element84\.com\/v1\/search\?/.test(u)) { log.stac.push(u); return r.fulfill({ status: 200, contentType: "application/geo+json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(STAC) }); }
     if (u.startsWith(S3)) {
-      const col = u.split("/").slice(-2)[0], buf = COGS[col]; log.cog.push(col);
+      const file = u.split("/").pop(), col = u.split("/").slice(-2)[0], buf = file === "TCI.tif" ? COGS[col] : col === "WHITE" ? BANDS[file] : null; log.cog.push(col + "/" + file);
       if (!buf) return r.fulfill({ status: 404 });
       const m = /bytes=(\d+)-(\d*)/.exec(q.headers()["range"] || "");
       if (!m) { log.full++; return r.fulfill({ status: 200, headers: { "access-control-allow-origin": "*", "content-type": "image/tiff" }, body: buf }); }
@@ -176,7 +183,45 @@ const AREA = [[50.40, 30.45], [50.50, 30.45], [50.50, 30.60], [50.40, 30.60]];
   ok(hgt >= 40 && fs === "16px", "phone: buttons at least 40 px (" + hgt + "), inputs 16 px (" + fs + ")");
   ok(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "phone: no sideways scroll");
   if (OUT) await p.screenshot({ path: OUT + "/sat-phone.png" });
+  // swipe with the map view: the pictures follow the map (Jebel Dukhan, 2026-11-16: opened close in, zoomed out, the pictures
+  // stayed a small box and both sides showed the same base map under "Before" and "After")
+  await p.evaluate(() => window.OSAP_SAT.mode("swipe"));
+  await p.waitForFunction(() => { const s = window.OSAP_SAT.state(); return s.swipe && s.swipe.box; }, null, { timeout: 20000 });
+  const a0 = (await p.evaluate(() => window.OSAP_SAT.state())).area;
+  await p.evaluate(() => window.__asapMap.setZoom(10, { animate: false }));
+  await p.waitForFunction((a0) => { const s = window.OSAP_SAT.state(); return s.area[2] - s.area[0] > 2 * (a0[2] - a0[0]); }, a0, { timeout: 10000 }).catch(() => {});
+  await p.waitForTimeout(1500);
+  const sv = await p.evaluate(() => { const s = window.OSAP_SAT.state(), b = window.__asapMap.getBounds(); return { s, v: [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()] }; });
+  ok(sv.s.src === "Map view" && sv.s.area.every((x, i) => Math.abs(x - sv.v[i]) < 1e-6), "phone swipe: zooming out, the map-view area follows the map " + JSON.stringify(sv.s.area.map((x) => +x.toFixed(3))));
+  const iw = await p.evaluate(() => { const r = document.querySelector(".satimg.satb").getBoundingClientRect(), c = window.__asapMap.getContainer().getBoundingClientRect(); return [r.width / c.width, r.height / c.height]; });
+  ok(iw[0] >= 0.99 && iw[1] >= 0.99, "phone swipe: the pictures cover the whole map (" + iw.map((x) => x.toFixed(2)).join(" x ") + ")");
+  // a drawn area smaller than the view: dashed box, a note on the map, and the handle over the pictures
+  await p.evaluate(() => { window.TSAP.areaApi.setArea([[50.44, 30.54], [50.46, 30.54], [50.46, 30.58], [50.44, 30.58]]); window.__asapMap.setView([50.45, 30.525], 12, { animate: false }); window.OSAP_SAT.open(); });
+  await p.waitForFunction(() => { const s = window.OSAP_SAT.state(); return s.src === "Drawn area" && s.swipe && s.swipe.box; }, null, { timeout: 20000 });
+  await p.waitForTimeout(500);
+  const sw = await p.evaluate(() => { const s = window.OSAP_SAT.state(), m = window.__asapMap, cw = m.getContainer().clientWidth; return { s, x0: m.latLngToContainerPoint([50.46, 30.54]).x / cw, x1: m.latLngToContainerPoint([50.44, 30.58]).x / cw }; });
+  ok(sw.s.swipe.x > sw.x0 && sw.s.swipe.x < sw.x1, "phone swipe: handle moved over the drawn area (" + sw.s.swipe.x.toFixed(2) + " in " + sw.x0.toFixed(2) + ".." + sw.x1.toFixed(2) + ")");
+  ok(/inside the dashed box only/.test(sw.s.swipe.note), "phone swipe: note on the map says where the pictures are: " + sw.s.swipe.note);
+  ok(/dashed box/.test(await p.textContent("#satba")), "phone swipe: the window explains the dashed box");
+  if (OUT) await p.screenshot({ path: OUT + "/sat-phone-swipe-box.png" });
   ok(errors.length === 0, "phone: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- bright ground ----------
+{
+  log = { stac: [], cog: [], ranged: 0, full: 0, gibs: [] };
+  STAC = { type: "FeatureCollection", links: [], features: [feat("S2B_36UUA_W1_0_L2A", iso(3), 1, "WHITE"), feat("S2B_36UUA_W2_0_L2A", iso(33), 1, "WHITE")] };
+  const ctx = await context({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+  const { p, errors } = await open(ctx);
+  await p.evaluate(() => { window.__asapMap.setView([50.45, 30.525], 12, { animate: false }); window.OSAP_SAT.mode("side"); window.OSAP_SAT.open(); });
+  await p.waitForFunction(() => window.OSAP_SAT.state().bright, null, { timeout: 20000 }).catch(() => {});
+  await p.waitForFunction(() => { const c = document.querySelector('#satba [data-pic="after"] canvas'); if (!c) return false; const d = c.getContext("2d").getImageData(c.width >> 1, c.height >> 1, 1, 1).data; return d[0] < 200; }, null, { timeout: 20000 }).catch(() => {});
+  const bp = await pics(p);
+  ok(await p.evaluate(() => window.OSAP_SAT.state().bright) && near(bp[0], [128, 64, 26, 255]) && near(bp[1], [128, 64, 26, 255]), "clipped-white picture: both passes drawn again from the 16-bit bands " + JSON.stringify(bp));
+  ok(log.cog.some((c) => /WHITE\/B04\.tif/.test(c)) && log.cog.some((c) => /WHITE\/B02\.tif/.test(c)), "bands B04, B03, B02 read next to TCI.tif");
+  ok(/Bright ground/.test(await p.textContent("#satba")), "the window says why the colors differ");
+  if (OUT) await p.screenshot({ path: OUT + "/sat-bright.png" });
+  ok(errors.length === 0, "bright: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 await browser.close(); server.close();

@@ -11,6 +11,11 @@
      Data (CORS "*", byte ranges). It is read in the browser with geotiff.js (assets/vendor/geotiff-3.0.5.js, MIT, loaded the first
      time a picture is drawn): only the window over the area and only the overview level that matches the screen are fetched,
      then each pixel is moved from the tile's UTM grid onto the web map. Nothing is stored or sent anywhere else.
+     Bright ground (desert, salt flats, snow): the 8-bit true-colour picture clips at about 30 % reflectance, so when more than
+     a fifth of the drawn pixels come back at 255 both passes are drawn again from the 16-bit B04 / B03 / B02 COGs on one fixed
+     scale (0 to 50 % reflectance) and the window says so (Jebel Dukhan, Bahrain, 2026-11-16: 90 % of the TCI pixels were white).
+   - Swipe on the map: the pictures fill a dashed box; with no drawn area the box is the map view and follows the map. A note on
+     the map says when the pictures stop at the box, when zoomed in past 10 m pixels, and when the bright-ground scale is on.
      Licence: Copernicus Sentinel data, free and open; every picture carries "Contains modified Copernicus Sentinel data <year>".
    - NASA daily: GIBS WMTS (gibs.earthdata.nasa.gov, keyless, CORS "*", public domain), Corrected Reflectance true colour from
      VIIRS (NOAA-20, Suomi NPP, NOAA-21) or MODIS (Terra, Aqua), about 250 m, one picture per day stitched from that day's passes.
@@ -38,6 +43,24 @@
       "&limit=" + (limit || 100) + "&sortby=-properties.datetime";
   }
   function safeUrl(u) { return /^https:\/\//i.test(String(u || "")) ? String(u) : ""; }
+  /* the 16-bit red, green and blue 10 m bands of an item (B04, B03, B02), for bright ground where the 8-bit true-colour picture
+     is clipped white: the item's own asset links, else the files next to TCI.tif (the sentinel-cogs layout). Null when unsure. */
+  function bandsOf(f, href) {
+    var a = f.assets || {}, out = ["red", "green", "blue"].map(function (k, i) {
+      var u = safeUrl(a[k] && a[k].href); if (u && /\.tif{1,2}$/i.test(u.split("?")[0])) return u;
+      return /\/TCI\.tif$/i.test(href) ? href.replace(/TCI\.tif$/i, ["B04", "B03", "B02"][i] + ".tif") : "";
+    });
+    return out.every(Boolean) ? out : null;
+  }
+  /* L2A reflectance = (DN - offset) / 10000. Processing baseline 04.00 and later (from 2022-01-25) adds 1000 to every value,
+     unless Earth Search says it has already taken it off. */
+  function boaOffset(p, t) {
+    if (p["earthsearch:boa_offset_applied"] === true) return 0;
+    var b = parseFloat(p["s2:processing_baseline"]);
+    return (isFinite(b) ? b >= 4 : t >= Date.parse("2022-01-25T00:00:00Z")) ? 1000 : 0;
+  }
+  /* one 16-bit band value -> 0..255: reflectance 0 to 50 % drawn straight (the same scale for every pass, so two dates compare) */
+  function stretch(v, off) { if (!v) return 0; var r = (v - off) / 5000; return r <= 0 ? 1 : r >= 1 ? 255 : Math.max(1, Math.round(r * 255)); }
   /* STAC features -> passes, newest first: { key, t (ms), date, sat, cloud (mean %), items: [{ id, tile, href, stac, t, cloud }] } */
   function groupPasses(features) {
     var P = {};
@@ -50,7 +73,8 @@
       var key = sat + "_" + isoDay(t), g = P[key] || (P[key] = { key: key, t: t, date: isoDay(t), sat: sat, items: [] });
       var self = ((f.links || []).filter(function (l) { return l && l.rel === "self"; })[0] || {}).href;
       var it = { id: id, tile: tile, href: href, stac: safeUrl(self) || STAC + "/collections/sentinel-2-l2a/items/" + encodeURIComponent(id), t: t,
-        cloud: isFinite(+p["eo:cloud_cover"]) ? +p["eo:cloud_cover"] : null, run: +((id.match(/_(\d+)_L2A$/) || [, 0])[1]) };
+        cloud: isFinite(+p["eo:cloud_cover"]) ? +p["eo:cloud_cover"] : null, run: +((id.match(/_(\d+)_L2A$/) || [, 0])[1]),
+        bands: bandsOf(f, href), off: boaOffset(p, t) };
       /* the same tile processed twice (…_0_L2A, …_1_L2A): keep the newer processing */
       var dup = g.items.filter(function (x) { return x.tile && x.tile === it.tile; })[0];
       if (dup) { if (it.run > dup.run) g.items[g.items.indexOf(dup)] = it; }
@@ -99,12 +123,17 @@
       for (var i = 0; i < nx; i++) { var px = Math.min(Wd, i * step); out.push([lat, bb[0] + (bb[2] - bb[0]) * px / Wd]); } }
     return { nx: nx, ny: ny, step: step, ll: out };
   }
+  /* a box [w,s,e,n] in tile metres widened to the tile's pixel edges (origin = the tile's corner, pixel = res) */
+  function snap(r, tb, res) {
+    return [tb[0] + Math.floor((r[0] - tb[0]) / res + 1e-9) * res, tb[1] + Math.floor((r[1] - tb[1]) / res + 1e-9) * res,
+      tb[0] + Math.ceil((r[2] - tb[0]) / res - 1e-9) * res, tb[1] + Math.ceil((r[3] - tb[1]) / res - 1e-9) * res];
+  }
   function cloudTxt(c) { return c == null ? "cloud ?" : (c < 1 ? "<1" : Math.round(c)) + "% cloud"; }
   function sizeKm(bb) {
     var mid = (bb[1] + bb[3]) / 2, kx = 111.32 * Math.cos(mid * Math.PI / 180);
     return [(bb[2] - bb[0]) * kx, (bb[3] - bb[1]) * 110.57];
   }
-  var T = { bboxOf: bboxOf, searchUrl: searchUrl, groupPasses: groupPasses, pickDefault: pickDefault, utm: utm, utmOf: utmOf, mercY: mercY, latOfY: latOfY, gridLL: gridLL, cloudTxt: cloudTxt, sizeKm: sizeKm, isoDay: isoDay };
+  var T = { snap: snap, bandsOf: bandsOf, boaOffset: boaOffset, stretch: stretch, bboxOf: bboxOf, searchUrl: searchUrl, groupPasses: groupPasses, pickDefault: pickDefault, utm: utm, utmOf: utmOf, mercY: mercY, latOfY: latOfY, gridLL: gridLL, cloudTxt: cloudTxt, sizeKm: sizeKm, isoDay: isoDay };
   if (typeof module === "object" && module.exports) module.exports = T;
   if (typeof window === "undefined") return;
 
@@ -115,7 +144,7 @@
   function Tm() { return W.OSAP_TIME || { dualT: function (ms) { return new Date(ms).toISOString().slice(0, 16).replace("T", " ") + "Z"; } }; }
   function dual(ms) { return Tm().dualT(ms, { date: true }); }
   function toast(m) { if (W.OSAP_ATAK && W.OSAP_ATAK.toast) W.OSAP_ATAK.toast(m); }
-  var KEY = "osap-sat", LIB = "assets/vendor/geotiff-3.0.5.js", MAX_DEG = 2.5, MAX_TILES = 9;
+  var KEY = "osap-sat", CLIP = 0.2, LIB = "assets/vendor/geotiff-3.0.5.js", MAX_DEG = 2.5, MAX_TILES = 9;
   var GIBS = "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/";
   var GLAYERS = [["VIIRS_NOAA20_CorrectedReflectance_TrueColor", "VIIRS NOAA-20"], ["VIIRS_SNPP_CorrectedReflectance_TrueColor", "VIIRS Suomi NPP"],
     ["VIIRS_NOAA21_CorrectedReflectance_TrueColor", "VIIRS NOAA-21"], ["MODIS_Terra_CorrectedReflectance_TrueColor", "MODIS Terra"], ["MODIS_Aqua_CorrectedReflectance_TrueColor", "MODIS Aqua"]];
@@ -146,7 +175,7 @@
   var TIFS = {}, TORDER = [];
   function tif(url) {
     if (TIFS[url]) return TIFS[url];
-    TORDER.push(url); if (TORDER.length > 12) delete TIFS[TORDER.shift()];
+    TORDER.push(url); if (TORDER.length > 24) delete TIFS[TORDER.shift()];
     var p = TIFS[url] = lib().then(function (G) { return G.fromUrl(url, { allowFullFile: false }); }).then(function (t) {
       return t.getImage(0).then(function (im) {
         var gk = im.getGeoKeys ? im.getGeoKeys() : im.geoKeys, u = utmOf(gk && gk.ProjectedCSTypeGeoKey);
@@ -157,26 +186,36 @@
     p.catch(function () { if (TIFS[url] === p) delete TIFS[url]; });
     return p;
   }
-  /* one pass drawn onto a Wd x Ht canvas covering bb ([w,s,e,n], web-map projection). Resolves { canvas, filled (0..1) } */
-  function render(pass, bb, Wd, Ht, signal) {
+  /* one pass drawn onto a Wd x Ht canvas covering bb ([w,s,e,n], web-map projection). Resolves { canvas, filled (0..1), clip (0..1,
+     the share of drawn pixels clipped white in the 8-bit picture), bands (true when drawn from the 16-bit bands) }.
+     opts.bands: draw from the red, green and blue bands with one fixed stretch (bright ground, see stretch()) */
+  function render(pass, bb, Wd, Ht, signal, opts) {
     var cv = D.createElement("canvas"); cv.width = Wd; cv.height = Ht;
-    var g = cv.getContext("2d"), img = g.createImageData(Wd, Ht), px = img.data, grid = gridLL(bb, Wd, Ht, 16), filled = 0, errs = [];
+    var g = cv.getContext("2d"), img = g.createImageData(Wd, Ht), px = img.data, grid = gridLL(bb, Wd, Ht, 16), filled = 0, clip = 0, errs = [];
+    var bright = !!(opts && opts.bands);
     var items = pass.items.slice(0, MAX_TILES);
     return items.reduce(function (chain, it) {
       return chain.then(function () {
         if (signal && signal.aborted) throw new Error("aborted");
         /* every pixel already drawn from a clearer tile of the pass: the rest are not fetched */
         if (filled >= Wd * Ht) return;
-        return tif(it.href).then(function (o) {
+        if (bright && !it.bands) { errs.push(it.id + ": no 16-bit bands listed"); return; }
+        return Promise.all((bright ? it.bands : [it.href]).map(tif)).then(function (os) {
+          var o = os[0];
           /* the tile's grid at each node, and the part of the tile the canvas covers */
           var E = new Float64Array(grid.ll.length), N = new Float64Array(grid.ll.length), ub = [Infinity, Infinity, -Infinity, -Infinity];
           grid.ll.forEach(function (q, k) { var m = utm(q[0], q[1], o.u.zone, o.u.south); E[k] = m[0]; N[k] = m[1]; if (m[0] < ub[0]) ub[0] = m[0]; if (m[1] < ub[1]) ub[1] = m[1]; if (m[0] > ub[2]) ub[2] = m[0]; if (m[1] > ub[3]) ub[3] = m[1]; });
           var r = [Math.max(ub[0], o.bb[0]), Math.max(ub[1], o.bb[1]), Math.min(ub[2], o.bb[2]), Math.min(ub[3], o.bb[3])];
+          /* on the tile's own pixel edges: geotiff.js widens a bbox to whole pixels before it resamples, which would slide the
+             picture by up to a pixel (10 m) */
+          r = snap(r, o.bb, o.res);
           if (r[2] - r[0] < o.res || r[3] - r[1] < o.res) return;
           /* ground size of one canvas pixel: read no finer than that (and never finer than 10 m) */
           var gm = Math.max(o.res, (ub[2] - ub[0]) / Wd, (ub[3] - ub[1]) / Ht);
           var rw = Math.max(1, Math.min(2400, Math.round((r[2] - r[0]) / gm))), rh = Math.max(1, Math.min(2400, Math.round((r[3] - r[1]) / gm)));
-          return o.t.readRasters({ bbox: r, width: rw, height: rh, interleave: true, signal: signal }).then(function (ras) {
+          return Promise.all(os.map(function (b) { return b.t.readRasters({ bbox: r, width: rw, height: rh, interleave: true, signal: signal }); })).then(function (rs) {
+            var ras = rs[0];
+            if (bright) { ras = new Uint8Array(rw * rh * 3); for (var q = 0, off = it.off || 0; q < rw * rh; q++) { ras[q * 3] = stretch(rs[0][q], off); ras[q * 3 + 1] = stretch(rs[1][q], off); ras[q * 3 + 2] = stretch(rs[2][q], off); } }
             var sx = rw / (r[2] - r[0]), sy = rh / (r[3] - r[1]), st = grid.step, nx = grid.nx;
             for (var y = 0; y < Ht; y++) {
               var gj = Math.min(grid.ny - 2, Math.floor(y / st)), fy = (y - gj * st) / Math.max(1e-9, Math.min(st, Ht - gj * st));
@@ -190,6 +229,7 @@
                 var s = (rr * rw + c) * 3, R = ras[s], G2 = ras[s + 1], B = ras[s + 2];
                 if (!R && !G2 && !B) continue;
                 px[o4] = R; px[o4 + 1] = G2; px[o4 + 2] = B; px[o4 + 3] = 255; filled++;
+                if (!bright && (R === 255 || G2 === 255 || B === 255)) clip++;
               }
             }
           });
@@ -198,12 +238,12 @@
     }, Promise.resolve()).then(function () {
       g.putImageData(img, 0, 0);
       if (!filled && errs.length) throw new Error(errs.join("; "));
-      return { canvas: cv, filled: filled / (Wd * Ht), errs: errs };
+      return { canvas: cv, filled: filled / (Wd * Ht), clip: filled ? clip / filled : 0, bands: bright, errs: errs };
     });
   }
 
   /* ---------- state ---------- */
-  var S = { area: null, src: "", passes: [], from: 0, busy: "", err: "", before: null, after: null, more: true, run: 0, ac: null, pics: {}, picErr: {} };
+  var S = { area: null, src: "", bright: false, passes: [], from: 0, busy: "", err: "", before: null, after: null, more: true, run: 0, ac: null, pics: {}, picErr: {} };
   function areaPoly() { var a = W.TSAP && W.TSAP.areaApi && W.TSAP.areaApi.area(); return a && a.length >= 3 ? a : null; }
   function viewBox() { var b = map.getBounds(); return [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]; }
   function chooseArea() {
@@ -256,7 +296,8 @@
     "@media (max-width:700px){#satba{padding:6px}#satba button,#satba select,#satba input{font-size:16px}}" +
     ".satswipe{position:absolute;top:0;bottom:0;width:0;z-index:650;pointer-events:none}.satswipe i{position:absolute;top:0;bottom:0;left:-2px;width:4px;background:#fff;box-shadow:0 0 3px rgba(0,0,0,.6)}" +
     ".satswipe b{position:absolute;top:50%;left:-22px;width:44px;height:44px;margin-top:-22px;border-radius:50%;background:#fff;border:2px solid #0b7285;box-shadow:0 1px 4px rgba(0,0,0,.4);pointer-events:auto;cursor:ew-resize;touch-action:none;display:flex;align-items:center;justify-content:center;font:700 14px/1 system-ui,sans-serif;color:#0b7285}" +
-    ".satswipe span{position:absolute;top:8px;white-space:nowrap;font:600 11.5px/1.2 system-ui,sans-serif;background:rgba(0,0,0,.65);color:#fff;padding:3px 6px;border-radius:4px}.satswipe .l{right:8px}.satswipe .r{left:8px}";
+    ".satswipe span{position:absolute;top:8px;white-space:nowrap;font:600 11.5px/1.2 system-ui,sans-serif;background:rgba(0,0,0,.65);color:#fff;padding:3px 6px;border-radius:4px}.satswipe .l{right:8px}.satswipe .r{left:8px}" +
+    ".satswipe .n{top:34px;left:0;transform:translateX(-50%);white-space:normal;width:max-content;max-width:min(320px,58vw);text-align:center;font-weight:500}";
   function ensure() {
     if (el) return el;
     if (!D.getElementById("satba-css")) { var st = D.createElement("style"); st.id = "satba-css"; st.textContent = CSS; D.head.appendChild(st); }
@@ -266,13 +307,13 @@
     el.addEventListener("click", onClick); el.addEventListener("change", onChange);
     el.addEventListener("click", function (e) { if (e.target === el) close(); });
     if (W.OSAP_SPLIT) W.OSAP_SPLIT.add(el, ".chead");
-    D.addEventListener("osap:split", function () { if (!el.hidden) { draw(); paint(); } });
+    D.addEventListener("osap:split", function () { if (!el.hidden) { setTimeout(function () { follow(); draw(); paint(); }, 0); } });
     return el;
   }
   function isOpen() { return !!(el && !el.hidden); }
   function open() {
     ensure(); chooseArea();
-    S.passes = []; S.before = S.after = null; S.pics = {}; S.picErr = {}; S.err = ""; S.from = Date.now();
+    S.passes = []; S.before = S.after = null; S.pics = {}; S.picErr = {}; S.err = ""; S.from = Date.now(); S.bright = false;
     el.hidden = false; draw();
     if (tooBig(S.area)) { S.err = (S.src === "Map view" ? "The map view" : "The drawn area") + " is too large for Sentinel-2 pictures here (up to about " + Math.round(MAX_DEG * 100) + " km across). " + (S.src === "Map view" ? "Zoom in or draw a smaller area." : "Draw a smaller area."); draw(); return true; }
     load(false);
@@ -298,7 +339,7 @@
     var c = el.firstElementChild, bb = S.area, km = bb ? sizeKm(bb) : [0, 0];
     var h = '<div class="chead"><h2 id="satba-h">Satellite before/after <span class="tag" title="Sentinel-2 pictures as taken, not interpreted. Not AI.">Sentinel-2</span></h2>' +
       (W.OSAP_SPLIT ? W.OSAP_SPLIT.btn() : "") + '<button type="button" class="x" data-sat="close" aria-label="Close Satellite before/after">Close</button></div>';
-    h += '<div class="row"><span><b>' + esc(S.src) + "</b> " + (bb ? esc(km[0].toFixed(km[0] < 10 ? 1 : 0) + " × " + km[1].toFixed(km[1] < 10 ? 1 : 0) + " km") : "") + "</span>" +
+    h += '<div class="row"><span class="sz"><b>' + esc(S.src) + "</b> " + (bb ? esc(km[0].toFixed(km[0] < 10 ? 1 : 0) + " × " + km[1].toFixed(km[1] < 10 ? 1 : 0) + " km") : "") + "</span>" +
       '<button type="button" data-sat="area" title="Use the drawn area if there is one, otherwise what the map shows now">' + (areaPoly() ? "Use drawn area" : "Use map view") + "</button>" +
       '<button type="button" data-sat="zoom">Zoom to area</button></div>';
     h += '<div class="row"><span class="mut">Show</span><span class="seg" role="group" aria-label="How to show the two pictures">' +
@@ -306,6 +347,7 @@
     if (S.err) h += '<p class="err" role="alert">' + esc(S.err) + "</p>";
     if (S.busy) h += '<p class="mut" role="status">' + esc(S.busy) + "</p>";
     var b = find(S.before), a = find(S.after);
+    if (S.bright) h += '<p class="mut" style="font-size:12px">Bright ground: the standard Sentinel-2 true-color picture is clipped white here, so both passes are drawn from the 16-bit red, green and blue bands on one fixed scale (0 to 50% reflectance). Colors compare between the two dates; they are not the usual true-color look.</p>';
     if (P.mode === "side") {
       h += '<div class="pics">' + [["before", "Before", b], ["after", "After", a]].map(function (x) {
         var e = S.picErr[x[0]];
@@ -313,7 +355,8 @@
           "<figcaption>" + scLine(x[2], x[1]) + "</figcaption></figure>";
       }).join("") + "</div>";
     } else {
-      h += '<p class="mut">Drag the round handle on the map: before on the left, after on the right. The pictures are redrawn for what the map shows.</p>' +
+      h += '<p class="mut">Drag the round handle on the map: before on the left, after on the right. The Sentinel-2 pictures fill the dashed box only; outside it is the base map. ' +
+        (S.src === "Map view" ? "The box follows the map as you pan and zoom." : "The box is the drawn area.") + " Sentinel-2 is 10 m per pixel, so zoomed in close it shows as squares.</p>" +
         '<p style="font-size:12px">' + scLine(b, "Before") + "</p><p style=\"font-size:12px\">" + scLine(a, "After") + "</p>" + (S.picErr.swipe ? '<p class="err">' + esc(S.picErr.swipe) + "</p>" : "");
     }
     /* the passes */
@@ -345,6 +388,13 @@
   function paint() {
     clearTimeout(paintT); paintT = setTimeout(paintNow, 30);
   }
+  /* the 8-bit pictures came back mostly clipped white (bright desert, snow, salt flats): draw both passes again from the bands */
+  function canBand(p) { return !!(p && p.items.length && p.items.every(function (it) { return it.bands; })); }
+  function brighten(rs) {
+    if (S.bright || !rs.some(function (r) { return r && !r.bands && r.clip > CLIP; })) return false;
+    if (!canBand(find(S.before)) && !canBand(find(S.after))) return false;
+    S.bright = true; draw(); paint(); return true;
+  }
   function paintNow() {
     if (!isOpen() || !S.area || tooBig(S.area)) { swipeOff(); return; }
     if (S.ac) S.ac.abort();
@@ -356,8 +406,9 @@
         var fig = el.querySelector('[data-pic="' + x[0] + '"] .ph'); if (!fig || !x[1]) return;
         var pw = Math.max(200, Math.min(900, Math.round((fig.clientWidth || 400) * Math.min(2, W.devicePixelRatio || 1))));
         var ar = aspect().split("/")[0], ph = Math.max(80, Math.min(1400, Math.round(pw / ar)));
-        render(x[1], S.area, pw, ph, sig).then(function (r) {
+        render(x[1], S.area, pw, ph, sig, { bands: S.bright }).then(function (r) {
           if (sig && sig.aborted) return;
+          if (brighten([r])) return;
           var f2 = el.querySelector('[data-pic="' + x[0] + '"] .ph'); if (!f2) return;
           f2.innerHTML = ""; r.canvas.setAttribute("role", "img"); r.canvas.setAttribute("aria-label", "Sentinel-2 true color, " + x[0] + ", " + isoDay(x[1].t));
           f2.appendChild(r.canvas);
@@ -371,9 +422,10 @@
   }
 
   /* ---------- swipe on the map ---------- */
-  var SW = { lb: null, la: null, bar: null, x: 0.5, urls: [] };
+  var SW = { lb: null, la: null, bar: null, box: null, x: 0.5, urls: [] };
   function swipeOff() {
     if (SW.lb) map.removeLayer(SW.lb); if (SW.la) map.removeLayer(SW.la); SW.lb = SW.la = null;
+    if (SW.box) { map.removeLayer(SW.box); SW.box = null; }
     SW.urls.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} }); SW.urls = [];
     if (SW.bar) { SW.bar.remove(); SW.bar = null; }
   }
@@ -392,8 +444,10 @@
     var Wd = Math.max(16, Math.min(2048, Math.round((p1.x - p0.x) * dpr))), Ht = Math.max(16, Math.min(2048, Math.round((p1.y - p0.y) * dpr)));
     var bounds = Lf.latLngBounds([bb[1], bb[0]], [bb[3], bb[2]]), att = "Contains modified Copernicus Sentinel data " + esc(years());
     S.picErr.swipe = "";
-    Promise.all([b ? render(b, bb, Wd, Ht, sig) : null, a ? render(a, bb, Wd, Ht, sig) : null]).then(function (r) {
+    var o = { bands: S.bright };
+    Promise.all([b ? render(b, bb, Wd, Ht, sig, o) : null, a ? render(a, bb, Wd, Ht, sig, o) : null]).then(function (r) {
       if (sig && sig.aborted) return;
+      if (brighten(r)) return;
       return Promise.all([r[0] ? blobUrl(r[0].canvas) : null, r[1] ? blobUrl(r[1].canvas) : null]).then(function (u) {
         if (sig && sig.aborted) return;
         var old = SW.urls; SW.urls = [u[0], u[1]].filter(function (x) { return x && /^blob:/.test(x); });
@@ -401,14 +455,17 @@
         SW.lb = u[0] ? Lf.imageOverlay(u[0], bounds, { pane: "satpane", className: "satimg satb", attribution: att }).addTo(map) : null;
         SW.la = u[1] ? Lf.imageOverlay(u[1], bounds, { pane: "satpane", className: "satimg sata", attribution: att }).addTo(map) : null;
         old.forEach(function (x) { try { URL.revokeObjectURL(x); } catch (e) {} });
-        bar(); clip();
+        /* the dashed box: where the Sentinel-2 pictures are (outside it both sides are the same base map) */
+        var ab = Lf.latLngBounds([S.area[1], S.area[0]], [S.area[3], S.area[2]]);
+        if (SW.box) SW.box.setBounds(ab); else SW.box = Lf.rectangle(ab, { interactive: false, fill: false, color: "#fff", weight: 2, opacity: 0.9, dashArray: "6 5", className: "satbox" }).addTo(map);
+        bar(); center(); clip();
       });
     }).catch(function (e) { if (sig && sig.aborted) return; S.picErr.swipe = "Could not draw the pictures: " + (e && e.message || e); draw(); });
   }
   function bar() {
     if (SW.bar) { label(); return; }
     var c = map.getContainer(), d = D.createElement("div"); d.className = "satswipe noprint";
-    d.innerHTML = '<i></i><span class="l"></span><span class="r"></span><b role="slider" tabindex="0" aria-label="Swipe between before and after" aria-valuemin="0" aria-valuemax="100">⇔</b>';
+    d.innerHTML = '<i></i><span class="l"></span><span class="r"></span><span class="n" hidden></span><b role="slider" tabindex="0" aria-label="Swipe between before and after" aria-valuemin="0" aria-valuemax="100">⇔</b>';
     c.appendChild(d); SW.bar = d; label();
     var k = d.querySelector("b"), drag = false;
     function at(ev) { var r = c.getBoundingClientRect(), x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left; SW.x = Math.max(0, Math.min(1, x / r.width)); clip(); }
@@ -423,20 +480,49 @@
     if (!SW.bar) return; var b = find(S.before), a = find(S.after);
     SW.bar.querySelector(".l").textContent = b ? "Before " + isoDay(b.t) : "";
     SW.bar.querySelector(".r").textContent = a ? "After " + isoDay(a.t) : "";
+    note();
+  }
+  /* under the dates: what the squares are, and that the pictures stop at the dashed box */
+  function note() {
+    if (!SW.bar || !S.area) return;
+    var n = SW.bar.querySelector(".n"), z = map.getZoom(), lat = (S.area[1] + S.area[3]) / 2;
+    var px10 = 10 / (156543.03392 * Math.cos(lat * Math.PI / 180) / Math.pow(2, z)), v = map.getBounds();
+    var part = S.area[0] > v.getWest() || S.area[1] > v.getSouth() || S.area[2] < v.getEast() || S.area[3] < v.getNorth();
+    var t = [];
+    if (part) t.push("Sentinel-2 inside the dashed box only");
+    if (px10 >= 6) t.push("each square is one 10 m Sentinel-2 pixel");
+    if (S.bright) t.push("bright-ground scale");
+    n.textContent = t.length ? t.join(" · ").replace(/^./, function (x) { return x.toUpperCase(); }) : "";
+    n.hidden = !t.length;
+  }
+  /* keep the handle over the pictures: a cut outside the box would hide one date completely (on a phone, clear of the tool bar) */
+  function center() {
+    if (!SW.bar || !S.area) return;
+    var cw = map.getContainer().clientWidth, x0 = Math.max(0, map.latLngToContainerPoint([S.area[3], S.area[0]]).x), x1 = Math.min(cw - (cw < 700 ? 80 : 0), map.latLngToContainerPoint([S.area[1], S.area[2]]).x), x = SW.x * cw;
+    if (x1 - x0 > 40 && (x < x0 + 16 || x > x1 - 16)) SW.x = ((x0 + x1) / 2) / cw;
   }
   /* the after picture shows right of the handle only; the before picture is under it */
   function clip() {
     if (!SW.bar) return;
     var c = map.getContainer(), cw = c.clientWidth, x = Math.round(SW.x * cw);
     SW.bar.style.left = x + "px"; SW.bar.querySelector("b").setAttribute("aria-valuenow", Math.round(SW.x * 100));
+    /* the note sits mid-map (clear of the phone tool bar), not on the handle */
+    SW.bar.querySelector(".n").style.left = Math.round((cw - (cw < 700 ? 80 : 0)) / 2 - x) + "px";
     var im = SW.la && SW.la.getElement();
     if (im) { var r = im.getBoundingClientRect(), cr = c.getBoundingClientRect(), cut = Math.max(0, x - (r.left - cr.left)), sc = r.width / (im.offsetWidth || r.width || 1);
       im.style.clipPath = "inset(0 0 0 " + Math.max(0, cut / (sc || 1)) + "px)"; }
   }
   var mvT = null;
   map.on("move zoom", function () { if (SW.bar) clip(); });
-  map.on("moveend", function () { if (!isOpen() || P.mode !== "swipe") return; clearTimeout(mvT); mvT = setTimeout(paintNow, 450); });
-  map.on("zoomend", function () { if (SW.bar) setTimeout(clip, 0); });
+  /* the map view as the area follows the map in the swipe (the passes stay; the pictures are redrawn for the new view) */
+  function follow() {
+    if (S.src !== "Map view" || P.mode !== "swipe") return;
+    var v = viewBox(); if (tooBig(v)) return;
+    S.area = v; var km = sizeKm(v), sz = el && el.querySelector(".sz");
+    if (sz) sz.innerHTML = "<b>Map view</b> " + esc(km[0].toFixed(km[0] < 10 ? 1 : 0) + " × " + km[1].toFixed(km[1] < 10 ? 1 : 0) + " km");
+  }
+  map.on("moveend", function () { if (!isOpen() || P.mode !== "swipe") return; clearTimeout(mvT); mvT = setTimeout(function () { follow(); paintNow(); }, 450); });
+  map.on("zoomend", function () { if (SW.bar) setTimeout(function () { clip(); note(); }, 0); });
   W.addEventListener("resize", function () { if (SW.bar) clip(); });
 
   /* ---------- NASA GIBS daily true colour ---------- */
@@ -486,7 +572,7 @@
     if (b && a && b.t > a.t) { var x = S.before; S.before = S.after; S.after = x; }
     draw(); paint();
   }
-  function mode(m) { if (m !== "side" && m !== "swipe") return; P.mode = m; save(); draw(); paint(); }
+  function mode(m) { if (m !== "side" && m !== "swipe") return; P.mode = m; save(); follow(); draw(); paint(); }
 
   /* ---------- Map overlays > Satellite imagery ---------- */
   function build() {
@@ -511,5 +597,6 @@
   /* in the Area menu (assets/osap-atak.js asks for a shape first when none is drawn) */
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "satba", label: "Satellite before/after", run: function () { open(); } });
   W.OSAP_SAT = { open: open, close: close, isOpen: isOpen, render: render, gibs: gibs, setGibsDate: setGibsDate, setGibsLayer: setGibsLayer, pick: pick, mode: mode,
-    state: function () { return { area: S.area, src: S.src, passes: S.passes.length, before: S.before, after: S.after, mode: P.mode, gibs: P.gon, gdate: gDate(), glayer: P.gl, err: S.err, busy: S.busy }; }, _t: T };
+    state: function () { return { area: S.area, src: S.src, passes: S.passes.length, before: S.before, after: S.after, mode: P.mode, gibs: P.gon, gdate: gDate(), glayer: P.gl, err: S.err, busy: S.busy, bright: S.bright,
+      swipe: SW.bar ? { x: SW.x, box: !!SW.box, note: SW.bar.querySelector(".n").hidden ? "" : SW.bar.querySelector(".n").textContent } : null }; }, _t: T };
 })();
