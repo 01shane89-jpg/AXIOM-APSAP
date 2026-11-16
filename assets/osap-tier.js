@@ -705,6 +705,7 @@
   function start() {
     refreshPlan().then(function () {
       readyDone();
+      if (W.OSAP_DATA && W.OSAP_DATA.site) W.OSAP_DATA.site(true);
       STARTED_OUT = !CFG.signedIn;
       css(); draw();
       D.addEventListener("click", guard, true);
@@ -734,7 +735,12 @@
         } else sessionStorage.removeItem(K_RELOAD);
       } catch (e) { /* no reload */ }
       if (W.OSAP_DATA && W.OSAP_DATA.release) W.OSAP_DATA.release();
-    }, function () { readyDone(); /* not the Netlify site: no paywall here */ if (W.OSAP_DATA && W.OSAP_DATA.release) W.OSAP_DATA.release(); });
+    }, function () {
+      readyDone(); /* not the Netlify site: no paywall here */
+      /* a start that held back its data because the address looked like the Netlify site: remember it is not, and start again */
+      if (W.OSAP_DATA && W.OSAP_DATA.site) { W.OSAP_DATA.site(false); if (W.OSAP_DATA.dark && W.OSAP_DATA.dark()) { location.reload(); return; } }
+      if (W.OSAP_DATA && W.OSAP_DATA.release) W.OSAP_DATA.release();
+    });
   }
 
   W.OSAP_TIER = {

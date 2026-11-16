@@ -52,9 +52,23 @@ ok(TOOLS.overlays === "mid" && TOOLS.mine === "full" && !TOOLS.today && !TOOLS.w
   ok(paths.length > 100 && !bad.length, "the page reads each of " + paths.length + " data paths as tierOfPath does " + bad.slice(0, 5).join(", "));
   ok(G.plan().tier === "free" && !G.ok("data/live/ucdp.js") && G.ok("data/live/news.js") && G.ok("/AXIOM-APSAP/data/basemap/x.js") && !G.ok("https://x.test/AXIOM-APSAP/data/sof/th.js") && G.ok("https://other.test/data/sof/th.js") && G.ok("assets/logo.png"),
     "Free kept: Mid and Full files are left out, Free files, other sites and app files are not");
-  store["osap-auth"] = undefined; const ctx2 = { ...ctx }; ctx2.window = ctx2;
-  vm.runInNewContext(fs.readFileSync("assets/osap-datagate.js", "utf8"), ctx2);
-  ok(!ctx2.OSAP_DATA.plan() && ctx2.OSAP_DATA.ok("data/sof/th.js"), "signed out (or GitHub Pages, where no plan is kept): nothing is left out");
+  store["osap-auth"] = undefined;
+  const run = (loc, extra = {}) => { const st = { ...store, ...extra }, c = { ...ctx, location: loc, localStorage: { getItem: (k) => st[k] ?? null, setItem: (k, v) => { st[k] = v; }, removeItem: () => {} }, document: { baseURI: loc.origin + loc.pathname, write() {} } }; c.window = c; vm.runInNewContext(fs.readFileSync("assets/osap-datagate.js", "utf8"), c); return c.OSAP_DATA; };
+  const pages = { origin: "https://01shane89-jpg.github.io", protocol: "https:", hostname: "01shane89-jpg.github.io", pathname: "/AXIOM-APSAP/" };
+  const site = { origin: "https://osap.example.org", protocol: "https:", hostname: "osap.example.org", pathname: "/" };
+  const local = { origin: "http://127.0.0.1:8080", protocol: "http:", hostname: "127.0.0.1", pathname: "/" };
+  let D2 = run(pages);
+  ok(!D2.plan() && !D2.dark() && D2.ok("data/sof/th.js"), "signed out on GitHub Pages: nothing is left out");
+  D2 = run(local);
+  ok(!D2.plan() && !D2.dark() && D2.ok("data/sof/th.js"), "signed out on this computer: nothing is left out");
+  D2 = run(site);
+  ok(D2.dark() && !D2.ok("data/live/news.js") && !D2.ok("data/basemap/x.js") && D2.ok("assets/logo.png") && D2.ok("api/osap-account"), "signed out on the Netlify site: every data file is left out, app files and the account service are not");
+  D2 = run(site, { "osap-gated": "0" });
+  ok(!D2.dark() && D2.ok("data/live/news.js"), "an address found to have no account service: nothing is left out");
+  D2 = run(local, { "osap-gated": "1" });
+  ok(D2.dark(), "an address found to have the account service: dark when signed out");
+  D2 = run(site, { "osap-auth": "{}" });
+  ok(!D2.dark(), "signed in: never dark");
   // the service worker's warm-up leaves out the same files, given the plan the page sends it
   const locked = new Function("TIERS", fs.readFileSync("sw.js", "utf8").match(/function locked\(u, plan\) \{[\s\S]*?\n\}/)[0] + "; return locked;")(TIERS);
   const plan = (tier) => ({ tier, data: R.data, dataDefault: R.dataDefault });

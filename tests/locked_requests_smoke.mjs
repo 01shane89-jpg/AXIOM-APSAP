@@ -65,6 +65,8 @@ async function context(token, viewport = { width: 1400, height: 900 }) {
   return { ctx, p, log, reset };
 }
 const settle = (p) => p.waitForTimeout(7000);
+const OUTSIDE_MAX = 0;
+const PLAIN = (await readFile(join(root, "index.html"), "utf8")).match(/^<script src="(data\/[^"]+)"><\/script>$/gm).map((t) => t.slice(13, -11));
 const dataReqs = (log) => [...new Set(log.reqs.filter((u) => /^(data|source)\//.test(u)).map((u) => u.split("?")[0]))];
 const gateState = (p) => p.evaluate(() => ({ plan: window.OSAP_DATA.plan() && window.OSAP_DATA.plan().tier, skipped: window.OSAP_DATA.skipped(), tier: window.OSAP_TIER && window.OSAP_TIER.tier() }));
 
@@ -154,6 +156,40 @@ for (const [tok, tier] of [["tok-free", "free"], ["tok-mid", "mid"], ["tok-full"
   ok(await p.evaluate(() => localStorage.getItem("osap-tier-plan") === null && window.OSAP_DATA.plan() === null), "signed out: the kept plan is forgotten");
   await ctx.close();
 }
+// 6. signed out on the Netlify site (this stand-in is known by osap-gated, as the real address is by its name): the sign-in
+// screen covers the page, so the page asks for no data file and no outside service behind it; signing in starts it properly
+{
+  const { ctx, p, log, reset } = await context();
+  await ctx.addInitScript({ content: "try{localStorage.setItem('osap-gated','1')}catch(e){}" });
+  await p.goto(base + "#th"); await settle(p);
+  const g = await p.evaluate(() => ({ dark: window.OSAP_DATA.dark(), wall: !!document.querySelector("#tierdlg.trwall:not([hidden])") }));
+  ok(g.dark && g.wall, "signed out: the sign-in screen shows and the start is dark " + JSON.stringify(g));
+  // the free feeds written as plain tags are still fetched by the browser's look-ahead (and refused, 401), but none is run, and
+  // no loader asks for anything else (before: 44 refused files and 90 outside requests)
+  const plain = new Set(PLAIN), extra = dataReqs(log).filter((u) => !plain.has(u)), tags = await p.evaluate(() => [...document.scripts].filter((x) => /\/(data|source)\//.test(x.src)).length);
+  ok(!extra.length && !tags, "signed out: no data file asked for beyond the " + PLAIN.length + " plain tags' look-ahead, none on the page " + JSON.stringify({ extra, tags, refused: log.refused.length }));
+  ok(log.outside.length <= OUTSIDE_MAX, "signed out: at most " + OUTSIDE_MAX + " outside requests (" + log.outside.length + ") " + [...new Set(log.outside.map((u) => new URL(u).host))].join(" "));
+  ok(log.errors.length === 0, "signed out: no page errors " + log.errors.join(" | "));
+  await p.fill('#tierdlg input[name="email"]', "free@test"); await p.fill('#tierdlg input[name="password"]', "password1");
+  reset();
+  await Promise.all([p.waitForEvent("load", { timeout: 15000 }).catch(() => null), p.click('#tierdlg button[type="submit"]')]);
+  await settle(p);
+  const g2 = await gateState(p);
+  ok(g2.tier === "free" && !(await p.evaluate(() => window.OSAP_DATA.dark())) && dataReqs(log).includes("data/live/news/th.js") && log.refused.length === 0, "signed in from there: the page starts again with its data, nothing refused " + JSON.stringify({ tier: g2.tier, n: dataReqs(log).length }));
+  ok(log.errors.length === 0, "signed in from there: no page errors " + log.errors.join(" | "));
+  await ctx.close();
+}
+// 7. an address that looked like the Netlify site but has no account service: remembered, and the start is not left dark
+gate = false;
+{
+  const { ctx, p, log } = await context();
+  await ctx.addInitScript({ content: "if(!sessionStorage.getItem('g-seeded')){sessionStorage.setItem('g-seeded','1');try{localStorage.setItem('osap-gated','1')}catch(e){}}" });
+  await p.goto(base + "#th"); await settle(p);
+  const g = await p.evaluate(() => ({ dark: window.OSAP_DATA.dark(), kept: localStorage.getItem("osap-gated") }));
+  ok(!g.dark && g.kept === "0" && dataReqs(log).includes("data/live/news/th.js") && log.loads === 2, "no account service: kept as such, started once more with its data " + JSON.stringify({ ...g, loads: log.loads }));
+  await ctx.close();
+}
+gate = true;
 // 5. a 390 px phone, Free: nothing scrolls sideways
 {
   const { ctx, p, log, reset } = await context("tok-free", { width: 390, height: 844 });
