@@ -16,6 +16,7 @@ import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
+import { protectThaiPlaces } from "./th_places.mjs";
 import { mtSuspect, looksEnglish, lowConfidence } from "./mt_guard.mjs";
 
 // One cache file per refresh lane. The fast lane (warnings) and the news lane (news, Deep South, social) run at the same time and
@@ -80,7 +81,7 @@ export async function translateAll(items, opts = {}) {
     // no language given and nothing outside Latin script: taken as English (Telegram channels carry no language tag)
     if (!it.lang && !/[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F\u20A0-\u20CF\u2100-\u214F\uFE00-\uFE0F\u{1F000}-\u{1FAFF}]/u.test(it.text)) return { en: orig[i].text, tool: null };
     const k = key(it.text, it.lang), c = cache[k];
-    if (c && c.en && mtSuspect(it.text, c.en)) { if (c.tool === MT_TOOL) put(k, { en: null, rejected: MT_TOOL, at: c.at }); else delete cache[k]; return null; }
+    if (c && c.en && mtSuspect(it.text, c.en, undefined, it.lang)) { if (c.tool === MT_TOOL) put(k, { en: null, rejected: MT_TOOL, at: c.at }); else delete cache[k]; return null; }
     return c && c.en ? { en: c.en, tool: c.tool } : null;
   });
   const todo = items.map((it, i) => (out[i] ? -1 : i)).filter((i) => i >= 0);
@@ -111,7 +112,7 @@ function localModel(items, todo, out, beam) {
   pick.forEach((k, j) => {
     const en = tidy(res[j]); if (!en) return;
     const low = lowConfidence(scores[j]); if (low) unsure++;
-    if (low || mtSuspect(items[k].text, en)) { put(key(items[k].text, items[k].lang), { en: null, rejected: MT_TOOL, beam: beam ? 4 : undefined, at: Date.now() }); bad.push(k); return; }
+    if (low || mtSuspect(items[k].text, en, undefined, items[k].lang)) { put(key(items[k].text, items[k].lang), { en: null, rejected: MT_TOOL, beam: beam ? 4 : undefined, at: Date.now() }); bad.push(k); return; }
     out[k] = { en, tool: MT_TOOL }; put(key(items[k].text, items[k].lang), { en, tool: MT_TOOL, at: Date.now() }); n++;
   });
   console.log("MADLAD-400" + (beam ? " (beam search, texts the quick pass got wrong)" : "") + ": translated " + n + " of " + pick.length + " texts in " +
@@ -126,9 +127,12 @@ function localModel(items, todo, out, beam) {
 const TH_MONTHS = { "ม.ค.": "มกราคม", "ก.พ.": "กุมภาพันธ์", "มี.ค.": "มีนาคม", "เม.ย.": "เมษายน", "พ.ค.": "พฤษภาคม", "มิ.ย.": "มิถุนายน",
   "ก.ค.": "กรกฎาคม", "ส.ค.": "สิงหาคม", "ก.ย.": "กันยายน", "ต.ค.": "ตุลาคม", "พ.ย.": "พฤศจิกายน", "ธ.ค.": "ธันวาคม" };
 const TH_ABBR = new RegExp("(" + Object.keys(TH_MONTHS).map((k) => k.replace(/\./g, "\\.")).join("|") + ")(?:\\s*(\\d{2}|\\d{4})(?!\\d))?", "g");
+// Thai place names: written in English (tools/th_places.mjs), since the model reads them as ordinary words or other places
+// ("ไฟไหม้ป่าตอง", a fire in Patong, as "forest fire"). On 60 stored headlines whose translation had lost its place, 48 came back
+// right with the names written in and 2 without; on 30 that had kept theirs, 28 still passed (probe 2026-11-16).
 export function prepareForModel(text, lang) {
   if (!/^th\b/i.test(lang || "") && !/[\u0E00-\u0E7F]/.test(text || "")) return text;
-  return String(text).replace(TH_ABBR, (m, mo, y, at, all) => TH_MONTHS[mo] + (y ? " " + (+(y.length === 2 ? "25" + y : y) - (y.length === 2 || /^2[45]/.test(y) ? 543 : 0)) : "") +
+  return protectThaiPlaces(String(text)).replace(TH_ABBR, (m, mo, y, at, all) => TH_MONTHS[mo] + (y ? " " + (+(y.length === 2 ? "25" + y : y) - (y.length === 2 || /^2[45]/.test(y) ? 543 : 0)) : "") +
     (/[\u0E00-\u0E7F]/.test(all[at + m.length] || "") ? " " : ""));
 }
 // The model writes a cut-off headline's "..." as ". . ." ("Ca. . ."): put it back as one ellipsis.

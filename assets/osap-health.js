@@ -60,6 +60,7 @@
       if (!t) why = "no data";
       else if (ref - t > max * 60000) why = "last updated " + ago(now - t) + " ago";
       else if (f.src && f.src.ok + f.src.fail >= 4 && f.src.fail > f.src.ok) why = f.src.fail + " of " + (f.src.ok + f.src.fail) + " sources failing";
+      else if (f.minItems > 0 && typeof f.n === "number" && f.n < f.minItems) why = f.n + " items";
       if (why) probs.push({ name: f.name || f.id, why: why, key: !!f.key });
     });
     /* what the reader sees (tools/health_lib.mjs userView): red only when nothing has refreshed for downMin or most key feeds

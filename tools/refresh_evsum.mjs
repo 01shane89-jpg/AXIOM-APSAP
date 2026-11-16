@@ -257,8 +257,8 @@ async function runnerDrafts(events, countries, failed) {
   for (const e of events) {
     const srcs = new Set(e.reports.map((r) => r.source)); if (srcs.size < 2) continue;
     const reps = pickReports(e), keys = reps.map((r) => r.key), id = keysId(keys);
-    if (oldI[id]) { keep.add(id); continue; }
-    const prior = [...new Set(keys.flatMap((k) => byK[k] || []))].filter((pid) => oldI[pid]);
+    if (oldI[id] && !staleRefs(oldI[id], reps)) { keep.add(id); continue; }
+    const prior = [...new Set(keys.flatMap((k) => byK[k] || []))].filter((pid) => oldI[pid] && pid !== id && !staleRefs(oldI[pid], reps));
     prior.forEach((pid) => keep.add(pid));
     const cover = prior.reduce((m, pid) => Math.max(m, oldI[pid].keys.filter((k) => keys.includes(k)).length), 0);
     if (cover >= keys.length * 2 / 3 || (e.to || 0) < recentCut) continue;
@@ -298,6 +298,13 @@ async function runnerDrafts(events, countries, failed) {
 }
 
 // ---------- 3. keep, reuse, prioritise, write ----------
+// A kept draft whose source headline has changed since it was written is not kept: on 2026-11-16 the machine translation guard
+// (tools/mt_guard.mjs) began rejecting headlines with casualty counts their originals do not give ("Kill 10"), which then show in
+// their original words, and a draft written from the invented English may repeat it. It is drafted again when the budget allows.
+const staleRefs = (s, reps) => {
+  const cur = new Map(reps.filter((r) => r.url).map((r) => [r.url, String(r.title || "").slice(0, 200)]));
+  return (s.refs || []).some((r) => r.url && cur.has(r.url) && cur.get(r.url) !== String(r.title || "").slice(0, 200));
+};
 const keysId = (keys) => crypto.createHash("sha256").update(keys.slice().sort().join(",")).digest("hex").slice(0, 16);
 const { events, countries, failed, recent } = await scan();
 if (AI_ONLY) { await runnerDrafts(events, countries, failed); process.exit(0); }
@@ -311,10 +318,11 @@ for (const e of events) {
   if (srcs.size < 2) continue;
   multi++;
   const reps = pickReports(e), keys = reps.map((r) => r.key), id = keysId(keys);
-  if (oldItems[id] && oldItems[id].method !== "extract") { items[id] = { ...oldItems[id], seen: stamp, cc: oldItems[id].cc }; continue; }
-  if (oldItems[id]) items[id] = { ...oldItems[id], seen: stamp };
+  const stale = oldItems[id] && staleRefs(oldItems[id], reps);
+  if (oldItems[id] && !stale && oldItems[id].method !== "extract") { items[id] = { ...oldItems[id], seen: stamp, cc: oldItems[id].cc }; continue; }
+  if (oldItems[id] && !stale) items[id] = { ...oldItems[id], seen: stamp };
   // an older draft of the same event (it shares reports) is kept until the new one is written
-  const prior = [...new Set(keys.flatMap((k) => byKey[k] || []))].filter((pid) => oldItems[pid] && oldItems[pid].keys.filter((k) => keys.includes(k)).length >= 2);
+  const prior = [...new Set(keys.flatMap((k) => byKey[k] || []))].filter((pid) => oldItems[pid] && oldItems[pid].keys.filter((k) => keys.includes(k)).length >= 2 && !staleRefs(oldItems[pid], reps));
   prior.forEach((pid) => { items[pid] = { ...oldItems[pid], seen: stamp }; });
   todo.push({ e, reps, keys, id, prior, srcN: srcs.size, recent: e.to || 0 });
 }

@@ -11,7 +11,7 @@
 //   Env: HEALTH_DRY=1 prints instead of posting; HEALTH_SITE / HEALTH_TOPIC override tools/health.json (tests).
 import fs from "node:fs";
 import vm from "node:vm";
-import { stampOf, sourcesOf, evaluate, decide, lastAnnounced, fpTag } from "./health_lib.mjs";
+import { stampOf, sourcesOf, countOf, evaluate, decide, lastAnnounced, fpTag } from "./health_lib.mjs";
 
 const cfg = JSON.parse(fs.readFileSync(new URL("./health.json", import.meta.url), "utf8"));
 const SITE = (process.env.HEALTH_SITE || cfg.site).replace(/\/?$/, "/");
@@ -40,6 +40,7 @@ async function build() {
         const obj = Object.values(box.window)[0];
         const src = sourcesOf(obj);
         if (src) row.src = src;
+        if (f.count) { const n = countOf(obj, f.count); if (n != null) { row.n = n; row.minItems = f.minItems || 1; } }
         if (obj === null) row.asof = null;
       } catch (e) {}
     }

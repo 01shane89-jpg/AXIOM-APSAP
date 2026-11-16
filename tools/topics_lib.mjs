@@ -67,6 +67,10 @@ export function itemRelevance(R, i) {
   if (i.exempt) return "strong";   // an outlet marked relevance "exempt" in tools/news_feeds.json
   const en = String(i.title_en || i.title || ""), orig = i.title && i.title !== en ? i.title : "";
   const rel = relevance(R, en + " \n " + orig + " \n " + String(i.summary_en || i.summary || "").slice(0, 400));
+  // an untranslated headline in a language without its own word lists is not left out on an English drop word: "Golf" is the
+  // Persian Gulf in German ("Persischer Golf - Iranische Revolutionsgarden melden neuen Drohnenangriff", 2026-11-15, whose
+  // invented English the translation guard rejected), not the sport
+  if (rel === "drop" && i.mt === "untranslated" && !(R.native && R.native.has(baseLang(i.lang)))) return "unchecked";
   if (rel !== "none") return rel;
   // the outlet's summary is read by the job but not stored (tools/outlet_text.mjs): what its words matched then still counts
   if (i.sum_rel === "strong" || i.sum_rel === "keep") return i.sum_rel;

@@ -8,7 +8,7 @@
 // files: it holds nothing of its own. Unchanged days are rewritten byte-identical, so a refresh only changes the recent ones.
 import fs from "node:fs";
 import { compileTopics, topicsOf, compileRelevance, itemRelevance } from "./topics_lib.mjs";
-import { dropSuspectMt } from "./mt_guard.mjs";
+import { dropSuspectMt, mtSuspect } from "./mt_guard.mjs";
 import { compileViews, viewsOf } from "./view_reports_lib.mjs";
 
 const DAYS = Number(process.env.NEWSIX_DAYS || 30), SUM = Number(process.env.NEWSIX_SUM || 0), OUT = "data/live/news-index.js", DIR = "data/live/news-index";
@@ -77,14 +77,18 @@ if (process.env.NEWSIX_DROPPED) fs.writeFileSync(process.env.NEWSIX_DROPPED, JSO
 // also clears the days Story coverage and news search already read. Rows that rolled off are not rechecked: their summary,
 // which may be what kept them, is gone.
 const seen = new Set(rows.map((r) => r[5]));
-let carried = 0, recheck = 0;
+let carried = 0, recheck = 0, mtDropped = 0;
 try {
   for (const f of fs.readdirSync(DIR)) {
     if (!/^\d{4}-\d{2}-\d{2}\.js$/.test(f) || f.slice(0, 10) < cutoff.slice(0, 10)) continue;
     let old; try { old = readJs(DIR + "/" + f); } catch (e) { console.error("index day unreadable:", f, e.message); continue; }
-    for (const r of Array.isArray(old) ? old : []) {
+    for (let r of Array.isArray(old) ? old : []) {
       if (!Array.isArray(r) || r.length < 10 || !r[5] || seen.has(r[5]) || r[1] < cutoff) continue;
       if (left.has(r[5])) { seen.add(r[5]); recheck++; continue; }
+      // a carried row's machine translation passes today's guard too: one it fails shows the original headline (on 2026-11-16,
+      // 1,600 stored rows carried a casualty count or a death the original does not give, "Kill 10" for a German report of a
+      // drone attack among them, kept from before the guard caught them)
+      if (/m/.test(r[7] || "") && r[3] && mtSuspect(r[3], r[2])) { r = [...r]; r[2] = r[3]; r[3] = ""; r[7] = String(r[7]).replace(/m/g, ""); mtDropped++; }
       seen.add(r[5]); rows.push(r); carried++;
       String(r[8] || "").split(",").filter(Boolean).forEach((id) => (count[id] = (count[id] || 0) + 1));
       String(r[9] || "").split(",").filter(Boolean).forEach((id) => (vcount[id] = (vcount[id] || 0) + 1));
@@ -92,6 +96,7 @@ try {
   }
 } catch (e) {}
 if (carried) console.log(`carried over ${carried} headlines already in the index whose history copy has rolled off`);
+if (mtDropped) console.log(`machine translation: ${mtDropped} carried headlines failed the guard and show their original words`);
 if (recheck) console.log(`relevance: ${recheck} headlines already in the index left out by this run's check`);
 const byDay = {};
 rows.forEach((r) => (byDay[r[1].slice(0, 10)] = byDay[r[1].slice(0, 10)] || []).push(r));

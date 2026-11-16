@@ -73,7 +73,7 @@
     ((X && X.records) || []).forEach(function (r) {
       // a live blog can be cited twice, for two of its updates: one entry per headline, but never a live report again
       if (!r.url || seen[r.url] === 1 || seen[r.url + "|" + r.title]) return; seen[r.url + "|" + r.title] = 2; if (!seen[r.url]) seen[r.url] = 2;
-      out.push({ t: r.t, lat: r.lat, lon: r.lon, place: r.place, prec: r.prec || "", site: r.site || "", about: r.about || "", kind: BK[r.kind] || r.kind, side: r.side, actor: r.actor, title: r.title, source: r.source, url: r.url, fp: r.fp, via: r.via || "", outlets: r.outlets || 0, claim: r.side !== "neutral", live: false });   // "claim": a party's own statement
+      out.push({ t: r.t, lat: r.lat, lon: r.lon, place: r.place, prec: r.prec || "", site: r.site || "", also: r.also || [], about: r.about || "", kind: BK[r.kind] || r.kind, side: r.side, actor: r.actor, title: r.title, source: r.source, url: r.url, fp: r.fp, via: r.via || "", outlets: r.outlets || 0, claim: r.side !== "neutral", live: false });   // "claim": a party's own statement
     });
     out.sort(function (a, b) { return ms(b.t) - ms(a.t); });
     return out;
@@ -91,18 +91,20 @@
 
   /* the reports about one place: earlier reports that name it as their site, and live reports the refresh job pinned on it
      (by its names, tools/gazetteer.mjs siteMatcher), in the chosen period, newest first */
+  /* a report that names several sites (a survey of damage across bases) is listed on each of them ("also") */
+  function onSite(r, p) { return (r.site ? r.site === p.id : r.place === p.name && r.prec === "site") || (!!r.also && r.also.indexOf(p.id) >= 0); }
   function atPlace(recs, p) {
-    return recs.filter(function (r) { return (r.site ? r.site === p.id : r.place === p.name && r.prec === "site") && inP(r.t); });
+    return recs.filter(function (r) { return onSite(r, p) && inP(r.t); });
   }
   function placeHtml(p, recs) {
-    var at = atPlace(recs, p), all = recs.filter(function (r) { return r.site ? r.site === p.id : r.place === p.name && r.prec === "site"; });
+    var at = atPlace(recs, p), all = recs.filter(function (r) { return onSite(r, p); });
     var h = "<b>" + esc(p.name) + "</b><br><small>" + esc(KIND_LBL[p.kind] || p.kind) + " · " + esc((SIDE[p.side] || SIDE.neutral).name) + "</small><br>" + esc(p.why) +
       ' <span class="aitag" title="' + esc(p.why_status) + '">AI generated</span><br><small>' + link(p.src, p.srcname) + " · " +
       (p.prec === "site" ? (p.basis ? esc(p.basis) : "position of the site itself") : "position approximate") + fpShort(p.fp) + "</small>";
     if (all.length) {
       h += '<div class="cfi-at"><b>Reporting on this site</b> <span class="cfi-claim">Reported, not verified</span>' + (at.length < all.length ? " <small>(" + at.length + " of " + all.length + " in the chosen period)</small>" : "") +
         '<ul class="cfi-ev">' + at.slice(0, 8).map(function (r) {
-          return "<li><small>" + day(r.t) + (r.about ? " · about " + day(r.about) : "") + (r.actor ? " · " + esc(r.actor) : "") + "</small><br>" + link(r.url, r.title) + " <small>(" + esc(r.source) + ")</small>" +
+          return "<li><small>" + day(r.t) + (r.about && r.site === p.id ? " · about " + day(r.about) : "") + (r.also && r.also.length ? " · covers " + (r.also.length + 1) + " sites" : "") + (r.actor ? " · " + esc(r.actor) : "") + "</small><br>" + link(r.url, r.title) + " <small>(" + esc(r.source) + ")</small>" +
             (r.claim ? ' <span class="cfi-claim">claim</span>' : "") + (r.live ? "" : ' <span class="cfi-claim">earlier report</span>') + fpShort(r.fp) + "</li>";
         }).join("") + (at.length > 8 ? "<li><small>and " + (at.length - 8) + " more in the history list</small></li>" : "") +
         (!at.length ? "<li><small>None in the chosen period. Choose All to see them.</small></li>" : "") + "</ul></div>";
