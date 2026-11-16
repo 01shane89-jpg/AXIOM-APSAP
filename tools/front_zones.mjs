@@ -39,7 +39,10 @@ export function zonesFront(c, s, items, stamp, now = Date.now()) {
   for (const i of pool) {
     if (seen.has(i.link)) continue; seen.add(i.link);
     // a live report counts only when its headline names the place it was pinned to (a dateline such as "TEHRAN, Sep. 27" is not where a strike was)
-    if (!i.backfill && i.geo && i.geo.n) {
+    // a pin only to a whole country (one-country fallback) is not a strike place
+    if (i.geo && i.geo.p === "country") continue;
+    // a pin on a named site of this conflict was placed by the site's own names (aliases), not by its listed name
+    if (!i.backfill && i.geo && i.geo.n && i.geo.p !== "site") {
       const head = (i.title_en || "") + " " + (i.title || ""), pl = String(i.geo.n).split(",")[0];
       if (head.toLowerCase().indexOf(pl.toLowerCase()) < 0) continue;
       // a capital used for its government ("Tehran warns", "Riyadh says") is not a place something happened

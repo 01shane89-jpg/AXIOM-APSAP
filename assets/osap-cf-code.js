@@ -64,7 +64,7 @@
     var cl = low.search(/\bclaim(?:s|ed)?\b/);
     var b1 = named[0] ? (cl > at0 ? "claimed_by_actor" : "named_by_source") : "unidentified";
     var pl = null;
-    if (i && i.geo && i.geo.la != null) pl = { n: clean(i.geo.n), la: +i.geo.la, lo: +i.geo.lo, precision: i.geo.p === "province" ? 3 : 1, from_fp: i.fp || null };
+    if (i && i.geo && i.geo.la != null) pl = { n: clean(i.geo.n), la: +i.geo.la, lo: +i.geo.lo, precision: i.geo.p === "province" || i.geo.p === "country" ? 3 : 1, from_fp: i.fp || null };
     var f = i && typeof i.killed === "number" && i.killed >= 0 ? i.killed : null;
     return { event_type: et, sub_event_type: se, actor1: a1 ? { name: a1, basis: b1 } : null,
       actor2: a2 ? { name: a2, basis: named[1] ? "named_by_source" : "unidentified" } : null, place: pl, fatalities: f == null ? null : { n: f, from_fp: i.fp || null } };

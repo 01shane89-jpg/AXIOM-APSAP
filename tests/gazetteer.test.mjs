@@ -4,7 +4,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { loadGazetteer, placeIn, stripDatelines, addSmallPlaces } from "../tools/gazetteer.mjs";
+import { loadGazetteer, placeIn, stripDatelines, addSmallPlaces, metonymOnly, siteMatcher, placeCountry, placeConflictReport, PLACE_V } from "../tools/gazetteer.mjs";
 
 // geonameid name ascii alt lat lon class code(7) cc(8) cc2 admin1(10) a2 a3 a4 pop(14) ...
 const row = (name, lat, lon, code, cc, a1, pop) => [0, name, name, "", lat, lon, "P", code, cc, "", a1, "", "", "", pop, "", "", "", ""].join("\t");
@@ -27,11 +27,17 @@ const cities = [
   row("Bunia", 1.56, 30.25, "PPLA", "CD", "12", 96000),
   row("Iligan", 8.23, 124.24, "PPL", "PH", "40", 300000),
   row("Toluca", 19.28, -99.66, "PPLA", "MX", "15", 490000),
+  // Iran war audit 2026-11-16: government stand-ins, an oil benchmark that is also a town, a country named on its own
+  row("Tehran", 35.694, 51.422, "PPLC", "IR", "26", 7000000),
+  row("Washington", 38.895, -77.036, "PPLC", "US", "DC", 690000),
+  row("Brent", 30.469, -87.236, "PPL", "US", "FL", 27000),
+  row("Manama", 26.228, 50.586, "PPLC", "BH", "16", 150000),
+  row("Riffa", 26.13, 50.555, "PPL", "BH", "17", 110000),
 ].join("\n");
 const admin = ["US.UT\tUtah\tUtah\t1", "US.HI\tHawaii\tHawaii\t2", "US.TX\tTexas\tTexas\t3", "US.IL\tIllinois\tIllinois\t4",
   "FR.11\tIle-de-France\tIle-de-France\t5", "TH.40\tBangkok\tBangkok\t6", "KR.11\tSeoul\tSeoul\t7", "KR.10\tBusan\tBusan\t8",
   "UA.14\tDonetsk Oblast\tDonetsk Oblast\t9", "CD.12\tIturi\tIturi\t10", "PH.40\tAgusan del Sur\tAgusan del Sur\t11",
-  "MX.15\tMéxico\tMexico\t12"].join("\n");
+  "MX.15\tMéxico\tMexico\t12", "US.FL\tFlorida\tFlorida\t13", "US.DC\tWashington, D.C.\tWashington, D.C.\t14", "IR.26\tTehran\tTehran\t15", "BH.16\tCapital\tCapital\t16", "BH.17\tSouthern\tSouthern\t17"].join("\n");
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gz-")), txt = path.join(dir, "cities15000.txt"), zip = path.join(dir, "c.zip");
 fs.writeFileSync(txt, cities + "\n");
 spawnSync("zip", ["-qj", zip, txt]);
@@ -66,6 +72,13 @@ const cases = [
   ["Free rides amid strike \n SEOUL, Korea -The ministry deployed buses", "kr", null],   // "-The": no space after the dash                                 // not all capitals: a headline, not a dateline
   ["Coast guard patrols \n MANILA, Philippines-The Department of Foreign Affairs rejected the claim", "ph", null],   // no space either side of the dash
   ["Heavy rain floods roads in Seoul", "kr", "Seoul"],
+  // a capital standing for its government is not a place; the same capital as a place still is
+  ["Tehran says it hit a US radar in Bahrain", "ir", null],
+  ["Explosions heard in Tehran", "ir", "Tehran"],
+  ["Washington denies Iran's claim", "us", null],
+  ["Tehran warns, then blasts rock Tehran", "ir", "Tehran"],
+  ["Oil steadies as Brent crude slips on Bahrain attack", "us", null],
+  ["Sirens sound in Riffa", "bh", "Riffa"],
 ];
 let bad = 0;
 for (const [t, cc, want] of cases) {
@@ -128,5 +141,46 @@ for (const [t, cc, want, prec] of [
   for (let n = 0; n < 3000; n++) if (placeIn(gz, "Russian drone strike on a village near Kramatorsk kills two, officials say in Zyx" + (n % 20000).toString(36) + "ville " + n, ["ua"])) hit++;
   const ms = Date.now() - t0, ok = ms < 3000 && hit === 3000; if (!ok) bad++;
   console.log(ok ? "ok  " : "FAIL", "small places: 3000 texts against 20,000 villages in", ms, "ms,", hit, "placed");
+}
+
+// named sites, the one-country fallback and the placement of a conflict report (refresh_conflicts.mjs)
+{
+  const site = siteMatcher([{ name: "Jebel Dukhan radar site", lat: 26.03788, lon: 50.54224, aliases: ["Jebel Dukhan", "Jabal ad Dukhan"] },
+    { name: "Al Udeid Air Base", lat: 25.12, lon: 51.32, aliases: ["Al Udeid"] }, { name: "No names", lat: 1, lon: 1, aliases: [] }]);
+  const conf = { countries: ["ir", "us", "bh", "qa"], parties: ["Iran", "United States", "Israel"] };
+  const checks = [
+    ["site by alias", site("Satellite image shows radome on Jabal ad-Dukhan"), "Jebel Dukhan radar site", "site"],
+    ["first site named wins", site("From Al Udeid to Jebel Dukhan"), "Al Udeid Air Base", "site"],
+    ["Qatar's Dukhan is not the Bahrain hill", site("Dukhan Air Base opens to travellers"), null],
+    ["a place with no aliases is never matched", site("No names here"), null],
+    ["one country named: its capital, rough", placeCountry(gz, "Iran claims drone attack on US base in Bahrain", conf.countries, ["ir", "us", "il"]), "Bahrain", "country"],
+    ["two countries named: none", placeCountry(gz, "Bahrain and Qatar condemn attacks", conf.countries, ["ir", "us", "il"]), null],
+    ["only warring parties named: none", placeCountry(gz, "Iran and United States trade threats", conf.countries, ["ir", "us", "il"]), null],
+  ];
+  for (const [label, r, want, prec] of checks) {
+    const ok = (r ? r.name : null) === want && (!want || r.prec === prec); if (!ok) bad++;
+    console.log(ok ? "ok  " : "FAIL", label, "->", r ? r.name + " " + r.prec : null);
+  }
+  if (!(metonymOnly("Tehran says it struck", "Tehran") && !metonymOnly("Blasts in Tehran", "Tehran"))) { bad++; console.log("FAIL metonymOnly"); } else console.log("ok   metonymOnly");
+  Object.defineProperty(gz, "__small", { value: true, configurable: true });
+  const items = [
+    // pinned in Washington by an older rule; Washington only stands for the government: re-placed on Bahrain
+    [{ title: "Washington says Iran drone attack on Bahrain base failed", geo: { n: "Washington", la: 38.9, lo: -77 }, geo_c: 2 }, "Bahrain", "country"],
+    // names the hill: on the site
+    [{ title: "Iran claims strike on US radar on Jebel Dukhan", geo_c: 2 }, "Jebel Dukhan radar site", "site"],
+    // pinned in Tehran by an older rule, nothing else placed: the stand-in pin is dropped
+    [{ title: "Tehran warns of harsher response", geo: { n: "Tehran", la: 35.69, lo: 51.42 }, geo_c: 2 }, null],
+    // a pin the news step gave that the new rules do not find, and not a stand-in: kept
+    [{ title: "Tanker hit by mine", geo: { n: "Bandar Abbas", la: 27.18, lo: 56.27, p: "approx" }, geo_c: 2 }, "Bandar Abbas", "approx"],
+  ];
+  for (const [i, want, prec] of items) {
+    placeConflictReport(gz, i, conf, site);
+    const ok = (i.geo ? i.geo.n : null) === want && (!want || i.geo.p === prec) && i.geo_c === PLACE_V; if (!ok) bad++;
+    console.log(ok ? "ok  " : "FAIL", "report:", JSON.stringify(i.title), "->", i.geo ? i.geo.n + " " + i.geo.p : null, "v" + i.geo_c);
+  }
+  // already placed under the current rules: left alone (placement runs once per rule version)
+  const done = { title: "Iran claims strike on US radar on Jebel Dukhan", geo: { n: "Elsewhere", la: 0, lo: 0 }, geo_c: PLACE_V };
+  placeConflictReport(gz, done, conf, site);
+  const ok = done.geo.n === "Elsewhere"; if (!ok) bad++; console.log(ok ? "ok  " : "FAIL", "a report placed under the current rules is not placed again");
 }
 process.exit(bad ? 1 : 0);

@@ -94,6 +94,7 @@ jobs:
       - run: node tests/comms.test.mjs
       - run: node tests/commsplan.test.mjs
       - run: node tests/gazetteer.test.mjs
+      - run: node tests/cf_iran_sites.test.mjs
       - run: node tests/history_pins.test.mjs
       - run: node tests/country_bounds.test.mjs
       - run: node tests/illum.test.mjs

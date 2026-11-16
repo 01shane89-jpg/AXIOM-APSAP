@@ -31,7 +31,7 @@
     return t < a ? (a - t) / DAY : t > b ? (t - b) / DAY : 0;
   }
   function radius(rep, ev) {
-    var p = +ev.prec || 9, wide = rep.geo && rep.geo.p === "province";
+    var p = +ev.prec || 9, wide = rep.geo && (rep.geo.p === "province" || rep.geo.p === "country");
     if (p <= 2) return wide ? 60 : 25;
     if (p === 3) return 60;
     if (p === 4) return 120;

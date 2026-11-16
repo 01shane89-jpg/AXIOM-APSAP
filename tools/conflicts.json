@@ -68,7 +68,7 @@
    "note_data": "Ukraine's and Russia's official statements (General Staff, Air Force, regional administrations, Ministry of Defence, state news agencies) are each side's own claims; pro-Kremlin military channels Rybar and WarGonzo are sanctioned entities and their posts are claims. Front line: DeepStateMap, a Ukrainian volunteer project, as mirrored daily; it is one side's reported depiction."
   },
   {
-   "id": "iran-war", "name": "Iran war (US and Israel against Iran)", "short": "Iran war", "countries": ["ir", "il", "us", "iq", "ae", "sa", "qa", "bh", "kw", "om", "jo"], "since": "2026-02-28", "kind": "interstate war", "tier": 1,
+   "id": "iran-war", "name": "Iran war (US and Israel against Iran)", "short": "Iran war", "countries": ["ir", "il", "us", "iq", "ae", "sa", "qa", "bh", "kw", "om", "jo"], "since": "2026-02-28", "kind": "interstate war", "tier": 1, "cap": 3000,
    "parties": ["Iran", "United States", "Israel"],
    "bounds": [[12.0, 32.0], [40.0, 64.0]],
    "terms": ["Iran\\w*", "Tehran", "Hormuz", "IRGC", "Revolutionary Guard\\w*", "Isfahan", "Natanz", "Fordow", "Bandar Abbas", "Kharg", "Qeshm", "Larak", "Jask", "Bushehr", "Sirik", "Fifth Fleet", "Al Udeid", "Muwaffaq Salti", "Project Freedom", "Araghchi", "Pezeshkian", "ایران", "تهران", "سپاه", "هرمز", "איראן"],
@@ -78,7 +78,7 @@
    "feeds": [
     { "id": "centcom", "outlet": "US Central Command", "url": "https://www.centcom.mil/DesktopModules/ArticleCS/RSS.ashx?ContentType=1&Site=808&max=20", "lang": "en", "state": true },
     { "id": "dod", "outlet": "US Department of Defense", "url": "https://www.defense.gov/DesktopModules/ArticleCS/RSS.ashx?ContentType=1&Site=945&max=20", "lang": "en", "state": true},
-    { "id": "presstv", "outlet": "Press TV (Iranian state media)", "url": "https://www.presstv.ir/rss.xml", "lang": "en", "state": true},
+    { "id": "presstv", "outlet": "Press TV (Iranian state media)", "url": "https://www.presstv.co.uk/rss.xml", "lang": "en", "state": true, "date_from_link": true, "note": "presstv.ir redirects to its own presstv.co.uk mirror (checked 2026-11-16); presstv.ir failed from runners with a TLS name error. The feed has no dates: the day is read from the link."},
     { "id": "farsnews", "outlet": "Fars News (IRGC-affiliated)", "url": "https://www.farsnews.ir/en/rss", "lang": "en", "state": true},
     { "id": "aljazeera", "outlet": "Al Jazeera", "url": "https://www.aljazeera.com/xml/rss/all.xml", "lang": "en" },
     { "id": "bbc-me", "outlet": "BBC News Middle East", "url": "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml", "lang": "en", "nc": true},

@@ -47,7 +47,7 @@
   function strikes() {
     if (!data || !data.items) return [];
     return data.items.filter(function (i) {
-      if (!i.geo || i.geo.la == null || i.geo.p === "province" || !inP(i.date)) return false;
+      if (!i.geo || i.geo.la == null || i.geo.p === "province" || i.geo.p === "country" || !inP(i.date)) return false;
       if (!HIT_KIND.test(String(i.kind || ""))) return false;
       // the headline must name the target: a summary often lists air defence or depots in passing
       return TARGET.test([i.title_en, i.title].filter(Boolean).join(" "));
