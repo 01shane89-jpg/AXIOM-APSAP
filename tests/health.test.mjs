@@ -2,7 +2,7 @@
 // Usage: node tests/health.test.mjs
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { parseStamp, stampOf, sourcesOf, evaluate, decide, lastAnnounced, fpTag, ago } from "../tools/health_lib.mjs";
+import { parseStamp, stampOf, sourcesOf, countOf, evaluate, decide, lastAnnounced, fpTag, ago } from "../tools/health_lib.mjs";
 
 const NOW = Date.parse("2026-09-28T12:00:00Z");
 const iso = (minAgo) => new Date(NOW - minAgo * 60000).toISOString();
@@ -184,4 +184,24 @@ assert.deepEqual(ev.alerts, ["Live air traffic (ADS-B): last updated 5 h 40 min.
 assert.ok(C.feeds.some((f) => f.key), "at least one key feed");
 assert.match(C.topic, /^osap-health-[0-9a-f]{12}$/);
 assert.ok(C.downMin > C.amberMin);
+// fresh but empty (16 Nov 2026: GDACS sat at 0 alerts for days with a fresh stamp)
+assert.equal(countOf({ events: [] }, "events"), 0);
+assert.equal(countOf({ events: [1, 2] }, "events"), 2);
+assert.equal(countOf({ items: { th: [1, 2], vn: [3] } }, "items"), 3, "news-style object of lists");
+assert.equal(countOf({ asof: "x" }, "events"), 0, "a missing list counts as empty");
+assert.equal(countOf({ events: "x" }, "events"), null, "not a list: not counted");
+ev = evaluate({ asof: iso(10), feeds: [feed("gdacs", 5, { n: 0, minItems: 1 }), feed("quakes", 5), feed("news", 10)] }, cfg, NOW);
+assert.equal(ev.state, "down", "an empty key feed alerts even with a fresh stamp");
+assert.deepEqual(ev.alerts, ["GDACS: 0 items."]);
+assert.equal(ev.ui.line, "GDACS has 0 items; everything else is fresh.");
+ev = evaluate({ asof: iso(10), feeds: [feed("gdacs", 5, { n: 37, minItems: 1 })] }, cfg, NOW);
+assert.equal(ev.state, "ok", "a feed with items is fine");
+ev = evaluate({ asof: iso(10), feeds: [feed("volcano", 5, { key: false, n: 0, minItems: 1 })] }, cfg, NOW);
+assert.equal(ev.state, "amber", "an empty minor feed is amber only");
+ev = evaluate({ asof: iso(10), feeds: [feed("gdacs", 5, { n: 0 })] }, cfg, NOW);
+assert.equal(ev.state, "ok", "no minItems: a count alone never raises a problem");
+// the app's copy of the rule (assets/osap-health.js) matches
+assert.match(fs.readFileSync(new URL("../assets/osap-health.js", import.meta.url), "utf8"), /f\.minItems > 0 && typeof f\.n === "number" && f\.n < f\.minItems\) why = f\.n \+ " items"/);
+// GDACS and the other always-full key feeds are counted
+for (const id of ["quakes", "gdacs", "warnings", "news", "social", "conflicts"]) assert.ok(C.feeds.find((f) => f.id === id).count, id + " has a count list");
 console.log("health tests passed");
