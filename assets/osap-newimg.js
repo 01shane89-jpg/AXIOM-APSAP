@@ -15,6 +15,14 @@
        GIBS publishes HLS a few days after the pass.
      * NASA daily true color, about 250 m: GIBS VIIRS (NOAA-20, NOAA-21) and MODIS Terra, one world picture a day; offered as
        buttons below the scene list for today (still filling in) and the past two days.
+     * Sentinel-1 radar, 30 m (sees through cloud and at night): the pass dates come from NASA CMR (OPERA_L2_RTC-S1_V1 granules
+       at the middle of the map, keyless), the pictures from NASA GIBS (OPERA Radiometric Terrain Corrected SAR backscatter, false
+       color, one layer a UTC day). OPERA is a NASA/JPL product, open with no restriction on use; it is made from Copernicus
+       Sentinel-1 data, so the credit "Contains modified Copernicus Sentinel data <year>" is shown with it.
+     * Night lights, about 500 m: NASA GIBS VIIRS Day/Night Band. "Gap-filled" is NASA Black Marble nightly radiance (moonlight
+       and angle corrected, cloud gaps filled from earlier nights; best for outages), "At-sensor" is the raw newest night (one
+       day newer, cloud shows). The newest night of each comes from GIBS DescribeDomains. Black Marble 2016 and Earth at Night
+       2012 are the "before" baselines. NASA data, no restriction on use.
    - Cloud % is what the provider gives for the whole scene or tile, not for the map view.
    - Each source answers on its own: the list fills in as each one answers, and a source that fails says so in the window
      (the others still show). Nothing is stored or sent anywhere else; the choices kept in this browser are the cloud filter
@@ -31,10 +39,18 @@
   var PCD = "https://planetarycomputer.microsoft.com/api/data/v1";
   var CMR = "https://cmr.earthdata.nasa.gov/search/granules.json";
   var GIBS = "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/";
+  var OPERA = "OPERA_L2_Radiometric_Terrain_Corrected_SAR_Sentinel-1";
+  /* night-light layers: [GIBS id, label, kind, fallback lag in days]; all GoogleMapsCompatible_Level8 PNG (z9 answers 400) */
+  var NIGHT = [["VIIRS_NOAA20_GapFilled_BRDF_Corrected_DayNightBand_Radiance", "NOAA-20 gap-filled", "gf", 2],
+    ["VIIRS_NOAA21_GapFilled_BRDF_Corrected_DayNightBand_Radiance", "NOAA-21 gap-filled", "gf", 2],
+    ["VIIRS_NOAA20_DayNightBand_At_Sensor_Radiance", "NOAA-20 at-sensor", "raw", 1],
+    ["VIIRS_NOAA21_DayNightBand_At_Sensor_Radiance", "NOAA-21 at-sensor", "raw", 1]];
+  var NIGHT_BASE = [["VIIRS_Black_Marble", "Black Marble 2016", "2016-01-01", "png"], ["VIIRS_CityLights_2012", "Earth at Night 2012", "2012-01-01", "jpg"]];
   var LIC = {
     cop: { tag: "Copernicus open", tip: "Copernicus Sentinel data: free and open, commercial use allowed with credit", url: "https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice" },
     usgs: { tag: "Public domain", tip: "Landsat data: USGS, public domain, no restriction on use", url: "https://www.usgs.gov/information-policies-and-instructions/crediting-usgs" },
-    nasa: { tag: "Public domain", tip: "NASA Earth science data: no restriction on use (NASA Earthdata open data policy)", url: "https://www.earthdata.nasa.gov/engage/open-data-services-software/data-information-policy" }
+    nasa: { tag: "Public domain", tip: "NASA Earth science data: no restriction on use (NASA Earthdata open data policy)", url: "https://www.earthdata.nasa.gov/engage/open-data-services-software/data-information-policy" },
+    opera: { tag: "Open (NASA + Copernicus)", tip: "NASA/JPL OPERA product, no restriction on use; made from Copernicus Sentinel-1 data (free and open, commercial use allowed with credit)", url: "https://www.jpl.nasa.gov/go/opera/products/rtc-product/" }
   };
   var DAILY = [["VIIRS_NOAA20_CorrectedReflectance_TrueColor", "VIIRS NOAA-20"], ["VIIRS_NOAA21_CorrectedReflectance_TrueColor", "VIIRS NOAA-21"],
     ["VIIRS_SNPP_CorrectedReflectance_TrueColor", "VIIRS Suomi NPP"], ["MODIS_Terra_CorrectedReflectance_TrueColor", "MODIS Terra"], ["MODIS_Aqua_CorrectedReflectance_TrueColor", "MODIS Aqua"]];
@@ -57,6 +73,51 @@
   }
   function hlsUrl(kind, bb, fromMs, toMs) {
     return CMR + "?short_name=HLS" + kind + "30&bounding_box=" + bb.join(",") + "&temporal=" + isoT(fromMs) + "," + isoT(toMs) + "&sort_key=-start_date&page_size=20";
+  }
+  /* Sentinel-1 radar passes: CMR OPERA RTC-S1 bursts at one point (the middle of the map), newest first */
+  function s1Url(pt, fromMs, toMs) {
+    return CMR + "?short_name=OPERA_L2_RTC-S1_V1&point=" + r5(pt[0]) + "," + r5(pt[1]) + "&temporal=" + isoT(fromMs) + "," + isoT(toMs) + "&sort_key=-start_date&page_size=60";
+  }
+  /* CMR OPERA granules -> rows; one row a UTC day (GIBS shows the whole day), satellites of that day folded together */
+  function s1Rows(j) {
+    var out = [], seen = {}, entries = j && j.feed && j.feed.entry || [];
+    entries.forEach(function (e) {
+      var t = Date.parse(e && e.time_start); if (!isFinite(t)) return;
+      var title = String(e.title || ""), m = /_(S1[A-D])_/.exec(title), sat = m ? "Sentinel-" + m[1].slice(1) : "Sentinel-1", day = isoDay(t);
+      var r0 = seen[day];
+      if (r0) { r0.n++; if (r0.sats.indexOf(sat) < 0) { r0.sats.push(sat); r0.sat = r0.sats.join(" + ") + " radar"; } return; }
+      var id = String(e.id || "");
+      var r = seen[day] = { id: "s1:" + day, src: "s1", t: t, sats: [sat], sat: sat + " radar", res: "30 m", cloud: null, lic: "opera", scene: title, n: 1, via: "NASA OPERA (CMR + GIBS)",
+        link: /^G\d+-[A-Z0-9_]+$/.test(id) ? "https://cmr.earthdata.nasa.gov/search/concepts/" + id + ".html" : "",
+        tiles: GIBS + OPERA + "/default/" + day + "/GoogleMapsCompatible_Level12/{z}/{y}/{x}.png", nz: 12 };
+      out.push(r);
+    });
+    return out;
+  }
+  /* GIBS DescribeDomains: the newest day a layer has (the latest YYYY-MM-DD in its time domain), "" if none */
+  function ddUrl(id, fromMs, toMs) { return GIBS + "1.0.0/" + id + "/default/GoogleMapsCompatible_Level8/all/" + isoDay(fromMs) + "--" + isoDay(toMs) + ".xml"; }
+  function domainEnd(xml) {
+    var m = /<Domain>([^<]*)<\/Domain>/.exec(String(xml || "")); if (!m) return "";
+    var d = m[1].match(/\d{4}-\d{2}-\d{2}/g) || []; return d.sort().pop() || "";
+  }
+  /* night lights: for each daily layer its newest 3 nights (newest from DescribeDomains, else the usual lag), then the baselines */
+  function nightRows(now, newest) {
+    var out = [];
+    NIGHT.forEach(function (g) {
+      var end = newest && /^\d{4}-\d{2}-\d{2}$/.test(newest[g[0]] || "") ? Date.parse(newest[g[0]] + "T12:00:00Z") : Date.parse(isoDay(now - g[3] * DAY) + "T12:00:00Z");
+      if (end > now + DAY) end = Date.parse(isoDay(now) + "T12:00:00Z");
+      [0, 1, 2].forEach(function (k) {
+        var day = isoDay(end - k * DAY);
+        out.push({ id: "night:" + g[0] + ":" + day, src: "night", kind: g[2], t: Date.parse(day + "T12:00:00Z"), day: day, sat: "VIIRS " + g[1] + " night lights", res: "500 m", cloud: null, lic: "nasa",
+          scene: g[0] + " " + day, via: "NASA GIBS", link: "https://worldview.earthdata.nasa.gov/?l=" + g[0] + "&t=" + day,
+          tiles: GIBS + g[0] + "/default/" + day + "/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png", nz: 8 });
+      });
+    });
+    NIGHT_BASE.forEach(function (g) {
+      out.push({ id: "night:" + g[0], src: "night", kind: "base", t: Date.parse(g[2] + "T12:00:00Z"), day: g[2].slice(0, 4), sat: "VIIRS " + g[1] + " (baseline)", res: "500 m", cloud: null, lic: "nasa",
+        scene: g[0], via: "NASA GIBS", link: "https://worldview.earthdata.nasa.gov/?l=" + g[0], tiles: GIBS + g[0] + "/default/" + g[2] + "/GoogleMapsCompatible_Level8/{z}/{y}/{x}." + g[3], nz: 8 });
+    });
+    return out;
   }
   /* Planetary Computer item tile address from the item's tilejson asset; only that host, and always PNG with no-data clear */
   function pcTiles(f) {
@@ -118,10 +179,11 @@
     });
     return out;
   }
+  function coarse(r) { return r.src === "daily" || r.src === "night" ? 1 : 0; }
   /* all rows, newest first; daily rows after the scenes of the same day (they are coarser) */
   function merge(rows, maxCloud) {
     return (rows || []).filter(function (r) { return maxCloud >= 100 || r.cloud == null || r.cloud <= maxCloud; })
-      .sort(function (a, b) { return isoDay(b.t) !== isoDay(a.t) ? b.t - a.t : (a.src === "daily") - (b.src === "daily") || b.t - a.t; });
+      .sort(function (a, b) { return isoDay(b.t) !== isoDay(a.t) ? b.t - a.t : coarse(a) - coarse(b) || b.t - a.t; });
   }
   function ageTxt(t, now) {
     var h = (now - t) / 36e5;
@@ -131,7 +193,7 @@
   }
   function cloudTxt(c) { return c == null ? "" : (c < 1 ? "<1" : Math.round(c)) + "% cloud"; }
   var T = { searchBox: searchBox, s2Url: s2Url, lsUrl: lsUrl, hlsUrl: hlsUrl, pcTiles: pcTiles, lsRows: lsRows, s2Rows: s2Rows, hlsRows: hlsRows,
-    dailyRows: dailyRows, merge: merge, ageTxt: ageTxt, cloudTxt: cloudTxt, LIC: LIC };
+    dailyRows: dailyRows, merge: merge, ageTxt: ageTxt, cloudTxt: cloudTxt, LIC: LIC, s1Url: s1Url, s1Rows: s1Rows, ddUrl: ddUrl, domainEnd: domainEnd, nightRows: nightRows, NIGHT: NIGHT };
   if (typeof module === "object" && module.exports) module.exports = T;
   if (typeof window === "undefined") return;
 
@@ -150,8 +212,8 @@
   function save() { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch (e) {} }
   function pcOn() { return !W.OSAP_SOLD; }
 
-  var SRC = [["s2", "Sentinel-2 (10 m)"], ["ls", "Landsat 8/9 (30 m)"], ["hls", "HLS (30 m)"]];
-  var S = { box: null, run: 0, rows: [], st: {}, shown: null };
+  var SRC = [["s2", "Sentinel-2 (10 m)"], ["ls", "Landsat 8/9 (30 m)"], ["hls", "HLS (30 m)"], ["s1", "Sentinel-1 radar (30 m)"]];
+  var S = { box: null, run: 0, rows: [], st: {}, shown: null, newest: {} };
   function fetchJson(url, sig) {
     return fetch(url, sig ? { signal: sig } : undefined).then(function (r) { if (!r.ok) throw new Error("answered " + r.status); return r.json(); });
   }
@@ -160,7 +222,8 @@
     var run = ++S.run, now = Date.now(), bb = S.box;
     if (ac) try { ac.abort(); } catch (e) {}
     ac = typeof AbortController === "function" ? new AbortController() : null; var sig = ac && ac.signal;
-    S.rows = dailyRows(now); S.st = {};
+    S.rows = dailyRows(now).concat(nightRows(now, S.newest)); S.st = {};
+    nightLoad(now);
     if (!bb) { draw(); return; }
     function done(k, rows, err) {
       if (run !== S.run) return;
@@ -183,7 +246,21 @@
     Promise.all(["L", "S"].map(function (k) {
       return fetchJson(hlsUrl(k, bb, now - 60 * DAY, now), sig).then(function (j) { hl = hl.concat(hlsRows(k, j)); });
     })).then(function () { done("hls", hl); }).catch(function (e) { if (!(sig && sig.aborted)) done("hls", hl, "NASA CMR " + (e && e.message || e)); });
+    S.st.s1 = { busy: 1 };
+    fetchJson(s1Url([(bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2], now - 60 * DAY, now), sig).then(function (j) { done("s1", s1Rows(j)); })
+      .catch(function (e) { if (!(sig && sig.aborted)) done("s1", [], "NASA CMR (OPERA) " + (e && e.message || e)); });
     draw();
+  }
+  /* the newest night of each night-light layer (GIBS DescribeDomains); once per page, the rows are rebuilt when they answer */
+  function nightLoad(now) {
+    if (S.nightAsked) return; S.nightAsked = true;
+    Promise.all(NIGHT.map(function (g) {
+      return fetch(ddUrl(g[0], now - 20 * DAY, now + DAY)).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+        .then(function (x) { var d = domainEnd(x); if (d) S.newest[g[0]] = d; }).catch(function () {});
+    })).then(function () {
+      /* night rows do not depend on the search box: rebuild them in whatever search is current */
+      S.rows = S.rows.filter(function (r) { return r.src !== "night"; }).concat(nightRows(Date.now(), S.newest)); draw();
+    });
   }
   function find(id) { return S.rows.filter(function (r) { return r.id === id; })[0] || null; }
 
@@ -191,7 +268,8 @@
   var lay = null, s2ac = null, badge = null, mvT = null;
   function attr(r) {
     var y = new Date(r.t).getUTCFullYear();
-    return esc(r.sat) + " " + esc(isoDay(r.t)) + ": " + (r.lic === "cop" ? "Contains modified Copernicus Sentinel data " + y : r.lic === "usgs" ? "Landsat courtesy of the U.S. Geological Survey" : "NASA") + " (" + esc(r.via) + ")";
+    return esc(r.sat) + " " + esc(r.day || isoDay(r.t)) + ": " + (r.lic === "cop" ? "Contains modified Copernicus Sentinel data " + y : r.lic === "usgs" ? "Landsat courtesy of the U.S. Geological Survey" :
+      r.lic === "opera" ? "NASA/JPL OPERA; contains modified Copernicus Sentinel data " + y : "NASA") + " (" + esc(r.via) + ")";
   }
   function clear() {
     if (lay) { map.removeLayer(lay); lay = null; }
@@ -248,7 +326,9 @@
       badge.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-nimg]"); if (!b) return; var k = b.getAttribute("data-nimg"); if (k === "clear") clear(); else if (k === "open") open(); });
     }
     var L2 = LIC[r.lic] || {};
-    badge.innerHTML = '<b>' + esc(r.sat) + "</b> · " + (r.src === "daily" ? esc(r.day) + " (UTC day" + (r.partial ? ", still filling in" : "") + ")" : esc(dual(r.t)) + " · <b>" + esc(ageTxt(r.t, Date.now())) + "</b>") +
+    badge.innerHTML = '<b>' + esc(r.sat) + "</b> · " + (r.kind === "base" ? esc(r.day) + " annual composite (before)" : r.src === "night" ? esc(r.day) + " (UTC night)" :
+      r.src === "daily" ? esc(r.day) + " (UTC day" + (r.partial ? ", still filling in" : "") + ")" : esc(dual(r.t)) + " · <b>" + esc(ageTxt(r.t, Date.now())) + "</b>") +
+      (r.src === "s1" ? " · radar, all passes that UTC day" : "") +
       (r.cloud != null ? " · " + esc(cloudTxt(r.cloud)) : "") + ' · <span title="' + esc(L2.tip) + '">' + esc(L2.tag) + "</span>" +
       (S.s2busy ? ' · <i>drawing…</i>' : "") + (S.s2err ? '<br><span class="e">' + esc(S.s2err) + "</span>" : "") +
       ' <button type="button" data-nimg="open" aria-label="Pick another picture">Pick</button><button type="button" data-nimg="clear" aria-label="Remove the satellite picture">×</button>';
@@ -303,7 +383,7 @@
   function draw() {
     if (!el || el.hidden) return;
     var now = Date.now(), all = merge(S.rows, P.maxc), bb = S.box;
-    var L = all.filter(function (r) { return r.src !== "daily"; }), DL = S.rows.filter(function (r) { return r.src === "daily"; });
+    var L = all.filter(function (r) { return r.src !== "daily" && r.src !== "night"; }), DL = S.rows.filter(function (r) { return r.src === "daily"; }), NL = S.rows.filter(function (r) { return r.src === "night"; });
     var h = '<div class="chead"><h2>Newest imagery here <span class="tag" title="Satellite pictures as taken, not interpreted. Not AI.">Satellite</span></h2>' +
       (W.OSAP_SPLIT ? W.OSAP_SPLIT.btn() : "") + '<button type="button" data-nimg="close" aria-label="Close Newest imagery">Close</button></div>';
     h += '<div class="row"><span class="mut">' + (bb ? "Pictures over " + esc(((bb[1] + bb[3]) / 2).toFixed(3) + ", " + ((bb[0] + bb[2]) / 2).toFixed(3)) + " (the middle of the map, up to 1° around it)" : "Move the map to a place first") + "</span>" +
@@ -316,20 +396,37 @@
       return '<tr' + (on ? ' class="on"' : "") + "><td>" + esc(dual(r.t)) + "<br><b>" + esc(ageTxt(r.t, now)) + "</b></td>" +
         "<td><b>" + esc(r.sat) + '</b> <span class="mut">' + esc(r.res) + '</span><br><a class="tag" href="' + esc(L2.url) + '" target="_blank" rel="noopener noreferrer" title="' + esc(L2.tip) + '">' + esc(L2.tag) + "</a> " +
         (r.link ? '<a href="' + esc(r.link) + '" target="_blank" rel="noopener noreferrer" title="' + esc(r.scene + " (" + r.via + ")") + '">scene</a>' : '<span class="mut">' + esc(r.via) + "</span>") + "</td>" +
-        "<td>" + esc(r.cloud == null ? "–" : cloudTxt(r.cloud).replace(" cloud", "")) + "</td>" +
+        "<td>" + (r.src === "s1" ? '<span class="mut" title="Radar sees through cloud and works at night">radar</span>' : esc(r.cloud == null ? "–" : cloudTxt(r.cloud).replace(" cloud", ""))) + "</td>" +
         '<td><button type="button" data-nimg-show="' + esc(r.id) + '" aria-pressed="' + !!on + '">' + (on ? "Shown" : "Show") + "</button></td></tr>";
     }).join("") + "</tbody></table>";
-    else h += '<p class="mut">' + (["s2", "ls", "hls"].some(function (k) { return S.st[k] && S.st[k].busy; }) ? "Looking…" : "No scenes" + (P.maxc < 100 ? " at this cloud level" : "") + " in the past 60 days.") + "</p>";
+    else h += '<p class="mut">' + (["s2", "ls", "hls", "s1"].some(function (k) { return S.st[k] && S.st[k].busy; }) ? "Looking…" : "No scenes" + (P.maxc < 100 ? " at this cloud level" : "") + " in the past 60 days.") + "</p>";
     var days = []; DL.forEach(function (r) { if (days.indexOf(r.day) < 0) days.push(r.day); });
     h += '<div class="row" style="border-top:1px solid var(--line,#ddd);padding-top:8px;margin-top:10px"><b>NASA daily true color</b> <span class="mut">about 250 m, one world picture a day (big smoke, floods, burn scars, cloud)</span></div>' +
       days.map(function (d, k) {
         return '<div class="row"><span style="min-width:9em">' + esc(d) + ' <span class="mut">' + (k === 0 ? "today, filling in" : k === 1 ? "yesterday" : "UTC day") + "</span></span>" +
           DL.filter(function (r) { return r.day === d; }).map(function (r) { var on = S.shown && S.shown.id === r.id; return '<button type="button" data-nimg-show="' + esc(r.id) + '" aria-pressed="' + !!on + '">' + esc(r.sat.replace(/ daily$/, "")) + "</button>"; }).join("") + "</div>";
       }).join("");
+    if (L.some(function (r) { return r.src === "s1"; })) h += '<p class="mut" style="font-size:12px">Sentinel-1 radar is not a photo: it shows how the ground sends the radar back. Buildings, ships and metal are bright; calm water and smooth surfaces are dark. It sees through cloud, smoke and night.</p>';
+    h += nightHtml(NL);
     h += '<div class="attr">Sentinel-2: Contains modified Copernicus Sentinel data ' + new Date(now).getUTCFullYear() + ', via Element 84 Earth Search and AWS Open Data. ' +
       (pcOn() ? "Landsat 8/9: courtesy of the U.S. Geological Survey, drawn by Microsoft Planetary Computer. " : "") +
-      "HLS and daily true color: NASA (CMR, GIBS / LANCE), public domain. Each picture is shown as the provider made it; nothing here is interpreted or approved.</div>";
+      "HLS and daily true color: NASA (CMR, GIBS / LANCE), public domain. Sentinel-1 radar: NASA/JPL OPERA, contains modified Copernicus Sentinel data " + new Date(now).getUTCFullYear() + ". " +
+      "Night lights: NASA Black Marble and VIIRS Day/Night Band (GIBS), public domain. Each picture is shown as the provider made it; nothing here is interpreted or approved.</div>";
     el.firstElementChild.innerHTML = h;
+  }
+
+  /* the night-lights block: newest nights per layer, then the before baselines */
+  function nightHtml(NL) {
+    function btn(r, label) { var on = S.shown && S.shown.id === r.id; return '<button type="button" data-nimg-show="' + esc(r.id) + '" aria-pressed="' + !!on + '">' + esc(label) + "</button>"; }
+    var h = '<div class="row" id="nimg-night" style="border-top:1px solid var(--line,#ddd);padding-top:8px;margin-top:10px"><b>Night lights (VIIRS)</b> <span class="mut">about 500 m. Lights that go dark show power cuts or people leaving; new lights show new activity. ' +
+      'Compare a recent night with a baseline. Gap-filled is moonlight-corrected and best for outages; at-sensor is one night newer but cloud blocks it.</span></div>';
+    NIGHT.forEach(function (g) {
+      var rs = NL.filter(function (r) { return r.scene.indexOf(g[0] + " ") === 0; });
+      if (rs.length) h += '<div class="row"><span style="min-width:9em">' + esc(g[1]) + "</span>" + rs.map(function (r) { return btn(r, r.day.slice(5)); }).join("") + "</div>";
+    });
+    var bs = NL.filter(function (r) { return r.kind === "base"; });
+    if (bs.length) h += '<div class="row"><span style="min-width:9em">Before (annual)</span>' + bs.map(function (r) { return btn(r, r.sat.replace(/^VIIRS /, "").replace(/ \(baseline\)$/, "")); }).join("") + "</div>";
+    return h;
   }
 
   /* ---------- Map overlays > Satellite imagery: the first row ---------- */
@@ -337,10 +434,12 @@
     var sec = D.getElementById("ml-sat"); if (!sec) return false;
     if (D.getElementById("ml-nimg")) return true;
     var d = D.createElement("div"); d.id = "ml-nimg"; d.className = "mlrow"; d.style.cursor = "default";
-    d.innerHTML = '<span><b>Newest imagery here</b><i>The newest Sentinel-2, Landsat, HLS and NASA daily pictures of where the map is, each with its date, age, cloud % and licence. Pick one to lay it on the map with its date.</i>' +
-      '<button type="button" data-nimg-open="1" style="margin-top:4px;min-height:40px;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:inherit;padding:4px 10px;cursor:pointer">Find newest imagery</button></span>';
+    var bs = "margin-top:4px;margin-right:6px;min-height:40px;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:inherit;padding:4px 10px;cursor:pointer";
+    d.innerHTML = '<span><b>Newest imagery here</b><i>The newest Sentinel-2, Landsat, HLS, Sentinel-1 radar (sees through cloud) and NASA daily pictures of where the map is, plus VIIRS night lights, each with its date, age, cloud % and licence. Pick one to lay it on the map with its date.</i>' +
+      '<button type="button" data-nimg-open="1" style="' + bs + '">Find newest imagery</button><button type="button" data-nimg-open="night" style="' + bs + '">Night lights</button></span>';
     var h = sec.querySelector(".mlh"); sec.insertBefore(d, h ? h.nextSibling : sec.firstChild);
-    d.querySelector("[data-nimg-open]").addEventListener("click", function () { open(); });
+    d.querySelector('[data-nimg-open="1"]').addEventListener("click", function () { open(); });
+    d.querySelector('[data-nimg-open="night"]').addEventListener("click", function () { open(); var n = D.getElementById("nimg-night"); if (n && n.scrollIntoView) n.scrollIntoView({ block: "start" }); });
     return true;
   }
   if (!build()) { var tries = 0, bt = setInterval(function () { if (build() || ++tries > 60) clearInterval(bt); }, 250); }
