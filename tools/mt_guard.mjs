@@ -10,6 +10,8 @@
 //   - is still mostly in another script (the model gave Chinese back as Chinese);
 //   - gives a count of dead, injured or detained people, or a death or injury, the original does not (tools/mt_facts.mjs: "Kill 10"
 //     for a German report of a drone attack that names no deaths, 2026-11-15);
+//   - leaves out or replaces a Thai place the original names (tools/th_places.mjs: ไฟไหม้ป่าตอง, a fire in Patong, as "forest fire",
+//     Khon Kaen as Kangar, 2026-11-16);
 //   - gives a number the original does not have (a date moved from "05 Novembre" to "28 Novembre", "Gulf 28" turned into
 //     "Gulf Games 26", "The 100 Most Powerful People in the World" for an Armenian headline with no number in it).
 // looksEnglish() finds a headline that is already English under another language's label (a Gulf or West African outlet's
@@ -18,12 +20,13 @@
 // lowConfidence() reads the model's own score (tools/mt/madlad.py MT_SCORES=1): below MT_MIN_SCORE a line is treated as invented.
 //   - names a month the original does not give ("5 พ.ย. 69", 5 November 2026, as "5th of July, 69"; "２７日", the 27th, as
 //     "27 July"): the original must carry that month's name (tools/mt_months.mjs) or its number.
-// Pure: no files, no network. Used by tools/translate.mjs (new and cached translations), tools/history.mjs and
+// Pure: no network; the only file read is the Thai place list (tools/mt/th_places.json), once at load. Used by tools/translate.mjs (new and cached translations), tools/history.mjs and
 // tools/news_index.mjs (translations already stored) and tools/daily_lib.mjs (the summary's last check).
 
 import { MONTHS } from "./mt_months.mjs";
 import { WEEKDAYS } from "./mt_weekdays.mjs";
 import { extraCount, extraHarm, numberWordValues } from "./mt_facts.mjs";
+import { missingThaiPlace } from "./th_places.mjs";
 
 // any script's decimal digits as ASCII ("২০০১" -> "2001"), so a year written in Bengali or Thai digits is recognised
 export function asciiDigits(s) {
@@ -89,6 +92,8 @@ export function mtSuspect(orig, en, now = Date.now(), lang = "") {
   if (c) return "casualty count " + c + " not in the original";
   const h = extraHarm(orig, en, lang);
   if (h) return "\"" + h + "\" not in the original";
+  const pl = missingThaiPlace(orig, en);
+  if (pl) return "place " + pl + " left out";
   const n = extraNumber(orig, en);
   if (n) return "number " + n + " not in the original";
   const mo = extraMonth(orig, en);
