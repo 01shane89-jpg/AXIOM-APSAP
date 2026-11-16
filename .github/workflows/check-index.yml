@@ -79,6 +79,8 @@ jobs:
       - run: node tests/newimg.test.mjs
       - run: node tests/feedparse_image.test.mjs
       - run: node tests/news_pics.test.mjs
+      # news item dates: outlets that write local time as UTC, and no item dated in the future (tools/news_date.mjs)
+      - run: node tests/news_date.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/tak.test.mjs
       - run: node tests/milsites.test.mjs
@@ -144,6 +146,9 @@ jobs:
       - run: node tests/mt_confidence.test.mjs
       - run: node tests/mt_cache_lanes.test.mjs
       - run: node tests/mt_prepare.test.mjs
+      # casualty counts and deaths a translation may not add, and the re-check of daily summaries already written
+      - run: node tests/mt_facts.test.mjs
+      - run: node tests/th_places.test.mjs
       # licence: outlet summaries are read by the jobs but never stored
       - run: node tests/outlet_text.test.mjs
       # sold-version switch: non-commercial sources come out in one step (tools/nc_strip.mjs)

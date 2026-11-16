@@ -8,6 +8,10 @@
 //   - gives a clock time the original does not have ("10.35am: The rain continues ..." for a Thai headline with no time in it);
 //   - repeats a word run (the model looping);
 //   - is still mostly in another script (the model gave Chinese back as Chinese);
+//   - gives a count of dead, injured or detained people, or a death or injury, the original does not (tools/mt_facts.mjs: "Kill 10"
+//     for a German report of a drone attack that names no deaths, 2026-11-15);
+//   - leaves out or replaces a Thai place the original names (tools/th_places.mjs: ไฟไหม้ป่าตอง, a fire in Patong, as "forest fire",
+//     Khon Kaen as Kangar, 2026-11-16);
 //   - gives a number the original does not have (a date moved from "05 Novembre" to "28 Novembre", "Gulf 28" turned into
 //     "Gulf Games 26", "The 100 Most Powerful People in the World" for an Armenian headline with no number in it).
 // looksEnglish() finds a headline that is already English under another language's label (a Gulf or West African outlet's
@@ -16,11 +20,13 @@
 // lowConfidence() reads the model's own score (tools/mt/madlad.py MT_SCORES=1): below MT_MIN_SCORE a line is treated as invented.
 //   - names a month the original does not give ("5 พ.ย. 69", 5 November 2026, as "5th of July, 69"; "２７日", the 27th, as
 //     "27 July"): the original must carry that month's name (tools/mt_months.mjs) or its number.
-// Pure: no files, no network. Used by tools/translate.mjs (new and cached translations), tools/history.mjs and
+// Pure: no network; the only file read is the Thai place list (tools/mt/th_places.json), once at load. Used by tools/translate.mjs (new and cached translations), tools/history.mjs and
 // tools/news_index.mjs (translations already stored) and tools/daily_lib.mjs (the summary's last check).
 
 import { MONTHS } from "./mt_months.mjs";
 import { WEEKDAYS } from "./mt_weekdays.mjs";
+import { extraCount, extraHarm, numberWordValues } from "./mt_facts.mjs";
+import { missingThaiPlace } from "./th_places.mjs";
 
 // any script's decimal digits as ASCII ("২০০১" -> "2001"), so a year written in Bengali or Thai digits is recognised
 export function asciiDigits(s) {
@@ -44,8 +50,9 @@ const CLOCK = /(?<![\d.,:])([01]?\d|2[0-3])(?:[:.]([0-5]\d))?\s*(a\.?m\b\.?|p\.?
 const YEAR = /(?<![\d,.:/])(1[5-9]\d\d|20\d\d)(?![\d,])/g;
 
 // reason the English is not a translation of orig, or "" when nothing is wrong. now: the time of the check (ms), for the
-// current year, which a translation may add (Japanese era years, "this year").
-export function mtSuspect(orig, en, now = Date.now()) {
+// current year, which a translation may add (Japanese era years, "this year"). lang: the original's language tag, when known,
+// for the casualty checks (tools/mt_facts.mjs).
+export function mtSuspect(orig, en, now = Date.now(), lang = "") {
   orig = String(orig || ""); en = String(en || "").trim();
   if (!orig.trim() || !en || orig.trim() === en) return "";
   for (const re of STOCK) if (re.test(en)) return "stock text";
@@ -80,6 +87,13 @@ export function mtSuspect(orig, en, now = Date.now()) {
     if (!hourIn || (mi && mi !== "00" && !nums.some((x) => x === mi || +x === +mi))) return "clock time not in the original";
   }
   for (const m of en.matchAll(CENTURY)) if (!nums.includes(m[1])) return "century not in the original";
+  // a count of dead, injured or detained people, or a death or injury, the original does not give (tools/mt_facts.mjs)
+  const c = extraCount(orig, en, numberIn(orig), lang);
+  if (c) return "casualty count " + c + " not in the original";
+  const h = extraHarm(orig, en, lang);
+  if (h) return "\"" + h + "\" not in the original";
+  const pl = missingThaiPlace(orig, en);
+  if (pl) return "place " + pl + " left out";
   const n = extraNumber(orig, en);
   if (n) return "number " + n + " not in the original";
   const mo = extraMonth(orig, en);
@@ -139,11 +153,18 @@ function roman(r) {
 }
 // names that carry a number of their own, which the model may add ("COVID-19", "the Nikkei 225", "the G20")
 const NAMED_NUMBERS = /\b(?:COVID-19|Nikkei 225|G-?(?:7|8|20)|P-?5|Brent)\b/gi;
+// whether a number appears in the original, in any form originalNumbers reads, with no allowance for number words
+export function numberIn(orig) {
+  const { tokens, vals } = originalNumbers(String(orig || ""));
+  return (x) => tokens.has(x) || vals.some((v) => SCALES.some((k) => same(v * k, x) || same(v / k, x)));
+}
 export function extraNumber(orig, en) {
   orig = String(orig || ""); en = String(en || "");
   const { tokens, vals } = originalNumbers(orig);
   const okVal = (x) => vals.some((v) => SCALES.some((k) => same(v * k, x) || same(v / k, x)));
-  const okTok = (x) => tokens.has(x) || (x <= 12 && tokens.has(x + 12)) || (x >= 12 && x <= 24 && tokens.has(x - 12)) || (x === 12 && tokens.has(0));
+  // a number the original writes as a word ("diez muertos y 16 heridos" -> "10 dead and 16 injured"; tools/mt_facts.mjs)
+  const words = numberWordValues(orig);
+  const okTok = (x) => tokens.has(x) || words.has(x) || (x <= 12 && tokens.has(x + 12)) || (x >= 12 && x <= 24 && tokens.has(x - 12)) || (x === 12 && tokens.has(0));
   // a school or budget year written short ("2026-27" for ២០២៦-២០២៧): the short year is the year rule's job
   const enS = asciiDigits(en.normalize("NFKC")).replace(NAMED_NUMBERS, " ").replace(/\b((?:19|20)\d\d)\s*[-–/]\s*\d\d\b/g, "$1");
   const re = /(?<![\w.])(\d+(?:,\d{3}(?!\d))*(?:\.\d+)?)(?:\s*(thousand|million|billion|trillion|lakh|crore|k|m|bn)\b)?/gi;
@@ -152,7 +173,7 @@ export function extraNumber(orig, en) {
     const parts = raw.split(/[.,]/).map(Number);
     if (v >= 1900 && v <= 2100 && !raw.includes(".") && !m[2]) continue;        // a year: the year rule's job
     if (v <= 1 && parts.length === 1) continue;
-    if (okVal(v * sc) || okVal(v) || parts.every(okTok)) continue;
+    if (okVal(v * sc) || okVal(v) || parts.every(okTok) || (sc === 1 && words.has(v))) continue;
     if (!tokens.size && !vals.length && v <= 12 && parts.length === 1) continue;  // a number word in the original
     return raw + (m[2] ? " " + m[2] : "");
   }
@@ -231,8 +252,8 @@ export function dropSuspectMt(i, now) {
   // already English: shown as written, not as the model's rewrite of it
   if (i.title && looksEnglish(i.title)) { i.title_en = i.title; delete i.mt; return true; }
   let hit = false;
-  if (i.title_en && i.title && mtSuspect(i.title, i.title_en, now)) { delete i.title_en; hit = true; }
-  if (i.summary_en && i.summary && mtSuspect(i.summary, i.summary_en, now)) { delete i.summary_en; hit = true; }
+  if (i.title_en && i.title && mtSuspect(i.title, i.title_en, now, i.lang)) { delete i.title_en; hit = true; }
+  if (i.summary_en && i.summary && mtSuspect(i.summary, i.summary_en, now, i.lang)) { delete i.summary_en; hit = true; }
   if (hit && !i.title_en && !i.summary_en) i.mt = "untranslated";
   return hit;
 }

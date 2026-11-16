@@ -14,7 +14,7 @@
 import fs from "node:fs";
 import { gateway, parseJsonReply } from "./ai_gateway.mjs";
 import { compileRelevance } from "./topics_lib.mjs";
-import { buildRules, buildWorld, validateAi, fromRow, fromConflict, fingerprint, softSection, SCHEMA, WW } from "./daily_lib.mjs";
+import { buildRules, buildWorld, validateAi, fromRow, fromConflict, fingerprint, scrubDay, softSection, SCHEMA, WW } from "./daily_lib.mjs";
 
 const DIR = "data/live/daily", INDEX = "data/live/daily.js", KEEP = 7, PROMPT_V = "daily/2";
 const MODEL = process.env.DAILY_MODEL || "openai/gpt-4.1-mini";
@@ -135,16 +135,25 @@ index.ai.retry = !!(stop && made < focus.length);   // a later run today tries t
 
 // ---------- write ----------
 fs.mkdirSync(DIR, { recursive: true });
+let mtScrubbed = 0;
 for (const cc of only || ccs) {
   const d = built[cc]; d.fp = fingerprint(d);
   // a retry keeps the morning's rules summary unless this run added an AI draft
   const old = (prev[cc] && prev[cc].days) || [];
+  // the kept days are checked again with today's machine translation guard (tools/daily_lib.mjs scrubDay)
+  const scrubbed = old.reduce((n, x) => n + scrubDay(x), 0);
+  if (scrubbed) mtScrubbed += scrubbed;
   const same = old[0] && old[0].date === today;
-  if (same && d.method !== "ai" && !process.env.DAILY_FORCE) { index.countries[cc] = { method: old[0].method, reports: old[0].basis.reports }; continue; }
+  if (same && d.method !== "ai" && !process.env.DAILY_FORCE) {
+    index.countries[cc] = { method: old[0].method, reports: old[0].basis.reports };
+    if (scrubbed) fs.writeFileSync(`${DIR}/${cc}.js`, `window.OSAP_DAILY=window.OSAP_DAILY||{};window.OSAP_DAILY[${JSON.stringify(cc)}]=` + JSON.stringify({ cc, name: old[0].name, days: old }) + ";\n");
+    continue;
+  }
   const daysOut = [d, ...old.filter((x) => x.date !== today)].slice(0, KEEP);
   fs.writeFileSync(`${DIR}/${cc}.js`, `window.OSAP_DAILY=window.OSAP_DAILY||{};window.OSAP_DAILY[${JSON.stringify(cc)}]=` + JSON.stringify({ cc, name: d.name, days: daysOut }) + ";\n");
   index.countries[cc] = { method: d.method, reports: d.basis.reports };
 }
+if (mtScrubbed) console.log(`daily: ${mtScrubbed} source headlines in kept summaries failed the machine translation guard and now show their original words`);
 if (!only) fs.writeFileSync(INDEX, "window.OSAP_DAILY_INDEX=" + JSON.stringify(index) + ";\n");
 const n = Object.values(built), quiet = n.filter((d) => !d.basis.reports).length;
 console.log(`daily ${today}: ${n.length} countries, ${n.length - quiet} with reports, ${quiet} quiet; AI top lines ${made} of ${focus.length} priority` + (stop ? `; AI stopped: ${stop}` : "") + (errs.length ? `; errors: ${errs.join(" | ")}` : ""));

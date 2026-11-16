@@ -16,6 +16,7 @@ import { COUNTRIES, ccsInText } from "./geo_cc.mjs";
 import { splitByCountry } from "./split_country.mjs";
 import { stripOutletText } from "./outlet_text.mjs";
 import { dedupeStories } from "./news_dedupe.mjs";
+import { itemDate } from "./news_date.mjs";
 import { US_STATES, stateQuery } from "./us_states.mjs";
 
 const TIMEOUT = 30000, PER_AREA = 40, PER_STATE = 60, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
@@ -86,11 +87,7 @@ try {
   const t = fs.readFileSync("data/live/news.js", "utf8"), prev = JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, ""));
   for (const l of Object.values(prev.items || {})) for (const i of l) if (i.link && i.date) { seenAt.set(i.link, i.date); if (i.detail) seenDetail.set(i.link, i); if (i.img) seenImg.set(i.link, i.img); }
 } catch (e) {}
-const nowIso = new Date().toISOString().slice(0, 16);
-// a date with no time zone is the outlet's local time: tz in tools/news_feeds.json, e.g. "+08:00"
-// clock: the feed writes local wall-clock time but labels it UTC (or gives no zone); read it as local time at that offset.
-const onClock = (d, tz) => { const m = /^([+-])(\d\d):(\d\d)$/.exec(tz || ""); if (!m || !d) return d; const off = (m[1] === "-" ? -1 : 1) * (+m[2] * 60 + +m[3]); return new Date(Date.parse(d + "Z") - off * 60000).toISOString().slice(0, 16); };
-const zoned = (d, tz) => (tz && /^\d{4}-\d\d-\d\d[ T]\d\d:\d\d(:\d\d)?$/.test(String(d).trim()) ? String(d).trim().replace(" ", "T") + tz : d);
+// item dates (time zone fixes, nothing in the future): tools/news_date.mjs
 // About 330 feeds: read several hosts at once but never more than one request at a time to the same host.
 const LANES = 8, MAX_AGE_DAYS = 30;
 const bodies = {}, failed = new Set();   // one fetch per address a run (a regional outlet serves several countries)
@@ -105,8 +102,7 @@ async function readFeed(f) {
       if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via Bing News search)"; } catch (e) {} }
       // a search returns outlets in any language: a non-Latin headline from an English query is left for the model to detect
       const lang = f.search && /^en\b/.test(f.lang) && /[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F]/.test(i.title) ? "" : f.lang;
-      let date = onClock(iso(zoned(i.date, f.tz)), f.clock), seen = false;
-      if (!date) { date = seenAt.get(link) || nowIso; seen = true; }
+      const { date, seen } = itemDate(i.date, f, seenAt.get(link));
       const o = { title: i.title, summary: i.summary.slice(0, 280), date, link, outlet, lang, via: f.search ? "search" : f.html ? "web page" : "RSS", state: !!f.state };
       // the picture the outlet's own feed offers for the item (media:thumbnail, media:content, an image enclosure): its link only
       if (i.image) o.img = i.image;
