@@ -35,9 +35,11 @@ const byName = new Map(places.map((p) => [p.name, p]));
 const records = B.filter((r) => r.url && r.title && !seen.has(r.url + r.title) && seen.add(r.url + r.title)).map((r) => {
   const s = r.site ? byName.get(r.site) : null;
   if (r.site && !s) throw new Error("backfill record names an unknown site: " + r.site);
+  // one report that names several sites (a survey of damage across bases) sits on the first and is listed on the others too ("also")
+  const also = (r.also || []).map((n) => { const a = byName.get(n); if (!a) throw new Error("backfill record names an unknown site: " + n); if (!s || a === s) throw new Error("'also' needs a different first site: " + r.title); return a.id; });
   const o = { id: "cfb:" + id + ":" + short(r.url + "|" + r.title), t: r.t, lat: s ? s.lat : r.lat, lon: s ? s.lon : r.lon,
     prec: s ? s.prec : r.lat == null ? "none" : r.place && r.place.toLowerCase() !== (r.cc || "") && !ccFromName(r.place) ? "approx" : "country",   // a place that is a country's name is not a town
-    place: s ? s.name : r.place || "", ...(s ? { site: s.id } : {}), ...(r.about ? { about: r.about } : {}), cc: r.cc || (s && s.cc) || null, kind: r.kind, actor: r.actor, side: r.side, title: r.title, source: r.source, url: r.url,
+    place: s ? s.name : r.place || "", ...(s ? { site: s.id } : {}), ...(also.length ? { also } : {}), ...(r.about ? { about: r.about } : {}), cc: r.cc || (s && s.cc) || null, kind: r.kind, actor: r.actor, side: r.side, title: r.title, source: r.source, url: r.url,
     claim_status: CLAIM, basis: "Web search result title" + (r.gap_fill ? ", checked by opening the page (its own title and date)" : "") + "; date only (time unknown); " +
       (s ? "placed on the named site the report is about" : r.lat == null ? "no place: the report covers the whole war that day" : "position is the named place's approximate centre"), backfill: true };
   return { ...o, fp: fp(o) };
@@ -47,7 +49,9 @@ const records = B.filter((r) => r.url && r.title && !seen.has(r.url + r.title) &
 const nB = records.length, urls = new Set(records.map((r) => r.url));
 for (const r of H.records || []) {
   if (!r.url || !r.title || urls.has(r.url)) continue; urls.add(r.url);
-  const o = { id: "cfh:" + id + ":" + short(r.url + "|" + r.title), t: r.t, ...(r.lat != null ? { lat: r.lat, lon: r.lon, place: r.place } : { place: "" }), prec: r.lat != null ? r.prec || "approx" : "none",
+  // a report the import placed on a named site takes that site's position as listed now (sites can be moved to better coordinates)
+  const sp = r.lat != null && r.prec === "site" ? byName.get(r.place) : null;
+  const o = { id: "cfh:" + id + ":" + short(r.url + "|" + r.title), t: r.t, ...(r.lat != null ? { lat: sp ? sp.lat : r.lat, lon: sp ? sp.lon : r.lon, place: r.place } : { place: "" }), prec: r.lat != null ? r.prec || "approx" : "none",
     cc: r.cc || null, kind: r.kind, actor: r.actor || "", side: r.side || "neutral", title: r.title, source: r.source, url: r.url, via: r.via, ...(r.outlets ? { outlets: r.outlets } : {}), ...(r.lang ? { lang: r.lang } : {}),
     claim_status: CLAIM };   // basis: history.basis, by prec
   records.push({ ...o, fp: fp(o) });
