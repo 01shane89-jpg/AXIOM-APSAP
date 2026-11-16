@@ -1,6 +1,6 @@
 {
  "v": 1,
- "at": "2026-11-09T12:06Z",
+ "at": "2026-11-16T12:02Z",
  "sources": {
   "osm": {
    "name": "OpenStreetMap",
@@ -10,14 +10,14 @@
    "at": "2026-11-02T11:41Z",
    "n": 4928,
    "err": "HTTP 502",
-   "tried": "2026-11-09T12:06Z"
+   "tried": "2026-11-16T12:02Z"
   },
   "wd": {
    "name": "Wikidata",
    "lic": "CC0",
    "link": "https://www.wikidata.org/wiki/Q671224",
    "ok": true,
-   "at": "2026-11-09T12:06Z",
+   "at": "2026-11-16T12:02Z",
    "n": 86
   },
   "epochdc": {
@@ -25,7 +25,7 @@
    "lic": "CC BY 4.0",
    "link": "https://epoch.ai/data/data-centers",
    "ok": true,
-   "at": "2026-11-09T12:06Z",
+   "at": "2026-11-16T12:02Z",
    "n": 96
   },
   "epochgpu": {
@@ -33,7 +33,7 @@
    "lic": "CC BY 4.0",
    "link": "https://epoch.ai/data/gpu-clusters",
    "ok": true,
-   "at": "2026-11-09T12:06Z",
+   "at": "2026-11-16T12:02Z",
    "n": 185
   }
  },
