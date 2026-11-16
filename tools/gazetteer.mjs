@@ -13,7 +13,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { ccFromA2, COUNTRIES } from "./geo_cc.mjs";
+import { ccFromA2, ccFromName, ccsInText, COUNTRIES } from "./geo_cc.mjs";
 
 const UA = "Mozilla/5.0 (AXIOM-OSAP refresh; gazetteer)";
 async function fetchBuf(url, ms = 60000) {
@@ -34,7 +34,9 @@ const STOP = new Set(["police", "mobile", "split", "nice", "reading", "bath", "h
   "police", "army", "navy", "liberal", "paradise", "eureka", "hazard", "security", "justice", "freedom", "harmony", "friendship", "welcome",
   "mission", "temple", "church", "castle", "market", "garden", "gardens", "bridge", "beach", "valley", "canyon", "mountain", "harbour", "harbor",
   "whites", "blacks", "nations", "america", "europe", "africa", "asia", "pacific", "atlantic", "arctic", "alliance", "senate", "congress",
-  "parliament", "court", "crown", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "christmas", "easter"]);
+  "parliament", "court", "crown",
+  // oil-market words that are also towns: "Brent crude" is not Brent, Florida (Iran war audit 2026-11-16)
+  "brent", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "christmas", "easter"]);
 // Accents folded, so a region spelled like its own country in the local language ("México" state, "Panamá" province) is not
 // read when a text names the country: Spanish headlines saying "México" were pinned on the State of Mexico (audit 2026-11-14).
 const fold = (s) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
@@ -90,7 +92,8 @@ export function loadGazetteer(get = fetchBuf) {
       // only against another capital.
       for (const p of m.values()) if (p.kind === "city" && !p.amb)
         p.amb = (world.get(p.name.toLowerCase()) || []).some((o) => o.cc !== cc && (o.cap || (!p.cap && o.pop >= 1e6 && o.pop >= 3 * p.pop)));
-      idx[cc] = { m, regs: regsBy[cc] || new Map(), re: new RegExp("(?<![\\p{L}\\p{N}])(" + names.join("|") + ")(?![\\p{L}\\p{N}])", "giu") };
+      let capital = null; for (const p of m.values()) if (p.kind === "city" && p.cap && (!capital || p.pop > capital.pop)) capital = p;
+      idx[cc] = { m, capital, regs: regsBy[cc] || new Map(), re: new RegExp("(?<![\\p{L}\\p{N}])(" + names.join("|") + ")(?![\\p{L}\\p{N}])", "giu") };
     }
     return idx;
   })();
@@ -113,6 +116,58 @@ export const DATELINE = [
   // "ILOCOS SUR-A 56-year-old ...", "PAMPANGA-Isang ...": a provincial dateline in capitals, the dash straight before the first word
   /(^|\n)[ \t]*\p{Lu}{3,}(?: \p{Lu}{2,}){0,3}-(?=\p{Lu}\p{Ll}|\p{Lu} )/gu,
 ];
+// A capital followed by a speech or stance verb names a government, not a place ("Tehran warns", "Washington says it shot down").
+// Iran war audit 2026-11-16: 27 Bahrain reports were pinned in Tehran and 11 in Washington this way.
+export const METONYM_AFTER = /^\s+(?:says?|said|claims?|claimed|warns?|warned|denies|denied|accuses|accused|rejects?|rejected|urges?|urged|condemns?|condemned|vows?|vowed|threatens?|threatened|responds?|responded|insists?|insisted|confirms?|confirmed|announces?|announced|demands?|demanded|blames?|blamed|signals?|signalled|signaled|reaffirms?|reaffirmed|repeats?|repeated|retaliates?|retaliated|calls|called|tells|told|hits back|pushes|pushed|offers?|offered|agrees?|agreed|refuses?|refused|seeks?|sought)(?![\p{L}])/iu;
+// true when every mention of name in the text is such a stand-in for a government (a pin from an older rule can then be dropped)
+export function metonymOnly(text, name) {
+  const t = stripDatelines(text), n = String(name || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  if (!n) return false;
+  const hits = [...t.matchAll(new RegExp("(?<![\\p{L}\\p{N}])" + n + "(?![\\p{L}\\p{N}])", "giu"))];
+  return hits.length > 0 && hits.every((m) => METONYM_AFTER.test(t.slice(m.index + m[0].length, m.index + m[0].length + 30)));
+}
+// Named sites of one conflict (tools/conflict_extras/<id>-places.json entries that list aliases): a text that names one is placed
+// on that site, before any town. sites: [{ name, lat, lon, aliases: [..] }]. Returns { name, lat, lon, prec: "site", kind, basis } or null.
+export function siteMatcher(sites) {
+  const list = (sites || []).filter((x) => x && isFinite(x.lat) && isFinite(x.lon) && (x.aliases || []).length).map((x) => ({ ...x,
+    re: new RegExp("(?<![\\p{L}\\p{N}])(?:" + x.aliases.map((a) => String(a).replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/[\s-]+/g, "[\\s-]+")).join("|") + ")(?![\\p{L}\\p{N}])", "iu") }));
+  return (text) => {
+    const t = stripDatelines(text || ""); let best = null, at = Infinity;
+    for (const x of list) { const m = x.re.exec(t); if (m && m.index < at) { at = m.index; best = x; } }
+    return best ? { name: best.name, lat: +(+best.lat).toFixed(5), lon: +(+best.lon).toFixed(5), prec: "site", kind: "site", basis: "A named site of this conflict (curated list), named in the text" } : null;
+  };
+}
+// Last resort for a conflict tab: a text that names exactly one of the given countries (and no town or region placed it) is shown
+// at that country's capital with precision "country", drawn as a rough ring, so a report that only says "Bahrain" is still on the
+// map. Countries in skip (the warring parties, named in nearly every report) never count. Returns null otherwise.
+export function placeCountry(gz, text, ccs, skip = []) {
+  if (!gz || !text) return null;
+  const named = ccsInText(stripDatelines(text)).filter((c) => ccs.includes(c) && !skip.includes(c));
+  if (named.length !== 1) return null;
+  const cc = named[0], cap = gz[cc] && gz[cc].capital, c = COUNTRIES.find((x) => x.id === cc);
+  if (!cap || !c) return null;
+  return { name: c.name, lat: +cap.lat.toFixed(3), lon: +cap.lon.toFixed(3), prec: "country", kind: "country", cc,
+    basis: "Only the country is named; shown at its capital as a rough position" };
+}
+export const partyCcs = (parties) => (parties || []).map((p) => ccFromName(p)).filter(Boolean);
+// Placement of one conflict report (tools/refresh_conflicts.mjs). PLACE_V is the rule version kept on each report as geo_c:
+// 1 towns and regions, 2 with villages, 3 (2026-11-16) with named sites first, government stand-ins skipped and the
+// one-country fallback. A report placed under an older version is placed once more under the new one; a pin the new rules no
+// longer give is kept unless its name was only a government stand-in ("Tehran says").
+export const PLACE_V = 3;
+export function placeConflictReport(gz, item, conf, site) {
+  const small = !!(gz && gz.__small), v = small ? PLACE_V : 1, i = item;
+  if (!gz || (i.geo_c || 0) >= v) return { changed: false };
+  const text = [i.title_en, i.title, i.summary_en, i.summary].filter(Boolean).join(" \u2022 ");
+  const before = i.geo ? i.geo.n + "@" + i.geo.la + "," + i.geo.lo : "";
+  let p = (site && site(text)) || placeIn(gz, text, conf.countries);
+  if (!p) p = placeCountry(gz, text, conf.countries, partyCcs(conf.parties));
+  if (p) i.geo = { n: p.name, la: p.lat, lo: p.lon, p: p.prec, b: p.kind === "small" ? "gazetteer-small" : p.kind === "site" ? "site" : p.kind === "country" ? "country" : "gazetteer" };
+  else if (i.geo && metonymOnly(text, i.geo.n)) delete i.geo;
+  i.geo_c = v;
+  const after = i.geo ? i.geo.n + "@" + i.geo.la + "," + i.geo.lo : "";
+  return { changed: before !== after, from: before, to: after };
+}
 export function stripDatelines(text) {
   let t = String(text || "");
   for (const re of DATELINE) t = t.replace(re, (m, lead) => (typeof lead === "string" ? lead : "") + " ".repeat(m.length - (typeof lead === "string" ? lead.length : 0)));
@@ -129,6 +184,8 @@ export function namesIn(gz, text, ccs) {
     for (const m of text.matchAll(g.re)) {
       if (!/^\p{Lu}/u.test(m[1])) continue;
       const p = g.m.get(m[1].toLowerCase()); if (!p) continue;
+      // "Tehran says", "Washington denies": a capital standing for its government is not where the story happened
+      if (p.kind === "city" && p.cap && METONYM_AFTER.test(text.slice(m.index + m[1].length, m.index + m[1].length + 30))) continue;
       (p.kind === "city" ? towns : regs).push({ ...p, cc, at: m.index });
     }
     // villages and small towns (addSmallPlaces), only where a town or region of the same name does not already match

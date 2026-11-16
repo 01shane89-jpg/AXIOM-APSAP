@@ -403,6 +403,21 @@
   "url": "https://www.aljazeera.com/news/2026/6/11/iran-shuts-hormuz-strait-but-wasnt-it-already-closed"
  },
  {
+  "t": "2026-06-13T00:00:00Z",
+  "site": "Jebel Dukhan radar site (US early-warning radar)",
+  "about": "2026-06-11",
+  "cc": "bh",
+  "kind": "strike",
+  "actor": "Iran",
+  "side": "ir",
+  "title": "Iran Bahrain Radar Strike Claim Raises Fresh Questions",
+  "source": "South Matters",
+  "url": "https://www.southmatters.com/world-news/iran-bahrain-radar-strike-claim/",
+  "place": "Jebel Dukhan, Bahrain",
+  "lat": 26.03788,
+  "lon": 50.54224
+ },
+ {
   "t": "2026-06-15T00:00:00Z",
   "place": "Persian Gulf",
   "cc": "ir",
@@ -494,6 +509,19 @@
   "url": "https://www.cnn.com/2026/07/14/world/live-news/iran-war-trump"
  },
  {
+  "t": "2026-07-14T00:00:00Z",
+  "place": "Bahrain",
+  "cc": "bh",
+  "lat": 26.22,
+  "lon": 50.58,
+  "kind": "strike",
+  "actor": "Iran",
+  "side": "ir",
+  "title": "US Patriot Radar, C-RAM System in Bahrain Destroyed in IRGC Missile Strike",
+  "source": "Tasnim News (IRGC-affiliated)",
+  "url": "https://www.tasnimnews.ir/en/news/2026/07/14/3646793/us-patriot-radar-c-ram-system-in-bahrain-destroyed-in-irgc-missile-strike"
+ },
+ {
   "t": "2026-07-15T00:00:00Z",
   "place": "Iran",
   "cc": "ir",
@@ -531,6 +559,19 @@
   "title": "US launches strikes on Iran after soldiers killed in Jordan; 7th consecutive night of exchanges",
   "source": "Al Jazeera",
   "url": "https://www.aljazeera.com/news/liveblog/2026/7/18/iran-war-live-us-and-iran-exchange-attacks-for-7th-consecutive-night"
+ },
+ {
+  "t": "2026-07-21T00:00:00Z",
+  "place": "Bahrain",
+  "cc": "bh",
+  "lat": 26.22,
+  "lon": 50.58,
+  "kind": "strike",
+  "actor": "Iran",
+  "side": "ir",
+  "title": "IRGC Missiles, Drones Destroy US Radars, Air Defense Systems in Bahrain",
+  "source": "Tasnim News (IRGC-affiliated)",
+  "url": "https://www.tasnimnews.ir/en/news/2026/07/21/3652341/irgc-missiles-drones-destroy-us-radars-air-defense-systems-in-bahrain"
  },
  {
   "t": "2026-07-22T00:00:00Z",
@@ -1987,5 +2028,20 @@
   "title": "Iranian general vows to 'consolidate victory' over US as Tehran awaits official response",
   "source": "Al Jazeera",
   "url": "https://www.aljazeera.com/news/liveblog/2026/9/27/iran-war-live-tehran-awaits-official-response-as-trump-rejects-hormuz-plan"
+ },
+ {
+  "t": "2026-10-31T00:00:00Z",
+  "site": "Jebel Dukhan radar site (US early-warning radar)",
+  "about": "2026-06-11",
+  "cc": "bh",
+  "kind": "strike",
+  "actor": "AP analysis",
+  "side": "neutral",
+  "title": "Iran targeted US air defenses then hit aircraft and buildings on Mideast bases, AP analysis finds",
+  "source": "Associated Press (via Yahoo News)",
+  "url": "https://www.yahoo.com/news/us/articles/iran-strikes-damaged-destroyed-us-141307706.html",
+  "place": "Jebel Dukhan, Bahrain",
+  "lat": 26.03788,
+  "lon": 50.54224
  }
 ]

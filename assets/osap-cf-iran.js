@@ -58,6 +58,7 @@
     ".cfi-claim{display:inline-block;font-size:10.5px;color:var(--muted);background:var(--accent-soft);border-radius:999px;padding:0 6px;margin-left:4px;font-weight:400}" +
     ".cfi-fp{font:10.5px ui-monospace,monospace;color:var(--muted)}.cfi-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}" +
     ".cfi-filt{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}.cfi-filt button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:1px 8px;cursor:pointer}" +
+    ".cfi-at{margin-top:6px;border-top:1px solid var(--line-soft);padding-top:4px}.cfi-at .cfi-ev li{padding:4px 0}" +
     ".cfi-filt button[aria-pressed=true]{background:var(--accent);color:var(--on-accent,var(--surface));border-color:var(--accent)}.cfi-more{font:inherit;margin-top:6px;cursor:pointer}";
   function css() { if (D.getElementById("cfi-css")) return; var st = D.createElement("style"); st.id = "cfi-css"; st.textContent = CSS; D.head.appendChild(st); }
 
@@ -66,15 +67,49 @@
     var out = [], seen = {};
     ((data && data.items) || []).forEach(function (i) {
       if (!i.link || seen[i.link]) return; seen[i.link] = 1;
-      out.push({ t: i.date, lat: i.geo && i.geo.la, lon: i.geo && i.geo.lo, place: i.geo ? i.geo.n : "", kind: i.kind || "other", side: "", title: i.title_en || i.title,
+      out.push({ t: i.date, lat: i.geo && i.geo.la, lon: i.geo && i.geo.lo, place: i.geo ? i.geo.n : "", prec: i.geo ? i.geo.p || "" : "", kind: i.kind || "other", side: "", title: i.title_en || i.title,
         source: i.outlet || "", url: i.link, fp: i.fp || "", claim: !!i.state, live: true });
     });
     ((X && X.records) || []).forEach(function (r) {
       if (!r.url || seen[r.url]) return; seen[r.url] = 1;
-      out.push({ t: r.t, lat: r.lat, lon: r.lon, place: r.place, kind: BK[r.kind] || r.kind, side: r.side, actor: r.actor, title: r.title, source: r.source, url: r.url, fp: r.fp, claim: true, live: false });
+      out.push({ t: r.t, lat: r.lat, lon: r.lon, place: r.place, prec: r.prec || "", site: r.site || "", about: r.about || "", kind: BK[r.kind] || r.kind, side: r.side, actor: r.actor, title: r.title, source: r.source, url: r.url, fp: r.fp, claim: r.side !== "neutral", live: false });   // "claim": a party's own statement
     });
     out.sort(function (a, b) { return ms(b.t) - ms(a.t); });
     return out;
+  }
+
+  /* the reports about one place: earlier reports that name it as their site, and live reports the refresh job pinned on it
+     (by its names, tools/gazetteer.mjs siteMatcher), in the chosen period, newest first */
+  function atPlace(recs, p) {
+    return recs.filter(function (r) { return (r.site ? r.site === p.id : r.place === p.name && r.prec === "site") && inP(r.t); });
+  }
+  function placeHtml(p, recs) {
+    var at = atPlace(recs, p), all = recs.filter(function (r) { return r.site ? r.site === p.id : r.place === p.name && r.prec === "site"; });
+    var h = "<b>" + esc(p.name) + "</b><br><small>" + esc(KIND_LBL[p.kind] || p.kind) + " · " + esc((SIDE[p.side] || SIDE.neutral).name) + "</small><br>" + esc(p.why) +
+      ' <span class="aitag" title="' + esc(p.why_status) + '">AI generated</span><br><small>' + link(p.src, p.srcname) + " · " +
+      (p.prec === "site" ? (p.basis ? esc(p.basis) : "position of the site itself") : "position approximate") + fpShort(p.fp) + "</small>";
+    if (all.length) {
+      h += '<div class="cfi-at"><b>Reporting on this site</b> <span class="cfi-claim">Reported, not verified</span>' + (at.length < all.length ? " <small>(" + at.length + " of " + all.length + " in the chosen period)</small>" : "") +
+        '<ul class="cfi-ev">' + at.slice(0, 8).map(function (r) {
+          return "<li><small>" + day(r.t) + (r.about ? " · about " + day(r.about) : "") + (r.actor ? " · " + esc(r.actor) : "") + "</small><br>" + link(r.url, r.title) + " <small>(" + esc(r.source) + ")</small>" +
+            (r.claim ? ' <span class="cfi-claim">claim</span>' : "") + (r.live ? "" : ' <span class="cfi-claim">earlier report</span>') + fpShort(r.fp) + "</li>";
+        }).join("") + (at.length > 8 ? "<li><small>and " + (at.length - 8) + " more in the history list</small></li>" : "") +
+        (!at.length ? "<li><small>None in the chosen period. Choose All to see them.</small></li>" : "") + "</ul></div>";
+    }
+    var rel = related(recs, p);
+    if (rel.length) {
+      h += '<div class="cfi-at"><b>' + rel.length + " other report" + (rel.length > 1 ? "s" : "") + " in the chosen period</b> <small>mention " + esc(p.related.words.split("|")[0].replace(/\\|\[|\]/g, "")) +
+        " in " + esc(p.related.country) + " without naming this site, so they are pinned on " + esc(p.related.country) + ", not here. They may or may not be about this site.</small>" +
+        '<ul class="cfi-ev">' + rel.slice(0, 5).map(function (r) {
+          return "<li><small>" + day(r.t) + "</small> " + link(r.url, r.title) + " <small>(" + esc(r.source) + ")</small>" + (r.claim ? ' <span class="cfi-claim">claim</span>' : "") + "</li>";
+        }).join("") + (rel.length > 5 ? "<li><small>and " + (rel.length - 5) + " more</small></li>" : "") + "</ul></div>";
+    }
+    return h;
+  }
+  function related(recs, p) {
+    var R = p.related; if (!R || !R.country || !R.words) return [];
+    var re; try { re = new RegExp(R.words, "i"); } catch (e) { return []; }
+    return recs.filter(function (r) { return r.place === R.country && r.prec === "country" && !r.site && re.test(r.title) && inP(r.t); });
   }
 
   function panel(box, data, front) {
@@ -151,7 +186,7 @@
       function fill() {
         var rs = recs.filter(function (r) { return (!kind || r.kind === kind) && inP(r.t); });
         list.innerHTML = rs.slice(0, shown).map(function (r) {
-          return '<li><span class="cfi-dot" style="background:' + (SIDE[r.side] || SIDE.neutral).col + '"></span><small>' + day(r.t) + (r.place ? " · " + esc(r.place) : "") + (r.actor ? " · " + esc(r.actor) : "") + "</small><br>" +
+          return '<li><span class="cfi-dot" style="background:' + (SIDE[r.side] || SIDE.neutral).col + '"></span><small>' + day(r.t) + (r.about ? " (about " + day(r.about) + ")" : "") + (r.place ? " · " + esc(r.place) : "") + (r.actor ? " · " + esc(r.actor) : "") + "</small><br>" +
             link(r.url, r.title) + " <small>(" + esc(r.source) + ")</small>" + (r.claim ? ' <span class="cfi-claim">claim</span>' : "") + (r.live ? "" : ' <span class="cfi-claim">earlier report</span>') + fpShort(r.fp) + "</li>";
         }).join("") || "<li><small>No reports of this kind in the chosen period.</small></li>";
         more.hidden = rs.length <= shown;
@@ -172,8 +207,7 @@
             var c = (SIDE[p.side] || SIDE.neutral).col, po = { pane: "cfpane", radius: 6, color: "#fff", weight: 1.5, fillColor: c, fillOpacity: 0.95 };
             /* NATO symbol of the kind of site (unknown frame: the source's report); the side the source gives is the dot */
             return (sym() ? W.OSAP_SYM.mark([p.lat, p.lon], SYMK[p.kind] || "milbase", L.extend(po, { badge: c, scale: 0.75 })) : L.circleMarker([p.lat, p.lon], po))
-              .bindPopup("<b>" + esc(p.name) + "</b><br><small>" + esc(KIND_LBL[p.kind] || p.kind) + " · " + esc((SIDE[p.side] || SIDE.neutral).name) + "</small><br>" + esc(p.why) +
-                ' <span class="aitag" title="' + esc(p.why_status) + '">AI generated</span><br><small>' + link(p.src, p.srcname) + " · position approximate" + fpShort(p.fp) + "</small>", { maxWidth: 320 });
+              .bindPopup(function () { return placeHtml(p, recs); }, { maxWidth: 340, maxHeight: 420 });
           }));
         },
         navw: function () {
@@ -234,4 +268,5 @@
 
   W.OSAP_CF_PANELS = W.OSAP_CF_PANELS || {};
   W.OSAP_CF_PANELS[ID] = panel;
+  W.OSAP_CF_PANELS[ID]._t = { allRecords: allRecords, atPlace: atPlace, related: related, placeHtml: placeHtml };   /* pure helpers for tests */
 })();

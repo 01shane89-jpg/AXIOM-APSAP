@@ -193,7 +193,8 @@
     var n = wa.filter(function (w) { return wb.indexOf(w) >= 0; }).length;
     return n / (wa.length + wb.length - n) >= 0.5;
   }
-  function spot(i) { return i.geo && i.geo.la != null && i.geo.p !== "province" ? (+i.geo.la).toFixed(2) + "," + (+i.geo.lo).toFixed(2) : ""; }
+  function rough_(g) { return !!g && (g.p === "province" || g.p === "country"); }   // a region's or a whole country's rough centre, not a spot
+  function spot(i) { return i.geo && i.geo.la != null && !rough_(i.geo) ? (+i.geo.la).toFixed(2) + "," + (+i.geo.lo).toFixed(2) : ""; }
   // the province (or, where none is known, the place) a report is about: a curated record's own province first
   function prov(i) { var n = (i._r && i._r.prov) || (i.geo && i.geo.n) || i.place || ""; var m = String(n).match(/(Pattani|Yala|Narathiwat|Songkhla)/); return m ? m[1] : String(n).replace(/\s*\(.*\)$/, "").replace(/ district, .*/, ""); }
   // the report a group is shown by: a curated record first, then an official or established outlet in English, then the earliest
@@ -334,7 +335,7 @@
       row("sub_event_type", "Sub-event", '<select data-f="sub_event_type">' + opts(C.TYPES[et] || [], se, "Choose") + "</select>") +
       row("actor1", "Actor 1", '<input data-f="a1" list="cfactors-' + k + '" value="' + esc(a1.name || "") + '" placeholder="Side that acted"><select data-f="a1b">' + opts(bas, a1.basis || "named_by_source") + "</select>") +
       row("actor2", "Actor 2", '<input data-f="a2" list="cfactors-' + k + '" value="' + esc(a2.name || "") + '" placeholder="Side acted on (blank: none)"><select data-f="a2b">' + opts(bas, a2.basis || "named_by_source") + "</select>") +
-      row("place", "Place", '<select data-f="pin" aria-label="Place from">' + opts(pins.map(function (x) { return [x.fp, (x.geo.n || "pin") + (x.geo.p === "province" ? " (province center)" : "") + " · " + oname(x)]; }).concat([["", "My own place or coordinates"]]), pinSel) + "</select>" +
+      row("place", "Place", '<select data-f="pin" aria-label="Place from">' + opts(pins.map(function (x) { return [x.fp, (x.geo.n || "pin") + (x.geo.p === "province" ? " (province center)" : x.geo.p === "country" ? " (country only, pin at capital)" : "") + " · " + oname(x)]; }).concat([["", "My own place or coordinates"]]), pinSel) + "</select>" +
         '<input data-f="n" value="' + esc(pl.n || "") + '" placeholder="Place name"><input data-f="la" type="number" step="any" value="' + esc(pl.la == null ? "" : pl.la) + '" placeholder="Lat"><input data-f="lo" type="number" step="any" value="' + esc(pl.lo == null ? "" : pl.lo) + '" placeholder="Lon">' +
         '<select data-f="prec" aria-label="Geo precision">' + opts(C.PRECISION, pl.precision || 3) + "</select>") +
       row("fatalities", "Fatalities", '<input data-f="fn" type="number" min="0" step="1" value="' + esc(fa.n == null ? "" : fa.n) + '" placeholder="Not given"><select data-f="ffp" aria-label="As reported by">' +
@@ -384,7 +385,7 @@
       if (f === "pin" && e.type === "change") {
         var x = g.all.filter(function (r) { return r.fp === e.target.value; })[0];
         box.querySelector('[data-f="n"]').value = x ? x.geo.n || "" : ""; box.querySelector('[data-f="la"]').value = x ? x.geo.la : ""; box.querySelector('[data-f="lo"]').value = x ? x.geo.lo : "";
-        if (x) box.querySelector('[data-f="prec"]').value = x.geo.p === "province" ? "3" : "1";
+        if (x) box.querySelector('[data-f="prec"]').value = rough_(x.geo) ? "3" : "1";
       }
       // typed coordinates are the analyst's own, not a report's pin
       if ((f === "la" || f === "lo") && box.querySelector('[data-f="pin"]').value) box.querySelector('[data-f="pin"]').value = "";
@@ -727,7 +728,7 @@
   var repSyms = {}, repConf = false;
   function repSym(i) { var k = W.OSAP_SYM.classify(kindName(i.kind)); return k === "a_incident" ? W.OSAP_SYM.classify(kindName(i.kind), i.title_en || i.title) : k; }
   function repDot(g) {
-    var i = g.lead, rough = i.geo.p === "province";   // placed only to a province or region: a hollow ring at its centre, so it does not read as the exact spot
+    var i = g.lead, rough = rough_(i.geo);   // placed only to a province or region: a hollow ring at its centre, so it does not read as the exact spot
     var ro = { pane: "cfpane", radius: g.all.length > 1 ? 6.5 : 5, color: rough ? "#1D5A86" : "#fff", weight: rough ? 2 : 1.5, dashArray: rough ? "3 2" : null, fillColor: "#1D5A86", fillOpacity: rough ? 0.15 : 0.9 };
     var sk = sym() ? repSym(i) : null; if (sk) repSyms[sk] = 1;
     if (g.vs === "confirmed") { repConf = true; L.extend(ro, { weight: 3, color: "#1F8A4C", dashArray: null }); if (!sk) ro.fillColor = "#1F8A4C"; }
@@ -841,7 +842,7 @@
       (i.mt ? '<span class="tag" title="' + esc(i.mt) + '">Machine translated</span>' : "") +
       (i.killed ? '<span class="tag" title="As the headline states it; unverified">' + i.killed + " killed (reported)</span>" : "") +
       (i.injured ? '<span class="tag" title="As the headline states it; unverified">' + i.injured + " injured (reported)</span>" : "") +
-      esc(i.outlet || "") + (i.via === "search" ? "" : "") + " · " + when(i.date) + (i.geo ? " · " + esc(i.geo.n) + (i.geo.p === "province" ? " (place given only to region; pin at its center)" : "") : "") +
+      esc(i.outlet || "") + (i.via === "search" ? "" : "") + " · " + when(i.date) + (i.geo ? " · " + esc(i.geo.n) + (i.geo.p === "province" ? " (place given only to region; pin at its center)" : i.geo.p === "country" ? " (only the country is named; pin at its capital)" : i.geo.p === "site" ? " (named site)" : "") : "") +
       (i.nc ? ' · <span title="Found through a service whose terms are non-commercial">nc</span>' : "") + "</div>" +
       (i.tab && i.summary ? '<div class="cfm">' + esc(i.summary.length > 280 ? i.summary.slice(0, 277) + "…" : i.summary) + "</div>" : "") +
       '<div class="fp" title="SHA-256 fingerprint of this record: ' + esc(i.fp || "") + '">SHA-256 ' + esc((i.fp || "").slice(0, 16)) + "…</div>";

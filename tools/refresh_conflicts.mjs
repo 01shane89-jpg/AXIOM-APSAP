@@ -147,7 +147,10 @@ for (const c of LIST) {
         if (!fits(i.title + " " + i.summary, f.all)) continue;
         const link = f.search ? unwrap(i.link) : i.link;
         if (!/^https?:\/\//.test(link || "")) continue;
-        if (!iso(i.date)) continue;   // an undated item cannot be placed in time
+        // an undated item cannot be placed in time, unless the feed is marked date_from_link and its link carries the day (/2026/11/16/)
+        const ld = !iso(i.date) && f.date_from_link ? (String(link).match(/\/(20\d\d)\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\//) || null) : null;
+        if (ld) i.date = ld[1] + "-" + ld[2] + "-" + ld[3] + "T00:00:00Z";
+        if (!iso(i.date)) continue;
         let outlet = f.outlet;
         if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via Bing News)"; } catch (e) {} }
         kept.push({ title: i.title, summary: i.summary.slice(0, 300), date: iso(i.date), link, outlet, lang: f.lang, via: f.search ? "search" : f.tg ? "Telegram" : "RSS",
@@ -380,10 +383,18 @@ async function readFront(c, prev, items) {
 }
 
 /* ---------- translate, sort, place, fingerprint ---------- */
-let translateAll = null, saveCache = () => {}, gz = null, placeIn = null;
+let translateAll = null, saveCache = () => {}, gz = null, placeConflictReport = null, siteMatcher = null;
+// named sites of a conflict (tools/conflict_extras/<id>-places.json entries with aliases), matched before any town
+const SITES = {};
+function sitesOf(c) {
+  if (c.id in SITES) return SITES[c.id];
+  let list = [];
+  try { list = JSON.parse(fs.readFileSync("tools/conflict_extras/" + c.id + "-places.json", "utf8")).places.map(([name, , , , lat, lon, , , o]) => ({ name, lat, lon, aliases: (o && o.aliases) || [] })); } catch (e) {}
+  return (SITES[c.id] = list.some((x) => x.aliases.length) && siteMatcher ? siteMatcher(list) : null);
+}
 if (!PROBE) {
   try { ({ translateAll, saveCache } = await import("./translate.mjs")); } catch (e) { console.error("translation unavailable:", e.message); }
-  try { const g = await import("./gazetteer.mjs"); placeIn = g.placeIn; gz = await g.loadGazetteer();
+  try { const g = await import("./gazetteer.mjs"); placeConflictReport = g.placeConflictReport; siteMatcher = g.siteMatcher; gz = await g.loadGazetteer();
     // villages and small towns in the conflicts' countries (fighting is reported by village); without them, towns and regions only
     try { const n = await g.addSmallPlaces(gz, [...new Set(LIST.flatMap((c) => c.countries))]); console.log("small places added:", n); if (n) Object.defineProperty(gz, "__small", { value: true }); }
     catch (e) { console.error("small places unavailable:", errMsg(e)); }
@@ -425,19 +436,12 @@ for (const c of LIST) {
       else if (had && had !== "statement" && had !== "other") i.kind = had;
     }
     i.killed = en ? figure(en, KILLED) : null; i.injured = en ? figure(en, INJURED) : null;
-    // placed by the places the text names inside this conflict's countries (the news step placed it within one country only).
-    // geo_c 2: placed with villages and small towns too; a report placed before them (geo_c 1) with no place or only a region is
-    // looked at once more and takes a village only, never a coarser place
-    if (gz && placeIn) {
-      const small = !!gz.__small, redo = !i.geo_c || (small && i.geo_c < 2 && (!i.geo || i.geo.p === "province"));
-      if (redo) {
-        const p = placeIn(gz, [i.title_en, i.title, i.summary_en, i.summary].filter(Boolean).join(" \u2022 "), c.countries);
-        if (p && (!i.geo_c || p.prec !== "province")) {
-          if (i.geo_c) placedMore[c.id] = (placedMore[c.id] || 0) + 1;
-          i.geo = { n: p.name, la: p.lat, lo: p.lon, p: p.prec, b: p.kind === "small" ? "gazetteer-small" : "gazetteer" };
-        }
-      }
-      i.geo_c = Math.max(i.geo_c || 0, small ? 2 : 1);
+    // placed by the places the text names inside this conflict's countries (the news step placed it within one country only):
+    // a named site of this conflict first, then towns, villages and regions, then a single named country that is not a party
+    // (tools/gazetteer.mjs placeConflictReport; geo_c is the version of those rules the report was placed with)
+    if (gz && placeConflictReport) {
+      const r = placeConflictReport(gz, i, c, sitesOf(c));
+      if (r.changed) placedMore[c.id] = (placedMore[c.id] || 0) + 1;
     }
     if (i.geo && i.geo.la != null) { const inCc = ccsAt(i.geo.la, i.geo.lo, 0.3); i.cc = i.cc && inCc.includes(i.cc) ? i.cc : inCc.find((x) => c.countries.includes(x)) || i.cc || null; }
     i.fp = sha256({ link: i.link, title: i.title, date: i.date, outlet: i.outlet });
@@ -548,5 +552,5 @@ writeJs(OUT + "/index.js", "window.OSAP_CONFLICTS", { schema: "osap-conflicts/1"
 // the automatic tabs' UCDP events, loaded only when one of those tabs is opened
 if (!ONLY.length) writeJs(OUT + "/auto.js", "window.OSAP_CF_AUTO", { asof: stamp, events: autoEvents.slice(0, 6000) });
 saveCache();
-if (Object.keys(placedMore).length) console.log("placed with villages and small towns this run (reports that had no place or only a region):", JSON.stringify(placedMore));
+if (Object.keys(placedMore).length) console.log("reports placed or moved this run (new placement rules, villages, named sites, one-country fallback):", JSON.stringify(placedMore));
 console.log("conflicts:", index.length, "automatic tabs:", autoTabs.length, autoTabs.slice(0, 12).map((a) => a.cc + " " + a.best).join(", "));
