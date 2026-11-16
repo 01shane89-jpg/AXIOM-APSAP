@@ -6,7 +6,7 @@ site's service worker gives it the same offline behavior as the web app. Built w
 
 - Package name: `com.axiomintelligencesystems.osap` (permanent once uploaded to Play; never change it).
 - Settings: `twa-manifest.json` (name, colors, icons from the site's `manifest.webmanifest`, notifications and location
-  passed through to the site, Android 6.0+, target API 36).
+  passed through to the site, Android 7.0+, target API 36).
 - Site link: `/.well-known/assetlinks.json` in the site lists the signing keys allowed to open the site without a
   browser bar. If a key is missing there, the app still works but shows a small address bar at the top.
 
