@@ -1,0 +1,8 @@
+{
+  "name": "axiom-osap-android",
+  "private": true,
+  "description": "Builds the AXIOM OSAP Android app (a Trusted Web Activity of the live site) for Google Play",
+  "type": "module",
+  "scripts": { "generate": "node generate.mjs" },
+  "dependencies": { "@bubblewrap/core": "1.27.0" }
+}

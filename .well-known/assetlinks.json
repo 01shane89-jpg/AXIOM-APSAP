@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.axiomintelligencesystems.osap",
+      "sha256_cert_fingerprints": [
+        "41:7D:8E:B5:62:C4:14:D0:2D:65:E0:07:1F:D2:07:98:DF:3C:BE:D8:8D:EC:C2:5A:A9:82:BE:44:48:00:B1:8B"
+      ]
+    }
+  }
+]

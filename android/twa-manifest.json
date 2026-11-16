@@ -1,0 +1,50 @@
+{
+  "packageId": "com.axiomintelligencesystems.osap",
+  "host": "osap.axiom-intelligence-systems.com",
+  "name": "AXIOM OSAP",
+  "launcherName": "OSAP",
+  "display": "standalone",
+  "themeColor": "#12324A",
+  "themeColorDark": "#12324A",
+  "navigationColor": "#12324A",
+  "navigationColorDark": "#12324A",
+  "navigationDividerColor": "#12324A",
+  "navigationDividerColorDark": "#12324A",
+  "backgroundColor": "#FFFFFF",
+  "enableNotifications": true,
+  "startUrl": "/index.html",
+  "iconUrl": "https://osap.axiom-intelligence-systems.com/assets/icons/icon-512.png",
+  "maskableIconUrl": "https://osap.axiom-intelligence-systems.com/assets/icons/maskable-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./osap-upload.jks",
+    "alias": "osap-upload"
+  },
+  "appVersionName": "0.1.0",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-core",
+  "webManifestUrl": "https://osap.axiom-intelligence-systems.com/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {
+    "locationDelegation": {
+      "enabled": true
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://osap.axiom-intelligence-systems.com/",
+  "minSdkVersion": 23,
+  "orientation": "any",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "protocolHandlers": [],
+  "fileHandlers": [],
+  "launchHandlerClientMode": "",
+  "displayOverride": []
+}

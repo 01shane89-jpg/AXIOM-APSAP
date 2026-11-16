@@ -26,3 +26,10 @@
   for = "/api/*"
   [headers.values]
     Cache-Control = "no-store"
+
+# Android app link (android/README.md): Android checks this file to open the Play Store app full screen, without a browser bar
+[[headers]]
+  for = "/.well-known/assetlinks.json"
+  [headers.values]
+    Content-Type = "application/json"
+    Access-Control-Allow-Origin = "*"
