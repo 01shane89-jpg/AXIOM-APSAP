@@ -17,6 +17,7 @@
 ["n12334545467",44.55665,42.67519,"ru",{"name":"Временная площадка для бзлета и посадки БВС","aeroway":"helipad","surface":"ground"}],
 ["n12741649669",44.04634,43.05011,"ru",{"name":"Красота здоровья","amenity":"clinic","phone":"+7 905 4142255","website":"https://krasota-zdorovya.ru/","opening_hours":"Mo-Fr 09:00-18:00; Sa 09:00-16:00"}],
 ["n13484959774",44.14807,43.01874,"ru",{"aeroway":"helipad","surface":"gravel"}],
+["n14319696846",45.01664,42.38325,"ru",{"name":"ФАП от Грачевской районой больницы","amenity":"hospital"}],
 ["n1499856987",44.06073,43.06883,"ru",{"name":"Медицинский центр","amenity":"hospital","healthcare":"hospital"}],
 ["n1823973914",44.04704,43.07105,"ru",{"name":"ИВЦ ФГБУ ПГНИИК ФМБА России","amenity":"hospital","healthcare":"hospital","addr:housenumber":"3А","addr:street":"улица Крайнего"}],
 ["n1835514064",45.05178,42.00697,"ru",{"name":"Поликлиника №2","amenity":"clinic","phone":"+7 8652 280734","website":"http://www.stavmbuzgp2.ru"}],

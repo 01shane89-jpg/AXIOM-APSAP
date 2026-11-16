@@ -72,6 +72,7 @@
 ["w156990389",61.03202,76.10138,"ru",{"name":"Роддом","name:en":"Maternity Hospital","amenity":"hospital","addr:housenumber":"18/1","addr:street":"улица Нефтяников","addr:city":"Мегион"}],
 ["w157087944",61.03111,76.10303,"ru",{"name":"ЛДЦ \"Здоровье\"","amenity":"clinic","addr:housenumber":"12","addr:street":"Заречная улица","addr:city":"Мегион"}],
 ["w157088064",61.03133,76.09712,"ru",{"name":"Инфекционное отделение","amenity":"hospital","healthcare":"hospital","addr:housenumber":"18/8","addr:street":"улица Нефтяников"}],
+["w1573350633",60.82959,77.15672,"ru",{"aeroway":"helipad"}],
 ["w175875151",61.0208,76.96361,"ru",{"aeroway":"helipad"}],
 ["w175962715",60.95643,76.88338,"ru",{"name":"Больница","amenity":"hospital","addr:housenumber":"2 к1","addr:street":"улица Энергетиков","addr:city":"Излучинск","addr:postcode":"628634"}],
 ["w180673214",60.7286,77.61958,"ru",{"name":"Детская больница","amenity":"hospital"}],

@@ -53,6 +53,8 @@
 ["w1485837564",51.06374,59.60534,"ru",{"aeroway":"helipad"}],
 ["w148869029",51.04157,59.87018,"ru",{"name":"Центральная районная больница","amenity":"hospital"}],
 ["w148869570",51.04316,59.87245,"ru",{"name":"Профилакторий \"Ленок\"","amenity":"hospital"}],
+["w1575919605",51.1524,59.74893,"ru",{"aeroway":"helipad"}],
+["w1575920256",51.16631,59.96319,"ru",{"aeroway":"helipad"}],
 ["w179240025",51.45727,58.43736,"ru",{"name":"Женская консультация","amenity":"hospital","healthcare":"hospital","addr:housenumber":"18","addr:street":"проспект Победы"}],
 ["w187150487",51.37981,58.99259,"ru",{"amenity":"hospital","addr:housenumber":"2Г","addr:street":"улица Ленина"}],
 ["w236359140",51.47083,58.46197,"ru",{"emergency":"ambulance_station","addr:housenumber":"27","addr:street":"Октябрьская улица","addr:city":"Гай","addr:postcode":"462633"}],

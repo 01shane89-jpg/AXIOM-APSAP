@@ -54,6 +54,5 @@
 ["w88074208",46.30364,44.31652,"ru",{"name":"Филиал детской поликлиники","amenity":"hospital","healthcare":"hospital","addr:housenumber":"35 с1","addr:city":"Элиста"}],
 ["w91375842",46.30909,44.26105,"ru",{"emergency":"ambulance_station","addr:housenumber":"6","addr:street":"улица им. А.Г. Балакаева","addr:city":"Элиста"}],
 ["w957832433",46.31769,44.26617,"ru",{"name":"Нефрологический центр","amenity":"hospital","healthcare":"hospital","addr:housenumber":"52","addr:street":"улица А.С. Пушкина","addr:city":"Элиста"}],
-["w957832436",46.31698,44.26931,"ru",{"name":"Нефрологическое отделение","amenity":"hospital","healthcare":"hospital","addr:housenumber":"21А","addr:city":"Элиста"}],
 ["w959053169",46.30628,44.26604,"ru",{"name":"Детский невролог","amenity":"hospital","healthcare":"hospital","addr:housenumber":"4","addr:street":"улица И. К. Илишкина","addr:city":"Элиста"}],
 ["w981341084",46.30762,44.29828,"ru",{"amenity":"hospital","healthcare":"hospital","addr:housenumber":"22","addr:street":"улица им. Н.М. Очирова","addr:city":"Элиста"}]]

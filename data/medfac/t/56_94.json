@@ -21,6 +21,6 @@
 ["w93676766",56.20646,95.70283,"ru",{"name":"Канская поликлиника №2","amenity":"clinic","healthcare":"clinic","addr:housenumber":"5","addr:street":"улица Урицкого"}],
 ["w93712497",56.20467,95.68072,"ru",{"name":"Детская поликлиника","amenity":"clinic","healthcare":"yes","addr:housenumber":"90А","addr:street":"улица Урицкого"}],
 ["w97635463",56.18291,95.74315,"ru",{"amenity":"hospital","healthcare":"hospital"}],
-["w98521324",56.22052,95.71983,"ru",{"name":"Детская поликлиника","amenity":"clinic","healthcare":"clinic","addr:housenumber":"12А"}],
+["w98521324",56.22052,95.71983,"ru",{"name":"Детская поликлиника №2","amenity":"clinic","healthcare":"clinic","addr:housenumber":"12А","addr:city":"Канск"}],
 ["w98521401",56.22846,95.71159,"ru",{"amenity":"hospital","healthcare":"hospital"}],
 ["w99635746",56.126,95.66365,"ru",{"name":"Аэродром Канск","name:en":"Kansk Air Base","operator":"Russian Air Force","aeroway":"aerodrome","military":"airfield","wikidata":"Q4212586"}]]

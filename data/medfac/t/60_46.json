@@ -6,6 +6,7 @@
 ["n1287714546",61.25549,46.63457,"ru",{"name":"Детская поликлиника","amenity":"hospital","addr:housenumber":"5","addr:street":"улица Мелентьева","addr:city":"Котлас"}],
 ["n1323459234",61.24911,46.65075,"ru",{"name":"Поликлиника Ж/Д","amenity":"clinic"}],
 ["n13630534034",61.24585,46.65106,"ru",{"name":"Детская поликлиника","amenity":"clinic","addr:housenumber":"36 кБ","addr:street":"проспект Мира","addr:city":"Котлас"}],
+["n14325247016",60.63459,47.24298,"ru",{"name":"Лузская ЦРБ","amenity":"hospital","healthcare":"hospital","addr:housenumber":"73","addr:street":"улица Ленина","addr:city":"Луза"}],
 ["n1559559579",60.7457,46.18174,"ru",{"aeroway":"helipad"}],
 ["n1569490024",61.27997,46.51329,"ru",{"name":"Больница","amenity":"hospital"}],
 ["n2246496754",60.72687,47.58159,"ru",{"aeroway":"aerodrome"}],

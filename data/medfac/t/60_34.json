@@ -5,6 +5,7 @@
 ["n1335828031",61.79152,34.37115,"ru",{"name":"Поликлиника МВД","amenity":"clinic","healthcare":"clinic","operator":"Медико-санитарная часть МВД России по Республике Карелия","phone":"+78142715390","website":"https://мсч.10.мвд.рф/Struktura_MSCh/Poliklinika_MSCH"}],
 ["n1383927360",61.79383,34.34442,"ru",{"name":"Клиническая больница РЖД-Медицина Петрозаводск","amenity":"hospital","operator:type":"private","phone":"+78142264761","website":"https://petrozavodsk.rzd-medicine.ru","addr:housenumber":"17","addr:street":"Первомайский проспект","opening_hours":"Mo-Fr 07:30-19:00"}],
 ["n13907387813",61.77983,34.37236,"ru",{"name":"Здоровье","amenity":"clinic","healthcare":"clinic"}],
+["n14311923097",61.7774,34.38376,"ru",{"amenity":"clinic","opening_hours":"24/7","osap:withheld":"1"}],
 ["n1451552254",61.76223,34.43862,"ru",{"name":"Поликлиника № 4 ,Педиатрическое отделение","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"paediatrics","phone":"+78142525978","website":"http://clinic4.ru/","addr:housenumber":"1","addr:street":"Нойбранденбургская улица","addr:city":"Петрозаводск"}],
 ["n1577912210",61.88852,34.07011,"ru",{"name":"Чалнинская врачебная амбулатория","amenity":"clinic","healthcare":"clinic","operator":"Пряжинская ЦРБ","operator:type":"government","phone":"+78145645331","website":"https://bolnica.pro/"}],
 ["n1773521558",61.78405,34.35295,"ru",{"name":"Подологический центр Ковалевской В.","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"podiatry"}],

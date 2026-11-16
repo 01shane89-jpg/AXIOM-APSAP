@@ -4,7 +4,6 @@
 ["r14382033",57.13239,103.90085,"ru",{"name":"Новоигирминская городская больница","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"41","addr:city":"Новая Игирма"}],
 ["r14428602",56.94106,103.58774,"ru",{"name":"Березняковская участковая больница","amenity":"hospital","healthcare":"hospital","operator":"Областное государственное бюджетное учреждение здравоохранения Железногорская районная больница","operator:type":"government","phone":"+7 (39566) 6-02-81","addr:housenumber":"11","addr:street":"улица 9 Мая","addr:city":"Березняки","addr:postcode":"665696"}],
 ["r14466149",57.29871,103.68141,"ru",{"name":"Новоилимский фельдшерско-акушерский пункт","name:en":"Novoilimskiy feldsher-obstetric station","amenity":"hospital","healthcare":"hospital","emergency":"no","addr:housenumber":"2Б","addr:street":"Большая улица","addr:city":"Новоилимск","addr:postcode":"665697"}],
-["r2180902",57.94161,102.76255,"ru",{"name":"Усть-Илимская районная больница","amenity":"hospital","healthcare":"hospital","addr:housenumber":"1","addr:street":"Врачебный проезд","addr:city":"Усть-Илимск"}],
 ["w1026181482",56.51045,102.87935,"ru",{"aeroway":"helipad"}],
 ["w1077264106",57.13286,103.90014,"ru",{"emergency":"ambulance_station"}],
 ["w1082040524",57.15125,103.92557,"ru",{"name":"Новоигирминская поликлиника","amenity":"clinic","healthcare":"clinic","addr:housenumber":"32","addr:city":"Новая Игирма"}],

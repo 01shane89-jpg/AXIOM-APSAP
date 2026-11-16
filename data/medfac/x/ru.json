@@ -56,7 +56,6 @@
 ["w127436315",55.7742,37.63369,"ru",{"name":"Отделение трансфузиологии","healthcare":"blood_donation","website":"https://yadonor.ru/bloodstations/bloodsklif","addr:housenumber":"3 с12","addr:street":"Большая Сухаревская площадь"}],
 ["w1302415212",53.22361,50.16624,"ru",{"name":"Самарская областная клиническая станция переливания крови","official_name":"Государственное бюджетное учреждение здравоохранения \"Самарская областная клиническая станция переливания крови\"","amenity":"blood_bank","healthcare":"blood_donation"}],
 ["w146168402",44.9978,41.13107,"ru",{"name":"Cтанция переливания крови","healthcare":"blood_donation","contact:phone":"+7 86137 32390","addr:housenumber":"107/1","addr:street":"улица Ленина","addr:city":"Армавир"}],
-["w149136442",56.83895,35.92623,"ru",{"healthcare":"blood_donation","addr:housenumber":"20","addr:street":"улица Тамары Ильиной","addr:city":"Тверь"}],
 ["w153632329",57.06615,53.99548,"ru",{"name":"переливания крови горбольницы №2","amenity":"clinic","healthcare":"blood_donation"}],
 ["w167412125",58.59102,49.66041,"ru",{"name":"Кировский центр крови","healthcare":"blood_donation","addr:housenumber":"74","addr:street":"Красноармейская улица","addr:city":"Киров"}],
 ["w175040834",43.32341,45.71416,"ru",{"name":"Республиканская станция переливания крови","healthcare":"blood_donation","phone":"+7 (8712) 21-21-26","website":"http://spk95.ru","addr:housenumber":"47","addr:street":"Киевская улица","opening_hours":"Mo-Fr 08:00-17:00"}],

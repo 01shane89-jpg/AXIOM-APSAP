@@ -10,6 +10,7 @@
 ["n1279282563",64.48349,40.77147,"ru",{"amenity":"hospital"}],
 ["n1286303832",64.22486,41.65742,"ru",{"name":"Районная больница","amenity":"hospital"}],
 ["n1292074686",64.53085,40.54704,"ru",{"name":"Санаторий-профилакторий САФУ","amenity":"hospital","healthcare":"hospital"}],
+["n14311954630",64.55861,40.53563,"ru",{"amenity":"clinic","opening_hours":"24/7","osap:withheld":"1"}],
 ["n1461585152",64.54158,40.56284,"ru",{"name":"Анеста","amenity":"clinic","healthcare":"clinic","operator":"ООО \"Многопрофильный центр лечения боли и реабилитации\"","phone":"+7 8182 643002","opening_hours":"Mo-Fr 10:00-21:00"}],
 ["n1463053217",64.55863,40.5361,"ru",{"name":"Доктор Соран","amenity":"clinic","healthcare":"clinic","operator":"ООО медицинский центр \"Здоровье\"","phone":"+7 8182 669366","website":"https://www.drsoran.ru/","opening_hours":"Mo-Fr 09:00-20:00; Sa 10:00-14:00"}],
 ["n1512015912",64.55545,40.51835,"ru",{"name":"Детская больница им. Семашко","amenity":"hospital","healthcare":"hospital"}],

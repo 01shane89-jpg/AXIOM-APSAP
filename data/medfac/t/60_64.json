@@ -18,7 +18,7 @@
 ["w203116651",60.11362,64.82403,"ru",{"aeroway":"helipad"}],
 ["w203116653",60.11409,64.8255,"ru",{"aeroway":"helipad"}],
 ["w203116655",60.11288,64.82499,"ru",{"aeroway":"helipad"}],
-["w205174676",60.13044,64.78519,"ru",{"name":"Стационар","amenity":"hospital","healthcare":"hospital","addr:housenumber":"2","addr:street":"Северная улица","addr:city":"Урай","addr:postcode":"628285"}],
+["w205174676",60.1303,64.7847,"ru",{"name":"Стационар","amenity":"hospital","healthcare":"hospital","addr:housenumber":"2","addr:street":"Северная улица","addr:postcode":"628285"}],
 ["w210335881",61.58662,64.25932,"ru",{"aeroway":"helipad"}],
 ["w215353709",61.28082,65.28423,"ru",{"aeroway":"helipad"}],
 ["w215353710",61.32624,65.34241,"ru",{"aeroway":"helipad"}],

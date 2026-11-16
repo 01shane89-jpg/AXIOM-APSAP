@@ -1,6 +1,7 @@
 [["n12798747161",57.81665,28.26659,"ru",{"name":"Лечу у дома","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;paediatrics;gynaecology;neurology;endocrinology;otolaryngology;urology;cardiology;gastroenterology;diagnostic_radiology;laboratory;massage;ultrasound;ecg","contact:phone":"+7 8112 444404","opening_hours":"Mo-Fr 08:00-20:00; Sa 08:00-17:00; Su 08:00-16:00"}],
 ["n13327709233",57.81243,28.29351,"ru",{"name":"Инновационный сосудистый центр","amenity":"clinic","phone":"+7 8112 672787","opening_hours":"Mo-Fr 09:00-20:00; Sa,Su 10:00-19:00"}],
 ["n1340033476",57.83078,28.29115,"ru",{"name":"Поликлиника наркологического диспансера","official_name":"ГБУЗ ПО \"Наркологический диспансер Псковской области\"","amenity":"clinic","healthcare":"clinic","phone":"+7 8112 571116","addr:housenumber":"4","addr:street":"Чудская улица","addr:postcode":"180020","opening_hours":"Mo-Fr 08:00-17:00"}],
+["n14309519109",57.79465,28.35219,"ru",{"amenity":"clinic","opening_hours":"24/7","osap:withheld":"1"}],
 ["n2040721847",57.09062,29.37889,"ru",{"amenity":"hospital"}],
 ["n2218543406",57.76321,29.56072,"ru",{"amenity":"hospital","healthcare":"hospital"}],
 ["n2891250607",57.35547,28.29823,"ru",{"name":"Госпиталь","amenity":"hospital"}],

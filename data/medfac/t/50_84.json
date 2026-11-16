@@ -22,6 +22,7 @@
 ["w1421097300",51.83064,85.77789,"ru",{"aeroway":"helipad"}],
 ["w1479971520",51.82511,85.80572,"ru",{"aeroway":"helipad"}],
 ["w1546508487",51.44672,85.98845,"ru",{"name":"Аэродром Барантал","aeroway":"aerodrome"}],
+["w1577646440",51.95404,85.81403,"ru",{"amenity":"hospital","healthcare":"hospital"}],
 ["w190450475",51.9529,85.33147,"ru",{"name":"Алтайская районная больница","amenity":"hospital","addr:housenumber":"197 к2","addr:street":"улица Карла Маркса"}],
 ["w203589682",51.97863,84.96802,"ru",{"name":"ФГБУ Детский санаторий \"Белокуриха\"","amenity":"hospital","addr:housenumber":"14","addr:street":"улица Славского"}],
 ["w220117202",50.26415,85.71078,"ru",{"name":"Усть-Кокса","name:en":"Ust-Koksa Airport","aeroway":"aerodrome"}],

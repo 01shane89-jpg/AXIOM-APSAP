@@ -102,7 +102,7 @@
 ["w155453820",56.14391,44.18503,"ru",{"name":"Наркодиспансер","amenity":"clinic","addr:city":"Кстово"}],
 ["w158326347",56.18011,44.16532,"ru",{"amenity":"hospital","healthcare":"hospital","addr:city":"Кстово"}],
 ["w158326370",56.18058,44.16394,"ru",{"amenity":"hospital","healthcare":"hospital","addr:housenumber":"14","addr:street":"Советская улица","addr:city":"Кстово","addr:postcode":"607655"}],
-["w158326552",56.18023,44.16613,"ru",{"amenity":"clinic","healthcare":"clinic"}],
+["w158326552",56.18023,44.16613,"ru",{"amenity":"clinic","healthcare":"clinic","addr:housenumber":"14","addr:street":"Советская улица"}],
 ["w158507020",56.15254,44.19276,"ru",{"name":"ГБУЗ Нижегородской области Кстовская центральная районная больница","amenity":"hospital"}],
 ["w159335986",56.14726,44.20749,"ru",{"name":"Станция скорой помощи","emergency":"ambulance_station"}],
 ["w160015198",56.31375,44.03385,"ru",{"name":"Городская больница №35","amenity":"hospital"}],

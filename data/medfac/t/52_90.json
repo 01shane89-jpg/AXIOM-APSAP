@@ -51,6 +51,7 @@
 ["w145739607",53.70423,91.39515,"ru",{"amenity":"hospital","healthcare":"hospital","addr:full":"Респ. Хакасия, г. Абакан, ул. Кошурникова, 23А","addr:housenumber":"23А","addr:street":"улица Кошурникова"}],
 ["w145750945",53.70454,91.39483,"ru",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1554528759",53.17243,91.66434,"ru",{"name":"Очурская врачебная амбулатория","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"119","addr:street":"улица Чкалова","addr:city":"Очуры","addr:postcode":"655764","opening_hours":"Mo-Fr 08:00-16:00"}],
+["w1573417842",53.10852,91.2518,"ru",{"amenity":"clinic","healthcare":"clinic"}],
 ["w162157253",53.70147,91.66599,"ru",{"name":"ЦРБ","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"emergency","emergency":"yes"}],
 ["w175640067",52.83979,91.40212,"ru",{"aeroway":"heliport"}],
 ["w229933339",52.83963,91.40171,"ru",{"aeroway":"helipad"}],

@@ -175,7 +175,7 @@
 ["w112545697",48.7616,44.55378,"ru",{"amenity":"clinic","healthcare":"clinic","addr:housenumber":"29А","addr:street":"улица Кузнецова","addr:city":"Волгоград","addr:postcode":"400007"}],
 ["w112660076",48.76162,44.55374,"ru",{"name":"Поликлиника №20","amenity":"hospital","healthcare":"hospital","website":"https://www.polyclinic20.ru/"}],
 ["w112795849",48.76972,44.55215,"ru",{"name":"Консультативно-диагностическая поликлиника №2","amenity":"clinic","healthcare":"clinic","addr:housenumber":"26А","addr:street":"проспект Металлургов","addr:city":"Волгоград","addr:postcode":"400007"}],
-["w113059664",48.70074,44.55705,"ru",{"name":"Среднеахтубинская центральная районная больница","amenity":"hospital"}],
+["w113059664",48.70074,44.55705,"ru",{"name":"Среднеахтубинская центральная районная больница","amenity":"hospital","addr:housenumber":"29А","addr:street":"улица Свердлова"}],
 ["w113839178",48.76755,44.55712,"ru",{"name":"Поликлиника № 2","amenity":"clinic","healthcare":"clinic","addr:housenumber":"8","addr:street":"проспект Металлургов","addr:city":"Волгоград","addr:postcode":"400007"}],
 ["w114000660",48.76289,44.52492,"ru",{"amenity":"hospital","healthcare":"hospital"}],
 ["w114060734",48.82461,44.63459,"ru",{"name":"Волгоградский областной детский санаторий № 2","amenity":"hospital","healthcare":"hospital"}],

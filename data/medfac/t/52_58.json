@@ -100,7 +100,7 @@
 ["w33272210",53.41041,59.05757,"ru",{"name":"АНО «Центральная медико–санитарная часть»","amenity":"hospital","healthcare":"hospital","website":"http://hospital-mmk.ru","addr:housenumber":"4","addr:street":"проспект Пушкина","addr:city":"Магнитогорск","addr:postcode":"455019"}],
 ["w333208749",53.35491,58.96473,"ru",{"name":"Поликлиника № 6 АНО «ЦМСЧ»","amenity":"hospital","healthcare":"hospital","addr:housenumber":"219","addr:street":"Советская улица","addr:city":"Магнитогорск","addr:postcode":"455034"}],
 ["w337729875",52.71648,58.68134,"ru",{"name":"Психоневрологический диспансер","amenity":"hospital","healthcare":"hospital","addr:housenumber":"2/5","addr:street":"улица Белова","addr:city":"Сибай"}],
-["w337879520",52.72574,58.67853,"ru",{"name":"Волшебный, межрайонный противотуберкулезный диспансер. Детское отделение","amenity":"hospital","healthcare":"hospital","addr:housenumber":"18/1","addr:street":"улица Чайковского","addr:city":"Сибай"}],
+["w337879520",52.72574,58.67853,"ru",{"name":"Волшебный","healthcare":"hospital","addr:housenumber":"18/1","addr:street":"улица Чайковского"}],
 ["w337932440",52.72742,58.6855,"ru",{"name":"Худайгулов","amenity":"clinic","healthcare":"clinic","addr:housenumber":"28 к1","addr:street":"улица Чайковского","addr:city":"Сибай"}],
 ["w337932528",52.71698,58.6802,"ru",{"name":"Республиканский наркологический диспансер №1","amenity":"hospital","healthcare":"hospital","addr:housenumber":"2/4","addr:street":"улица Белова","addr:city":"Сибай"}],
 ["w337987949",52.72604,58.68204,"ru",{"name":"Центральная горбольница города Сибай","amenity":"hospital","healthcare":"hospital"}],

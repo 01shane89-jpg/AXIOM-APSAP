@@ -71,7 +71,7 @@
 ["w358642812",60.34362,28.7009,"ru",{"aeroway":"helipad"}],
 ["w358642813",60.34377,28.70007,"ru",{"aeroway":"helipad"}],
 ["w358981241",60.66209,28.73427,"ru",{"name":"Соколинская туберкулёзная больница","amenity":"hospital"}],
-["w36574802",60.105,29.96556,"ru",{"healthcare":"hospital","emergency":"yes","addr:housenumber":"9А","addr:street":"улица Борисова","addr:postcode":"197706"}],
+["w36574802",60.105,29.96556,"ru",{"healthcare":"hospital","emergency":"yes","addr:housenumber":"9П","addr:street":"улица Борисова","addr:city":"Сестрорецк","addr:postcode":"197706"}],
 ["w367160524",60.69175,29.97354,"ru",{"aeroway":"helipad"}],
 ["w368938751",60.5679,29.87561,"ru",{"name":"Мичуринская сельская врачебная амбулатория","amenity":"clinic","healthcare":"clinic","addr:housenumber":"9Б","addr:street":"Первомайская улица","addr:city":"Мичуринское","addr:postcode":"188753","opening_hours":"Mo-Fr 09:00-16:00"}],
 ["w369102899",60.10705,29.96551,"ru",{"name":"Сестрорецкая","official_name":"Общество с ограниченной ответственностью «Многопрофильная клиника Сестрорецкая»","amenity":"hospital","healthcare":"hospital","contact:phone":"+7 812 679-07-90","contact:website":"https://sestroclinic.ru","opening_hours":"Mo-Su 08:00-21:00"}],

@@ -132,7 +132,7 @@
 ["w1410252678",56.49031,52.21379,"ru",{"aeroway":"helipad"}],
 ["w1472913999",56.9014,53.26216,"ru",{"aeroway":"helipad"}],
 ["w1474392864",56.5647,53.0255,"ru",{"aeroway":"helipad"}],
-["w1476895275",57.01057,53.04053,"ru",{"amenity":"hospital","healthcare":"hospital","addr:housenumber":"1","addr:street":"Центральная улица"}],
+["w1476895275",57.01057,53.04053,"ru",{"name":"Люкшудьинский ФАП","amenity":"hospital","healthcare":"hospital","addr:housenumber":"1","addr:street":"Центральная улица"}],
 ["w150040636",56.87891,53.21259,"ru",{"healthcare:speciality":"emergency","emergency":"ambulance_station","addr:housenumber":"29А","addr:street":"улица Холмогорова","addr:city":"Ижевск"}],
 ["w151254437",57.05016,53.98953,"ru",{"name":"Поликлиника ГБ№1","amenity":"hospital","healthcare":"hospital","phone":"+7 34145 52050","website":"https://gb1votkinsk.ru/","addr:housenumber":"14","addr:street":"улица Спорта","addr:city":"Воткинск","addr:postcode":"427430"}],
 ["w151254439",57.05026,53.99048,"ru",{"name":"Профилакторий","amenity":"hospital","healthcare":"hospital","operator":"АО \"Воткинский завод\"","addr:housenumber":"16","addr:street":"улица Спорта"}],

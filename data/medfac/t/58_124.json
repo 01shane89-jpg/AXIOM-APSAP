@@ -2,7 +2,7 @@
 ["n2528623408",58.8217,125.53355,"ru",{"emergency":"ambulance_station","phone":"+7 411 4563103"}],
 ["n5423916629",58.60496,125.39829,"ru",{"name":"ЖД(Я) Поликлиника","amenity":"hospital"}],
 ["n9367118385",58.8217,125.53355,"ru",{"name":"Скорая","emergency":"ambulance_station","phone":"+74114563103"}],
-["r10405308",58.60879,125.40228,"ru",{"name":"Поликлиника","amenity":"clinic"}],
+["r10405308",58.60879,125.40228,"ru",{"name":"Поликлиника","amenity":"clinic","addr:housenumber":"59","addr:street":"улица Слепнёва"}],
 ["w1022564605",58.79351,124.78119,"ru",{"aeroway":"helipad"}],
 ["w111783849",58.82154,125.53368,"ru",{"name":"Н-Куранахская Больница","amenity":"hospital","emergency":"yes","addr:housenumber":"5","addr:street":"Строительная улица"}],
 ["w112759732",58.82097,125.53261,"ru",{"name":"Детское отделение","amenity":"clinic","addr:street":"Строительная улица"}],

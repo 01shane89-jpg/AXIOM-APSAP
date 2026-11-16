@@ -10,6 +10,8 @@
 ["n14049282705",52.222,104.23515,"ru",{"name":"Врачебная амбулатория","amenity":"clinic","phone":"+73952549179","addr:housenumber":"174а","addr:street":"Берёзовый микрорайон","addr:postcode":"664523","opening_hours":"Mo-Fr 08:00-17:00"}],
 ["n14077921157",52.26386,104.31031,"ru",{"name":"Элит","healthcare":"clinic","addr:housenumber":"120","addr:street":"Байкальская улица","addr:city":"Иркутск"}],
 ["n14148872288",52.29325,104.28713,"ru",{"name":"МедПрофи","healthcare":"clinic","phone":"+73952407449","opening_hours":"Круглосуточно"}],
+["n14338104547",52.27351,104.30712,"ru",{"name":"Городская клиническая больница №8","amenity":"hospital","healthcare":"hospital"}],
+["n14339998040",52.27487,104.30223,"ru",{"name":"Микрохирургия глаза им. академика С.Н. Федорова","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"ophthalmology"}],
 ["n1463683062",52.26562,104.30565,"ru",{"amenity":"hospital"}],
 ["n1914923200",53.96172,105.90612,"ru",{"aeroway":"aerodrome","icao":"UIIX"}],
 ["n2084040335",52.25874,104.20109,"ru",{"name":"Иркутская областная инфекционная клиническая больница","amenity":"hospital","addr:housenumber":"90 к1","addr:street":"улица Маршала Конева","addr:city":"Иркутск","addr:postcode":"664043"}],

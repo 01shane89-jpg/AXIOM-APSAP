@@ -1,5 +1,7 @@
 [["n6488052287",59.1638,76.24229,"ru",{"name":"Медпункт","amenity":"hospital","opening_hours":"24/7"}],
 ["r11662656",59.1492,76.27874,"ru",{"name":"Аэропорт Пионерный","name:en":"Pionerny Airport","aeroway":"aerodrome"}],
+["w1573719001",58.47971,76.05048,"ru",{"aeroway":"helipad"}],
+["w1573719002",58.47669,76.0567,"ru",{"aeroway":"helipad"}],
 ["w220130794",58.58389,76.50965,"ru",{"aeroway":"helipad"}],
 ["w220130795",58.58674,76.50291,"ru",{"aeroway":"helipad"}],
 ["w220130796",58.58589,76.50024,"ru",{"aeroway":"helipad"}],

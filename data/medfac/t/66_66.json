@@ -4,7 +4,7 @@
 ["n6275775385",66.70378,66.24288,"ru",{"name":"Инфекционное отделение","amenity":"hospital"}],
 ["n8646209879",66.70431,66.24323,"ru",{"amenity":"hospital","healthcare":"hospital"}],
 ["w102227168",66.53259,66.64274,"ru",{"healthcare":"hospital","addr:housenumber":"39 к7","addr:street":"улица Мира"}],
-["w103094058",66.59213,66.61561,"ru",{"name":"Аэропорт Салехард","name:en":"Salekhard Airport","operator":"ООО «Аэропорт Салехард»","operator:type":"private","contact:phone":"+7 (34922) 3-89-06","website":"https://slyport.ru/","aeroway":"aerodrome","icao":"USDD","iata":"SLY","aerodrome:type":"public","wikidata":"Q2445706"}],
+["w103094058",66.59213,66.61561,"ru",{"name":"Аэропорт Салехард","name:en":"Salekhard Airport","operator":"ООО «Аэропорт Салехард»","operator:type":"private","contact:phone":"+7 (34922) 52-215","website":"https://slyport.ru","aeroway":"aerodrome","icao":"USDD","iata":"SLY","aerodrome:type":"public","wikidata":"Q2445706","opening_hours":"Mo-Su 07:00-19:00"}],
 ["w108095527",66.52494,66.59946,"ru",{"name":"Детская поликлиника","amenity":"hospital","healthcare":"hospital","addr:housenumber":"32","addr:street":"улица Республики"}],
 ["w108295061",66.52809,66.59102,"ru",{"name":"Лечебный диспансер","amenity":"hospital","addr:housenumber":"14","addr:street":"улица Николая Сандалова","addr:city":"Салехард"}],
 ["w113656467",66.53165,66.63838,"ru",{"name":"Поликлиника","amenity":"doctors","healthcare":"hospital","addr:housenumber":"39","addr:street":"улица Мира","addr:city":"Салехард","addr:postcode":"629001"}],

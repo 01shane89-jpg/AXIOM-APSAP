@@ -154,7 +154,7 @@
 ["w342813802",50.78406,45.48642,"ru",{"amenity":"clinic","addr:housenumber":"25","addr:street":"Мостовая улица","addr:city":"Первомайское"}],
 ["w357887166",50.09988,45.40828,"ru",{"name":"Станция переливания крови","emergency":"ambulance_station","addr:housenumber":"6","addr:city":"Камышин","addr:postcode":"403874"}],
 ["w357887183",50.10667,45.41009,"ru",{"name":"Женская консультация №2","amenity":"clinic"}],
-["w358727541",50.1021,45.41577,"ru",{"amenity":"hospital","healthcare":"hospital"}],
+["w358727541",50.10205,45.41577,"ru",{"amenity":"hospital","healthcare":"hospital"}],
 ["w360597688",50.11382,45.43081,"ru",{"name":"Онкодиспансер","amenity":"hospital","healthcare":"hospital"}],
 ["w370203684",50.02506,45.4454,"ru",{"name":"Николаевская црб","amenity":"hospital","healthcare":"hospital","addr:housenumber":"38","addr:street":"Октябрьская улица"}],
 ["w402121237",50.32305,44.81462,"ru",{"name":"ЦРБ","amenity":"hospital","addr:housenumber":"1","addr:street":"Заречная улица","addr:city":"Котово"}],

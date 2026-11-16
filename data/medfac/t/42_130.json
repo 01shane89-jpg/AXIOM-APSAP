@@ -175,7 +175,7 @@
 ["w168692964",43.13741,131.89674,"ru",{"name":"Городская клиническая больница №1","amenity":"hospital","phone":"+7 423 2452682;+7 423 2452601","opening_hours":"Mo-Su 08:00-20:00"}],
 ["w168692966",43.13612,131.89873,"ru",{"name":"Детская городская клиническая больница №1","amenity":"hospital"}],
 ["w180522136",43.02129,131.89215,"ru",{"name":"Медицинский центр","name:en":"Medical center","amenity":"hospital"}],
-["w184145652",43.13109,131.90938,"ru",{"name":"Поликлиника ОАО «РЖД»","amenity":"hospital","contact:phone":"+7 423 2245558","contact:website":"http://www.zdclinic.ru"}],
+["w184145652",43.13106,131.90938,"ru",{"name":"Поликлиника ОАО «РЖД»","amenity":"hospital","contact:phone":"+7 423 2245558","contact:website":"http://www.zdclinic.ru"}],
 ["w184146998",43.10387,131.87124,"ru",{"name":"Отделенческая клиническая больница на станции Владивосток ОАО РЖД","amenity":"hospital","healthcare":"hospital","contact:phone":"+7 423 2248332","contact:website":"http://zdclinic.ru"}],
 ["w200891145",43.16643,131.90728,"ru",{"name":"Медицинский диагностический центр","amenity":"hospital","addr:housenumber":"5Б","addr:street":"Русская улица"}],
 ["w215778119",43.78817,131.95255,"ru",{"name":"Кожно-венерологический диспансер","amenity":"hospital","healthcare":"hospital","addr:housenumber":"15","addr:street":"улица Некрасова"}],

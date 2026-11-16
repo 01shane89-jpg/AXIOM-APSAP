@@ -58,7 +58,7 @@
 ["w541370609",43.00946,144.2736,"jp",{"name":"釧路優心病院","amenity":"hospital","healthcare":"hospital","website":"https://www.kushiro-yushin.jp/","addr:housenumber":"1","addr:city":"釧路市","addr:province":"北海道","addr:postcode":"084-0917"}],
 ["w541923874",43.01602,144.31627,"jp",{"name":"星が浦病院","name:en":"Hoshigaura Hospital","amenity":"hospital","healthcare":"hospital","phone":"+81 154 54 2500","website":"http://www.kojinkai.or.jp/hospital/hp-hoshigaura.html","addr:housenumber":"13","addr:street":"北海道釧路市星が浦大通","addr:city":"釧路市","addr:province":"北海道","addr:postcode":"084-0912"}],
 ["w545995947",43.39176,145.12163,"jp",{"name":"町立別海病院","amenity":"hospital","wikidata":"Q85882511"}],
-["w552150337",43.73703,145.52024,"ru",{"amenity":"hospital","addr:housenumber":"18","addr:street":"Нагорная улица","addr:city":"Головнино"}],
+["w552150337",43.73697,145.5202,"ru",{"amenity":"hospital","healthcare":"hospital","addr:housenumber":"18","addr:street":"Нагорная улица","addr:city":"Головнино"}],
 ["w57007974",43.04286,144.19262,"jp",{"name":"釧路空港","name:en":"Kushiro Airport","operator":"http://www.mlit.go.jp","website":"https://www.kushiro-airport.co.jp/","aeroway":"aerodrome","icao":"RJCK","iata":"KUH","aerodrome:type":"public","wikidata":"Q1333925"}],
 ["w57008051",43.57685,144.95709,"jp",{"name":"中標津空港","name:en":"Nakashibetsu Airport","aeroway":"aerodrome","icao":"RJCN","iata":"SHB","wikidata":"Q1432123"}],
 ["w629125777",42.97671,144.40328,"jp",{"name":"市立釧路総合病院","amenity":"hospital","wikidata":"Q11480688"}],

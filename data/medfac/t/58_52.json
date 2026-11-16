@@ -25,6 +25,8 @@
 ["w1186645140",58.11896,52.71385,"ru",{"aeroway":"helipad","surface":"concrete"}],
 ["w129137525",59.36928,52.19509,"ru",{"name":"Аэродром","aeroway":"aerodrome"}],
 ["w1420131820",58.68074,52.17756,"ru",{"aeroway":"helipad"}],
+["w1572168089",58.11559,52.63409,"ru",{"aeroway":"helipad"}],
+["w1573421625",58.13289,52.67991,"ru",{"amenity":"clinic","healthcare":"clinic"}],
 ["w171764486",58.78793,52.24022,"ru",{"name":"Центральная больница","amenity":"hospital"}],
 ["w216980782",59.61824,52.49094,"ru",{"name":"Больница","amenity":"hospital","addr:housenumber":"1","addr:street":"Юбилейная улица"}],
 ["w251823357",58.68158,52.17764,"ru",{"name":"КОГБУЗ Омутнинская центральная районная больница","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"103","website":"http://omutcrb.medkirov.ru/"}],

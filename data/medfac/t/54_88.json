@@ -1,4 +1,6 @@
 [["n11669500347",55.75912,88.31122,"ru",{"name":"Тисульская районная больница","amenity":"hospital","healthcare":"hospital","addr:housenumber":"20","addr:street":"Октябрьская улица","addr:city":"Тисульское городское поселение"}],
+["n14292526002",55.53264,89.18851,"ru",{"name":"Центр современной кардиологии","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"cardiology","addr:housenumber":"2","addr:street":"Медицинский переулок","addr:city":"Шарыпово","addr:postcode":"662314"}],
+["n14292526006",55.53257,89.18865,"ru",{"name":"Центр амбулаторного гемодиализа","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"nephrology","operator":"Terve","addr:housenumber":"2","addr:street":"Медицинский переулок","addr:city":"Шарыпово"}],
 ["n2976800891",55.53201,89.18852,"ru",{"name":"Больница","amenity":"clinic"}],
 ["n4213417889",55.6197,89.08474,"ru",{"name":"Кожно-венерический диспансер","amenity":"hospital"}],
 ["n4213417989",55.61959,89.08425,"ru",{"name":"терапевтическое отделение","amenity":"hospital"}],

@@ -69,7 +69,7 @@
 ["w1424221426",52.06956,113.45558,"ru",{"aeroway":"helipad"}],
 ["w1424241042",52.08073,113.46733,"ru",{"aeroway":"helipad"}],
 ["w252283954",52.06928,113.43459,"ru",{"name":"Аэродром Чита-1","name:en":"Chita Northwest Air Base","operator":"Russian Air Force","aeroway":"aerodrome","military":"airfield","wikidata":"Q3273993"}],
-["w259407943",52.05771,113.49889,"ru",{"name":"Академия Здоровья","amenity":"clinic","contact:phone":"+7 302 2217911;+7 302 2401904","contact:website":"https://az-chita.ru","opening_hours":"Mo-Su 08:00-20:00"}],
+["w259407943",52.05771,113.49889,"ru",{"name":"Академия Здоровья","amenity":"clinic","contact:phone":"+7 302 2217911;+7 302 2401904","contact:website":"https://az-chita.ru","addr:housenumber":"13 с3","addr:street":"улица Коханского","opening_hours":"Mo-Su 08:00-20:00"}],
 ["w281811651",52.11413,113.49967,"ru",{"name":"Чита (Каштак)","name:en":"Chita (Kashtak)","operator":"Читинский краевой АСК ДОСААФ России","aeroway":"aerodrome","wikidata":"Q4218269"}],
 ["w48537714",52.02391,113.51492,"ru",{"name":"Краевая клиническая инфекционная больница","amenity":"hospital","healthcare":"hospital","website":"https://www.kkib.sibhost.ru/","addr:housenumber":"20","addr:street":"Амурская улица"}],
 ["w508110309",53.21785,112.77432,"ru",{"amenity":"clinic"}],

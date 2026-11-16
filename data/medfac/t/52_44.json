@@ -138,7 +138,7 @@
 ["w189851303",53.18758,44.00294,"ru",{"name":"Станция скорой медицинской помощи","amenity":"hospital","emergency":"yes"}],
 ["w194202144",53.19403,45.18123,"ru",{"name":"МСЧ № 59","amenity":"hospital","contact:website":"http://www.msch59.ru/"}],
 ["w195516861",53.19397,45.03473,"ru",{"name":"Детская поликлиника №4","amenity":"hospital","healthcare":"hospital","emergency":"no","addr:housenumber":"9А","addr:street":"Фабричная улица","addr:city":"Пенза"}],
-["w201795859",52.81907,45.06221,"ru",{"name":"Кондольская ЦРБ","amenity":"hospital","emergency":"yes"}],
+["w201795859",52.81907,45.06221,"ru",{"name":"Кондольская ЦРБ","amenity":"hospital","emergency":"yes","addr:housenumber":"1","addr:street":"улица Мира"}],
 ["w210819869",53.14323,45.02317,"ru",{"name":"Медиклиник","amenity":"clinic","healthcare":"clinic","website":"https://www.mediclinic.ru/","addr:housenumber":"160В","addr:street":"улица Терновского"}],
 ["w213888939",53.17852,45.00113,"ru",{"name":"Медико-санитарная часть Управления МВД России по Пензенской области","amenity":"hospital","healthcare":"hospital","addr:street":"улица Свердлова","addr:city":"Пенза"}],
 ["w217101746",53.17511,45.01804,"ru",{"name":"Городская больница №3 Поликлиника N 1","amenity":"hospital"}],

@@ -61,6 +61,7 @@
 ["r14481147",53.92938,102.06661,"ru",{"amenity":"hospital","healthcare":"hospital"}],
 ["r14526487",53.8928,102.04737,"ru",{"name":"Центральная городская больница","amenity":"hospital"}],
 ["r14698846",53.92569,102.03255,"ru",{"amenity":"hospital"}],
+["r21709782",52.81657,103.5285,"ru",{"name":"Белореченская участковая больница","amenity":"hospital","operator":"Усольская городская больница"}],
 ["r9361808",52.50715,103.82509,"ru",{"amenity":"hospital","addr:city":"Ангарск"}],
 ["w104275501",52.75703,103.64214,"ru",{"name":"Детская Поликлиника","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"paediatrics","addr:housenumber":"77","addr:street":"улица Ленина","addr:city":"Усолье-Сибирское"}],
 ["w104275512",52.75736,103.64656,"ru",{"name":"Поликлиника №2","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"emergency","emergency":"yes","addr:housenumber":"71","addr:street":"улица Ленина","addr:city":"Усолье-Сибирское"}],

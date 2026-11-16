@@ -46,6 +46,7 @@
 ["w1348627585",53.86817,46.36491,"ru",{"amenity":"hospital","healthcare":"hospital"}],
 ["w137936672",52.04473,47.38427,"ru",{"name":"Кожвендиспансер","amenity":"clinic","addr:housenumber":"69","addr:street":"Коммунистическая улица"}],
 ["w152318644",52.79803,47.31003,"ru",{"amenity":"hospital"}],
+["w1576962075",53.64417,46.41073,"ru",{"name":"ФАП","amenity":"hospital","healthcare":"hospital","addr:housenumber":"20","addr:street":"Прудная улица"}],
 ["w184959296",52.12739,46.07694,"ru",{"name":"МУЗ \"Новобурасская ЦРБ\"","amenity":"hospital","addr:housenumber":"16","addr:street":"улица Баумана"}],
 ["w184959297",52.12868,46.0752,"ru",{"amenity":"hospital","emergency":"official","addr:housenumber":"1","addr:street":"1-й Советская переулок"}],
 ["w227764325",52.46197,46.62337,"ru",{"amenity":"hospital"}],
