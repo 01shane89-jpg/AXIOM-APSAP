@@ -1,1 +1,1 @@
-window.ASAP_GDACS={"asof":"2026-11-16 03:00Z","src":"https://www.gdacs.org/xml/rss.xml","events":[]};
+window.ASAP_GDACS={"asof":"2026-11-16 03:09Z","src":"https://www.gdacs.org/xml/rss.xml","events":[]};
