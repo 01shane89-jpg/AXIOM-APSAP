@@ -80,7 +80,10 @@ if (want("aq")) try {
 const ISO3 = { th: "THA", vn: "VNM", kh: "KHM", la: "LAO", mm: "MMR", ph: "PHL", my: "MYS", sg: "SGP", id: "IDN", bn: "BRN", tl: "TLS",
   cn: "CHN", tw: "TWN", kp: "PRK", kr: "KOR", jp: "JPN", oki: "JPN", mn: "MNG", au: "AUS", nz: "NZL", pg: "PNG",
   in: "IND", pk: "PAK", np: "NPL", bt: "BTN", bd: "BGD", lk: "LKA", mv: "MDV" };
-const GDACS = "https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventlist=TC;FL;DR;VO;WF";
+// The event-list API takes one type per request ("eventtype="): the old "eventlist=TC;FL;..." form answers HTTP 400
+// "Eventtype is required." since early November 2026, and the alerts went empty.
+const GDACS_TYPES = ["TC", "FL", "DR", "VO", "WF"], GDACS_BASE = "https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventtype=";
+const GDACS = GDACS_BASE + GDACS_TYPES.join(",");
 function lines(geo) {
   const out = [];
   for (const f of (geo && geo.features) || []) {
@@ -94,6 +97,8 @@ function lines(geo) {
 const isoOr = (d) => { const t = new Date(d); return isNaN(t) ? d : t.toISOString().slice(0, 19); };
 async function gdacsFromRss() {
   const xml = await getText("https://www.gdacs.org/xml/rss.xml"), features = [];
+  // GDACS's firewall answers some clients with a 200 "Request Rejected" HTML page: that is a failure, not an empty alert list
+  if (!/<rss[\s>]/.test(xml)) throw new Error("RSS answer is not a feed (" + xml.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 60) + ")");
   const tag = (it, t) => { const m = it.match(new RegExp("<" + t + "[^>]*>([\\s\\S]*?)</" + t + ">")); return m ? m[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim() : ""; };
   for (const it of xml.split(/<item[\s>]/).slice(1)) {
     const pt = (tag(it, "georss:point") || "").split(/\s+/).map(Number), lat = pt[0] || +tag(it, "geo:lat"), lon = pt[1] || +tag(it, "geo:long");
@@ -107,7 +112,15 @@ async function gdacsFromRss() {
 }
 if (want("gdacs")) try {
   let g, via = GDACS;
-  try { g = await getJSON(GDACS); } catch (e) { console.error("GDACS API failed (" + e.message + "), using RSS"); g = await gdacsFromRss(); via = "https://www.gdacs.org/xml/rss.xml"; }
+  // one request per type; a type that fails is fetched again from the RSS feed below only if every type failed
+  const got = [], bad = [];
+  for (const t of GDACS_TYPES) {
+    try { const j = await getJSON(GDACS_BASE + t); got.push(...((j && j.features) || []).filter((f) => (f.properties || {}).eventtype === t)); }
+    catch (e) { bad.push(t + " " + e.message.slice(0, 80)); }
+  }
+  if (bad.length) console.error("GDACS API failed for " + bad.join("; "));
+  if (bad.length < GDACS_TYPES.length) g = { features: got };
+  else { console.error("GDACS API failed for every type, using RSS"); g = await gdacsFromRss(); via = "https://www.gdacs.org/xml/rss.xml"; }
   const events = [];
   for (const f of g.features || []) {
     const p = f.properties || {}, c = (f.geometry || {}).coordinates || [];

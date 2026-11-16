@@ -235,3 +235,5 @@ tests/boolq_smoke.mjs
 tests/grade_smoke.mjs
 # news pictures: outlet picture on Today Top stories and the News tab (violent stories too), phone fit
 tests/news_thumbs_smoke.mjs
+# disaster alerts: page reads only the GDACS snapshot (API changed), World sends no made-up air-quality request
+tests/gdacs_hazards_smoke.mjs

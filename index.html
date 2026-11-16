@@ -5550,7 +5550,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     Promise.all([
       hzFetch(USGS).then(function (g) { HZ.q = quakesFromGeo(g); HZ.qFrom = "live " + window.OSAP_TIME.dualT(Date.now(), { date: true }); HZ.qErr = ""; },
         function (e) { HZ.qErr = e.message; useSnapshotQuakes(); }),
-      hzFetch(aqUrl).then(function (j) {
+      /* World has no posts and its "center" is open ground in West Africa: no air-quality reading rather than a meaningless one */
+      C.global ? Promise.resolve(useSnapshotAQ()) : hzFetch(aqUrl).then(function (j) {
         var arr = Array.isArray(j) ? j : [j];
         HZ.aq = pts.map(function (p, i) { var c = (arr[i] || {}).current || {}; return { name: p.name, lat: p.lat, lon: p.lon, time: c.time || "", us_aqi: c.us_aqi, pm2_5: c.pm2_5, pm10: c.pm10 }; });
         HZ.aqFrom = "live " + window.OSAP_TIME.dualT(Date.now(), { date: true }); HZ.aqErr = "";
@@ -5614,23 +5615,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (window.TSAP) window.TSAP.records = R;
   }
   addGdacsRecords();
-  /* GDACS live: the event list straight from GDACS when the browser is allowed to read it; otherwise the 15-minute snapshot stays.
-     Cyclone tracks come only with the snapshot, so a live event keeps the snapshot's track for the same event. */
-  var GDACS_API = "https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventlist=TC;FL;DR;VO;WF", GD_SNAP = window.ASAP_GDACS, GD_ERR = "";
-  function pullGdacs() {
-    return hzFetch(GDACS_API).then(function (g) {
-      var old = {}; ((GD_SNAP || {}).events || []).forEach(function (e) { old[e.id] = e; });
-      var events = (g.features || []).filter(function (f) { return (f.properties || {}).eventtype && (f.geometry || {}).type === "Point"; }).map(function (f) {
-        var p = f.properties, c = f.geometry.coordinates, id = p.eventtype + "-" + p.eventid + "-" + (p.episodeid || "");
-        var iso = [p.iso3].concat((p.affectedcountries || []).map(function (a) { return a.iso3; })).filter(function (x, i, a) { return x && a.indexOf(x) === i; });
-        return { id: id, type: p.eventtype, name: p.name || p.eventname || "", desc: p.description || "", alert: p.alertlevel || "", from: p.fromdate || "", to: p.todate || "", mod: p.datemodified || "",
-          lat: c[1], lon: c[0], iso3: iso, severity: (p.severitydata || {}).severitytext || "", url: (p.url || {}).report || "https://www.gdacs.org/",
-          current: p.iscurrent !== "false" && p.iscurrent !== false, track: (old[id] || {}).track || [] };
-      });
-      if (!events.length) throw new Error("empty list");
-      window.ASAP_GDACS = { asof: new Date().toISOString().slice(0, 16).replace("T", " ") + "Z", src: GDACS_API, events: events, live: true }; GD_ERR = "";
-    }, function (e) { GD_ERR = e.message; window.ASAP_GDACS = GD_SNAP; }).catch(function (e) { GD_ERR = e.message; window.ASAP_GDACS = GD_SNAP; });
-  }
+  var GD_ERR = "";
+  /* GDACS's event-list API now takes one event type per request, and droughts alone are ~3 MB, so the page no longer asks it
+     directly: tools/refresh_feeds.mjs reads it into data/live/gdacs.js every 15 minutes (every 2 minutes in a flash window). */
+  function pullGdacs() { return Promise.resolve(); }
   function gdacsHtml() {
     var g = window.ASAP_GDACS, evs = gdacsEvents().filter(function (e) { return e.current || inPeriodDate(gdDate(e.to || e.from)); });
     var col = { Red: "#c62828", Orange: "#e07b00", Green: "#3a9d4a" };
