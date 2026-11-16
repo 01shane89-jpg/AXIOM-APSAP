@@ -2469,7 +2469,7 @@
   function css() {
     var s = document.createElement("style");
     s.textContent = [
-      "#wx-ops .wxplace{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}#wx-ops .wxplace select{max-width:100%;font:inherit}#wx-ops .wxplace label{display:flex;gap:4px;align-items:center;max-width:100%}",
+      "#wx-ops .wxplace{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}#wx-ops .wxplace select{max-width:100%;min-width:0;flex:0 1 auto;font:inherit}#wx-ops .wxplace label{display:flex;gap:4px;align-items:center;max-width:100%;min-width:0}",
       "#wx-ops .wxplace form{display:flex;gap:4px}#wx-ops .wxplace input{width:10em;font:inherit}#wx-ops .wxfound{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.wxpicking,.wxpicking .leaflet-interactive{cursor:crosshair!important}",
       "svg.wxmg{display:block;width:100%;height:auto;max-width:800px;font:10px system-ui,sans-serif}.wxmg .mgday{fill:rgba(120,140,160,.08)}.wxmg .mggrid{stroke:rgba(128,128,128,.3);stroke-width:.6}",
       ".wxmg .mgax,.wxmg .mglbl{fill:currentColor;opacity:.75}.wxmg .mgtemp{fill:none;stroke:#c62828;stroke-width:1.8}.wxmg .mgdew{fill:none;stroke:#2e7d32;stroke-width:1.2;stroke-dasharray:4 3}",

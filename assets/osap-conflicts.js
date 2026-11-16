@@ -62,7 +62,7 @@
     "#cf-rail .tag{display:inline-block;font-size:10.5px;border-radius:3px;padding:0 5px;margin-right:4px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);vertical-align:1px}#cf-rail .tag.claim{border-color:var(--near);color:var(--ink)}",
     "html[data-cf] .leaflet-popup-content .cfm{font-size:12px;color:var(--muted);margin:3px 0}html[data-cf] .leaflet-popup-content .fp{font:10.5px 'IBM Plex Mono',monospace;color:var(--muted);margin-top:4px}" +
     "html[data-cf] .leaflet-popup-content .tag{display:inline-block;font-size:10.5px;border-radius:3px;padding:0 5px;margin-right:4px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);vertical-align:1px}html[data-cf] .leaflet-popup-content .tag.claim{border-color:var(--near);color:var(--ink)}html[data-cf] .leaflet-popup-content .cfalso a{color:var(--accent)}",
-    "#cf-rail .fp{font:10.5px 'IBM Plex Mono',monospace;color:var(--muted)}#cf-rail details>summary{cursor:pointer;font-weight:600;font-size:13px}#cf-rail table{width:100%;border-collapse:collapse;font-size:12px}#cf-rail td{padding:2px 4px;border-top:1px solid var(--line-soft);vertical-align:top}",
+    "#cf-rail .fp{font:10.5px 'IBM Plex Mono',monospace;color:var(--muted)}#cf-rail details>summary{cursor:pointer;font-weight:600;font-size:13px}#cf-rail table{width:100%;border-collapse:collapse;font-size:12px}#cf-rail td{padding:2px 4px;border-top:1px solid var(--line-soft);vertical-align:top}#cf-rail table.cfev td{white-space:normal;text-align:left;overflow-wrap:anywhere}#cf-rail table.cfev td:first-child{white-space:nowrap}#cf-rail table.cfev td:last-child{text-align:right;white-space:nowrap}",
     "#cf-rail .lg{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px;box-shadow:0 0 0 1px rgba(0,0,0,.25)}#cf-rail .more{margin-top:6px}",
     ".leaflet-marker-icon.cfrepn,.cfrepn{display:flex!important;align-items:center;justify-content:center;border-radius:50%;background:#1D5A86;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);box-sizing:border-box;color:#fff;font:700 12px/1 system-ui,-apple-system,sans-serif;cursor:pointer}.cfrepn span{display:block;width:100%;text-align:center;line-height:1}" +
     "html[data-cf] .leaflet-popup-content .cfrepi{border-top:1px solid var(--line);padding-top:5px;margin-top:5px}",
@@ -979,7 +979,7 @@
         (cur.data._olderFail ? '<p class="cfbad">Older reports could not be loaded.</p>' : "") +
         '<button type="button" class="refresh more" data-cfolder="1">Load ' + num(cur.data.older.items) + " reports from before " + day(cur.data.older.from) + "</button>");
     }
-    h.push("<details" + (cur.data.auto ? " open" : "") + '><summary>UCDP events in this period (' + num(ev.length) + ")</summary><table><tbody>" + ev.slice(0, 200).map(function (e) {
+    h.push("<details" + (cur.data.auto ? " open" : "") + '><summary>UCDP events in this period (' + num(ev.length) + ")</summary><table class=\"cfev\"><tbody>" + ev.slice(0, 200).map(function (e) {
       return "<tr><td>" + day(e.date) + "</td><td>" + esc(e.where || e.adm1) + '<div class="cfm">' + esc(actors(e.sideA && e.sideB ? e.sideA + " vs " + e.sideB : e.conflict)) + "</div></td><td>" + num(e.best) + "</td></tr>";
     }).join("") + "</tbody></table>" + (ev.length > 200 ? '<p class="cfm">The newest 200 are listed; all are on the map.</p>' : "") + "</details>");
     box.innerHTML = h.join("");
