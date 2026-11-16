@@ -15,8 +15,8 @@
 ["7302",39.5119,-119.9468,"I80 @ East Verdi","https://nvroads.com/map/Cctv/7302","https://d2wse2.its.nv.gov:443/renoxcd03/fafa232f-9a8f-456a-841e-09930f79d9dc_hspflirxcd03_public.stream/playlist.m3u8"],
 ["7303",39.55637,-119.75237,"Pyramid @ North McCarran","https://nvroads.com/map/Cctv/7303","https://d2wse1.its.nv.gov:443/renoxcd01/9af52b68-391f-42de-8cd6-781b6d221362_hspflirxcd01_public.stream/playlist.m3u8"],
 ["7304",36.0689,-115.1998,"I-215 WB E of Decatur","https://nvroads.com/map/Cctv/7304"],
-["7305",36.27775,-115.26808,"I-11 SB Centennial","https://nvroads.com/map/Cctv/7305","https://d1wse5.its.nv.gov:443/vegasxcd05/f0010c32-a6f9-449c-a917-bdf208804d74_lvflirxcd05_public.stream/playlist.m3u8"],
-["7306",36.27785,-115.26843,"I-11 SB Centennial (dual)","https://nvroads.com/map/Cctv/7306","https://d1wse5.its.nv.gov:443/vegasxcd05/f7d47f94-d0d0-499e-b1bb-74df9bf80a42_lvflirxcd05_public.stream/playlist.m3u8"],
+["7305",36.27744,-115.26828,"I-11 SB Centennial","https://nvroads.com/map/Cctv/7305","https://d1wse5.its.nv.gov:443/vegasxcd05/f0010c32-a6f9-449c-a917-bdf208804d74_lvflirxcd05_public.stream/playlist.m3u8"],
+["7306",36.27739,-115.26799,"I-11 SB Centennial (dual)","https://nvroads.com/map/Cctv/7306","https://d1wse5.its.nv.gov:443/vegasxcd05/f7d47f94-d0d0-499e-b1bb-74df9bf80a42_lvflirxcd05_public.stream/playlist.m3u8"],
 ["7307",36.11724,-115.17312,"Las Vegas Blvd & Caesars Dr F1","https://nvroads.com/map/Cctv/7307","https://d1wse2.its.nv.gov:443/vegasxcd02/164d50b6-4c0c-44ca-bb80-8dae3666f214_lvflirxcd03_public.stream/playlist.m3u8"],
 ["7308",39.3059,-119.8252,"I580 NB Bowers Mansion Highmast","https://nvroads.com/map/Cctv/7308","https://d2wse2.its.nv.gov:443/renoxcd03/9f56a5fa-30af-4939-abe8-584242a1cd30_hspflirxcd03_public.stream/playlist.m3u8"],
 ["7309",39.21371,-119.80598,"I580 NB East Lake Onramp","https://nvroads.com/map/Cctv/7309","https://d2wse2.its.nv.gov:443/renoxcd03/b1ae816d-f2f9-47ff-a60c-abf5be29d6cd_hspflirxcd03_public.stream/playlist.m3u8"],
@@ -251,8 +251,6 @@
 ["7538",36.19553,-115.16105,"Martin Luther King Blvd & Lake Mead Blvd","https://nvroads.com/map/Cctv/7538","https://d1wse4.its.nv.gov:443/vegasxcd04/f98cc1e1-151c-4773-8f52-6d5e89be38c6_lvflirxcd04_public.stream/playlist.m3u8"],
 ["7539",36.00694,-115.11429,"Eastern Ave & St Rose Pkwy","https://nvroads.com/map/Cctv/7539","https://d1wse3.its.nv.gov:443/vegasxcd03/dccccb52-23d5-4ac5-a8d0-4261fced9ac1_lvflirxcd03_public.stream/playlist.m3u8"],
 ["7540",35.9664,-115.17262,"St. Rose Pkwy & Las Vegas Blvd","https://nvroads.com/map/Cctv/7540","https://d1wse4.its.nv.gov:443/vegasxcd04/7775181c-3ba5-4c26-b4ee-13a24fcbc0ae_lvflirxcd04_public.stream/playlist.m3u8"],
-["7541",36.02423,-115.10064,"Pecos & I-215 WB Beltway","https://nvroads.com/map/Cctv/7541","https://d1wse3.its.nv.gov:443/vegasxcd03/65388c60-a4aa-4164-941a-48d97a22e36e_lvflirxcd04_public.stream/playlist.m3u8"],
-["7542",36.02242,-115.10031,"St Rose & I-215 EB Beltway","https://nvroads.com/map/Cctv/7542","https://d1wse4.its.nv.gov:443/vegasxcd04/e74c3afd-dd3d-4b68-90f5-e252c93caeb7_lvflirxcd04_public.stream/playlist.m3u8"],
 ["7543",36.11416,-115.1828,"Flamingo Rd & I-15 SB Ramp","https://nvroads.com/map/Cctv/7543","https://d1wse1.its.nv.gov:443/vegasxcd01/5537114d-4533-444d-9e2d-527a61f8c2ab_lvflirxcd01_public.stream/playlist.m3u8"],
 ["7544",36.11444,-115.17971,"Flamingo Rd & I-15 NB Ramp Arena","https://nvroads.com/map/Cctv/7544","https://d1wse1.its.nv.gov:443/vegasxcd01/cbfccd8b-0b66-4d66-8dea-604cc29c753e_lvflirxcd01_public.stream/playlist.m3u8"],
 ["7545",36.11588,-115.18977,"Flamingo Rd & Valley View Blvd","https://nvroads.com/map/Cctv/7545","https://d1wse1.its.nv.gov:443/vegasxcd01/9454ddb3-8fde-43b8-830e-f4f35d80330f_lvflirxcd01_public.stream/playlist.m3u8"],
@@ -648,4 +646,5 @@
 ["7936",36.32199,-115.61975,"SR-158 NB Deer Creek","https://nvroads.com/map/Cctv/7936","https://d1wse5.its.nv.gov:443/vegasxcd05/sr158of_deer_creek_lvflirxcd05_public.stream/playlist.m3u8"],
 ["7937",38.83085,-117.18944,"SR-376 North of Carver","https://nvroads.com/map/Cctv/7937","https://d1wse5.its.nv.gov:443/vegasxcd05/sr376northofcarver_lvflirxcd05_public.stream/playlist.m3u8"],
 ["7938",39.1802,-119.7235,"US50 at Fairview","https://nvroads.com/map/Cctv/7938","https://d2wse2.its.nv.gov:443/renoxcd03/b1326bb6-b50c-49c1-b5ac-0be05b606b94_hspflirxcd03_public.stream/playlist.m3u8"],
-["7939",39.18922,-119.70375,"US50 at Arrowhead","https://nvroads.com/map/Cctv/7939","https://d2wse2.its.nv.gov:443/renoxcd03/0b562bd5-6151-487c-bc56-241e5d40fce1_hspflirxcd03_public.stream/playlist.m3u8"]]}
+["7939",39.18922,-119.70375,"US50 at Arrowhead","https://nvroads.com/map/Cctv/7939","https://d2wse2.its.nv.gov:443/renoxcd03/0b562bd5-6151-487c-bc56-241e5d40fce1_hspflirxcd03_public.stream/playlist.m3u8"],
+["7940",36.06881,-115.20394,"215 WB Decatur Off","https://nvroads.com/map/Cctv/7940","https://d1wse5.its.nv.gov:443/vegasxcd05/7c13761e-ce20-4db2-b24a-68d775e77fe3_lvflirxcd05_public.stream/playlist.m3u8"]]}
