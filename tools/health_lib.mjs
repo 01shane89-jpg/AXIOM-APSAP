@@ -2,7 +2,8 @@
 //
 // data/live/health.json (written by each refresh on main):
 //   { v: 1, asof: ISO time of the refresh, run: Actions run URL,
-//     feeds: [{ id, name, key, maxMin, asof: ISO or null, src: { ok, fail, failing: [names] } (when the file lists sources) }] }
+//     feeds: [{ id, name, key, maxMin, asof: ISO or null, src: { ok, fail, failing: [names] } (when the file lists sources),
+//               n: items in the file's list and minItems (when tools/health.json names a "count" list for the feed) }] }
 // evaluate() turns that into what the app badge shows and what the keeper alerts on.
 
 // "2026-09-28 13:12Z", "2026-09-28T13:12:00Z" -> ms; anything else -> null
@@ -44,6 +45,15 @@ export function sourcesOf(obj) {
   return null;
 }
 
+// how many items a data file's list holds: "count" names the list (an array, or an object of arrays such as news by country)
+export function countOf(obj, key) {
+  if (!obj || typeof obj !== "object" || !key) return null;
+  const v = obj[key];
+  if (Array.isArray(v)) return v.length;
+  if (v && typeof v === "object") { let n = 0; for (const x of Object.values(v)) { if (!Array.isArray(x)) return null; n += x.length; } return n; }
+  return v == null ? 0 : null;
+}
+
 const mins = (ms) => Math.round(ms / 60000);
 
 // -> { state: "ok" | "amber" | "down", ageMin, problems: [{ id, name, why, key }], alerts: [lines], fp }
@@ -64,6 +74,9 @@ export function evaluate(health, cfg, now = Date.now()) {
     if (!t) why = "no data";
     else if (ref - t > max * 60000) why = "last updated " + ago(now - t);
     else if (f.src && f.src.ok + f.src.fail >= 4 && f.src.fail > f.src.ok) why = f.src.fail + " of " + (f.src.ok + f.src.fail) + " sources failing";
+    // fresh but empty: a feed that always carries something came back with nothing (16 Nov 2026: GDACS sat at 0 alerts for
+    // days while its stamp stayed fresh, because a firewall page parsed as an empty feed)
+    else if (f.minItems > 0 && typeof f.n === "number" && f.n < f.minItems) why = f.n + " items";
     if (why) problems.push({ id: f.id, name: f.name || f.id, why, key: !!f.key });
   }
   let alerts;
