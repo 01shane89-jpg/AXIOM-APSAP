@@ -15,7 +15,7 @@
 import { execFileSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 
-export const SERVED = ["index.html", "reset.html", "sw.js", "manifest.webmanifest", "assets", "LICENSE", "NOTICE.md", "terms.html",
+export const SERVED = [".well-known", "index.html", "reset.html", "sw.js", "manifest.webmanifest", "assets", "LICENSE", "NOTICE.md", "terms.html",
   "privacy.html", "refunds.html", "netlify", "netlify.toml", "tools/netlify_build.mjs", "tools/netlify_ignore.mjs"];
 export const BLOCK_HOURS = 8;
 export const FORCE = /\[deploy now\]/i;
