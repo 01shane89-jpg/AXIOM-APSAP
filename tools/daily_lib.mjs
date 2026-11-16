@@ -12,6 +12,7 @@ import crypto from "node:crypto";
 import { fold, relevance } from "./topics_lib.mjs";
 import { ccsInText } from "./geo_cc.mjs";
 import { mtSuspect } from "./mt_guard.mjs";
+import { worldStories } from "./world_lib.mjs";
 
 export const SCHEMA = "osap-daily/1";
 export const MAX_EVENTS = 6, MAX_REFS = 30;
@@ -158,4 +159,71 @@ export function validateAi(o, nRefs) {
   if (!bluf.length) return null;
   return { bluf, watch };
 }
+// ---------- World ("ww") ----------
+// The World daily summary (Shane 2026-11-16: "a daily summary for world just like the ones for countries"). Same schema, same
+// page and same Export PDF as a country's, so nothing on the page is new. Its key events are not grouped again from the whole pool
+// (24,000 headlines a day split one story into many); they are the stories every country's Story coverage already groups
+// (data/live/stories/<cc>.js, tools/stories_lib.mjs), counted on the outlets that carried each one in the 24 hours, ranked by
+// tools/world_lib.mjs worldStories (outlets, +3 for strong analyst news; sport and show business out; at most 2 a country so one
+// busy country does not fill the day). Every line is an outlet's own headline and link; nothing is judged.
+export const WW = "ww", WORLD_EVENTS = 8, WORLD_PER = 2;
+/** stories: Map or [[cc, storiesFile]] of every country's Story coverage; names: cc -> name; conflicts: [{ id, name, stats, cc }] */
+export function buildWorld(inp, R) {
+  const end = inp.end, from = end - 24 * 36e5, iso = (ms) => new Date(ms).toISOString().slice(0, 16);
+  const ms = (d) => Date.parse(String(d || "").slice(0, 16) + "Z"), names = inp.names || {}, nm = (cc) => names[cc] || String(cc).toUpperCase();
+  // each story cut to the outlets that carried it in the window (a story of three days still reported today counts its new outlets)
+  const cut = new Map(), seen = new Set(); let reports = 0; const outlets = new Set(), countries = new Set();
+  for (const [cc, f] of inp.stories instanceof Map ? inp.stories : new Map(inp.stories || [])) {
+    if (!f || cc === WW) continue;
+    const list = [];
+    for (const s of f.stories || []) {
+      if (!s || s.b) continue;
+      const src = (s.src || []).filter((r) => { const t = ms(r[4]); return isFinite(t) && t >= from && t <= end + 14 * 36e5; });
+      if (src.length < 2) continue;
+      src.forEach((r) => { if (!seen.has(r[5])) { seen.add(r[5]); reports++; } outlets.add(r[0]); });
+      countries.add(cc);
+      const lead = src.find((r) => r[5] === s.u) || src.find((r) => !r[7]) || src[0], k = { state: 0, public: 0, other: 0 };
+      src.forEach((r) => { k[r[1]] = (k[r[1]] || 0) + 1; });
+      list.push({ ...s, t: lead[6] || s.t, u: lead[5], s: lead[0], src, n: src.length, k, d0: src[0][4], d: src[src.length - 1][4] });
+    }
+    cut.set(cc, { stories: list });
+  }
+  const top = worldStories(cut, { R, end, hours: 24, max: WORLD_EVENTS, per: WORLD_PER }).stories;
+  const refs = [], refOf = new Map();
+  const ref = (i) => {
+    if (refOf.has(i.url)) return refOf.get(i.url);
+    if (refs.length >= MAX_REFS) return 0;
+    const n = refs.length + 1;
+    refs.push({ n, title: i.title, outlet: i.outlet, url: i.url, date: i.date, via: i.via, flags: i.flags || undefined, where: i.where });
+    refOf.set(i.url, n); return n;
+  };
+  const events = top.map((s) => {
+    const lead = s.src.find((r) => r[5] === s.u) || s.src[0], rest = s.src.filter((r) => r !== lead);
+    const rs = [lead, ...rest].slice(0, 4).map((r) => ref({ title: r[6] || s.t, outlet: r[0], url: r[5], date: String(r[4] || "").slice(0, 16), via: "news",
+      flags: (r[1] === "state" ? "g" : "") + (r[7] ? "m" : ""), where: nm(s.cc) })).filter(Boolean);
+    const outs = [...new Set(s.src.map((r) => r[0]))], st = s.k.state || 0;
+    return { text: s.t, outlets: outs.slice(0, 6), n: s.n, refs: rs, when: String(s.d || "").slice(0, 16), claim: st === s.n || undefined,
+      some_state: (st && st < s.n) || undefined, mt: !!lead[7] || undefined, where: nm(s.cc), cc: s.cc, rel: R ? relevance(R, s.t) : "keep" };
+  });
+  const bluf = [];
+  const say = (e) => "\u201c" + e.text.replace(/[.\s]+$/, "") + "\u201d" + (e.claim ? " (state media or official, a claim)" : "") + " (" + e.n + " outlets, filed under " + e.where + ")";
+  if (events.length) {
+    bluf.push({ text: `${reports} reports by ${outlets.size} outlets on ${countries.size} countr${countries.size === 1 ? "y" : "ies"} in 24 hours. Most reported worldwide: ${say(events[0])}.`,
+      refs: events[0].refs.slice(0, 4) });
+    const k = events.findIndex((e, j) => j > 0 && e.rel === "strong");
+    if (k > 0) bluf.push({ text: `Also reported: ${say(events[k])}.`, refs: events[k].refs.slice(0, 4) });
+  }
+  events.forEach((e) => { delete e.rel; });
+  // the conflict tabs with the most reports in the last day; each line opens its tab (in its first country)
+  const watch = (inp.conflicts || []).filter((c) => c.stats && c.stats.reports && c.stats.reports.d1)
+    .sort((a, b) => b.stats.reports.d1 - a.stats.reports.d1).slice(0, 4).map((c) => { const s = c.stats.reports;
+      return { from: "conflict", text: `${c.name}: ${s.d1} report${s.d1 === 1 ? "" : "s"} in the last day, ${s.d7 || 0} in 7 days on the conflict tab.`, refs: [], tab: c.id, cc: c.cc }; });
+  const out = { schema: SCHEMA, cc: WW, name: inp.name || "World", date: new Date(end).toISOString().slice(0, 10), window: { from: iso(from) + "Z", to: iso(end) + "Z", hours: 24 },
+    method: "rules", bluf, events, watch, refs,
+    basis: { reports, outlets: outlets.size, events: events.length, countries: countries.size, conflict: 0, left_out: 0 }, gaps: [] };
+  if (!events.length) out.gaps.push(`No story was carried by two or more outlets in the 24 hours to ${iso(end)}Z in the outlets OSAP reads.`);
+  out.gaps.push("Stories are grouped by their headline words, so a story told in other words is missed and outlet counts are a floor.");
+  return out;
+}
+
 export function fingerprint(d) { const { fp, made, ...rest } = d; return sha256(rest); }

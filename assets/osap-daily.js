@@ -9,6 +9,8 @@
      tooltip) and every sentence cites numbered sources; each number links to the original.
    - Print gives a one-page summary with every source link and the summary's SHA-256 fingerprint.
    - The file is fetched only when Today is shown for the country; the last 7 days are kept and can be picked.
+   - World ("ww") has one too (tools/daily_lib.mjs buildWorld): the most reported stories of every country, each event naming
+     the country it is filed under, and the busiest conflict tabs under What to watch.
    - One tap (Reports > Daily brief, PDF; window.OSAP_DAILYQ.brief()): the latest summary of the open country goes straight to
      Export PDF, without opening Today. A key event whose source has a report digest (data/live/digest.js, an AI draft written on the
      Actions runner from the article, which is never stored) carries that digest's one-line "what", tagged AI generated. */
@@ -132,7 +134,8 @@
     if (go === "tab") {
       leave();
       var CT = W.OSAP_CONFLICT_TABS, b = D.querySelector('#view-seg [data-view="cf-' + w.tab + '"]');
-      if (b) b.click(); else if (CT && CT.open) CT.open(w.tab, CC);
+      /* a World line names the conflict's first country (World has no conflict tabs of its own) */
+      if (b) b.click(); else if (CT && CT.open) CT.open(w.tab, w.cc || CC);
     } else if (go === "url") {
       var r = d.refs[w.refs[0] - 1], u = r && safeUrl(r.url); if (u) W.open(u, "_blank", "noopener,noreferrer");
     } else if (go === "brief") {
@@ -159,7 +162,7 @@
     var nev = (d.events || []).length;
     if (kevOpen == null) kevOpen = !!(W.matchMedia && W.matchMedia("(min-width:761px)").matches);
     h += '<div class="dlcols"><div>' + (nev ? '<details class="dlkev"' + (kevOpen ? " open" : "") + '><summary class="dllbl">Key events (' + nev + ")</summary>" : '<p class="dllbl">Key events</p>') + (nev ? '<ul class="dlev">' + d.events.map(function (e) {
-      return "<li><b>" + esc(e.text) + "</b>" + refs(e.refs, d) + '<span class="dlmeta">' + (e.n > 1 ? e.n + " outlets: " : "") + esc(e.outlets.join(", ")) + " · " + esc(when(e.when, false)) +
+      return "<li><b>" + esc(e.text) + "</b>" + refs(e.refs, d) + '<span class="dlmeta">' + (e.where ? esc(e.where) + " · " : "") + (e.n > 1 ? e.n + " outlets: " : "") + esc(e.outlets.join(", ")) + " · " + esc(when(e.when, false)) +
         (e.claim ? " · state media or official, a claim" : e.some_state ? " · includes state media" : "") + (e.mt ? " · machine translated" : "") + (e.conflict ? " · " + esc(e.conflict) : "") + "</span>" + dgHtml(e, d) + "</li>";
     }).join("") + "</ul></details>" : '<p class="dlsub">No analyst-relevant reports in the window.</p>') + "</div>";
     h += '<div><p class="dllbl">What to watch</p><ul class="dlw">' + (watchList(d) || '<li class="dlsub">Nothing flagged.</li>') + "</ul></div></div>";
@@ -178,7 +181,7 @@
       '<p class="pm">AXIOM OSAP · ' + esc(d.window.hours) + " hours to " + esc(when(d.window.to)) + " · built " + esc(when(d.made)) + " · printed " + esc(W.OSAP_TIME ? W.OSAP_TIME.dualT(Date.now(), { date: true }) : new Date().toISOString()) +
       " · " + (ai ? esc(d.label || "Draft, AI-generated, not analyst-approved") + " (" + esc(d.model || "") + ")" : "Automatic: built by rules, no AI") + "</p>" +
       ((d.bluf || []).length ? "<h2>" + (ai ? "BLUF" : "Top lines") + '</h2><div class="bl">' + d.bluf.map(function (s) { return "<p>" + esc(s.text) + cite(s.refs) + "</p>"; }).join("") + "</div>" : "") +
-      "<h2>Key events</h2><ol>" + (d.events || []).map(function (e) { return "<li><b>" + esc(e.text) + "</b>" + cite(e.refs) + '<div class="pm">' + esc(e.outlets.join(", ")) + " · " + esc(when(e.when)) + (e.claim ? " · state media or official, a claim" : e.some_state ? " · includes state media" : "") + (e.mt ? " · machine translated" : "") + "</div>" +
+      "<h2>Key events</h2><ol>" + (d.events || []).map(function (e) { return "<li><b>" + esc(e.text) + "</b>" + cite(e.refs) + '<div class="pm">' + (e.where ? esc(e.where) + " · " : "") + esc(e.outlets.join(", ")) + " · " + esc(when(e.when)) + (e.claim ? " · state media or official, a claim" : e.some_state ? " · includes state media" : "") + (e.mt ? " · machine translated" : "") + "</div>" +
         (function (x) { return x ? '<div class="dg">(AI generated digest of [' + x.n + "], draft, not analyst-approved) " + esc(x.g.what) + (x.g.where ? " (" + esc(x.g.where) + ")" : "") + "</div>" : ""; })(digestOf(e, d)) + "</li>"; }).join("") + "</ol>" +
       "<h2>What to watch</h2><ul>" + (d.ai_watch || []).map(function (w) { return "<li>(AI generated) " + esc(w.text) + cite(w.refs) + "</li>"; }).join("") +
       (d.watch || []).map(function (w) { return "<li>" + esc((FROM[w.from] ? FROM[w.from] + (w.from === "brief" && w.asof ? " of " + w.asof + ", AI draft" : "") + ": " : "") + w.text) + cite(w.refs) + "</li>"; }).join("") + "</ul>" +
@@ -216,8 +219,6 @@
   function mount(box, cc, name) {
     if (CC && CC !== cc) { state = 0; sel = 0; }
     el = box; CC = cc; NAME = name || cc; el.classList.add("tddaily"); el.hidden = true;
-    /* World ("ww") has no daily summary: each one is one country's */
-    if (cc === "ww") return;
     if (!D.getElementById("dl-css")) { var st = D.createElement("style"); st.id = "dl-css"; st.textContent = CSS; D.head.appendChild(st); }
     el.addEventListener("click", function (e) {
       var t = e.target.closest && e.target.closest("[data-dlprint]"); if (t) { e.preventDefault(); printIt(); return; }

@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { compileRelevance } from "../tools/topics_lib.mjs";
-import { buildRules, validateAi, cluster, softSection, unent, fromRow, fingerprint } from "../tools/daily_lib.mjs";
+import { buildRules, buildWorld, validateAi, cluster, softSection, unent, fromRow, fingerprint } from "../tools/daily_lib.mjs";
 
 const R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")));
 const end = Date.parse("2026-09-28T01:00:00Z");
@@ -74,5 +74,37 @@ t("a flashpoint line carries the reports that mention it, newest first, as numbe
   assert.equal(w.fp, "Budo Mountains");
   assert.deepEqual(w.refs.map((n) => fp.refs[n - 1].url), ["https://n/1", "https://o/1"]);
   assert.equal(fp.refs[w.refs[0] - 1].outlet, "New Paper");
+});
+// World ("ww"): the most reported stories of every country's Story coverage, counted on the outlets of the last 24 hours
+const src = (o, date, url, title, kind = "other") => [o, kind, "dom", "", date, url, title, 0, 0];
+const story = (t, u, src, b) => ({ t, u, s: src[0][0], n: src.length, src, b });
+const many = (n, base, title, date = "2027-01-01T20:00", kind) => Array.from({ length: n }, (_, i) => src("Outlet " + base + i, date, `https://${base}/${i}`, title, kind));
+const wend = Date.parse("2027-01-02T00:00:00Z");
+const W = buildWorld({ end: wend, names: { aa: "Alphaland", bb: "Betaland", cc: "Gammaland" }, conflicts: [
+  { id: "c1", name: "Quiet war", stats: { reports: { d1: 0, d7: 4 } }, cc: "aa" }, { id: "c2", name: "Busy war", stats: { reports: { d1: 40, d7: 300 } }, cc: "bb" }],
+  stories: [
+    ["aa", { stories: [story("Missile strike kills 12 in border town", "https://a/0", many(9, "a", "Missile strike kills 12 in border town")),
+      story("Old summit story", "https://o/0", many(30, "o", "Old summit story", "2026-12-29T10:00")),
+      story("Only state media", "https://s/0", many(5, "s", "Only state media", "2027-01-01T20:00", "state"), "state-only")] }],
+    ["bb", { stories: [story("Cabinet resigns amid protests", "https://b/0", many(6, "b", "Cabinet resigns amid protests", "2027-01-01T20:00", "state").concat(many(2, "bx", "Cabinet resigns amid protests"))),
+      // the same story filed under a second country (shares a link) is kept once
+      story("Missile strike kills 12 in border town", "https://a/0", many(9, "a", "Missile strike kills 12 in border town"))] }],
+    ["cc", { stories: [story("Football final ends in draw", "https://f/0", many(20, "f", "Football final ends in draw"))] }],
+    ["ww", { stories: [story("never from World itself", "https://w/0", many(50, "w", "never from World itself"))] }]] }, R);
+t("World summary: most reported stories of every country in 24 hours, each naming its country", () => {
+  assert.equal(W.cc, "ww"); assert.equal(W.name, "World"); assert.equal(W.window.hours, 24); assert.equal(W.method, "rules");
+  const T = W.events.map((e) => e.text);
+  assert.deepEqual(T, ["Missile strike kills 12 in border town", "Cabinet resigns amid protests"], "old, blindspot, sport and World's own stories are left out; a story under two countries once");
+  assert.equal(W.events[0].where, "Alphaland"); assert.equal(W.events[0].n, 9);
+  assert.equal(W.events[1].some_state, true, "state outlets on a story are marked");
+  assert.ok(W.events.every((e) => e.refs.length && e.refs.every((n) => /^https:\/\//.test(W.refs[n - 1].url))), "every event links its sources");
+  assert.ok(W.refs.filter((r) => /g/.test(r.flags || "")).length, "state outlets' links are flagged as claims");
+  assert.match(W.bluf[0].text, /Most reported worldwide: .Missile strike kills 12 in border town. \(9 outlets, filed under Alphaland\)/);
+  assert.deepEqual(W.watch.map((w) => [w.tab, w.cc]), [["c2", "bb"]], "only conflict tabs with reports in the last day, each with the country to open it in");
+  assert.equal(W.basis.countries, 3, "countries with a story carried by two or more outlets in the window");
+});
+t("World summary with nothing reported says so", () => {
+  const E = buildWorld({ end: wend, stories: [], conflicts: [] }, R);
+  assert.equal(E.events.length, 0); assert.equal(E.bluf.length, 0); assert.match(E.gaps[0], /^No story was carried/);
 });
 console.log(`${ok} passed`);

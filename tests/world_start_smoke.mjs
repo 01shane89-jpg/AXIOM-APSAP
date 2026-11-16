@@ -42,7 +42,9 @@ async function open(hash, opt = {}) {
     news: (window.TSAP.records || []).filter((r) => r.news).length, quakes: (window.TSAP.records || []).filter((r) => r.quake).length,
     ccs: new Set(((window.ASAP_NEWS || {}).items || {}).ww ? window.ASAP_NEWS.items.ww.map((i) => i.cc) : []).size,
     top: document.querySelectorAll("#today .tdnews .tdst, #today .tdnews .tdrow, #today .tdnews li, #today .tdnews button[data-rec]").length,
-    cover: document.querySelectorAll("#td-cover .cvlist > li").length, blindTab: !!document.querySelector('#td-cover [data-cvview="blind"]'),
+    cover: document.querySelectorAll("#td-cover .cvlist > li").length,
+    daily: (function (d) { return d && !d.hidden ? { h: (d.querySelector("h2") || {}).textContent, ev: d.querySelectorAll(".dlev li").length, bluf: d.querySelectorAll(".dlbluf p").length - 1,
+      where: d.querySelectorAll(".dlev li .dlmeta").length && /^[A-Z][a-z]+[^·]* · \d+ outlets/.test(d.querySelector(".dlev li .dlmeta").textContent) } : null; })(document.getElementById("td-daily")), blindTab: !!document.querySelector('#td-cover [data-cvview="blind"]'),
     sideways: document.documentElement.scrollWidth - window.innerWidth
   }));
   ok(s.hash === "#ww/timeline" && s.cc === "ww", "first open with nothing saved starts on World (" + s.hash + ", " + s.cc + ")");
@@ -50,6 +52,7 @@ async function open(hash, opt = {}) {
   ok(s.news >= 10 && s.ccs >= 5, "World headlines come from many countries (" + s.news + " records, " + s.ccs + " countries)");
   ok(s.quakes > 0, "global earthquakes are on World (" + s.quakes + ")");
   ok(s.cover >= 5 && !s.blindTab, "Story coverage lists the world's most-covered stories, no blindspot tab (" + s.cover + ")");
+  ok(s.daily && s.daily.h === "Daily summary" && s.daily.ev >= 3 && s.daily.bluf >= 1 && s.daily.where, "World has a daily summary like a country's: top lines and key events, each naming its country (" + JSON.stringify(s.daily) + ")");
   ok(s.sideways <= 0, "no sideways scroll on a phone (" + s.sideways + " px)");
   await page.click(".tdmap");
   await page.waitForTimeout(2500);
@@ -88,6 +91,12 @@ async function open(hash, opt = {}) {
   const { ctx, page } = await open("#ww/timeline");
   await page.waitForTimeout(3000);
   ok(await page.evaluate(() => JSON.parse(localStorage.getItem("osap-last-cc") || "null") === "ww"), "opening World saves it as the last area viewed");
+  // Reports > Daily brief (PDF) on World: one tap gives "World: daily brief" with every source link
+  const pdf = await page.evaluate(() => new Promise((res) => {
+    window.OSAP_PDF.print = function (o) { var r = o.root; res({ title: o.title, links: r ? r.querySelectorAll("li.pm").length : 0, ev: r ? r.querySelectorAll("ol")[0].children.length : 0 }); return Promise.resolve(); };
+    window.OSAP_REPORTS.run("dailybrief"); setTimeout(() => res(null), 8000);
+  }));
+  ok(pdf && pdf.title === "World: daily brief" && pdf.ev >= 3 && pdf.links >= 6, "Reports > Daily brief (PDF) works on World (" + JSON.stringify(pdf) + ")");
   await ctx.close();
 }
 ok(!missing.length, "World asks for no file that does not exist" + (missing.length ? ": " + [...new Set(missing)].join(", ") : ""));
