@@ -22,6 +22,16 @@
   status = 200
   force = true
 
+# Basic browser protections on every response (16 Nov 2026 quality check: the site sent only HSTS). SAMEORIGIN keeps other
+# sites from framing a signed-in OSAP to trick taps (its own scan frames are same-origin; the desktop app and Android app load
+# it top-level); the referrer policy sends outside hosts only the origin, never the path. Not here yet: nosniff (the data gate
+# answers locked <script> files as text/plain, which nosniff would turn into console errors) and a Content-Security-Policy.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
 [[headers]]
   for = "/api/*"
   [headers.values]
