@@ -227,6 +227,10 @@
       });
     }
     function go(u) { location.replace(u); }
+    /* opened from a Home Screen icon (iOS sets navigator.standalone; installed web apps elsewhere match display-mode) */
+    function standalone() {
+      try { return W.navigator.standalone === true || !!(W.matchMedia && (W.matchMedia("(display-mode: standalone)").matches || W.matchMedia("(display-mode: fullscreen)").matches)); } catch (e) { return false; }
+    }
     /* the old address's own move (as index.html does it), without this file's markers */
     function plainMove() {
       var q = ""; try { var u = new URLSearchParams(location.search); u.delete("osap-stay"); u.delete("osap-unlock"); if (u.get("from") === "pages") u.delete("from"); /* added once below */ q = String(u); } catch (e) {}
@@ -287,7 +291,8 @@
       }
       W.OSAP_CARRY.handled = true; /* index.html and assets/osap-tier.js leave the move to this file */
       /* ?osap-stay=1: open the app here after all (chosen on the screen below when the hand-off failed, to make a backup file) */
-      if (/[?&]osap-stay=1(&|$)/.test(location.search)) { W.OSAP_CARRY.state = "stay"; return; }
+      /* (marked, so the next visit sends a full set again in case something was saved here meanwhile) */
+      if (/[?&]osap-stay=1(&|$)/.test(location.search)) { W.OSAP_CARRY.state = "stay"; lsSet("osap-carry-stayed", "1"); return; }
       var ok = /^#osap-carry-ok=([0-9a-f]{64})$/.exec(H), nx = /^#osap-carry-next=([0-9a-f]{64})\.(\d{1,2})$/.exec(H);
       /* a locked saved-work vault can only open here (its passkey belongs to this address): open the app to unlock first */
       if (vaultLocked()) {
@@ -300,9 +305,28 @@
       }
       if (ok) {
         var al = (lsGet("osap-carry-alias") || "").split(" ");
-        W.OSAP_CARRY.state = "confirmed"; lsSet("osap-carry-done", al[1] === ok[1] ? al[0] : ok[1]); screen("Done. Opening OSAP…"); go(TO + "?from=pages#osap-carried=" + ok[1]); return; }
-      W.OSAP_CARRY.state = "sending";
-      send(nx ? { id: nx[1], i: +nx[2] } : null);
+        W.OSAP_CARRY.state = "confirmed"; lsSet("osap-carry-done", al[1] === ok[1] ? al[0] : ok[1]); try { localStorage.removeItem("osap-carry-stayed"); } catch (e) {} screen("Done. Opening OSAP…"); go(TO + "?from=pages#osap-carried=" + ok[1]); return; }
+      /* Once the hand-off has been confirmed (or, from a Home Screen icon, tried once), later visits go straight on with no
+         hand-off screen (Shane 2026-11-16: "How long it is going to say this? It's on each time I open it"). An icon on the
+         iPhone Home Screen opens the new address in a sheet that keeps its own storage, so the confirmation may never come
+         back to the icon's copy: without this it would show the screen and send the set on every launch. Not when a set has
+         just arrived here from github.io (#osap-carried=), which this address must still hand on, or after ?osap-stay=1. */
+      var app = standalone(), fresh = /^#osap-carried=/.test(H);
+      var settled = !nx && !fresh && !lsGet("osap-carry-stayed") && !!(lsGet("osap-carry-done") || (app && lsGet("osap-carry-tried")));
+      var next = function () {
+        if (settled) { W.OSAP_CARRY.state = "moved"; halt(); plainMove(); return; }
+        if (app) lsSet("osap-carry-tried", String(Date.now()));
+        W.OSAP_CARRY.state = "sending";
+        send(nx ? { id: nx[1], i: +nx[2] } : null);
+      };
+      /* a Home Screen icon of an old address: say once how to replace it with the new address, then carry on */
+      if (app && !nx && !lsGet("osap-carry-icon")) {
+        W.OSAP_CARRY.state = "icon";
+        screen("OSAP has a new address: " + TO.replace(/^https:\/\/|\/$/g, "") + ". This Home Screen icon still opens the old one, so it goes through an extra step each time. To fix it, open the new address in Safari, tap Share, then Add to Home Screen, and delete this old icon. Your saved work comes with you when you continue.",
+          [["Continue", function () { lsSet("osap-carry-icon", "1"); next(); }, true]]);
+        return;
+      }
+      next();
       return;
     }
 

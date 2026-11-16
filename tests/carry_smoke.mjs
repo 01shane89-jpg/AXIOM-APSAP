@@ -11,6 +11,7 @@
 //   axiom-osap.netlify.app (its page names the new address), which takes it in and hands all it holds on to
 //   osap.axiom-intelligence-systems.com: everything from both old addresses arrives, each confirmed, and a second visit is the
 //   plain move. A tagged set opened from elsewhere asks first.
+// - A Home Screen icon of an old address: a one-time note on replacing the icon, then later launches move straight on.
 // - The real index.html: the hand-off is the first script, the old move steps aside only when the hand-off runs, and on the
 //   old address the hand-off carries saved work before anything else in the page runs.
 // Run from the repo root: node tests/carry_smoke.mjs   (needs the playwright package and Chromium; BROWSER=webkit runs it in
@@ -230,6 +231,34 @@ const OLD_STORES = {
   ok(/Only do this if you just came from the old OSAP address/.test(await p2.textContent("#carry-msg")), "tagged set from elsewhere: asks first");
   await p2.click("text=No"); await settle(p2, "home");
   ok(!(await ls(p2))["osap-atak-pts"], "No: nothing brought in");
+  await ctx.close();
+}
+
+// 10. a Home Screen icon of the old netlify.app address (Shane 2026-11-16: the hand-off screen on every launch): the first
+// launch says once how to replace the icon, then carries; later launches go straight to the new address with no hand-off
+// screen, also when the confirmation never came back to the icon's own storage (an iPhone opens the new address in a sheet)
+{
+  const { ctx, hits } = await ctxNew(false, true);
+  await ctx.addInitScript((NEW) => { if (location.href.startsWith(NEW)) Object.defineProperty(navigator, "standalone", { get: () => true }); }, NEW);
+  const p = await ctx.newPage(); const errs = []; p.on("pageerror", (e) => errs.push(e.message));
+  await seed(p, NEW, { "osap-atak-pts": J([{ id: "i1", lat: 1, lon: 1, name: "Made in the icon" }]) });
+  hits.length = 0;
+  await p.goto(NEW, { waitUntil: "commit" });
+  await p.waitForFunction(() => document.getElementById("carry-msg"), null, { timeout: 15000 });
+  ok(/Add to Home Screen/.test(await p.textContent("#carry-msg")) && /osap\.axiom-intelligence-systems\.com/.test(await p.textContent("#carry-msg")), "icon: says once how to replace the icon, with the new address");
+  await p.click("#carry-btns button"); await settle(p, "home", 60000);
+  ok(P((await ls(p))["osap-atak-pts"] || "[]")[0]?.id === "i1", "icon: saved work carried after Continue");
+  // the confirmation lost (as in the iPhone's sheet): only the icon's "tried" mark is left
+  await p.goto(NEW + "assets/osap-carry.js");
+  const marks = await p.evaluate(() => { const o = { icon: localStorage.getItem("osap-carry-icon"), tried: localStorage.getItem("osap-carry-tried") }; localStorage.removeItem("osap-carry-done"); localStorage.removeItem("osap-carry-stayed"); return o; });
+  ok(marks.icon === "1" && /^\d+$/.test(marks.tried || ""), "icon: note shown once and the attempt remembered", marks);
+  hits.length = 0;
+  const seen = []; await p.exposeFunction("sawScreen", (t) => seen.push(t));
+  await ctx.addInitScript(() => { new MutationObserver(() => { const m = document.getElementById("carry-msg"); if (m) window.sawScreen(m.textContent); }).observe(document, { childList: true, subtree: true }); });
+  await p.goto(NEW + "?c=mm#mm/map"); await settle(p, "home");
+  ok(hits.join("|") === "new ?c=mm|home ?c=mm&from=pages" && await p.evaluate(() => location.href) === HOME + "?c=mm&from=pages#mm/map", "icon, next launch: straight to the new address, view kept", hits);
+  ok(!seen.length, "icon, next launch: no hand-off screen", seen);
+  ok(!errs.length, "icon: no page errors", errs);
   await ctx.close();
 }
 
