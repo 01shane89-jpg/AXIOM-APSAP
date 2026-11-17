@@ -235,6 +235,7 @@ tests/boolq_smoke.mjs
 tests/grade_smoke.mjs
 # news pictures: outlet picture on Today Top stories and the News tab (violent stories too), phone fit
 tests/news_thumbs_smoke.mjs
+tests/reader_smoke.mjs
 # phone sheet width: UCDP event table (automatic conflict tabs) and the weather/hazards Region picker fit 390 px
 tests/phone_rail_overflow_smoke.mjs
 # disaster alerts: page reads only the GDACS snapshot (API changed), World sends no made-up air-quality request
