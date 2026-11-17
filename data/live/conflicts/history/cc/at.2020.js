@@ -1,0 +1,1 @@
+(window.OSAP_CF_HIST=window.OSAP_CF_HIST||{})["cc/at.2020"]={"id":"cc/at","from":"2020","to":"2020","release":"26.1","sha256":"6c68bb4376190b5af1fbcd1dfdd2a2c7fb9c44c99edfaab5e9c3bd1c9096a615","sides":["IS","Civilians"],"adm":["Vienna bundesland"],"rows":[["364836","2020-11-02","",48.2083,16.3737,3,4,4,4,4,0,1,"Vienna, Austria",0,1,0]]};

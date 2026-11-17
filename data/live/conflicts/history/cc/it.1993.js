@@ -1,0 +1,1 @@
+(window.OSAP_CF_HIST=window.OSAP_CF_HIST||{})["cc/it.1993"]={"id":"cc/it","from":"1993","to":"1993","release":"26.1","sha256":"81fe12313c35221912fb682b4f22e18cd36f8dc9def2e29a4e576e68ae4a1286","sides":["Government of Iran","MEK"],"adm":["Lazio region"],"rows":[["115845","1993-03-16","",41.9,12.5,1,0,0,1,0,0,1,"Rome",0,1,0]]};
