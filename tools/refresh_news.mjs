@@ -7,7 +7,8 @@ import fs from "node:fs";
 import { translateAll, saveCache, seed } from "./translate.mjs";
 import { updateHistory, storedTranslations } from "./history.mjs";
 import { parseFeed, parseList } from "./feedparse.mjs";
-import { loadPics, savePics, fillPics } from "./news_pics.mjs";
+import { loadPics, savePics, fillPics, readPage } from "./news_pics.mjs";
+import { loadDates, saveDates, fillPageDates, indexSearchRows } from "./news_pagedate.mjs";
 import { ADAPTERS } from "./news_adapters.mjs";
 import { getFeed, robotsAllow, unwrap } from "./news_fetch.mjs";
 import { loadRelevance, itemRelevance, kept, preTranslation } from "./topics_lib.mjs";
@@ -16,7 +17,7 @@ import { COUNTRIES, ccsInText } from "./geo_cc.mjs";
 import { splitByCountry } from "./split_country.mjs";
 import { stripOutletText } from "./outlet_text.mjs";
 import { dedupeStories } from "./news_dedupe.mjs";
-import { itemDate } from "./news_date.mjs";
+import { itemDate, bingDate, isBing } from "./news_date.mjs";
 import { US_STATES, stateQuery } from "./us_states.mjs";
 
 const TIMEOUT = 30000, PER_AREA = 40, PER_STATE = 60, GDELT_GAP = Number(process.env.GDELT_GAP_MS || 12000);
@@ -102,11 +103,12 @@ async function readFeed(f) {
       if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via Bing News search)"; } catch (e) {} }
       // a search returns outlets in any language: a non-Latin headline from an English query is left for the model to detect
       const lang = f.search && /^en\b/.test(f.lang) && /[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F]/.test(i.title) ? "" : f.lang;
-      const { date, seen } = itemDate(i.date, f, seenAt.get(link));
+      const { date, seen } = itemDate(isBing(f.url) ? bingDate(i.date) : i.date, f, seenAt.get(link));   // Bing: Pacific time labelled GMT
       const o = { title: i.title, summary: i.summary.slice(0, 280), date, link, outlet, lang, via: f.search ? "search" : f.html ? "web page" : "RSS", state: !!f.state };
       // the picture the outlet's own feed offers for the item (media:thumbnail, media:content, an image enclosure): its link only
       if (i.image) o.img = i.image;
       if (seen) o.date_seen = true;          // the outlet gives no date: this is when OSAP first saw it
+      else if (isBing(f.url)) o.date_src = "bing";   // Bing's time read as Pacific time (tools/news_date.mjs)
       if (f.nc) o.nc = true;
       if (f.relevance === "exempt") o.exempt = true;   // every item kept by the relevance check
       if (f.tier) o.tier = f.tier;          // official, national, regional, local-language or specialist (tools/news_feeds.json)
@@ -219,6 +221,19 @@ for (const cc of Object.keys(items)) {
   // one copy per story (tools/news_dedupe.mjs): the same article under another link, or the same headline within 3 days
   items[cc] = dedupeStories(items[cc].sort((a, b) => (b.date > a.date ? 1 : -1)))
     .filter((i, k) => k < share(cc) || (i.tier === "official" && extra++ < OFFICIAL_EXTRA));
+}
+// Search results: the article page's own publication time replaces Bing's (tools/news_pagedate.mjs), read once a link and
+// remembered (data/live/news-dates.json); the same page read gives the picture below. Lists are re-sorted on the new times.
+const PAGE_DATE_MAX = Number(process.env.PAGE_DATE_MAX || 300);
+{
+  const t1 = Date.now(), cache = loadDates(), flat = Object.values(items).flat();
+  const r = await fillPageDates(flat, cache, PAGE_DATE_MAX, readPage);
+  // what is left of the budget goes to search rows the index already holds (the last 2 days), which tools/news_index.mjs
+  // re-dates from this cache: reports listed before 2026-11-17 with Bing's time get their page's time over the next runs
+  const old = PAGE_DATE_MAX > r.read ? await fillPageDates(indexSearchRows(2), cache, PAGE_DATE_MAX - r.read, readPage) : { read: 0, found: 0 };
+  console.log("pages of search results already in the index:", old.found, "dated of", old.read, "read");
+  for (const cc of Object.keys(items)) items[cc].sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
+  console.log("search results dated from their pages:", r.moved, "moved (" + r.cached, "cached,", r.found, "found of", r.read, "pages read); cache", saveDates(cache), "links; timing", took(t1));
 }
 // Outlets whose feed carries no picture: the article page's own og:image (tools/news_pics.mjs), kept as a link. A page is read
 // once and remembered (data/live/news-pics.json), so the 400 reads a run go to new stories, newest first.

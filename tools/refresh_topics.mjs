@@ -7,6 +7,9 @@
 // A failed search or feed keeps its earlier results. Exit code 0 unless tools/topics.json is unreadable.
 import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
+import { bingDate, fixBingDate } from "./news_date.mjs";
+import { loadDates, saveDates, fillPageDates } from "./news_pagedate.mjs";
+import { readPage } from "./news_pics.mjs";
 import { getFeed, robotsAllow, unwrap } from "./news_fetch.mjs";
 import { COUNTRIES } from "./geo_cc.mjs";
 import { countriesNamed, compileTopics, topicsOf, compileRelevance, relevance } from "./topics_lib.mjs";
@@ -22,7 +25,7 @@ const REL = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", 
 
 let prev = { items: [] };
 try { const t = fs.readFileSync(OUT, "utf8"); prev = JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;$/, "")); } catch (e) {}
-const byLink = new Map((prev.items || []).map((i) => [i.link, i]));
+const byLink = new Map((prev.items || []).map((i) => [i.link, fixBingDate(i)]));   // Bing times stored before 2026-11-17
 const status = [];
 // a search engine (or a trade feed) also returns loosely related stories: keep only those that contain one of the data
 // set's own words, name one of its countries when it has any, and pass the relevance check (sport, celebrity, lifestyle)
@@ -77,12 +80,18 @@ for (const t of topics || []) {
         // a story a specialist feed already gave keeps that (commercial) source and only gains the data set
         const had = byLink.get(link);
         if (had && !had.nc) { had.topics = [...new Set([...had.topics, t.id])]; n++; continue; }
-        const o = record(t, i, link, outlet, { via: "search", nc: true });
+        // Bing writes US Pacific time labelled GMT (tools/news_date.mjs bingDate)
+        const o = record(t, { ...i, date: bingDate(i.date) }, link, outlet, { via: "search", nc: true, date_src: "bing" });
         byLink.set(link, o); n++;
       }
       status.push({ topic: t.id, q, ok: true, n, off });
     } catch (e) { status.push({ topic: t.id, q, ok: false, error: e.name === "AbortError" ? "timed out" : e.message }); }
   }
+}
+// a search result's own page gives its publication time (tools/news_pagedate.mjs; the cache is shared with the news step)
+{
+  const cache = loadDates(), r = await fillPageDates([...byLink.values()], cache, Number(process.env.PAGE_DATE_MAX || 150), readPage);
+  console.log("search results dated from their pages:", r.moved, "moved (" + r.cached, "cached,", r.found, "found of", r.read, "pages read); cache", saveDates(cache), "links");
 }
 const cutoff = new Date(Date.now() - KEEP_DAYS * 864e5).toISOString().slice(0, 16), count = {};
 // an old story the search listed with a fresh date (its link or its own text dates it earlier) is left out
