@@ -560,7 +560,7 @@ select.mini{
 #ml-ds .dsxname{cursor:pointer}#ml-ds .dsxname::after{content:none}#ml-ds .dsxname i{display:block;font-size:11.5px;color:var(--muted);opacity:1;font-weight:400}#ml-ds .dsxop{margin:2px 0 6px 40px}#ml-ds .dsall-rep{width:100%;min-height:38px;border:1px solid var(--line)}
 html:not(.phone) .shell.rv-split #tl-list,html:not(.phone) .shell.rv-list #tl-list{display:none}
 .dshint{position:absolute;top:10px;left:56px;z-index:800;display:flex;gap:8px;align-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:4px 6px 4px 10px;font-size:13px;line-height:1.25;max-width:calc(100% - 180px)}
-.dshint span{overflow:hidden;text-overflow:ellipsis}.dshint button{font:inherit;font-weight:600;white-space:nowrap;background:var(--accent);color:var(--on-accent);border:0;border-radius:4px;padding:4px 8px;cursor:pointer;flex:none}
+.dshint span{overflow:hidden;text-overflow:ellipsis}.dshint .dsx{background:none;color:var(--muted);font-size:18px;line-height:1;padding:2px 6px;min-width:28px}.dshint button{font:inherit;font-weight:600;white-space:nowrap;background:var(--accent);color:var(--on-accent);border:0;border-radius:4px;padding:4px 8px;cursor:pointer;flex:none}
 .osap-hs{mix-blend-mode:multiply}
 .mlop{display:flex;gap:8px;align-items:center;margin-top:8px}.mlop input{flex:1;min-width:0}.mlop output{width:3em;text-align:right;color:var(--muted)}
 .leaflet-bar{box-shadow:var(--shadow)!important;border:none!important}
@@ -7036,7 +7036,15 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (window.OSAP_LEGEND && window.OSAP_LEGEND.refresh) window.OSAP_LEGEND.refresh();
     var list = dsList(), l = LBY[current];
     var mine = l && list.some(function (x) { return x.id === current; });
+    /* All reports (Timeline) with no data set ticked draws nothing on the map while its list holds hundreds of reports, and a first
+       open looked broken (design review, 17 Nov 2026). Data sets stay unticked until the user ticks one; the note only says so and
+       opens the data sets list (Overlays > Data sets in the toolbar, assets/osap-atak.js [data-dspick]; else the Layers menu).
+       It goes once a set is ticked, or for this tab once Clear map is pressed or the note is closed. */
+    var DX0 = window.OSAP_DISASTERX, none = current === "timeline" && !scoped() && !list.some(function (x) { return DS[x.id]; }) && !dsCfOn().length &&
+      !(DX0 ? DX0.list() : []).some(function (x) { return x.on; }) && !dsExtra().some(function (x) { return x.on(); }) && R.length > 0;
     if (mine && !DS[current] && dsHintGone !== current) dsHint.innerHTML = "<span>" + esc(l.name) + ' is not on the map</span><button type="button" data-dsshow="' + esc(current) + '">Show on map</button>';
+    else if (none && dsHintGone !== current) dsHint.innerHTML = '<span>No data sets on the map yet</span><button type="button" data-dspick="1">Choose data sets</button>' +
+      '<button type="button" class="dsx" data-dsgone="1" aria-label="Close this note">&times;</button>';
     else dsHint.innerHTML = "";
     dsHint.hidden = !dsHint.innerHTML || document.documentElement.hasAttribute("data-cf");
     var pan = document.getElementById("ml-panel"); if (!pan) return;
@@ -7169,6 +7177,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   dsHint.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("button"); if (!b) return;
     if (b.getAttribute("data-dsshow")) dsSet(b.getAttribute("data-dsshow"), true);
+    else if (b.getAttribute("data-dsgone")) { dsHintGone = current; dsUi(); }
     else { var mb = document.querySelector(".mlctl .mlbtn"); if (mb && mb.getAttribute("aria-expanded") !== "true") mb.click(); }
   });
   document.addEventListener("osap:period", function () { dsStamp++; dsSync(); });

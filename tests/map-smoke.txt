@@ -244,3 +244,5 @@ tests/gdacs_hazards_smoke.mjs
 tests/related_match_smoke.mjs
 # daily summary: citations the AI repeats inside a sentence ("(1,2,3)", "(Outlet, ISO time)") are dropped; source links stay
 tests/daily_cites_smoke.mjs
+# map: All reports with no data set ticked says "No data sets on the map yet" and opens the data sets list; clear of the north arrow on a phone
+tests/empty_map_hint_smoke.mjs

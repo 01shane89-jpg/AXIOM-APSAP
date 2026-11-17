@@ -312,7 +312,8 @@
   st.textContent =
     /* the tab pickers stay in the page (the app presses them) but are not shown */
     "html.tidy #view-seg,html.tidy #ph-view,html.tidy #hdr-src,html.tidy #country-seg,html.tidy #credits-btn,html.tidy #brief-btn,html.tidy #report-btn,html.tidy #tlrep-btn{display:none!important}" +
-    "html.phone.tidy .dshint{left:8px;top:8px;max-width:calc(100% - 76px)}" +
+    /* right of the north arrow (assets/osap-compass.js, top-left on a phone) and left of the toolbar, so neither covers it */
+    "html.phone.tidy .dshint{left:50px;top:8px;max-width:calc(100% - 134px)}html.phone.tidy .dshint button{min-height:40px}html.phone.tidy .dshint .dsx{min-width:40px}" +
     "html.tidy #hdr-title{cursor:pointer}html.tidy #hdr-title::after{content:' \\25BE';font-size:.7em;color:var(--muted)}" +
     /* no flood line under the header; the list header loses its own read time and refresh */
     "html.tidy #hdr-live{display:none!important}html.tidy .rvhead .rvfresh{display:none!important}" +
