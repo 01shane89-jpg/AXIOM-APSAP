@@ -191,21 +191,23 @@
     ".osplit:not([hidden])>*{height:auto;max-height:50svh!important;box-shadow:0 -4px 18px rgba(0,0,0,.3)!important;border-top:3px solid var(--line,#d5dbe1)!important}}" +
     /* the sheet: a handle bar on top, the window's own box under it, sized by the stop. Doubled classes outweigh the panel
        rules of assets/osap-panels.js, which load later */
+    /* the handle's own buttons are marked !important: windows style every button inside them by id ("#satba button",
+       "#terrain button", "#nimg button"), which outweighed these and boxed the title like a text field (design review, 17 Nov 2026) */
     ".osheet-h{display:none}" +
     ".osheet.osheet-on:not([hidden]){display:flex!important;flex-direction:column!important}" +
     ".osheet.osheet-on:not([hidden])>.osheet-h{display:flex;order:-1;flex:none!important;box-sizing:border-box!important;width:100%!important;max-width:none!important;height:auto!important;max-height:none!important;overflow:visible!important;align-items:center;gap:6px;padding:4px 6px 4px 10px!important;" +
     "pointer-events:auto;background:var(--surface,#fff);color:var(--ink,#111);border-bottom:1px solid var(--line,#d5dbe1)!important;font:13px/1.2 system-ui,-apple-system,sans-serif;position:relative;touch-action:none;user-select:none;-webkit-user-select:none}" +
     ".osheet.osheet-on:not([hidden])>:not(.osheet-h){flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important}" +
     ".osheet.osheet-on[data-osheet=min]:not([hidden])>:not(.osheet-h){display:none!important}" +
-    ".osheet-h .osh-t{flex:1 1 auto;min-width:0;display:flex;align-items:baseline;gap:8px;border:0;background:none;color:inherit;font:inherit;text-align:left;padding:6px 0;cursor:pointer}" +
+    ".osheet-h .osh-t{flex:1 1 auto;min-width:0;display:flex;align-items:baseline;gap:8px;border:0!important;border-radius:0!important;background:none!important;color:inherit!important;font:inherit!important;text-align:left;padding:6px 0!important;min-height:0!important;cursor:pointer}" +
     ".osheet-h .osh-t{overflow:hidden}.osheet-h .osh-t b{white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}.osheet-h .osh-s{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;font-weight:600;color:var(--muted,#56626F)}" +
     ".osheet-h .osh-s.osh-ok{color:#1e7a3a}.osheet-h .osh-s.osh-warning{color:#8a4b00}.osheet-h .osh-s.osh-blocking{color:#b3141a}" +
     ":root[data-map=grey] .osheet-h .osh-s.osh-ok,:root[data-map=dark] .osheet-h .osh-s.osh-ok{color:#7ED69A}:root[data-map=grey] .osheet-h .osh-s.osh-warning,:root[data-map=dark] .osheet-h .osh-s.osh-warning{color:#F5C877}:root[data-map=grey] .osheet-h .osh-s.osh-blocking,:root[data-map=dark] .osheet-h .osh-s.osh-blocking{color:#FF9A9A}" +
     ".osheet-h .osh-b{display:inline-flex;flex:none;border:1px solid var(--line,#c9d0d8);border-radius:6px;overflow:hidden}" +
-    ".osheet-h .osh-b button,.osheet-h .osh-x{font:inherit;font-size:12px;font-weight:600;min-height:32px;min-width:44px;padding:0 8px;border:0;background:var(--surface,#fff);color:var(--ink,#111);cursor:pointer}" +
-    ".osheet-h .osh-b button+button{border-left:1px solid var(--line,#c9d0d8)}" +
-    ".osheet-h .osh-b button[aria-pressed=true]{background:var(--ink,#111);color:var(--surface,#fff)}" +
-    ".osheet-h .osh-x{min-width:36px;border-radius:6px;background:none}" +
+    ".osheet-h .osh-b button,.osheet-h .osh-x{font:inherit!important;font-size:12px!important;font-weight:600!important;min-height:32px!important;min-width:44px;padding:0 8px!important;border:0!important;border-radius:0!important;background:var(--surface,#fff)!important;color:var(--ink,#111)!important;cursor:pointer}" +
+    ".osheet-h .osh-b button+button{border-left:1px solid var(--line,#c9d0d8)!important}" +
+    ".osheet-h .osh-b button[aria-pressed=true]{background:var(--ink,#111)!important;color:var(--surface,#fff)!important}" +
+    ".osheet-h .osh-x{min-width:36px;border-radius:6px!important;background:none!important;font-size:15px!important}" +
     ".osheet-h button:focus-visible{outline:2px solid var(--accent,#2a6fdb);outline-offset:-2px}" +
     /* large screen: Map folds the panel to its handle at the top, Half is the top half of the map's height */
     "@media (min-width:701px){.osheet.osheet.osheet-on[data-osheet=min]:not([hidden]){bottom:auto!important;height:auto!important}" +
@@ -219,7 +221,7 @@
     ".osheet.osheet-on[data-osheet=full]:not([hidden])>.osheet-h{border-radius:0;padding-top:max(12px,env(safe-area-inset-top))!important}" +
     ".osheet.osheet-on:not([hidden])>:not(.osheet-h){border-top:0!important;box-shadow:none!important}" +
     ".osheet-h .osh-grip{position:absolute;left:50%;top:4px;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:var(--line,#b9c1ca)}" +
-    ".osheet-h .osh-t{flex-direction:column;align-items:flex-start;gap:1px;padding:2px 0}.osheet-h .osh-s{max-width:100%}}" +
+    ".osheet-h .osh-t{flex-direction:column;align-items:flex-start;gap:1px;padding:2px 0!important}.osheet-h .osh-s{max-width:100%}}" +
     "@media print{.osheet-h{display:none!important}}";
   D.head.appendChild(css);
   /* on a large screen the panel starts under the page header, level with the top of the map; when it covers the right of the
