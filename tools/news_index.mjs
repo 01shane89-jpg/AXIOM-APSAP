@@ -9,6 +9,10 @@
 import fs from "node:fs";
 import { compileTopics, topicsOf, compileRelevance, itemRelevance } from "./topics_lib.mjs";
 import { dropSuspectMt, mtSuspect } from "./mt_guard.mjs";
+import { fixBingDate, bingDate } from "./news_date.mjs";
+import { loadDates, cachedDate, applyPageDate } from "./news_pagedate.mjs";
+// a search result's publication time from its own page (tools/news_pagedate.mjs; read by the news step), by link
+const PAGE_DATES = loadDates(), NOW = Date.now();
 import { compileViews, viewsOf } from "./view_reports_lib.mjs";
 
 const DAYS = Number(process.env.NEWSIX_DAYS || 30), SUM = Number(process.env.NEWSIX_SUM || 0), OUT = "data/live/news-index.js", DIR = "data/live/news-index";
@@ -30,6 +34,8 @@ const pool = new Map();   // link -> { item, ccs:Set }
 // a stored translation the model invented (tools/mt_guard.mjs) is not used: the row shows the original headline
 function add(i, ccs) {
   if (i && i.mt) { i = { ...i }; dropSuspectMt(i); }
+  if (i && i.via === "search" && !i.date_src) i = fixBingDate({ ...i });   // a Bing time stored before 2026-11-17 (tools/news_date.mjs)
+  if (i && i.via === "search" && i.date_src !== "page") { const pd = cachedDate(PAGE_DATES, i.link); if (pd) { i = { ...i }; applyPageDate(i, pd, NOW); } }
   if (!i || !i.link || !/^https?:\/\//.test(i.link) || !(i.title || i.title_en)) return;
   const d = i.date || (i.first_seen || "").replace(" ", "T").replace(/Z$/, "");
   if (!d || d < cutoff) return;
@@ -62,7 +68,8 @@ const rows = [...pool.values()].sort((a, b) => (b.i.date > a.i.date ? 1 : b.i.da
   // headline only (English and original): a summary often names side topics, which would list the story under the wrong tab
   const vw = viewsOf(V, en + " \n " + orig, [...ccs], ids);
   vw.forEach((id) => (vcount[id] = (vcount[id] || 0) + 1));
-  const flags = (i.via === "search" ? "s" : "") + (i.nc ? "n" : "") + (i.state ? "g" : "") + (i.mt && i.mt !== "untranslated" ? "m" : "");
+  // t: the time is the outlet's (a search result read as Pacific time or dated from its page), so a carried row is not moved again
+  const flags = (i.via === "search" ? "s" : "") + (i.nc ? "n" : "") + (i.state ? "g" : "") + (i.mt && i.mt !== "untranslated" ? "m" : "") + (i.date_src ? "t" : "");
   return [[...ccs].join(","), i.date, clip(en, 300), clip(orig, 300), clip(i.outlet, 80), i.link, sum, flags, ids.join(","), vw.join(",")];
 }).filter(Boolean);
 console.log(`relevance: kept ${(relN.strong || 0) + (relN.keep || 0) + (relN.unchecked || 0)} (${relN.strong || 0} on a security or disaster word, ${relN.unchecked || 0} untranslated and unchecked), left out ${(relN.drop || 0) + (relN.none || 0)} ` +
@@ -77,7 +84,7 @@ if (process.env.NEWSIX_DROPPED) fs.writeFileSync(process.env.NEWSIX_DROPPED, JSO
 // also clears the days Story coverage and news search already read. Rows that rolled off are not rechecked: their summary,
 // which may be what kept them, is gone.
 const seen = new Set(rows.map((r) => r[5]));
-let carried = 0, recheck = 0, mtDropped = 0;
+let carried = 0, recheck = 0, mtDropped = 0, redated = 0;
 try {
   for (const f of fs.readdirSync(DIR)) {
     if (!/^\d{4}-\d{2}-\d{2}\.js$/.test(f) || f.slice(0, 10) < cutoff.slice(0, 10)) continue;
@@ -89,6 +96,10 @@ try {
       // 1,600 stored rows carried a casualty count or a death the original does not give, "Kill 10" for a German report of a
       // drone attack among them, kept from before the guard caught them)
       if (/m/.test(r[7] || "") && r[3] && mtSuspect(r[3], r[2])) { r = [...r]; r[2] = r[3]; r[3] = ""; r[7] = String(r[7]).replace(/m/g, ""); mtDropped++; }
+      // a carried Bing search row written before 2026-11-17 still has Bing's Pacific time labelled GMT: moved once, then marked t
+      if (/s/.test(r[7] || "") && !/t/.test(r[7] || "") && /Bing/.test(r[4] || "")) { const d = bingDate(r[1] + ":00Z"); if (d) { r = [...r]; r[1] = d.slice(0, 16); r[7] = String(r[7] || "") + "t"; redated++; } }
+      // and its page's own time, once the news step has read it
+      if (/s/.test(r[7] || "")) { const pd = cachedDate(PAGE_DATES, r[5]), o = { date: r[1] }; if (pd && applyPageDate(o, pd, NOW)) { r = [...r]; r[1] = o.date; if (!/t/.test(r[7])) r[7] += "t"; redated++; } }
       seen.add(r[5]); rows.push(r); carried++;
       String(r[8] || "").split(",").filter(Boolean).forEach((id) => (count[id] = (count[id] || 0) + 1));
       String(r[9] || "").split(",").filter(Boolean).forEach((id) => (vcount[id] = (vcount[id] || 0) + 1));
@@ -96,6 +107,7 @@ try {
   }
 } catch (e) {}
 if (carried) console.log(`carried over ${carried} headlines already in the index whose history copy has rolled off`);
+if (redated) console.log(`search results: ${redated} carried Bing rows moved from Pacific time to UTC`);
 if (mtDropped) console.log(`machine translation: ${mtDropped} carried headlines failed the guard and show their original words`);
 if (recheck) console.log(`relevance: ${recheck} headlines already in the index left out by this run's check`);
 const byDay = {};

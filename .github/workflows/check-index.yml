@@ -81,6 +81,8 @@ jobs:
       - run: node tests/news_pics.test.mjs
       # news item dates: outlets that write local time as UTC, and no item dated in the future (tools/news_date.mjs)
       - run: node tests/news_date.test.mjs
+      # search result times: Bing writes Pacific time labelled GMT; article pages give their own time (tools/news_pagedate.mjs)
+      - run: node tests/search_dates.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/tak.test.mjs
       - run: node tests/milsites.test.mjs

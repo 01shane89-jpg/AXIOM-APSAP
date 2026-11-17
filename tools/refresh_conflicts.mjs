@@ -14,6 +14,7 @@
 // under data/ (probe-out/conflicts.json instead).
 import fs from "node:fs";
 import { parseFeed } from "./feedparse.mjs";
+import { bingDate, isBing } from "./news_date.mjs";
 import { termRe, isSecurity, classify, figure, KILLED, INJURED, sha256, shrink, fcKm2, KIND_NAMES, staleSearchResult } from "./conflict_lib.mjs";
 import { ccsAt } from "./geo_cc.mjs";
 import { zonesFront } from "./front_zones.mjs";
@@ -154,7 +155,8 @@ for (const c of LIST) {
         if (!iso(i.date)) continue;
         let outlet = f.outlet;
         if (f.search) { try { outlet = (i.source || new URL(link).hostname.replace(/^www\./, "")) + " (via Bing News)"; } catch (e) {} }
-        kept.push({ title: i.title, summary: i.summary.slice(0, 300), date: iso(i.date), link, outlet, lang: f.lang, via: f.search ? "search" : f.tg ? "Telegram" : "RSS",
+        // Bing writes US Pacific time labelled GMT (tools/news_date.mjs bingDate)
+        kept.push({ title: i.title, summary: i.summary.slice(0, 300), date: iso(isBing(f.url) ? bingDate(i.date) : i.date), link, outlet, lang: f.lang, via: f.search ? "search" : f.tg ? "Telegram" : "RSS",
           ...(f.side ? { side: f.side } : {}),
           ...(f.state ? { state: true } : {}), ...(f.nc ? { nc: true } : {}), feed: f.id });
       }

@@ -5,12 +5,21 @@
 // picture, so a page is read once rather than every hour: found pictures are kept 30 days, misses 2 days, then read again.
 // Used by tools/refresh_news.mjs (country news) and tools/world_pictures.mjs (the World list).
 import fs from "node:fs";
+import { pageDate } from "./news_pagedate.mjs";
 
 export const PICS = process.env.NEWS_PICS || "data/live/news-pics.json";
 const KEEP_HIT = 30, KEEP_MISS = 2, MAX = 40000;
 export const okPic = (u) => typeof u === "string" && /^https:\/\/[^\s<>"']{8,600}$/i.test(u);
 
-export async function ogImage(url) {
+// What an article page's head gives (its first 96 KB, up to </head>): { img, date } (date: tools/news_pagedate.mjs pageDate),
+// or empty strings when it cannot be read. One read per link a run, shared by the picture and the publication date; only the
+// two short answers are kept, never the page.
+const pages = new Map();
+export function readPage(url) {
+  if (!pages.has(url)) pages.set(url, fetchHead(url).then((html) => ({ img: pageImage(html), date: pageDate(html) })));
+  return pages.get(url);
+}
+async function fetchHead(url) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 8000);
   try {
     const r = await fetch(url, { signal: ctl.signal, redirect: "follow", headers: { "user-agent": "Mozilla/5.0 (AXIOM-ASAP hourly refresh)", accept: "text/html" } });
@@ -18,9 +27,10 @@ export async function ogImage(url) {
     const rd = r.body.getReader(), dec = new TextDecoder(); let html = "", n = 0;
     while (n < 98304) { const { done, value } = await rd.read(); if (done) break; n += value.length; html += dec.decode(value, { stream: true }); if (/<\/head>/i.test(html)) break; }
     try { await rd.cancel(); } catch (e) {}
-    return pageImage(html);
+    return html;
   } catch (e) { return ""; } finally { clearTimeout(t); }
 }
+export async function ogImage(url) { return (await readPage(url)).img; }
 // the og:image (or twitter:image) a page's head names, in either attribute order, https only
 export function pageImage(html) {
   const m = String(html).match(/<meta[^>]+(?:property|name)=["'](?:og:image(?::secure_url|:url)?|twitter:image(?::src)?)["'][^>]*content=["']([^"']+)["']/i) ||

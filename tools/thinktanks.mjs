@@ -13,6 +13,7 @@ import path from "node:path";
 import { rssItems, feed, run, ageDays } from "./dense_lib.mjs";
 import { ccsInText, ccFromA2, withOki } from "./geo_cc.mjs";
 import { robotsAllow, unwrap } from "./news_fetch.mjs";
+import { bingDate } from "./news_date.mjs";
 
 const TT = [
   // id, institute, home page, candidate feed addresses
@@ -309,7 +310,7 @@ function fromSearch(g, home) {
   const job = searchChain.then(async () => {
     if (!(await robotsAllow(url))) throw new Error("robots.txt does not allow the search");
     const t = await g(url, "text", { timeout: 20e3 });
-    const es = rssItems(t).map((x) => ({ ...x, link: unwrap(x.link), date: fixDate(x.date) }))
+    const es = rssItems(t).map((x) => ({ ...x, link: unwrap(x.link), date: bingDate(x.date) }))   // Bing: Pacific time labelled GMT (tools/news_date.mjs)
       .filter((x) => { try { return x.title && (new URL(x.link).hostname.replace(/^www\./, "") === host || new URL(x.link).hostname.endsWith("." + host)) && (!x.date || ageDays(x.date) <= 60); } catch (e) { return false; } });
     if (!es.length) throw new Error("no recent results on " + host);
     return es;
