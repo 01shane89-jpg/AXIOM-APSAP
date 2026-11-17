@@ -467,8 +467,9 @@ html.phone .lgctl{max-width:calc(100vw - 80px)}html.phone .lgctl .lgbody{max-hei
 .warn .th{display:block;margin-top:4px;font-size:11px;color:var(--muted);line-height:1.4}
 details>summary{cursor:pointer;font-size:11.5px;color:var(--muted);list-style:none}
 details>summary::-webkit-details-marker{display:none}
-details>summary::before{content:"\25B8 ";display:inline-block;transition:transform .15s}
-details[open]>summary::before{content:"\25BE "}
+/* the arrow is an inline-block, where a trailing space in content collapses: the gap is a margin ("▸Newest headlines" ran together) */
+details>summary::before{content:"\25B8";display:inline-block;margin-right:.35em;transition:transform .15s}
+details[open]>summary::before{content:"\25BE"}
 
 .tw{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:12.5px}
