@@ -239,3 +239,5 @@ tests/news_thumbs_smoke.mjs
 tests/phone_rail_overflow_smoke.mjs
 # disaster alerts: page reads only the GDACS snapshot (API changed), World sends no made-up air-quality request
 tests/gdacs_hazards_smoke.mjs
+# choosing a report point or map item centers the map on it, above the phone sheet (Shane 2026-11-08)
+tests/center_click_smoke.mjs
