@@ -65,6 +65,11 @@
 <script src="assets/osap-datagate.js"></script>
 <!-- button feedback: a held button shows it is pressed, and a press that waits on downloads shows a bar (assets/osap-press.js) -->
 <script src="assets/osap-press.js"></script>
+<!-- plan and sign-in (assets/osap-tier.js) reads e-mail links in the address first; then start-up (assets/osap-start.js) sets the address (a fresh open goes to the last country, or World on a new device) before
+     the next script reads it to decide whether Thailand's own files load: read after, a fresh open on World or another country
+     still loaded Thailand's flood files and its live water feed, which then emptied that country's records (17 Nov 2026) -->
+<script src="assets/osap-tier.js"></script>
+<script src="assets/osap-start.js"></script>
 <script>
 /* Data files the page writes in further down instead of plain tags: Thailand's own files only when Thailand opens (no country
    in the address, or #th/…; another country never builds the flood and border views, and switching country reloads the page),
@@ -95,8 +100,6 @@
   };
 })();
 </script>
-<script src="assets/osap-tier.js"></script>
-<script src="assets/osap-start.js"></script>
 <!-- first-run setup and My countries: runs before any other script saves a setting, to tell a new device from an existing user -->
 <script src="assets/osap-mycountries.js"></script>
 <script>
