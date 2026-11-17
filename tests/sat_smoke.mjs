@@ -111,6 +111,10 @@ const AREA = [[50.40, 30.45], [50.50, 30.45], [50.50, 30.60], [50.40, 30.60]];
   await p.waitForFunction(() => window.OSAP_SAT.state().passes > 0, null, { timeout: 15000 });
   const st = await p.evaluate(() => window.OSAP_SAT.state());
   ok(await shown(p, "#satba") && await p.evaluate(() => document.getElementById("satba").classList.contains("osplit")), "window open, docked beside the map (split view)");
+  // the docked window's handle bar keeps its own look: "#satba button" boxed its title like a text field (17 Nov 2026)
+  const hb = await p.evaluate(() => { const cs = (q) => { const e = document.querySelector(q); return e ? getComputedStyle(e) : null; }; const t = cs("#satba .osheet-h .osh-t"), x = cs("#satba .osheet-h .osh-x");
+    return t && x ? { t: t.borderTopWidth + " " + t.backgroundColor, x: x.borderTopWidth + " " + x.backgroundColor } : null; });
+  ok(hb && /^0px rgba\(0, 0, 0, 0\)$/.test(hb.t) && /^0px rgba\(0, 0, 0, 0\)$/.test(hb.x), "handle bar title and close have no box from the window's button style " + JSON.stringify(hb));
   ok(st.src === "Drawn area" && log.stac.length === 1 && /bbox=30\.45,50\.4,30\.6,50\.5&datetime=/.test(log.stac[0]) && /collections=sentinel-2-l2a/.test(log.stac[0]), "Earth Search asked for the drawn area's bbox: " + log.stac[0]);
   ok(st.passes === 5 && st.after === "S2B_" + iso(5).slice(0, 10) && st.before === "S2B_" + iso(34).slice(0, 10), "defaults: newest clear pass after, clear pass ~30 days earlier before (" + st.before + " / " + st.after + ")");
   const rows = await p.$$eval("#satba tbody tr", (t) => t.map((r) => r.textContent));
