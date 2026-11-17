@@ -66,6 +66,14 @@ jobs:
         run: node tools/conflict_extras.mjs
         timeout-minutes: 4
         continue-on-error: true
+      # Sensor check (tools/refresh_sensors.mjs, rules tools/sensor_lib.mjs "sensor-v1"): NASA FIRMS VIIRS heat detections near
+      # each strike report, in place and time, shown beside the report as "may relate", never as a confirmation. FIRMS is read
+      # at most every 3 hours (open files, no key); the other runs pair new reports with the detections already kept.
+      - name: Pair strike reports with satellite heat
+        if: ${{ inputs.only != 'probe-conflicts' && inputs.only != 'history' && inputs.only != 'sites' && inputs.only != 'probe-sites' }}
+        run: node tools/refresh_sensors.mjs
+        timeout-minutes: 6
+        continue-on-error: true
       # Military sites (tools/refresh_mil_sites.mjs): bases, airfields, naval bases and depots from Wikidata and OpenStreetMap,
       # re-read weekly, and every run the conflict's reports that name one. Reads the reports written above.
       - name: Refresh the military sites
