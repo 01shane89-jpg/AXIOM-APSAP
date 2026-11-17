@@ -1,8 +1,8 @@
 // Headless check that choosing an item centers the map on it (Shane 2026-11-08: "when i click on an item it doesnt center the map
 // on that item"). Before: a click on a report's map point opened the report but left the map where it was; pop-up items only nudged
 // into view. Checks: on a desktop, a real mouse click on a report point off to the side brings it to the middle of the map (zoom
-// kept); on a phone, a tap brings it to the middle of the map above the bottom sheet; while a map tool waits for a tap (crosshair
-// cursor), opening a pop-up does not move the map. External hosts are blocked. Run from the repo root: node tests/center_click_smoke.mjs
+// kept); on a phone, a tap brings it to the middle of the map above the bottom sheet; a pop-up opened by code (a list row, a tool)
+// does not move the map, and neither does a click while a map tool waits for a tap (crosshair cursor). External hosts are blocked. Run from the repo root: node tests/center_click_smoke.mjs
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
@@ -55,12 +55,17 @@ const where = () => { const c = __asapMap.latLngToContainerPoint(window.__cc.get
     ok(Math.abs(w.x - s.mid[0]) < 6 && Math.abs(w.y - s.mid[1]) < 6, `desktop: the clicked point is now in the middle of the map (${Math.round(w.x)},${Math.round(w.y)} vs ${s.mid})`);
     ok(w.zoom === s.zoom, `desktop: the zoom stayed ${s.zoom} (now ${w.zoom})`);
     ok(await p.evaluate(() => !document.getElementById("tl-pkg").hidden), "desktop: the report opened too");
-    /* a tool waiting for a tap: a pop-up opening does not move the map */
-    const before = await p.evaluate(() => { const c = __asapMap.getCenter(); __asapMap.getContainer().style.cursor = "crosshair";
-      const sz = __asapMap.getSize(), ll = __asapMap.containerPointToLatLng([sz.x / 2 + 150, sz.y / 2 + 60]); const mk = L.circleMarker(ll, { radius: 5 }).addTo(__asapMap).bindPopup("tool note", { autoPan: false }).openPopup(); window.__tmp = mk; return [c.lat, c.lng]; });
+    /* a pop-up a tool opens itself (a list row, a script) is placed by that tool: the map does not move */
+    const c0 = await p.evaluate(() => { const c = __asapMap.getCenter(), sz = __asapMap.getSize(), ll = __asapMap.containerPointToLatLng([sz.x / 2 + 150, sz.y / 2 + 60]);
+      window.__tmp = L.circleMarker(ll, { radius: 8 }).addTo(__asapMap).bindPopup("tool note", { autoPan: false }); window.__tmp.openPopup(); return [c.lat, c.lng]; });
     await p.waitForTimeout(900);
-    const after = await p.evaluate(() => { const c = __asapMap.getCenter(); __asapMap.removeLayer(window.__tmp); __asapMap.getContainer().style.cursor = ""; return [c.lat, c.lng]; });
-    ok(Math.abs(after[0] - before[0]) < 0.02 && Math.abs(after[1] - before[1]) < 0.02, "desktop: with a map tool armed (crosshair), a pop-up does not move the map");
+    const c1 = await p.evaluate(() => { const c = __asapMap.getCenter(); __asapMap.closePopup(); return [c.lat, c.lng]; });
+    ok(Math.abs(c1[0] - c0[0]) < 0.02 && Math.abs(c1[1] - c0[1]) < 0.02, "desktop: a pop-up opened by code, not a tap on the map, does not move the map");
+    /* a map tool waiting for a tap (crosshair): a real click on an item does not move the map */
+    const q = await p.evaluate(() => { const mr = __asapMap.getContainer().getBoundingClientRect(), pt = __asapMap.latLngToContainerPoint(window.__tmp.getLatLng()); __asapMap.getContainer().style.cursor = "crosshair"; const c = __asapMap.getCenter(); return { x: pt.x + mr.left, y: pt.y + mr.top, c: [c.lat, c.lng] }; });
+    await p.mouse.click(q.x, q.y); await p.waitForTimeout(900);
+    const c2 = await p.evaluate(() => { const c = __asapMap.getCenter(), open = !!document.querySelector(".leaflet-popup"); __asapMap.removeLayer(window.__tmp); __asapMap.getContainer().style.cursor = ""; return { c: [c.lat, c.lng], open }; });
+    ok(Math.abs(c2.c[0] - q.c[0]) < 0.02 && Math.abs(c2.c[1] - q.c[1]) < 0.02, "desktop: with a map tool armed (crosshair), clicking an item does not move the map");
   }
   ok(!errors.length, "desktop: no page errors" + (errors.length ? ": " + errors[0] : ""));
   await ctx.close();
