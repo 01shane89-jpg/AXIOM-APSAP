@@ -18,6 +18,14 @@
   "use strict";
   var D = document, W = window, CC = "", NAME = "", el = null, sel = 0, state = 0, kevOpen = null;
   var FROM = { conflict: "Conflict tab", flashpoint: "Flashpoint", warning: "Official warning", advisory: "Government advisory", brief: "Country brief", ai: "AI generated" };
+  /* AI lines sometimes repeat their citations in the sentence, "(1,2,3)" or "(The Nation Thailand, 2026-11-16T11:28)", next to the
+     numbered source links the page already shows. The same rule as tools/daily_lib.mjs stripInlineCites: only a parenthesis made
+     wholly of source numbers or of "outlet, ISO time" pairs, closing a clause, is dropped; other bracketed words stay. */
+  function ct(t) {
+    return String(t == null ? "" : t).replace(/\s*\(\s*\d{1,3}(?:\s*[,;]\s*\d{1,3})*\s*\)(?=\s*[.;,:]|\s*$)/g, "")
+      .replace(/\s*\((?:[^();]{1,80}?,\s*\d{4}-\d\d-\d\dT\d\d:\d\dZ?\s*;?\s*)+\)(?=\s*[.;,:]|\s*$)/g, "")
+      .replace(/\s+([.,;:])/g, "$1").replace(/\s{2,}/g, " ").trim();
+  }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function safeUrl(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
   function when(s, date) {
@@ -120,9 +128,10 @@
       var f = FROM[w.from] || "", extra = w.from === "brief" && w.asof ? " (" + w.asof + ", AI draft)" : "", go = watchGo(w), open = go === "list" && openW[i];
       var lab = w.from === "ai" ? '<span class="aitag" tabindex="0" title="' + esc(d.label || "Draft, AI-generated, not analyst-approved") + '">AI generated</span> '
         : f ? '<span class="dlfrom">' + esc(f + extra) + "</span>" : "";
-      if (!go) return "<li>" + lab + esc(w.text) + refs(w.refs, d) + "</li>";
+      var wt = w.from === "ai" ? ct(w.text) : w.text;
+      if (!go) return "<li>" + lab + esc(wt) + refs(w.refs, d) + "</li>";
       return '<li class="dlwgo' + (open ? " open" : "") + '"><button type="button" class="dlwbtn" data-dlw="' + i + '" title="' + GO_HINT[go] + '"' + (go === "list" ? ' aria-expanded="' + !!open + '"' : "") + ">" +
-        lab.replace(' tabindex="0"', "") + esc(w.text) + '<span class="dlwarr" aria-hidden="true">' + (go === "list" ? (open ? "▾" : "▸") : go === "url" ? "↗" : "›") + "</span></button>" +
+        lab.replace(' tabindex="0"', "") + esc(wt) + '<span class="dlwarr" aria-hidden="true">' + (go === "list" ? (open ? "▾" : "▸") : go === "url" ? "↗" : "›") + "</span></button>" +
         (go === "list" ? "" : refs(w.refs, d)) + (open ? watchReports(w, d) : "") + "</li>";
     }).join("");
   }
@@ -156,7 +165,7 @@
     el.hidden = false;
     var b = d.basis || {}, ai = d.method === "ai";
     var h = '<div class="dlhead"><h2>Daily summary</h2>' + tag(d) + '<span class="dlsub">' + esc(d.window.hours) + " hours to " + esc(when(d.window.to)) + "</span></div>";
-    if ((d.bluf || []).length) h += '<div class="dlbluf"><p class="dllbl">' + (ai ? "BLUF" : "Top lines") + "</p>" + d.bluf.map(function (s) { return "<p>" + esc(s.text) + refs(s.refs, d) + "</p>"; }).join("") + "</div>";
+    if ((d.bluf || []).length) h += '<div class="dlbluf"><p class="dllbl">' + (ai ? "BLUF" : "Top lines") + "</p>" + d.bluf.map(function (s) { return "<p>" + esc(ct(s.text)) + refs(s.refs, d) + "</p>"; }).join("") + "</div>";
     /* key events open beside What to watch on a wide screen; on a phone they fold away, as Top stories just below already lists
        the same headlines. Print keeps them in full. An open or fold by the user holds across redraws. */
     var nev = (d.events || []).length;
@@ -180,10 +189,10 @@
     p.innerHTML = "<h1>" + esc(d.name) + ": daily brief</h1>" +
       '<p class="pm">AXIOM OSAP · ' + esc(d.window.hours) + " hours to " + esc(when(d.window.to)) + " · built " + esc(when(d.made)) + " · printed " + esc(W.OSAP_TIME ? W.OSAP_TIME.dualT(Date.now(), { date: true }) : new Date().toISOString()) +
       " · " + (ai ? esc(d.label || "Draft, AI-generated, not analyst-approved") + " (" + esc(d.model || "") + ")" : "Automatic: built by rules, no AI") + "</p>" +
-      ((d.bluf || []).length ? "<h2>" + (ai ? "BLUF" : "Top lines") + '</h2><div class="bl">' + d.bluf.map(function (s) { return "<p>" + esc(s.text) + cite(s.refs) + "</p>"; }).join("") + "</div>" : "") +
+      ((d.bluf || []).length ? "<h2>" + (ai ? "BLUF" : "Top lines") + '</h2><div class="bl">' + d.bluf.map(function (s) { return "<p>" + esc(ct(s.text)) + cite(s.refs) + "</p>"; }).join("") + "</div>" : "") +
       "<h2>Key events</h2><ol>" + (d.events || []).map(function (e) { return "<li><b>" + esc(e.text) + "</b>" + cite(e.refs) + '<div class="pm">' + (e.where ? esc(e.where) + " · " : "") + esc(e.outlets.join(", ")) + " · " + esc(when(e.when)) + (e.claim ? " · state media or official, a claim" : e.some_state ? " · includes state media" : "") + (e.mt ? " · machine translated" : "") + "</div>" +
         (function (x) { return x ? '<div class="dg">(AI generated digest of [' + x.n + "], draft, not analyst-approved) " + esc(x.g.what) + (x.g.where ? " (" + esc(x.g.where) + ")" : "") + "</div>" : ""; })(digestOf(e, d)) + "</li>"; }).join("") + "</ol>" +
-      "<h2>What to watch</h2><ul>" + (d.ai_watch || []).map(function (w) { return "<li>(AI generated) " + esc(w.text) + cite(w.refs) + "</li>"; }).join("") +
+      "<h2>What to watch</h2><ul>" + (d.ai_watch || []).map(function (w) { return "<li>(AI generated) " + esc(ct(w.text)) + cite(w.refs) + "</li>"; }).join("") +
       (d.watch || []).map(function (w) { return "<li>" + esc((FROM[w.from] ? FROM[w.from] + (w.from === "brief" && w.asof ? " of " + w.asof + ", AI draft" : "") + ": " : "") + w.text) + cite(w.refs) + "</li>"; }).join("") + "</ul>" +
       "<h2>Sources</h2><ol>" + d.refs.map(function (r) { return '<li class="pm">' + esc(r.outlet) + ", " + esc(when(r.date)) + ": " + esc(r.title) + (/g/.test(r.flags || "") ? " (official or state media: a claim)" : "") + (/m/.test(r.flags || "") ? " (machine translated)" : "") + " · " + esc(r.url) + "</li>"; }).join("") + "</ol>" +
       '<p class="pm">From ' + (b.reports || 0) + " reports by " + (b.outlets || 0) + " outlets. Situational awareness only: reports are the sources' claims and are not verified; statements by any government, including figures, are its claims. " +
