@@ -241,3 +241,5 @@ tests/phone_rail_overflow_smoke.mjs
 tests/gdacs_hazards_smoke.mjs
 # a report's Related tab: no social post on one loose shared word, no headline twice from one source (Shane 2026-11-08 "Happy Water")
 tests/related_match_smoke.mjs
+# daily summary: citations the AI repeats inside a sentence ("(1,2,3)", "(Outlet, ISO time)") are dropped; source links stay
+tests/daily_cites_smoke.mjs

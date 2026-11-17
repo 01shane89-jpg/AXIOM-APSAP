@@ -76,6 +76,8 @@ jobs:
       - run: node tests/places_areas.test.mjs
       - run: node tests/view_reports.test.mjs
       - run: node tests/sat.test.mjs
+      # daily summary rules (tools/daily_lib.mjs): grouping, AI output checks, citations dropped from inside sentences
+      - run: node tests/daily.test.mjs
       - run: node tests/newimg.test.mjs
       - run: node tests/feedparse_image.test.mjs
       - run: node tests/news_pics.test.mjs

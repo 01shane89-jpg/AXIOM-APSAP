@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { compileRelevance } from "../tools/topics_lib.mjs";
-import { buildRules, buildWorld, validateAi, cluster, softSection, unent, fromRow, fingerprint } from "../tools/daily_lib.mjs";
+import { buildRules, buildWorld, validateAi, stripInlineCites, cluster, softSection, unent, fromRow, fingerprint } from "../tools/daily_lib.mjs";
 
 const R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")));
 const end = Date.parse("2026-09-28T01:00:00Z");
@@ -60,6 +60,17 @@ t("AI output: uncited or out-of-range sentences are dropped", () => {
   assert.equal(v.bluf.length, 1); assert.equal(v.watch.length, 1); assert.deepEqual(v.watch[0].refs, [1]);
   assert.equal(validateAi({ bluf: [{ text: "No citations at all in this one.", refs: [] }] }, 5), null);
   assert.equal(validateAi("not an object", 5), null);
+});
+t("AI output: citations repeated inside the sentence are dropped (the page shows them as source links)", () => {
+  assert.equal(stripInlineCites("China confirms the summit on the sidelines of APEC (1,2,3,4)."), "China confirms the summit on the sidelines of APEC.");
+  assert.equal(stripInlineCites("A fire left 11 dead and 36 injured (The Nation Thailand, 2026-11-16T11:28; The Nation Thailand, 2026-11-16T10:26)."), "A fire left 11 dead and 36 injured.");
+  assert.equal(stripInlineCites("Drones were shot down (9, 10), Moscow says (11)."), "Drones were shot down, Moscow says.");
+  // negative: a year, words in brackets and a bracket in mid-clause stay
+  assert.equal(stripInlineCites("The 1991 treaty (1991) still holds."), "The 1991 treaty (1991) still holds.");
+  assert.equal(stripInlineCites("Strikes hit 3 ports (Reuters said) on Monday."), "Strikes hit 3 ports (Reuters said) on Monday.");
+  assert.equal(stripInlineCites("Talks (Trump talks mentioned in La Nouvelle Tribune, 2026-11-17T00:18) went on."), "Talks (Trump talks mentioned in La Nouvelle Tribune, 2026-11-17T00:18) went on.");
+  const v = validateAi({ bluf: [{ text: "Outlet A reports a bomb killed three soldiers in Pattani (1, 2).", refs: [1, 2] }] }, d.refs.length);
+  assert.equal(v.bluf[0].text, "Outlet A reports a bomb killed three soldiers in Pattani.");
 });
 t("fingerprint is stable and ignores the build time", () => {
   assert.equal(fingerprint({ ...d, made: "a" }), fingerprint({ ...d, made: "b" }));

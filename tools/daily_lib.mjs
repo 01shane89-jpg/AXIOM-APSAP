@@ -176,11 +176,20 @@ function pick(items, from, to, R, cc) {
     .map((i) => ({ ...i, _s: score(R, i, cc) })).filter((i) => i._s > -3);
 }
 
+// Models sometimes repeat their citations inside the sentence: "(1,2,3)" or "(The Nation Thailand, 2026-11-16T11:28; ...)".
+// The page already shows each cited source as a numbered link after the sentence, so these parentheses only add noise (and raw
+// ISO times). Only a parenthesis made wholly of source numbers (1 to 3 digits, so a year stays), or wholly of "outlet, ISO time"
+// pairs, and only where it closes a clause (before . , ; : or the end), is removed; any other bracketed words stay. assets/osap-daily.js applies the same rule to summaries built before this change.
+const CITE_NUMS = /\s*\(\s*\d{1,3}(?:\s*[,;]\s*\d{1,3})*\s*\)(?=\s*[.;,:]|\s*$)/g;
+const CITE_SRC = /\s*\((?:[^();]{1,80}?,\s*\d{4}-\d\d-\d\dT\d\d:\d\dZ?\s*;?\s*)+\)(?=\s*[.;,:]|\s*$)/g;
+export function stripInlineCites(t) {
+  return String(t || "").replace(CITE_NUMS, "").replace(CITE_SRC, "").replace(/\s+([.,;:])/g, "$1").replace(/\s{2,}/g, " ").trim();
+}
 // keep only AI sentences that cite existing sources; returns null when nothing usable is left
 export function validateAi(o, nRefs) {
   const clean = (s, n) => String(s || "").replace(/\s+/g, " ").trim().slice(0, n);
   const ok = (a) => [...new Set((Array.isArray(a) ? a : []).map((x) => +String(x).replace(/\D/g, "")).filter((x) => x >= 1 && x <= nRefs))].slice(0, 6);
-  const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: clean(p && p.text, 400).replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, ""), refs: ok(p && p.refs) }))
+  const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: stripInlineCites(clean(p && p.text, 400).replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, "")), refs: ok(p && p.refs) }))
     .filter((p) => p.text.length > 15 && p.refs.length).slice(0, max);
   const bluf = list(o && o.bluf, 3), watch = list(o && o.watch, 3);
   if (!bluf.length) return null;
