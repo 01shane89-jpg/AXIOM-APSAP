@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2016-03-21"]=[["cn,mn","2016-03-21T13:59","China border checks cut Oyu Tolgoi exports by 70%","","The Northern Miner (via Bing News search)","https://www.northernminer.com/news/china-border-checks-cut-oyu-tolgoi-exports-by-70/1003896235/","","snt","mn-mining-border","border,presence"]];
