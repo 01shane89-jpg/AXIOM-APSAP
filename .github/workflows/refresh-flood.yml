@@ -437,7 +437,7 @@ jobs:
   # Daily country summaries (tools/refresh_daily.mjs): once a UTC day, the first run after 0000Z writes one summary per country from
   # what the refresh has just committed (the filtered news pool, conflict tabs, warnings, advisories, watch lists, country briefs):
   # top lines, key events with every source link, and what to watch. Built by rules, so it works with no AI. Where GitHub Models
-  # answers (this job's own token, models: read; no personal key), the top lines of the priority countries are redrafted from the
+  # answers (this job's own token, models: read; no personal key), the top lines of every country with sources (priority areas first) are redrafted from the
   # same numbered sources and shown as AI generated. Other runs of the day end at once (an AI retry at most every 3 hours).
   daily:
     needs: refresh
@@ -459,6 +459,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           DAILY_FORCE: ${{ inputs.only == 'daily' && '1' || '' }}
+          # every country now gets an AI draft over the day's retries: no new draft starts after 5 minutes, inside the step's 8
+          DAILY_AI_BUDGET_MIN: "5"
         run: node tools/refresh_daily.mjs
         timeout-minutes: 8
         continue-on-error: true
