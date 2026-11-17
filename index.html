@@ -739,7 +739,7 @@ html.phone .rvlist{overflow:visible;padding:8px 0 12px}
 .areasz span{flex:none;white-space:nowrap;margin-top:16px;padding:3px 8px;border-radius:4px;background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.35);font:600 12px/1.25 system-ui,-apple-system,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
 #map.area-drawing .areasz{display:none}
 .areahsz{display:block;font-weight:600;color:var(--ink);margin-top:2px}.areahsz:empty{display:none}
-#map.area-drawing .dshint,#map.area-editing .dshint{display:none}
+#map.area-drawing .dshint,#map.area-editing .dshint,#map.pop-open .dshint{display:none}
 .leaflet-container.area-drawing{cursor:crosshair;touch-action:none}
 .shell.rv-list .areactl{display:none}
 /* the hidden attribute always wins over a panel's own display rule (.rv is display:flex), so the report list really goes in Map view */
@@ -7028,6 +7028,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   dsHint.className = "dshint"; dsHint.hidden = true;
   L.DomEvent.disableClickPropagation(dsHint);
   map.getContainer().appendChild(dsHint);
+  /* a popup the user opened (a place, the terrain menu) can open under the note; hide the note until it closes */
+  map.on("popupopen", function () { map.getContainer().classList.add("pop-open"); });
+  map.on("popupclose", function () { map.getContainer().classList.remove("pop-open"); });
   window.OSAP_DS_OFF = function (h) {
     var own = railF.contains(h) ? "flood" : railA.contains(h) ? "alerts" : railC.contains(h) || railO.contains(h) ? current : "";
     return !!own && !DS[own] && dsList().some(function (x) { return x.id === own; });

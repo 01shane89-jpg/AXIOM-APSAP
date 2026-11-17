@@ -42,7 +42,12 @@ const hint = () => { const e = document.querySelector(".dshint"); if (!e || e.hi
   await p.evaluate(() => document.querySelector(".dshint [data-dspick]").click());
   await p.waitForTimeout(800);
   ok(await p.evaluate(() => { const o = document.getElementById("atk-om"); return !!o && !o.hidden && !!o.querySelector("[data-ds]"); }), "Choose data sets opens the data sets list with its ticks");
-  await p.keyboard.press("Escape");
+  await p.keyboard.press("Escape"); await p.waitForTimeout(600);
+  // a pop-up that stays a pop-up (the terrain menu, data-keep-pop) can sit under the note; the note steps aside until it closes (lidar_smoke caught this)
+  await p.evaluate(() => { const m = window.__asapMap; window.__pp = L.popup().setLatLng(m.getCenter()).setContent('<div data-keep-pop="1">Viewshed from here</div>').openOn(m); });
+  ok(!(await p.evaluate(hint)), "a map popup open: the note steps aside");
+  await p.evaluate(() => window.__asapMap.closePopup());
+  ok(!!(await p.evaluate(hint)), "popup closed: the note is back");
   await p.evaluate(() => document.querySelector(".dshint [data-dsgone]").click());
   await p.evaluate(() => window.OSAP_DATASETS && window.OSAP_DATASETS.refresh && window.OSAP_DATASETS.refresh());
   ok(!(await p.evaluate(hint)), "closing the note keeps it gone for this tab");
