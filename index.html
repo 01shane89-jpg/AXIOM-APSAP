@@ -667,6 +667,7 @@ header .viewtabs button.stub[aria-selected="true"]{color:var(--ink)}
 .tllist{display:flex;flex-direction:column;margin-top:8px}
 .tlrow{all:unset;box-sizing:border-box;display:grid;grid-template-columns:1fr;gap:1px;padding:7px 4px;border-top:1px solid var(--line-soft);cursor:pointer;width:100%}
 .tlrow:hover{background:var(--surface2)}
+.tlrow .xread{display:inline-block;margin-top:2px;font-size:11px;font-weight:600;color:var(--accent);border:1px solid var(--accent);border-radius:10px;padding:0 7px;width:max-content}
 .tlrow:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .tlt{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .tln{font-size:13px;line-height:1.35}
@@ -6783,12 +6784,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<div class="ctl" style="margin-top:6px"><input type="checkbox" id="x-radar"' + (xRadar && map.hasLayer(xRadar) ? " checked" : "") + '><label for="x-radar">Rain radar overlay (national radar: North America, Germany, Finland, Netherlands, Japan)</label></div>' +
       '<p class="note">Dated items follow the period; advice levels, sanctions listings, elections and reference layers always show. Infrastructure and Sanctions start switched off because they are long lists.</p></div>';
     var lists = XCAT.filter(function (c) { return byCat[c]; }).map(function (c) {
-      return '<div class="sec"><h2><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + XCOL[c] + ';margin-right:6px"></span>' + esc(c) + "</h2>" + (c === "Analysis" ? '<p class="note" style="margin:0 0 4px">Each item is that institute\'s published assessment: a sourced opinion, not established fact. Headline, short summary and link only.</p>' : "") + Object.keys(byCat[c]).map(function (fid) {
+      return '<div class="sec"><h2><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + XCOL[c] + ';margin-right:6px"></span>' + esc(c) + "</h2>" + (c === "Analysis" ? '<p class="note" style="margin:0 0 4px">Each item is that institute\'s published assessment: a sourced opinion, not established fact. Headline, short summary and link only, except items marked Read in OSAP: their publisher\'s open licence lets OSAP show the whole article.</p>' : "") + Object.keys(byCat[c]).map(function (fid) {
         var f = FD[fid], arr = byCat[c][fid], open = xOpen[fid], show = open ? arr : arr.slice(0, 8);
         return '<h3 style="margin:10px 0 2px;font-size:13px">' + esc(f.name) + ' <span class="obs" style="font-weight:400">· ' + arr.length + (f.nc ? ' · <span title="Non-commercial or restricted license: ' + esc(f.lic) + '">NC</span>' : "") +
           (f.ok ? "" : ' · <span title="' + esc(f.error || "") + '">stale</span>') + '</span></h3><div class="tllist">' + show.map(function (p) {
-          var i = p[0]; return '<button type="button" class="tlrow"' + (i.la != null ? ' data-sof="x:' + p[1] + '"' : ' data-xurl="' + esc(i.u || "") + '"') + '><span class="tln">' + esc(i.t) + '</span><span class="tlm"><span class="tls">' +
-            esc([i.d ? i.d.replace("T", " ").slice(0, 16) : "", (i.x || "").slice(0, 110)].filter(Boolean).join(" · ")) + "</span></span></button>"; }).join("") + "</div>" +
+          /* an open-licence article (assets/osap-reader.js) opens in the in-app reader; everything else opens the source */
+          var i = p[0], rd = i.la == null && window.OSAP_READER && window.OSAP_READER.can(i.u);
+          return '<button type="button" class="tlrow"' + (i.la != null ? ' data-sof="x:' + p[1] + '"' : rd ? ' data-xread="' + esc(i.u) + '" data-xsrc="' + esc(f.name) + '"' : ' data-xurl="' + esc(i.u || "") + '"') + '><span class="tln">' + esc(i.t) + '</span><span class="tlm"><span class="tls">' +
+            esc([i.d ? i.d.replace("T", " ").slice(0, 16) : "", (i.x || "").slice(0, 110)].filter(Boolean).join(" · ")) + "</span>" + (rd ? '<span class="xread">Read in OSAP</span>' : "") + "</span></button>"; }).join("") + "</div>" +
           (arr.length > show.length ? '<button type="button" class="mini" data-xmore="' + esc(fid) + '">Show all ' + arr.length + "</button>" : "");
       }).join("") + "</div>";
     }).join("");
@@ -6818,8 +6821,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   if (railO) railO.addEventListener("input", function (e) { if (e.target && e.target.id === "x-q") { xQ = e.target.value; clearTimeout(railO._xq); railO._xq = setTimeout(function () { showOpenData(); var b = document.getElementById("x-q"); if (b) { b.focus(); b.setSelectionRange(xQ.length, xQ.length); } }, 250); } });
   if (railO) railO.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("[data-xmore]"); if (b) { xOpen[b.getAttribute("data-xmore")] = 1; showOpenData(); return; }
-    var u = e.target.closest && e.target.closest("[data-xurl]"); if (u && u.getAttribute("data-xurl")) window.open(u.getAttribute("data-xurl"), "_blank", "noopener,noreferrer");
+    var rd = e.target.closest && e.target.closest("[data-xread]");
+    if (rd && window.OSAP_READER) { window.OSAP_READER.open(rd.getAttribute("data-xread"), { title: (rd.querySelector(".tln") || {}).textContent || "", src: rd.getAttribute("data-xsrc") || "" }); return; }
+    var u = e.target.closest && e.target.closest("[data-xurl]"), xu = u && u.getAttribute("data-xurl");
+    if (xu && /^https?:\/\//i.test(xu)) window.open(xu, "_blank", "noopener,noreferrer");
   });
+  /* assets/osap-reader.js loads after this script: once it knows the open-licence publishers, the open data list is drawn again */
+  document.addEventListener("osap:reader", function () { if (current === "opendata") showOpenData(); });
   function xLoad() {
     /* World reads the feed list only; each country's items are in its own file */
     var P = C.global ? ["data/live/x/feeds.js"] : ["data/live/x/feeds.js", "data/live/x/" + CC + ".js"];
@@ -9834,6 +9842,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-daily.js"></script>
 <script src="assets/osap-threads.js"></script>
 <script src="assets/osap-outletfacts.js"></script>
+<!-- in-app reader for open-licence articles (The Conversation, GOV.UK), data/live/fulltext/ from tools/refresh_fulltext.mjs -->
+<script src="assets/osap-reader.js"></script>
 <script src="assets/osap-coverage.js"></script>
 <script src="assets/osap-spikes.js"></script>
 <script src="assets/osap-locate.js"></script>

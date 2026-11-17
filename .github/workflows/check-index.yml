@@ -53,6 +53,8 @@ jobs:
       # new dense feeds of 8 Nov (tools/dense_nov8.mjs): PortWatch, RFJ, VAAC, UNSC, USGS blasts, BfS, RIPE, UN PKO, EU regimes, satellite passes
       - run: node tests/dense_nov8.test.mjs
       - run: node tests/uk_sanctions.test.mjs
+      # open-licence full text for the in-app reader (tools/fulltext_lib.mjs): which addresses, safe text, no script
+      - run: node tests/fulltext.test.mjs
       # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
       - if: github.event_name == 'pull_request'
         run: node tools/sw_version.mjs --same-as HEAD^1

@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, warngeo, news, topics, et, health-test, osm, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt, probe-mt-conf, probe-mt-th); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, warngeo, news, topics, et, health-test, osm, deepsouth, social, more, storms, roads, dense, fulltext, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt, probe-mt-conf, probe-mt-th); empty runs all"
         required: false
         default: ""
       lane:
@@ -246,6 +246,14 @@ jobs:
           # sold version: feeds tagged nc are not asked at all (tools/dense_lib.mjs), then nc_strip below sweeps the rest
           OSAP_COMMERCIAL: ${{ vars.OSAP_COMMERCIAL }}
         timeout-minutes: 14
+        continue-on-error: true
+      # Open-licence full text (tools/refresh_fulltext.mjs): articles whose publisher's licence allows republishing (The Conversation
+      # CC BY-ND, GOV.UK OGL), read once each and kept for the in-app reader; every other outlet stays a link. After the dense feeds,
+      # whose Analysis and travel-advice items carry most of these links.
+      - name: Read open-licence articles for the in-app reader
+        if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'dense' || inputs.only == 'fulltext' }}
+        run: node tools/refresh_fulltext.mjs
+        timeout-minutes: 6
         continue-on-error: true
       - name: Report translation coverage
         if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' || startsWith(inputs.only, 'probe-mt') }}
