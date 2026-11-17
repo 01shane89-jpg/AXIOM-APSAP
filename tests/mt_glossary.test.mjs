@@ -2,7 +2,7 @@
 // prepareForModel). The rejected lines are real MADLAD-400 output from the news pool, 2026-11-17 (Russian aircraft entering the
 // Korean and Japanese air defense identification zones). Run: node tests/mt_glossary.test.mjs
 import assert from "node:assert/strict";
-import { protectTerms, termMissing } from "../tools/mt_glossary.mjs";
+import { protectTerms, termMissing, countryAdded } from "../tools/mt_glossary.mjs";
 import { mtSuspect } from "../tools/mt_guard.mjs";
 import { prepareForModel } from "../tools/translate.mjs";
 
@@ -46,6 +46,54 @@ t("the model is given the terms spelled out (Korean with the acronym, other scri
   assert.equal(protectTerms("ខ្លួនហោះចូលតំបន់ការពារដែនអាកាស"), "ខ្លួនហោះចូល air defense zone");
   assert.equal(protectTerms("Ohne Begriff"), "Ohne Begriff");
   assert.equal(prepareForModel("새벽 러 군용기 카디즈 진입", "ko"), "새벽 러 군용기 한국 방공식별구역(KADIZ) 진입");
+});
+
+// 2026-11-17, Hormuz: real output from the stored index
+t("a mine read as a whale, a ranch, a bomb or a jetty is rejected", () => {
+  assert.match(mtSuspect("Kapal Tanker Super Angkut 2 Juta Barel Minyak Tenggelam di Selat Hormuz Usai Tabrak Ranjau",
+    "Supertanker Carrying 2 Million Barrels of Oil Sunk in Strait of Hormuz After Collision with a Whale", now, "id"), /term mine/);
+  assert.match(termMissing("Dua Kapal Tangker Arahan Militer AS Hantam Ranjau Laut", "Two US-Ordered Tanker Ships Hit a Sea Ranch"), /mine/);
+  assert.match(termMissing("อิหร่านเผยมีเรือบรรทุกน้ำมัน 3 ลำ ชนทุ่นระเบิดในช่องแคบฮอร์มุซ", "Iran says three oil tankers hit a bomb in the Strait of Hormuz."), /mine/);
+  assert.match(termMissing("Lại thêm tàu chở dầu phát nổ vì trúng thủy lôi ở eo biển Hormuz", "Another oil tanker exploded after hitting a jetty in the Strait of Hormuz."), /mine/);
+  assert.equal(termMissing("Kapal Tanker Tenggelam Usai Tabrak Ranjau", "Supertanker sank after hitting a mine"), "");
+  assert.equal(termMissing("รถแบ็กโฮเหยียบทุ่นระเบิด", "Backhoe hits a landmine"), "");
+  // Arabic only as a whole word: لغمان is Laghman, الغموض "mystery"
+  assert.equal(termMissing("تیراندازی هوایی در مراسم عروسی در لغمان", "Aerial shooting at wedding in Laghman kills two people"), "");
+  assert.equal(termMissing("5 انفجارات تهز جزيرة قشم الإيرانية.. وتحليق طائرات يثير الغموض", "Five explosions shake Qeshm island"), "");
+  assert.match(termMissing("تصعيد بعد اصطدام ناقلتي نفط بألغام", "Escalation after two tankers collide"), /mine/);
+});
+
+t("Hormuz read as Homs or Hermes is rejected", () => {
+  assert.match(termMissing("荷姆茲海峽單月37船遇襲創新高!", "37 ships attacked in a month in the Strait of Homs, record high!"), /Hormuz/);
+  assert.match(termMissing("«مجموعة السبع» تطالب إيران بوقف الهجمات في «هرمز»", "G7 Demands Iran to Stop Hermès Attacks"), /Hormuz/);
+  assert.equal(termMissing("تصعيد بهرمز", "Escalation in Hormuz"), "", "بهرمز is \"in Hormuz\"");
+  assert.equal(termMissing("بيان هام للشيخ كمال باهرمز", "Important statement by Sheikh Kamal Bahormuz"), "", "باهرمز is a family name");
+  assert.equal(termMissing("3油輪在荷姆茲觸雷爆炸!", "Three oil tankers hit a mine in Hormuz"), "");
+});
+
+t("Iraq or Syria the original does not name is rejected", () => {
+  assert.equal(countryAdded("3油輪在荷姆茲觸雷爆炸! 伊怪美軍引導關閉AIS 迄今至少25海員在此喪生",
+    "Three oil tankers hit a mine in Homs, Iraqi forces shut down AIS and at least 25 seamen have died."), "Iraq");
+  assert.match(mtSuspect("川普稱「極不可能」大規模再襲伊! 美軍陸海封鎖", "Trump Says It Is 'Extremely Unlikely' That Syria Will Re-Attack On A Large Scale", now, "zh"), /country Syria/);
+  assert.equal(countryAdded("'기름값 심판' 받은 트럼프…이란 전쟁이 부메랑 됐다", "The war in Iraq has turned into a boomerang."), "Iraq");
+  assert.equal(countryAdded("Stravičan napad: 24 osobe poginule, Rusi gađali školu", "24 killed in Syrian attack, Russians fire on school"), "Syria");
+  // named in any language, inflected, or by its capital
+  assert.equal(countryAdded("Alarm na letališču v Münchnu: Iračana sta se izdajala za grška diplomata", "Two Iraqis posing as Greek diplomats"), "");
+  assert.equal(countryAdded("Γερμανία: συνελήφθησαν δύο Ιρακινοί", "Germany: Two Iraqis arrested"), "");
+  assert.equal(countryAdded("سەرۆکوەزیرانی عێراق", "Iraqi Prime Minister"), "");
+  assert.equal(countryAdded("دمشق تعلن بدء تحقيقات", "Syrian government announces investigation"), "");
+  assert.equal(countryAdded("সিরিয়ায় বন্যা", "Syria Floods"), "");
+  assert.equal(countryAdded("伊朗再攻荷姆茲海峽油輪", "Iran attacks oil tanker in Strait of Hormuz"), "", "Iran is not checked");
+});
+
+t("the model is given Hormuz and the mine in English", () => {
+  assert.equal(protectTerms("Kapal Tanker Tenggelam Usai Tabrak Ranjau"), "Kapal Tanker Tenggelam Usai Tabrak mine");
+  assert.equal(protectTerms("Dua Kapal Tangker Hantam Ranjau Laut"), "Dua Kapal Tangker Hantam mine");
+  assert.equal(protectTerms("荷姆茲海峽單月37船遇襲"), "Hormuz 海峽單月37船遇襲");
+  assert.equal(protectTerms("تطالب إيران بوقف الهجمات في «هرمز»"), "تطالب إيران بوقف الهجمات في «Hormuz»");
+  assert.equal(protectTerms("ชนทุ่นระเบิดในช่องแคบฮอร์มุซ"), "ชน mine ในช่องแคบ Hormuz");
+  assert.equal(protectTerms("trúng thủy lôi ở eo biển Hormuz"), "trúng naval mine ở eo biển Hormuz");
+  assert.equal(protectTerms("北 지뢰폭발"), "北 지뢰폭발", "Korean is left alone");
 });
 
 console.log(ok + " passed");
