@@ -99,6 +99,22 @@ async function open(hash, opt = {}) {
   ok(pdf && pdf.title === "World: daily brief" && pdf.ev >= 3 && pdf.links >= 6, "Reports > Daily brief (PDF) works on World (" + JSON.stringify(pdf) + ")");
   await ctx.close();
 }
+// 5. a fresh open that lands on World or on the last country viewed must not load Thailand's own files: the address is set by
+//    assets/osap-start.js, and the page decides Thailand from it only after that. Read before (until 17 Nov 2026), World and every
+//    returning non-Thai user got Thailand's flood files and its live water feed, whose first refresh emptied the page's records.
+for (const [label, opt, cc] of [["a new device (World)", { phone: true }, "ww"], ["a returning user (France)", { last: "fr" }, "fr"]]) {
+  const thai = [];
+  const ctx = await browser.newContext({ serviceWorkers: "block" }), page = await ctx.newPage();
+  page.on("request", (r) => { if (/\/data\/thailand\/|thaiwater\.net/.test(r.url())) thai.push(r.url().replace(/^.*\/\/[^/]+/, "")); });
+  await page.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  if (opt.last) await page.addInitScript((c) => { if (!sessionStorage.getItem("osap-today")) localStorage.setItem("osap-last-cc", JSON.stringify(c)); }, opt.last);
+  await page.goto(base);
+  await page.waitForFunction(() => window.TSAP && window.OSAP_TODAY, null, { timeout: 30000 }).catch(() => {});
+  await page.waitForTimeout(4000);
+  const s = await page.evaluate(() => ({ cc: window.TSAP.country, th: window.OSAP_TH, n: (window.TSAP.records || []).length }));
+  ok(s.cc === cc && s.th === false && !thai.length && s.n > 0, label + ": opens " + cc + " without Thailand's files or water feed (" + JSON.stringify(s) + (thai.length ? ", asked for " + thai.slice(0, 3).join(" ") : "") + ")");
+  await ctx.close();
+}
 ok(!missing.length, "World asks for no file that does not exist" + (missing.length ? ": " + [...new Set(missing)].join(", ") : ""));
 await browser.close(); server.close();
 if (failed) { console.log(failed + " failed"); process.exit(1); }
