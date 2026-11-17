@@ -1,4 +1,5 @@
-[["n1705031064",28.41795,45.97734,"sa",{"name":"مستشفى نور خان","name:en":"Noor Moh'd khan's general hospital (1,682 patient )","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
+[["n14353768151",28.38642,45.96533,"sa",{"name":"استراحة الحويلا - المحمدية","amenity":"hospital","healthcare":"hospital","addr:street":"المغيرة بن الحارث","addr:city":"حفر الباطن","addr:postcode":"39911"}],
+["n1705031064",28.41795,45.97734,"sa",{"name":"مستشفى نور خان","name:en":"Noor Moh'd khan's general hospital (1,682 patient )","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["n3709907173",28.36186,45.99439,"sa",{"name":"التأهيل الشامل","amenity":"hospital","healthcare":"hospital"}],
 ["n4363484091",28.31111,45.95341,"sa",{"name":"مستشفى حفر الباطن المركزي","name:en":"Hafr Al Batin Central Hospital","amenity":"hospital","healthcare":"hospital","phone":"065270001","addr:street":"طريق الملك عبدالعزيز","opening_hours":"24/7"}],
 ["n4398308091",28.39372,45.94056,"sa",{"name":"مستوصف السليمانيه","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","operator":"وزارة الصحة","operator:type":"government","addr:housenumber":"123","addr:street":"ابن حزم"}],
