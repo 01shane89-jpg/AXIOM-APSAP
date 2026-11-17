@@ -1,0 +1,1 @@
+window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2024-11-07"]=[["ph","2024-11-07T05:23","Typhoon Yinxing slams into a northern Philippine region still recovering from back-to-back storms","","Newsday (via Bing News search)","https://www.newsday.com/news/nation/philippines-typhoon-yinxing-a06280","","snt","storms","flood,weather,hazards"]];
