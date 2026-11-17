@@ -55,6 +55,7 @@
 </script>
 <!-- sync my devices: writes changes from another device before any feature reads its store (assets/osap-sync.js) -->
 <!-- lock my saved work: a locked device has no saved work in plain storage before any feature reads it (assets/osap-vault.js) -->
+<script src="assets/osap-relmatch.js"></script>
 <script src="assets/osap-sold.js"></script>
 <script src="assets/osap-vault.js"></script>
 <script src="assets/osap-sync-boot.js"></script>
@@ -64,6 +65,11 @@
 <script src="assets/osap-datagate.js"></script>
 <!-- button feedback: a held button shows it is pressed, and a press that waits on downloads shows a bar (assets/osap-press.js) -->
 <script src="assets/osap-press.js"></script>
+<!-- plan and sign-in (assets/osap-tier.js) reads e-mail links in the address first; then start-up (assets/osap-start.js) sets the address (a fresh open goes to the last country, or World on a new device) before
+     the next script reads it to decide whether Thailand's own files load: read after, a fresh open on World or another country
+     still loaded Thailand's flood files and its live water feed, which then emptied that country's records (17 Nov 2026) -->
+<script src="assets/osap-tier.js"></script>
+<script src="assets/osap-start.js"></script>
 <script>
 /* Data files the page writes in further down instead of plain tags: Thailand's own files only when Thailand opens (no country
    in the address, or #th/…; another country never builds the flood and border views, and switching country reloads the page),
@@ -94,8 +100,6 @@
   };
 })();
 </script>
-<script src="assets/osap-tier.js"></script>
-<script src="assets/osap-start.js"></script>
 <!-- first-run setup and My countries: runs before any other script saves a setting, to tell a new device from an existing user -->
 <script src="assets/osap-mycountries.js"></script>
 <script>
@@ -667,6 +671,7 @@ header .viewtabs button.stub[aria-selected="true"]{color:var(--ink)}
 .tllist{display:flex;flex-direction:column;margin-top:8px}
 .tlrow{all:unset;box-sizing:border-box;display:grid;grid-template-columns:1fr;gap:1px;padding:7px 4px;border-top:1px solid var(--line-soft);cursor:pointer;width:100%}
 .tlrow:hover{background:var(--surface2)}
+.tlrow .xread{display:inline-block;margin-top:2px;font-size:11px;font-weight:600;color:var(--accent);border:1px solid var(--accent);border-radius:10px;padding:0 7px;width:max-content}
 .tlrow:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .tlt{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .tln{font-size:13px;line-height:1.35}
@@ -816,6 +821,8 @@ html.phone .rvpkg{max-height:none}
 .pkgreadbtn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 14px;border-radius:6px;background:var(--accent);color:var(--on-accent)!important;font-size:13px;font-weight:600;text-decoration:none;max-width:100%;overflow-wrap:anywhere}
 .pkgreadbtn:hover,.pkgreadbtn:focus-visible{filter:brightness(1.1);text-decoration:underline}
 .pkgread .sub{margin-top:4px}
+button.pkgreadbtn{font:inherit;font-size:13px;font-weight:600;border:none;cursor:pointer}
+.pkgreadalt{display:inline-block;margin-left:10px;font-size:13px;text-decoration:underline;min-height:40px;line-height:40px}
 .pkgdl dd a,.pkgorig{text-decoration:underline;text-underline-offset:2px}
 .pkgorig{display:inline-block;padding:4px 0}
 .qcard .qsrc{font-size:12px;margin-left:8px;text-decoration:underline}
@@ -4071,6 +4078,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var u = webUrl(r.url), news = r.news || r.lf || /news|outlet|media/i.test(s.kind || "");
     if (!u) return '<p class="pkgread obs">This source published no web link for this item.</p>';
     var who = esc(s.name || hostOf(u));
+    /* an open-licence article (assets/osap-reader.js) can be read in full here; the outlet's own page stays one tap away */
+    if (window.OSAP_READER && window.OSAP_READER.can(u))
+      return '<div class="pkgread"><button type="button" class="pkgreadbtn" data-ftread="' + esc(u) + '">Read it here</button> ' +
+        outA(u, "Original at " + who + ' <span aria-hidden="true">\u2197</span>', "pkgreadalt") +
+        '<span class="sub">The publisher\'s open licence lets OSAP show the whole article, unedited and credited.</span></div>';
     return '<div class="pkgread">' + outA(u, (news ? "Read the full article" : "Open the original") + " at " + who + ' <span aria-hidden="true">\u2197</span>', "pkgreadbtn") +
       '<span class="sub">Opens ' + esc(hostOf(u)) + " in a new tab." +
       (news && !String(r.detail || "").trim() ? " OSAP shows the headline only: " + who + "'s article text is theirs and is not copied into OSAP." : "") + "</span></div>";
@@ -4281,7 +4293,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return rDF;
   }
   function relatedStories(r) {
-    var common = rCommon(), mine = rTok(rText(r) + " " + (r.place || "") + " " + (r.prov || ""));
+    var common = rCommon(), mineText = rText(r) + " " + (r.place || "") + " " + (r.prov || ""), mine = rTok(mineText), RM = window.OSAP_RELMATCH;
     Object.keys(common).forEach(function (w) { delete mine[w]; });
     var t0 = Date.parse(String(r.ts).slice(0, 10)), hasLL = r.lat != null && isFinite(r.lat), out = [];
     function score(title, text, ts, lat, lon, place) {
@@ -4290,9 +4302,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var d = hasLL && lat != null && isFinite(lat) ? km(r, { lat: lat, lon: lon }) : null;
       var near = d != null ? d <= 50 : !!(r.place && place && place === r.place);
       if (dt != null && dt > (shared.length >= 3 ? 90 : 30)) return null;
-      if (!(shared.length >= 2 || (shared.length >= 1 && near) || (near && dt != null && dt <= 3))) return null;
-      var s = shared.length * 2 + (d != null ? (d <= 25 ? 3 : d <= 50 ? 1.5 : 0) : near ? 2 : 0) + (dt == null ? 0 : dt <= 2 ? 2 : dt <= 7 ? 1 : dt <= 30 ? 0.3 : -1);
-      var why = [shared.length ? "shares " + shared.slice(0, 4).join(", ") : "", d != null ? Math.round(d) + " km away" : near ? "same place" : "", dt != null ? (dt < 1 ? "same day" : Math.round(dt) + " days apart") : ""].filter(Boolean).join(" · ");
+      /* how much the shared words are worth (osap-relmatch.js): loose news words count half, names and the same kind of event more */
+      var w = RM.strength(shared, mineText, title + " " + String(text || "").slice(0, 240));
+      if (!RM.enough(w, near, dt)) return null;
+      var s = w.str * 2 + (d != null ? (d <= 25 ? 3 : d <= 50 ? 1.5 : 0) : near ? 2 : 0) + (dt == null ? 0 : dt <= 2 ? 2 : dt <= 7 ? 1 : dt <= 30 ? 0.3 : -1);
+      var why = [shared.length ? "shares " + (w.pairs.length ? w.pairs.concat(shared.filter(function (x) { return w.pairs.join(" ").split(" ").indexOf(x) < 0; })) : shared).slice(0, 4).join(", ") : "", w.why, d != null ? Math.round(d) + " km away" : near ? "same place" : "", dt != null ? (dt < 1 ? "same day" : Math.round(dt) + " days apart") : ""].filter(Boolean).join(" · ");
       return { s: s, why: why };
     }
     /* social posts: official and news accounts only (tools/social_accounts.json). Posts are short and fast, so one shared word within
@@ -4303,10 +4317,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var h = rMs(o), dh = isFinite(h0) && isFinite(h) ? (h - h0) / 36e5 : null, dd = dh == null ? null : Math.abs(dh) / 24;
       var d = hasLL && o.lat != null && isFinite(o.lat) ? km(r, { lat: o.lat, lon: o.lon }) : null, near = d != null ? d <= 50 : !!(r.place && o.place && o.place === r.place);
       if (dd == null || dd > 14) return null;
-      if (!(shared.length >= 2 || (shared.length >= 1 && (dd <= 3 || near)))) return null;
-      var s = shared.length * 2 + (near ? 2 : 0) + (dd <= 1 ? 3 : dd <= 3 ? 1.5 : dd <= 7 ? 0.5 : 0);
+      /* one loose word ("water") within three days was enough before (Shane 2026-11-08, "Happy Water"): never now */
+      var w = RM.strength(shared, mineText, rText(o));
+      if (!RM.enoughSocial(w, near, dd)) return null;
+      var s = w.str * 2 + (near ? 2 : 0) + (dd <= 1 ? 3 : dd <= 3 ? 1.5 : dd <= 7 ? 0.5 : 0);
       var ago = Math.abs(dh) < 1 ? "within the hour of this report" : Math.abs(dh) < 48 ? Math.round(Math.abs(dh)) + " h " + (dh > 0 ? "after" : "before") + " this report" : Math.round(dd) + " days " + (dh > 0 ? "after" : "before") + " this report";
-      return { s: s, h: h, why: [shared.length ? "shares " + shared.slice(0, 4).join(", ") : "", d != null ? Math.round(d) + " km away" : near ? "same place" : "", ago].filter(Boolean).join(" · ") };
+      return { s: s, h: h, why: [shared.length ? "shares " + shared.slice(0, 4).join(", ") : "", w.why, d != null ? Math.round(d) + " km away" : near ? "same place" : "", ago].filter(Boolean).join(" · ") };
     }
     R.forEach(function (o) {
       if (o === r || o.id === r.id) return;
@@ -4337,8 +4353,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var dd = Math.round(Math.abs(Date.parse(String(o.ts).slice(0, 10)) - Date.parse(String(r.ts).slice(0, 10))) / 864e5);
       out.push({ s: 0.5, why: d + " · " + (dd < 1 ? "same day" : dd + " days apart"), rec: o, t: o.title, when: fmtTs(o), src: o.src ? o.src.name : "", url: o.url, kind: LBY[o.layer] ? LBY[o.layer].name : o.layer });
     });
-    var res = out.sort(function (a, b) { return b.s - a.s; }).slice(0, 40);
-    res.social = soc.sort(function (a, b) { return b.s - a.s || b.h - a.h; }).slice(0, 20);
+    /* the same headline from the same source (one video uploaded twice) is listed once, the better match first */
+    function once(list) { var seen = {}; return list.filter(function (m) { var k = RM.dupKey(m.t, m.src); if (seen[k]) return false; seen[k] = 1; return true; }); }
+    var res = once(out.sort(function (a, b) { return b.s - a.s; })).slice(0, 40);
+    res.social = once(soc.sort(function (a, b) { return b.s - a.s || b.h - a.h; })).slice(0, 20);
     return res;
   }
   /* a record's time in ms: feed times without a zone are UTC ("2026-09-26T17:59"); date-only times count from midnight UTC */
@@ -4448,6 +4466,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     Array.prototype.forEach.call(box.querySelectorAll(".pkgrel button.tlrow"), function (b) {
       b.addEventListener("click", function () { select(b.getAttribute("data-id"), true, boxId); });
     });
+    var ftb = box.querySelector("[data-ftread]");
+    if (ftb) ftb.addEventListener("click", function () { window.OSAP_READER.open(ftb.getAttribute("data-ftread"), { title: r.title, src: s.name }); });
     document.querySelector(".rail").scrollTop = 0;
     /* on a phone the package opens as a sheet over the page; on a tablet the rail sits below the map, so it is scrolled into view */
     if (!(window.ASAP_PHONE && window.ASAP_PHONE.sheet(box))) {
@@ -6812,12 +6832,14 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<div class="ctl" style="margin-top:6px"><input type="checkbox" id="x-radar"' + (xRadar && map.hasLayer(xRadar) ? " checked" : "") + '><label for="x-radar">Rain radar overlay (national radar: North America, Germany, Finland, Netherlands, Japan)</label></div>' +
       '<p class="note">Dated items follow the period; advice levels, sanctions listings, elections and reference layers always show. Infrastructure and Sanctions start switched off because they are long lists.</p></div>';
     var lists = XCAT.filter(function (c) { return byCat[c]; }).map(function (c) {
-      return '<div class="sec"><h2><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + XCOL[c] + ';margin-right:6px"></span>' + esc(c) + "</h2>" + (c === "Analysis" ? '<p class="note" style="margin:0 0 4px">Each item is that institute\'s published assessment: a sourced opinion, not established fact. Headline, short summary and link only.</p>' : "") + Object.keys(byCat[c]).map(function (fid) {
+      return '<div class="sec"><h2><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + XCOL[c] + ';margin-right:6px"></span>' + esc(c) + "</h2>" + (c === "Analysis" ? '<p class="note" style="margin:0 0 4px">Each item is that institute\'s published assessment: a sourced opinion, not established fact. Headline, short summary and link only, except items marked Read in OSAP: their publisher\'s open licence lets OSAP show the whole article.</p>' : "") + Object.keys(byCat[c]).map(function (fid) {
         var f = FD[fid], arr = byCat[c][fid], open = xOpen[fid], show = open ? arr : arr.slice(0, 8);
         return '<h3 style="margin:10px 0 2px;font-size:13px">' + esc(f.name) + ' <span class="obs" style="font-weight:400">· ' + arr.length + (f.nc ? ' · <span title="Non-commercial or restricted license: ' + esc(f.lic) + '">NC</span>' : "") +
           (f.ok ? "" : ' · <span title="' + esc(f.error || "") + '">stale</span>') + '</span></h3><div class="tllist">' + show.map(function (p) {
-          var i = p[0]; return '<button type="button" class="tlrow"' + (i.la != null ? ' data-sof="x:' + p[1] + '"' : ' data-xurl="' + esc(i.u || "") + '"') + '><span class="tln">' + esc(i.t) + '</span><span class="tlm"><span class="tls">' +
-            esc([i.d ? i.d.replace("T", " ").slice(0, 16) : "", (i.x || "").slice(0, 110)].filter(Boolean).join(" · ")) + "</span></span></button>"; }).join("") + "</div>" +
+          /* an open-licence article (assets/osap-reader.js) opens in the in-app reader; everything else opens the source */
+          var i = p[0], rd = i.la == null && window.OSAP_READER && window.OSAP_READER.can(i.u);
+          return '<button type="button" class="tlrow"' + (i.la != null ? ' data-sof="x:' + p[1] + '"' : rd ? ' data-xread="' + esc(i.u) + '" data-xsrc="' + esc(f.name) + '"' : ' data-xurl="' + esc(i.u || "") + '"') + '><span class="tln">' + esc(i.t) + '</span><span class="tlm"><span class="tls">' +
+            esc([i.d ? i.d.replace("T", " ").slice(0, 16) : "", (i.x || "").slice(0, 110)].filter(Boolean).join(" · ")) + "</span>" + (rd ? '<span class="xread">Read in OSAP</span>' : "") + "</span></button>"; }).join("") + "</div>" +
           (arr.length > show.length ? '<button type="button" class="mini" data-xmore="' + esc(fid) + '">Show all ' + arr.length + "</button>" : "");
       }).join("") + "</div>";
     }).join("");
@@ -6847,8 +6869,13 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   if (railO) railO.addEventListener("input", function (e) { if (e.target && e.target.id === "x-q") { xQ = e.target.value; clearTimeout(railO._xq); railO._xq = setTimeout(function () { showOpenData(); var b = document.getElementById("x-q"); if (b) { b.focus(); b.setSelectionRange(xQ.length, xQ.length); } }, 250); } });
   if (railO) railO.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("[data-xmore]"); if (b) { xOpen[b.getAttribute("data-xmore")] = 1; showOpenData(); return; }
-    var u = e.target.closest && e.target.closest("[data-xurl]"); if (u && u.getAttribute("data-xurl")) window.open(u.getAttribute("data-xurl"), "_blank", "noopener,noreferrer");
+    var rd = e.target.closest && e.target.closest("[data-xread]");
+    if (rd && window.OSAP_READER) { window.OSAP_READER.open(rd.getAttribute("data-xread"), { title: (rd.querySelector(".tln") || {}).textContent || "", src: rd.getAttribute("data-xsrc") || "" }); return; }
+    var u = e.target.closest && e.target.closest("[data-xurl]"), xu = u && u.getAttribute("data-xurl");
+    if (xu && /^https?:\/\//i.test(xu)) window.open(xu, "_blank", "noopener,noreferrer");
   });
+  /* assets/osap-reader.js loads after this script: once it knows the open-licence publishers, the open data list is drawn again */
+  document.addEventListener("osap:reader", function () { if (current === "opendata") showOpenData(); });
   function xLoad() {
     /* World reads the feed list only; each country's items are in its own file */
     var P = C.global ? ["data/live/x/feeds.js"] : ["data/live/x/feeds.js", "data/live/x/" + CC + ".js"];
@@ -9863,6 +9890,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-daily.js"></script>
 <script src="assets/osap-threads.js"></script>
 <script src="assets/osap-outletfacts.js"></script>
+<!-- in-app reader for open-licence articles (The Conversation, GOV.UK), data/live/fulltext/ from tools/refresh_fulltext.mjs -->
+<script src="assets/osap-reader.js"></script>
 <script src="assets/osap-coverage.js"></script>
 <script src="assets/osap-spikes.js"></script>
 <script src="assets/osap-locate.js"></script>

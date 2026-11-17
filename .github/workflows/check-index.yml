@@ -53,6 +53,8 @@ jobs:
       # new dense feeds of 8 Nov (tools/dense_nov8.mjs): PortWatch, RFJ, VAAC, UNSC, USGS blasts, BfS, RIPE, UN PKO, EU regimes, satellite passes
       - run: node tests/dense_nov8.test.mjs
       - run: node tests/uk_sanctions.test.mjs
+      # open-licence full text for the in-app reader (tools/fulltext_lib.mjs): which addresses, safe text, no script
+      - run: node tests/fulltext.test.mjs
       # PRs keep main's sw.js VERSION so open PRs do not conflict on it; HEAD^1 of the PR merge ref is the base commit
       - if: github.event_name == 'pull_request'
         run: node tools/sw_version.mjs --same-as HEAD^1
@@ -76,11 +78,15 @@ jobs:
       - run: node tests/places_areas.test.mjs
       - run: node tests/view_reports.test.mjs
       - run: node tests/sat.test.mjs
+      # daily summary rules (tools/daily_lib.mjs): grouping, AI output checks, citations dropped from inside sentences
+      - run: node tests/daily.test.mjs
       - run: node tests/newimg.test.mjs
       - run: node tests/feedparse_image.test.mjs
       - run: node tests/news_pics.test.mjs
       # news item dates: outlets that write local time as UTC, and no item dated in the future (tools/news_date.mjs)
       - run: node tests/news_date.test.mjs
+      # search result times: Bing writes Pacific time labelled GMT; article pages give their own time (tools/news_pagedate.mjs)
+      - run: node tests/search_dates.test.mjs
       - run: node tests/geo.test.mjs
       - run: node tests/tak.test.mjs
       - run: node tests/milsites.test.mjs
@@ -149,6 +155,7 @@ jobs:
       # casualty counts and deaths a translation may not add, and the re-check of daily summaries already written
       - run: node tests/mt_facts.test.mjs
       - run: node tests/th_places.test.mjs
+      - run: node tests/mt_glossary.test.mjs
       # licence: outlet summaries are read by the jobs but never stored
       - run: node tests/outlet_text.test.mjs
       # sold-version switch: non-commercial sources come out in one step (tools/nc_strip.mjs)
@@ -162,6 +169,8 @@ jobs:
       - run: node tests/spikes.test.mjs
       # news relevance word lists, and the pool rechecking the rows it carries over (tools/relevance.json, tools/news_index.mjs)
       - run: node tests/topics.test.mjs
+      # related-story match rules: the "Happy Water" case (assets/osap-relmatch.js)
+      - run: node tests/relmatch.test.mjs
       - run: node tests/news_index_relevance.test.mjs
       # sync my devices: BIP-340 signing vectors, sync codes, sealing and the item-by-item merge
       - run: node tests/sync.test.mjs

@@ -24,6 +24,7 @@
 ["n11871306439",18.33632,43.27666,"sa",{"name":"العريقين","name:en":"Al`Urayqin","amenity":"hospital","healthcare":"hospital"}],
 ["n1237748922",18.29722,42.80355,"sa",{"name":"خميس مشيط","name:en":"King Khalid Air Base","aeroway":"aerodrome","icao":"OEKM","iata":"KMX","wikidata":"Q11297921"}],
 ["n13658867696",18.34147,42.55856,"sa",{"amenity":"clinic"}],
+["n14284639573",18.23175,42.55889,"sa",{"name":"مستشفى برايا للتأهيل والرعاية الممتدة","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"private","emergency":"no","operator:type":"private","addr:city":"أبها"}],
 ["n2714171327",18.28122,42.66934,"sa",{"name":"المستشفى السعودي الالماني عسير","name:en":"Bait al battarji Saudi German hospital (1,853 patient )","amenity":"hospital","emergency":"yes"}],
 ["n4364952590",18.29005,42.74301,"sa",{"name":"مستشفى الحياة الوطني","name:en":"Hayat national hospital (82 patient )","amenity":"hospital"}],
 ["n4406967896",18.21616,42.4978,"sa",{"name":"مستشفى ابها الخاص","name:en":"Abha private hospital (1,877 patient )","healthcare":"hospital","addr:street":"طريق الملك خالد"}],

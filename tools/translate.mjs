@@ -17,6 +17,7 @@ import { spawnSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
 import { protectThaiPlaces } from "./th_places.mjs";
+import { protectTerms } from "./mt_glossary.mjs";
 import { mtSuspect, looksEnglish, lowConfidence } from "./mt_guard.mjs";
 
 // One cache file per refresh lane. The fast lane (warnings) and the news lane (news, Deep South, social) run at the same time and
@@ -130,7 +131,10 @@ const TH_ABBR = new RegExp("(" + Object.keys(TH_MONTHS).map((k) => k.replace(/\.
 // Thai place names: written in English (tools/th_places.mjs), since the model reads them as ordinary words or other places
 // ("ไฟไหม้ป่าตอง", a fire in Patong, as "forest fire"). On 60 stored headlines whose translation had lost its place, 48 came back
 // right with the names written in and 2 without; on 30 that had kept theirs, 28 still passed (probe 2026-11-16).
+// Terms whose meaning must survive (tools/mt_glossary.mjs: 카디즈 -> KADIZ, an air defense zone is not airspace) are written in
+// English for every language.
 export function prepareForModel(text, lang) {
+  text = protectTerms(text);
   if (!/^th\b/i.test(lang || "") && !/[\u0E00-\u0E7F]/.test(text || "")) return text;
   return protectThaiPlaces(String(text)).replace(TH_ABBR, (m, mo, y, at, all) => TH_MONTHS[mo] + (y ? " " + (+(y.length === 2 ? "25" + y : y) - (y.length === 2 || /^2[45]/.test(y) ? 543 : 0)) : "") +
     (/[\u0E00-\u0E7F]/.test(all[at + m.length] || "") ? " " : ""));

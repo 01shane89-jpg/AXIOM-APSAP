@@ -1,7 +1,7 @@
 [["n10237441977",49.21746,18.74758,"sk",{"name":"Národná transfúzna služba SR","healthcare":"blood_donation"}],
 ["n11565002987",49.00053,21.23578,"sk",{"name":"Hyperbarické centrum ADOS Prešov","amenity":"clinic","healthcare":"clinic","phone":"+421 911 502 321","website":"https://www.hyperbaricke-centrum.sk/ados-lokacie/lokacia-presov","opening_hours":"Mo-Fr 08:00-17:00"}],
 ["n11878439917",48.16727,17.09129,"sk",{"name":"Národná transfúzna služba SR","healthcare":"blood_donation","phone":"+421 2 5910 3094","website":"https://www.ntssr.sk/","opening_hours":"Mo-Fr 07:00-14:00"}],
-["n11878447288",48.15532,17.1522,"sk",{"name":"Národná transfúzna služba SR","healthcare":"blood_donation","phone":"+421 2 5910 3061","website":"https://www.ntssr.sk/"}],
+["n11878447288",48.15532,17.1522,"sk",{"name":"Národná transfúzna služba SR","healthcare":"blood_donation","phone":"+421 2 5910 3061","website":"https://www.ntssr.sk/","opening_hours":"Mo-Fr 07:00-14:00"}],
 ["n12426006422",48.7437,19.11449,"sk",{"name":"Krištof 02","emergency":"air_rescue_service","operator:type":"private","website":"https://www.ate.sk/","wikidata":"Q12031524","opening_hours":"24/7"}],
 ["n12426006423",49.06808,20.24561,"sk",{"name":"Krištof 03","emergency":"air_rescue_service","operator:type":"private","website":"https://www.ate.sk/","wikidata":"Q12031525","opening_hours":"24/7"}],
 ["n12426006424",48.72422,21.2354,"sk",{"name":"Krištof 04","emergency":"air_rescue_service","operator:type":"private","website":"https://www.ate.sk/","wikidata":"Q12031526","opening_hours":"24/7"}],

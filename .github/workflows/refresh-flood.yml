@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, warngeo, news, topics, et, health-test, osm, deepsouth, social, more, storms, roads, dense, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt, probe-mt-conf, probe-mt-th); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, warngeo, news, topics, et, health-test, osm, deepsouth, social, more, storms, roads, dense, fulltext, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt, probe-mt-conf, probe-mt-th); empty runs all"
         required: false
         default: ""
       lane:
@@ -247,6 +247,14 @@ jobs:
           OSAP_COMMERCIAL: ${{ vars.OSAP_COMMERCIAL }}
         timeout-minutes: 14
         continue-on-error: true
+      # Open-licence full text (tools/refresh_fulltext.mjs): articles whose publisher's licence allows republishing (The Conversation
+      # CC BY-ND, GOV.UK OGL), read once each and kept for the in-app reader; every other outlet stays a link. After the dense feeds,
+      # whose Analysis and travel-advice items carry most of these links.
+      - name: Read open-licence articles for the in-app reader
+        if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'dense' || inputs.only == 'fulltext' }}
+        run: node tools/refresh_fulltext.mjs
+        timeout-minutes: 6
+        continue-on-error: true
       - name: Report translation coverage
         if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' || startsWith(inputs.only, 'probe-mt') }}
         run: node tools/mt/coverage.mjs
@@ -313,7 +321,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/news data/live/news-pics.json data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/stories.js data/live/stories data/live/threads data/live/spikes.js data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json data/live/translation-cache-fast.json data/live/translation-cache-news.json data/live/warnings-geo.json probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/news data/live/news-pics.json data/live/news-dates.json data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/stories.js data/live/stories data/live/threads data/live/spikes.js data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json data/live/translation-cache-fast.json data/live/translation-cache-news.json data/live/warnings-geo.json probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output ($ONLY) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin "HEAD:refs/heads/claude/dense-preview-data$([ "$ONLY" = dense ] || echo "-$ONLY")"
         continue-on-error: true

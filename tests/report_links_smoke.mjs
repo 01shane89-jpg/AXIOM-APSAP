@@ -9,6 +9,7 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright";
+import { RULES, SHARDS, EXTRACTOR, shardOf, shardJs } from "../tools/fulltext_lib.mjs";
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml", ".css": "text/css" };
 const root = process.cwd();
 const server = createServer(async (req, res) => {
@@ -24,6 +25,15 @@ function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
 const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
 await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+// the open-licence store (assets/osap-reader.js) with one Conversation article, for the report panel's Read it here
+const TC = "https://theconversation.com/test-report-panel-article-444444";
+const ftShard = shardOf(TC), ftEntry = { r: "conversation", at: "2026-11-17T10:00Z", sha: "cd".repeat(32), read: TC, x: EXTRACTOR, title: "Report panel test article",
+  by: [{ n: "Jane Example", r: "Lecturer, Example University" }], blocks: [{ k: "p", s: ["Full article text for the report panel test."] }], chars: 50 };
+const ftIx = "window.OSAP_FTIX=" + JSON.stringify({ asof: "2026-11-17T10:00Z", extractor: EXTRACTOR, shards: SHARDS, n: 1,
+  rules: RULES.map((r) => ({ id: r.id, hosts: r.hosts, path: r.path.source, name: r.name, lic: r.lic, licUrl: r.licUrl, terms: r.terms, note: r.note, nd: r.nd, apiName: r.apiName || "" })) }) + ";\n";
+await ctx.route(/\/data\/live\/fulltext\/index\.js(\?|$)/, (r) => r.fulfill({ status: 200, contentType: "text/javascript", body: ftIx }));
+await ctx.route(/\/data\/live\/fulltext\/([0-9a-f]{2})\.js(\?|$)/, (r) => { const k = r.request().url().match(/fulltext\/([0-9a-f]{2})\.js/)[1];
+  return r.fulfill({ status: 200, contentType: "text/javascript", body: shardJs(k, k === ftShard ? { [TC]: ftEntry } : {}) }); });
 await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "today"); } catch (e) {} });
 const p = await ctx.newPage(), errors = [];
 p.on("pageerror", (e) => errors.push(e.message));
@@ -96,6 +106,21 @@ if (lf) {
   ok(lf.href === lf.url && /^Read the full article at /.test(lf.text), "it has a Read the full article button to the outlet");
   ok(/headline only/.test(lf.note), "it says OSAP shows the headline only");
 } else console.log("  (no layer-feed headline in this snapshot)");
+
+// an open-licence article: the report offers Read it here, which opens the in-app reader with the full text
+await p.waitForFunction(() => window.OSAP_FTIX, null, { timeout: 30000 });
+const ft = await p.evaluate(([id, tc]) => {
+  const r = window.TSAP.records.find((x) => x.id === id), keep = r.url;
+  r.url = tc; window.TSAP.select(id, false);
+  const box = document.getElementById("tl-pkg"), b = box.querySelector("button[data-ftread]"), alt = box.querySelector("a.pkgreadalt");
+  const out = { btn: !!b && b.getAttribute("data-ftread") === tc, alt: !!alt && alt.href === tc && alt.target === "_blank" };
+  if (b) b.click();
+  r.url = keep; return out;
+}, [pick.id, TC]);
+ok(ft.btn && ft.alt, "an open-licence article's report offers Read it here, with the original one tap away");
+await p.waitForFunction(() => /Full article text for the report panel test/.test((document.querySelector("#ft-reader .fttext") || {}).textContent || ""), null, { timeout: 15000 }).catch(() => {});
+ok(await p.evaluate(() => /Full article text/.test((document.querySelector("#ft-reader .fttext") || {}).textContent || "") && /CC BY-ND/.test(document.querySelector("#ft-reader .ftlic").textContent)), "Read it here opens the reader with the full text and its licence credit");
+await p.evaluate(() => window.OSAP_READER.close());
 
 // a record whose address is not a web address shows it as text, never as a link
 const js = await p.evaluate((id) => {

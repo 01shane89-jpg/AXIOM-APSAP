@@ -12,6 +12,10 @@
 //     for a German report of a drone attack that names no deaths, 2026-11-15);
 //   - leaves out or replaces a Thai place the original names (tools/th_places.mjs: ไฟไหม้ป่าตอง, a fire in Patong, as "forest fire",
 //     Khon Kaen as Kangar, 2026-11-16);
+//   - loses an air defense identification zone (카디즈, KADIZ, as "Cádiz"; a Khmer "air defense zone" as "airspace") or turns a
+//     Korean scramble (출격) into an attack (tools/mt_glossary.mjs, 2026-11-17), or loses a mine or the Strait of Hormuz
+//     ("Tabrak Ranjau", hit a mine, as "Collision with a Whale"; 荷姆茲 as "Homs");
+//   - names Iraq or Syria where the original names neither (Newtalk's 伊, Iran, as "Iraqi forces", 2026-11-17);
 //   - gives a number the original does not have (a date moved from "05 Novembre" to "28 Novembre", "Gulf 28" turned into
 //     "Gulf Games 26", "The 100 Most Powerful People in the World" for an Armenian headline with no number in it).
 // looksEnglish() finds a headline that is already English under another language's label (a Gulf or West African outlet's
@@ -27,6 +31,7 @@ import { MONTHS } from "./mt_months.mjs";
 import { WEEKDAYS } from "./mt_weekdays.mjs";
 import { extraCount, extraHarm, numberWordValues } from "./mt_facts.mjs";
 import { missingThaiPlace } from "./th_places.mjs";
+import { termMissing, countryAdded } from "./mt_glossary.mjs";
 
 // any script's decimal digits as ASCII ("২০০১" -> "2001"), so a year written in Bengali or Thai digits is recognised
 export function asciiDigits(s) {
@@ -94,6 +99,10 @@ export function mtSuspect(orig, en, now = Date.now(), lang = "") {
   if (h) return "\"" + h + "\" not in the original";
   const pl = missingThaiPlace(orig, en);
   if (pl) return "place " + pl + " left out";
+  const tm = termMissing(orig, en);
+  if (tm) return "term " + tm + " not kept";
+  const ca = countryAdded(orig, en);
+  if (ca) return "country " + ca + " not in the original";
   const n = extraNumber(orig, en);
   if (n) return "number " + n + " not in the original";
   const mo = extraMonth(orig, en);
