@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2022-10-21"]=[["th","2022-10-21T00:18","21 dead in Ramkhamhaeng, NGV explodes and fires up.","ระทึกพระราม 2 ! ทัวร์ยางระเบิด-ไฟลุก-NGVพุ่ง 21 ชีวิต หนีตายอลหม่าน","เดลินิวส์ (via Bing News search)","https://www.dailynews.co.th/news/1600400/","","smt","","insurgency,safety"]];

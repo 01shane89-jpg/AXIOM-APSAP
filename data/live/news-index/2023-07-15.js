@@ -1,1 +1,0 @@
-window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2023-07-15"]=[["lu","2023-07-15T08:00","Deux ponts de Kiev touchés par des frappes russes","","L'essentiel (via Bing News search)","https://www.lessentiel.lu/fr/story/conflit-russie-ukraine-deux-ponts-de-kiev-touches-par-des-frappes-russes-777902872998","","st","",""]];
