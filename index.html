@@ -55,6 +55,7 @@
 </script>
 <!-- sync my devices: writes changes from another device before any feature reads its store (assets/osap-sync.js) -->
 <!-- lock my saved work: a locked device has no saved work in plain storage before any feature reads it (assets/osap-vault.js) -->
+<script src="assets/osap-relmatch.js"></script>
 <script src="assets/osap-sold.js"></script>
 <script src="assets/osap-vault.js"></script>
 <script src="assets/osap-sync-boot.js"></script>
@@ -4255,7 +4256,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return rDF;
   }
   function relatedStories(r) {
-    var common = rCommon(), mine = rTok(rText(r) + " " + (r.place || "") + " " + (r.prov || ""));
+    var common = rCommon(), mineText = rText(r) + " " + (r.place || "") + " " + (r.prov || ""), mine = rTok(mineText), RM = window.OSAP_RELMATCH;
     Object.keys(common).forEach(function (w) { delete mine[w]; });
     var t0 = Date.parse(String(r.ts).slice(0, 10)), hasLL = r.lat != null && isFinite(r.lat), out = [];
     function score(title, text, ts, lat, lon, place) {
@@ -4264,9 +4265,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var d = hasLL && lat != null && isFinite(lat) ? km(r, { lat: lat, lon: lon }) : null;
       var near = d != null ? d <= 50 : !!(r.place && place && place === r.place);
       if (dt != null && dt > (shared.length >= 3 ? 90 : 30)) return null;
-      if (!(shared.length >= 2 || (shared.length >= 1 && near) || (near && dt != null && dt <= 3))) return null;
-      var s = shared.length * 2 + (d != null ? (d <= 25 ? 3 : d <= 50 ? 1.5 : 0) : near ? 2 : 0) + (dt == null ? 0 : dt <= 2 ? 2 : dt <= 7 ? 1 : dt <= 30 ? 0.3 : -1);
-      var why = [shared.length ? "shares " + shared.slice(0, 4).join(", ") : "", d != null ? Math.round(d) + " km away" : near ? "same place" : "", dt != null ? (dt < 1 ? "same day" : Math.round(dt) + " days apart") : ""].filter(Boolean).join(" · ");
+      /* how much the shared words are worth (osap-relmatch.js): loose news words count half, names and the same kind of event more */
+      var w = RM.strength(shared, mineText, title + " " + String(text || "").slice(0, 240));
+      if (!RM.enough(w, near, dt)) return null;
+      var s = w.str * 2 + (d != null ? (d <= 25 ? 3 : d <= 50 ? 1.5 : 0) : near ? 2 : 0) + (dt == null ? 0 : dt <= 2 ? 2 : dt <= 7 ? 1 : dt <= 30 ? 0.3 : -1);
+      var why = [shared.length ? "shares " + (w.pairs.length ? w.pairs.concat(shared.filter(function (x) { return w.pairs.join(" ").split(" ").indexOf(x) < 0; })) : shared).slice(0, 4).join(", ") : "", w.why, d != null ? Math.round(d) + " km away" : near ? "same place" : "", dt != null ? (dt < 1 ? "same day" : Math.round(dt) + " days apart") : ""].filter(Boolean).join(" · ");
       return { s: s, why: why };
     }
     /* social posts: official and news accounts only (tools/social_accounts.json). Posts are short and fast, so one shared word within
@@ -4277,10 +4280,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var h = rMs(o), dh = isFinite(h0) && isFinite(h) ? (h - h0) / 36e5 : null, dd = dh == null ? null : Math.abs(dh) / 24;
       var d = hasLL && o.lat != null && isFinite(o.lat) ? km(r, { lat: o.lat, lon: o.lon }) : null, near = d != null ? d <= 50 : !!(r.place && o.place && o.place === r.place);
       if (dd == null || dd > 14) return null;
-      if (!(shared.length >= 2 || (shared.length >= 1 && (dd <= 3 || near)))) return null;
-      var s = shared.length * 2 + (near ? 2 : 0) + (dd <= 1 ? 3 : dd <= 3 ? 1.5 : dd <= 7 ? 0.5 : 0);
+      /* one loose word ("water") within three days was enough before (Shane 2026-11-08, "Happy Water"): never now */
+      var w = RM.strength(shared, mineText, rText(o));
+      if (!RM.enoughSocial(w, near, dd)) return null;
+      var s = w.str * 2 + (near ? 2 : 0) + (dd <= 1 ? 3 : dd <= 3 ? 1.5 : dd <= 7 ? 0.5 : 0);
       var ago = Math.abs(dh) < 1 ? "within the hour of this report" : Math.abs(dh) < 48 ? Math.round(Math.abs(dh)) + " h " + (dh > 0 ? "after" : "before") + " this report" : Math.round(dd) + " days " + (dh > 0 ? "after" : "before") + " this report";
-      return { s: s, h: h, why: [shared.length ? "shares " + shared.slice(0, 4).join(", ") : "", d != null ? Math.round(d) + " km away" : near ? "same place" : "", ago].filter(Boolean).join(" · ") };
+      return { s: s, h: h, why: [shared.length ? "shares " + shared.slice(0, 4).join(", ") : "", w.why, d != null ? Math.round(d) + " km away" : near ? "same place" : "", ago].filter(Boolean).join(" · ") };
     }
     R.forEach(function (o) {
       if (o === r || o.id === r.id) return;
@@ -4311,8 +4316,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       var dd = Math.round(Math.abs(Date.parse(String(o.ts).slice(0, 10)) - Date.parse(String(r.ts).slice(0, 10))) / 864e5);
       out.push({ s: 0.5, why: d + " · " + (dd < 1 ? "same day" : dd + " days apart"), rec: o, t: o.title, when: fmtTs(o), src: o.src ? o.src.name : "", url: o.url, kind: LBY[o.layer] ? LBY[o.layer].name : o.layer });
     });
-    var res = out.sort(function (a, b) { return b.s - a.s; }).slice(0, 40);
-    res.social = soc.sort(function (a, b) { return b.s - a.s || b.h - a.h; }).slice(0, 20);
+    /* the same headline from the same source (one video uploaded twice) is listed once, the better match first */
+    function once(list) { var seen = {}; return list.filter(function (m) { var k = RM.dupKey(m.t, m.src); if (seen[k]) return false; seen[k] = 1; return true; }); }
+    var res = once(out.sort(function (a, b) { return b.s - a.s; })).slice(0, 40);
+    res.social = once(soc.sort(function (a, b) { return b.s - a.s || b.h - a.h; })).slice(0, 20);
     return res;
   }
   /* a record's time in ms: feed times without a zone are UTC ("2026-09-26T17:59"); date-only times count from midnight UTC */

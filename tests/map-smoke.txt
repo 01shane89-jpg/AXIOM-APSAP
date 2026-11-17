@@ -239,3 +239,5 @@ tests/news_thumbs_smoke.mjs
 tests/phone_rail_overflow_smoke.mjs
 # disaster alerts: page reads only the GDACS snapshot (API changed), World sends no made-up air-quality request
 tests/gdacs_hazards_smoke.mjs
+# a report's Related tab: no social post on one loose shared word, no headline twice from one source (Shane 2026-11-08 "Happy Water")
+tests/related_match_smoke.mjs
