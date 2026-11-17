@@ -817,6 +817,16 @@ html.phone .rvpkg{max-height:none}
 .pkgt{font-size:16px;font-weight:700;margin:6px 0 6px}
 .pkgchips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
 .pkgd{font-size:12.5px;margin:0 0 8px;line-height:1.5}
+.pkgd:empty{display:none}
+.pkgread{margin:0 0 10px}
+.pkgreadbtn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 14px;border-radius:6px;background:var(--accent);color:var(--on-accent)!important;font-size:13px;font-weight:600;text-decoration:none;max-width:100%;overflow-wrap:anywhere}
+.pkgreadbtn:hover,.pkgreadbtn:focus-visible{filter:brightness(1.1);text-decoration:underline}
+.pkgread .sub{margin-top:4px}
+button.pkgreadbtn{font:inherit;font-size:13px;font-weight:600;border:none;cursor:pointer}
+.pkgreadalt{display:inline-block;margin-left:10px;font-size:13px;text-decoration:underline;min-height:40px;line-height:40px}
+.pkgdl dd a,.pkgorig{text-decoration:underline;text-underline-offset:2px}
+.pkgorig{display:inline-block;padding:4px 0}
+.qcard .qsrc{font-size:12px;margin-left:8px;text-decoration:underline}
 .pkgh{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px}
 .pkgdl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:12px}
 .pkgdl dt{color:var(--muted)}
@@ -4052,10 +4062,32 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     return day + (t.length > 10 ? " " + t.slice(11, 16) + " ICT" : "") + (r.datePub ? " (report date)" : "");
   }
   var STATE = { observation: ["Observed", "instrument reading, not reviewed"], claim: ["Reported", "official statement, not confirmed"],
-                event: ["Reported", "sourced report, not confirmed"] };
+                event: ["Reported", "sourced report, not confirmed"],
+                /* headlines the layer feed sorts into a layer, GVP and ASAM notices, UCDP events: without this the report panel threw and did not open */
+                report: ["Reported", "sourced report, not confirmed"] };
   /* a social media post is the account's own claim, not an official statement, even from a news desk */
   function stateSub(r) { var st = STATE[r.type] || ["", ""]; return r.social ? "the account's own post, not confirmed" : r.news && r.type === "claim" ? "state media report, not confirmed" : st[1]; }
   function chip(cls, text) { return '<span class="chip ' + esc(cls) + '">' + esc(text) + "</span>"; }
+  /* links out of the report panel: only http(s) addresses become links (a javascript: or data: address in a feed stays text),
+     and every one opens in a new tab with no referrer, so the reader keeps their place in OSAP */
+  function webUrl(u) { u = String(u || "").trim(); return /^https?:\/\/[^\s"<>]+$/i.test(u) ? u : ""; }
+  function hostOf(u) { return String(u).replace(/^https?:\/\/(www\.)?/i, "").split(/[\/?#]/)[0]; }
+  function outA(u, text, cls) { return '<a' + (cls ? ' class="' + cls + '"' : "") + ' href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + text + "</a>"; }
+  /* the article box under a report's headline. OSAP never copies an outlet's article text (tools/outlet_text.mjs); official,
+     public-domain and open-licence text is shown in full above. Either way the full original is one tap away. */
+  function readHtml(r, s) {
+    var u = webUrl(r.url), news = r.news || r.lf || /news|outlet|media/i.test(s.kind || "");
+    if (!u) return '<p class="pkgread obs">This source published no web link for this item.</p>';
+    var who = esc(s.name || hostOf(u));
+    /* an open-licence article (assets/osap-reader.js) can be read in full here; the outlet's own page stays one tap away */
+    if (window.OSAP_READER && window.OSAP_READER.can(u))
+      return '<div class="pkgread"><button type="button" class="pkgreadbtn" data-ftread="' + esc(u) + '">Read it here</button> ' +
+        outA(u, "Original at " + who + ' <span aria-hidden="true">\u2197</span>', "pkgreadalt") +
+        '<span class="sub">The publisher\'s open licence lets OSAP show the whole article, unedited and credited.</span></div>';
+    return '<div class="pkgread">' + outA(u, (news ? "Read the full article" : "Open the original") + " at " + who + ' <span aria-hidden="true">\u2197</span>', "pkgreadbtn") +
+      '<span class="sub">Opens ' + esc(hostOf(u)) + " in a new tab." +
+      (news && !String(r.detail || "").trim() ? " OSAP shows the headline only: " + who + "'s article text is theirs and is not copied into OSAP." : "") + "</span></div>";
+  }
 
   /* the words a record's NATO symbol is chosen from: its category, kind and title; when they say nothing, its data set's name */
   function recWords(r) {
@@ -4228,11 +4260,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* on a phone, a tap on a map point opens a small info box beside it; "Full details" opens the whole package as a sheet */
   var fullNext = false;
   function quickCard(r, mk, boxId) {
-    var st = STATE[r.type];
+    var st = STATE[r.type] || [r.type, ""];
     L.popup({ maxWidth: 280, autoPanPaddingTopLeft: [10, 50], className: "qpop" }).setLatLng(mk.getLatLng()).setContent(
       '<div class="pop qcard"><div class="tier">' + esc(LBY[r.layer].name + " · " + r.type + " · " + st[0]) + "</div><h3>" + esc(r.title.length > 160 ? r.title.slice(0, 157) + "…" : r.title) + "</h3>" +
       '<p class="obs">' + esc([fmtTs(r), [r.place, r.prov].filter(Boolean).join(", "), r.src.name].filter(Boolean).join(" · ")) + "</p>" +
-      '<button type="button" class="full" data-full="' + esc(r.id) + '" data-box="' + esc(boxId || "") + '">Full details</button></div>').openOn(map);
+      '<button type="button" class="full" data-full="' + esc(r.id) + '" data-box="' + esc(boxId || "") + '">Full details</button>' +
+      (webUrl(r.url) ? " " + outA(webUrl(r.url), (r.news || r.lf ? "Read article" : "Original") + ' <span aria-hidden="true">\u2197</span>', "qsrc") : "") + "</div>").openOn(map);
   }
   document.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("button[data-full]"); if (!b) return;
@@ -4361,7 +4394,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       if (qm) { quickCard(r, qm, boxId); return; }
     }
     fullNext = false;
-    var st = STATE[r.type], s = r.src;
+    var st = STATE[r.type] || [r.type, ""], s = r.src, ru = webUrl(r.url), su = webUrl(s.url);
+    /* a feed source's address can be the first article it was seen with: the source row then links the outlet's home page */
+    if (su && su === ru) su = su.replace(/^(https?:\/\/[^\/?#]+).*$/i, "$1/");
     var rel = related(r), rs = relatedStories(r), pic = r.img || r.thumb;
     var box = document.getElementById(boxId || "tl-pkg");
     box.hidden = false;
@@ -4370,12 +4405,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       '<div class="pkgtabs" role="tablist"><button type="button" role="tab" data-pkgtab="rep" aria-selected="true">Report</button><button type="button" role="tab" data-pkgtab="rel" aria-selected="false">Related reports (' + (rs.length + rs.social.length) + ")</button></div>" +
       '<div class="pkgpane" data-pane="rel" hidden>' + relatedHtml(rs) + "</div>" +
       '<div class="pkgpane" data-pane="rep">' +
-      (pic ? '<figure class="pkgpic"><a href="' + esc(r.url || pic) + '" target="_blank" rel="noopener noreferrer"><img src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.closest(\'figure\').remove()"></a>' +
+      (pic ? '<figure class="pkgpic"><a href="' + esc(ru || webUrl(pic)) + '" target="_blank" rel="noopener noreferrer"><img src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.closest(\'figure\').remove()"></a>' +
         "<figcaption>Picture: " + esc(s.name) + ", linked from its " + (r.thumb ? "video" : "news feed") + ", not stored by OSAP. It may not show this exact event.</figcaption></figure>" : "") +
       '<h3 class="pkgt">' + esc(r.title) + "</h3>" +
-      '<div class="pkgchips">' + chip("l-" + r.layer, LBY[r.layer].name) + chip("t-" + r.type, r.type) +
+      '<div class="pkgchips">' + chip("l-" + r.layer, (LBY[r.layer] || { name: r.layer }).name) + chip("t-" + r.type, r.type) +
         chip("st", st[0]) + chip("sev" + r.sev, ["", "Low", "Medium", "High"][r.sev] + " severity") + "</div>" +
-      '<p class="pkgd">' + esc(r.detail) + "</p>" +
+      '<p class="pkgd">' + esc(String(r.detail || "").trim()) + "</p>" + readHtml(r, s) +
       (r.th ? '<details><summary>Thai original</summary><span class="th">' + esc(r.th) + "</span></details>" : "") +
       (r.orig ? '<details><summary>' + esc(r.origLang || "Original") + ' original</summary><span class="th">' + esc(r.orig) + "</span></details>" : "") +
       '<dl class="pkgdl">' +
@@ -4397,10 +4432,11 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         "<dt>Verified?</dt><dd>" + esc(st[0]) + '<span class="sub">' + esc(stateSub(r)) + ". No analyst has confirmed it.</span></dd>" +
       "</dl>" +
       '<h4 class="pkgh">Source traceability</h4><dl class="pkgdl">' +
-        "<dt>Issuing source</dt><dd>" + esc(s.name) + "</dd>" +
+        "<dt>Issuing source</dt><dd>" + (su ? outA(su, esc(s.name) + ' <span aria-hidden="true">\u2197</span>') : esc(s.name)) + "</dd>" +
         "<dt>Published</dt><dd>" + esc(r.issued ? window.OSAP_TIME.asofT(r.issued, /^\d{4}-\d\d-\d\d \d\d:\d\d$/.test(r.issued) ? "Asia/Bangkok" : "") : "Unknown") + "</dd>" +
         "<dt>Last update</dt><dd>" + (r.ongoing ? "Status as of " + esc(CF_ASOF) : "Not tracked yet") + "</dd>" +
-        "<dt>Original</dt><dd>" + (r.url ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">' + esc(r.url.replace(/^https?:\/\/(www\.)?/, "").slice(0, 60)) + "</a>" : "No bulletin link archived") + "</dd>" +
+        "<dt>Original</dt><dd>" + (ru ? outA(ru, esc(ru.replace(/^https?:\/\/(www\.)?/i, "").slice(0, 60)) + (ru.replace(/^https?:\/\/(www\.)?/i, "").length > 60 ? "\u2026" : "") + ' <span aria-hidden="true">\u2197</span>', "pkgorig") +
+          '<span class="sub">Tap to open in a new tab</span>' : r.url ? esc(r.url) + '<span class="sub">Not a web address, so not a link</span>' : "No bulletin link archived") + "</dd>" +
         '<dt>Record fingerprint</dt><dd><code class="fp" data-fp="' + r.id + '">' + esc(FP[r.id] || "computing\u2026") + "</code>" +
           '<span class="sub">SHA-256 of this record as packaged in the build. It changes if any field changes. It does not cover the source page.</span></dd>' +
         "<dt>Recorded in OSAP</dt><dd>" + esc(window.OSAP_TIME.asofT(r.recorded || "")) + "</dd>" +
@@ -4431,6 +4467,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     Array.prototype.forEach.call(box.querySelectorAll(".pkgrel button.tlrow"), function (b) {
       b.addEventListener("click", function () { select(b.getAttribute("data-id"), true, boxId); });
     });
+    var ftb = box.querySelector("[data-ftread]");
+    if (ftb) ftb.addEventListener("click", function () { window.OSAP_READER.open(ftb.getAttribute("data-ftread"), { title: r.title, src: s.name }); });
     document.querySelector(".rail").scrollTop = 0;
     /* on a phone the package opens as a sheet over the page; on a tablet the rail sits below the map, so it is scrolled into view */
     if (!(window.ASAP_PHONE && window.ASAP_PHONE.sheet(box))) {
