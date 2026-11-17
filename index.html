@@ -4439,11 +4439,32 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     }
     var inCur = boxId === "cl-pkg", m = inCur ? CM[id] : markers[id];
     if (m) {
-      if (fly) map.setView(m.getLatLng(), Math.max(map.getZoom(), 9));
+      /* the chosen report goes to the middle of the map that can be seen (Shane 2026-11-08: clicking an item did not center it) */
+      mapCenterOn(m.getLatLng(), fly ? Math.max(map.getZoom(), 9) : null);
       m.setStyle({ weight: 3, color: tok("--ink") });
       setTimeout(function () { var mm = inCur ? CM[id] : markers[id]; if (mm) mm.setStyle(mm.__evStyle || (inCur ? cStyle(r) : markerStyle(r))); }, 2500);
     }
   }
+
+  /* CENTER ON THE CHOSEN ITEM. Puts a point in the middle of the part of the map that can be seen: on a phone the bottom sheet
+     (fixed .rail) covers the lower map, so the middle is taken above it. Keeps the zoom unless one is given. Runs a frame later so
+     a sheet that opens with the item has settled first. Never while a map tool waits for a tap (the cursor is a crosshair). */
+  function mapCenterOn(ll, zoom) {
+    if (!ll) return;
+    requestAnimationFrame(function () {
+      var mc = map.getContainer(), mr = mc.getBoundingClientRect(); if (!mr.width || !mr.height) return;
+      var bot = mr.bottom, rail = document.querySelector(".rail");
+      if (rail && getComputedStyle(rail).position === "fixed") { var rr = rail.getBoundingClientRect(); if (rr.top > mr.top + 120 && rr.top < bot) bot = rr.top; }
+      var z = zoom == null ? map.getZoom() : zoom, ty = (bot - mr.top) / 2;
+      var want = map.unproject(map.project(ll, z).add(L.point(0, mr.height / 2 - ty)), z);
+      if (z === map.getZoom()) { var now = map.latLngToContainerPoint(ll); if (Math.abs(now.x - mr.width / 2) < 4 && Math.abs(now.y - ty) < 4) return; }
+      map.setView(want, z, { animate: true });
+    });
+  }
+  window.OSAP_CENTER_ON = mapCenterOn;
+  /* when the user last clicked or tapped the map itself */
+  var mapTapAt = 0;
+  map.getContainer().addEventListener("click", function () { mapTapAt = Date.now(); }, true);
 
   function bindF(id, key, ev) {
     var el = document.getElementById(id);
@@ -7485,6 +7506,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var el = e.popup.getElement && e.popup.getElement(), body = el && el.querySelector(".leaflet-popup-content");
     if (!body || !body.textContent.trim()) return;
     /* a small question box (data-keep-pop), such as "Open Laos" after a double tap, stays a pop-up with its working button */
+    /* an item opened from the map (a layer was clicked, not a tool's own note) goes to the middle of the map. The user's own
+       saved points and drawings (atakpane) and pop-ups that are a menu or a form stay put: their buttons must not move under a tap */
+    var src = e.popup._source, D0 = document.documentElement, own = src && src.options && src.options.pane === "atakpane";
+    /* only a pop-up the user opened by tapping the map: one a tool opens itself (a list row, a test) is placed by that tool */
+    if (Date.now() - mapTapAt < 800 && ((src && src.getLatLng) || /\bqpop\b/.test(e.popup.options.className || "")) && !own && !body.querySelector(".atk-pb, input, select, textarea") &&
+      map.getContainer().style.cursor !== "crosshair" && !/-picking\b/.test(D0.className) && !e.popup.options.noCenter) mapCenterOn(e.popup.getLatLng());
     if (body.querySelector("[data-keep-pop]")) return;
     /* a pin drawn for one of this page's own reports (road disruptions) opens that report itself */
     var orec = body.querySelector("[data-openrec]"), rid = orec && orec.getAttribute("data-openrec");
