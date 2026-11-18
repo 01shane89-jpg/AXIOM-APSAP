@@ -9,7 +9,8 @@
 // top lines and watch lines of every country with sources are redrafted (priority areas first) from the same numbered sources the rules used. The sources
 // go to the model as quoted data, never as instructions. A sentence without a valid citation is dropped; a draft with no cited
 // top line is thrown away and the rules summary stays. AI text is labelled "AI generated" in the app.
-// Env: GITHUB_TOKEN, DAILY_MODEL, DAILY_FORCE=1 (build today again), DAILY_AI_PER_RUN, DAILY_AI_BUDGET_MIN (stop starting new
+// Env: GITHUB_TOKEN, DAILY_MODEL, DAILY_FORCE=1 (build today again), DAILY_CONTINUE=1 (carry on today's AI drafts now, where the
+// runner's own model is up: .github/workflows/refresh-ai.yml), DAILY_AI_PER_RUN, DAILY_AI_BUDGET_MIN (stop starting new
 // drafts after this many minutes), DAILY_ONLY=cc,cc (test), DAILY_END (ISO, test), OSAP_LOCAL_LLM + OSAP_LOCAL_MODEL, OSAP_AI_ORDER.
 import fs from "node:fs";
 import { gateway, parseJsonReply } from "./ai_gateway.mjs";
@@ -35,7 +36,13 @@ const readWin = (f, v) => { try { const w = {}; new Function("window", fs.readFi
 const oldIdx = readJs(INDEX) || {};
 // a day already built is built again only to retry the AI step, and at most every 3 hours
 const retryDue = oldIdx.ai && oldIdx.ai.retry && oldIdx.ai.due > 0 && Date.now() - Date.parse(String(oldIdx.asof).replace(" ", "T")) >= 3 * 36e5;
-if (!process.env.DAILY_FORCE && !process.env.DAILY_ONLY && oldIdx.date === today && !retryDue) {
+// DAILY_CONTINUE skips the 3-hour wait (the news lane's own retries have no model to draft with: GitHub Models answers "OK"),
+// but still only when today's queue has countries left
+const continueDue = !!process.env.DAILY_CONTINUE && oldIdx.date === today && oldIdx.ai && oldIdx.ai.retry && oldIdx.ai.due > 0;
+if (process.env.DAILY_CONTINUE && !continueDue) {
+  console.log(`daily: no AI drafts left to carry on today (${today}); nothing to do`); process.exit(0);
+}
+if (!process.env.DAILY_FORCE && !process.env.DAILY_ONLY && oldIdx.date === today && !retryDue && !continueDue) {
   console.log(`daily: today's summaries (${today}) are already built; nothing to do`); process.exit(0);
 }
 
