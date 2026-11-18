@@ -149,6 +149,7 @@
 "tests/terrain_smoke.mjs": 69,
 "tests/lidar_smoke.mjs": 42,
 "tests/terrain_layers_smoke.mjs": 45,
+"tests/ref_layers_smoke.mjs": 40,
 "tests/selected_contrast_smoke.mjs": 28,
 "tests/event_pin_smoke.mjs": 24,
 "tests/layout_list_smoke.mjs": 82,
