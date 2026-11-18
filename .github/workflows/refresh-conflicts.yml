@@ -69,6 +69,8 @@ jobs:
       # Sensor check (tools/refresh_sensors.mjs, rules tools/sensor_lib.mjs "sensor-v1"): NASA FIRMS VIIRS heat detections near
       # each strike report, in place and time, shown beside the report as "may relate", never as a confirmation. FIRMS is read
       # at most every 3 hours (open files, no key); the other runs pair new reports with the detections already kept.
+      # Seismic check (rules tools/seismic_lib.mjs "seismic-v1"): USGS and EMSC events near the same reports, read hourly, with the
+      # network's own label (earthquake, explosion, quarry blast); OSAP never labels an event itself.
       - name: Pair strike reports with satellite heat
         if: ${{ inputs.only != 'probe-conflicts' && inputs.only != 'history' && inputs.only != 'sites' && inputs.only != 'probe-sites' }}
         run: node tools/refresh_sensors.mjs

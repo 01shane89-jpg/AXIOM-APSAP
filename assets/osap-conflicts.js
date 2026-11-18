@@ -465,7 +465,28 @@
      VIIRS heat detections (NASA FIRMS) close to the incident's reports in place and time, from data/live/conflicts/sensors.js.
      A reading that may relate, never a confirmation: a fire, flare or other strike can sit there too, and a report can be pinned
      at the wrong town. Standing heat (seen on 3 of the last 10 days) is left out. Read-only: it changes no record. */
-  function sensorHtml(g) {
+  function sensorHtml(g) { return heatHtml(g) + seisHtml(g); }
+  /* seismic check (tools/seismic_lib.mjs rules seismic-v1): an event USGS or EMSC located close to the reports in place and time,
+     with the network's own label, magnitude and depth. OSAP never labels an event; most strikes are too small to record. */
+  function seisHtml(g) {
+    var S = W.OSAP_CF_SENSORS, m = S && S.seis && active && S.seis[active]; if (!m) return "";
+    var best = [], seen = {};
+    g.all.forEach(function (x) { (m[x.fp] || []).forEach(function (p) { var key = p.net + p.t; if (!seen[key]) { seen[key] = 1; best.push(p); } }); });
+    if (!best.length) return "";
+    best.sort(function (a, b) { return a.km - b.km || Math.abs(a.h) - Math.abs(b.h); });
+    var hrs = function (h) { var a = Math.abs(h); return (a < 1 ? "under 1 h" : Math.round(a) + " h") + (h < 0 ? " before" : " after") + " the report"; };
+    var rows = best.slice(0, 3).map(function (p) {
+      var u = /^https:\/\/(earthquake\.usgs\.gov|www\.seismicportal\.eu)\//.test(p.url || "") ? p.url : "";
+      return '<div class="mt">' + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(p.net) + " event</a>" : esc(p.net) + " event") + " at " + esc(String(p.t).replace("T", " ").replace(/:\d\dZ$/, "Z")) +
+        (p.mag != null ? ", magnitude " + esc(p.mag) + (p.magType ? " " + esc(p.magType) : "") : "") + (p.dep != null ? ", depth " + esc(p.dep) + " km" + (p.dep === 10 ? " (often a default, not measured)" : "") : "") + ", " +
+        (p.km < 1 ? "under 1 km" : num(Math.round(p.km)) + " km") + " from the report's pin, " + hrs(p.h) +
+        '<br><span class="cfm">' + esc(p.net) + " lists it as " + (p.blast ? "<b>" + esc(p.type) + "</b>" : esc(p.type)) + (p.place ? " · " + esc(p.place) : "") + "</span></div>";
+    });
+    return '<details class="cfmt"><summary title="A seismic event a public network located close to these reports in place and time (rules ' + esc(S.seis_rules || "") + '). It may relate. It is not a confirmation: networks can be 10 km or more out, earthquakes are common in many conflict areas, and most strikes are too small to record.">' +
+      "Seismic event nearby, may relate (" + best.length + ")</summary>" + rows.join("") +
+      '<p class="cfm">USGS (public domain) and EMSC (CC BY 4.0) catalogues' + (S.seis_asof ? ", read " + esc(S.seis_asof) : "") + ". The label is the network's own; OSAP does not tell an explosion from an earthquake. Nothing recorded does not mean nothing happened.</p></details>";
+  }
+  function heatHtml(g) {
     var S = W.OSAP_CF_SENSORS, m = S && S.by && active && S.by[active]; if (!m) return "";
     var best = [], seen = {};
     g.all.forEach(function (x) { (m[x.fp] || []).forEach(function (p) { var key = p.t + p.sat + p.km; if (!seen[key]) { seen[key] = 1; best.push({ p: p, x: x }); } }); });
