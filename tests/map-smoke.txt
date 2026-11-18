@@ -30,6 +30,8 @@ tests/area_shapes_smoke.mjs
 tests/draw_style_rulers_smoke.mjs
 tests/draw_planning_smoke.mjs
 tests/area_report_smoke.mjs
+# the report builder: map snip with its sources, SITREP, QC check before export (assets/osap-rb.js)
+tests/report_builder_smoke.mjs
 # sold version: no tile.openstreetmap.org or Esri request once assets/osap-sold.js says true
 tests/sold_mode_smoke.mjs
 # the Esri maps the site's key can use: folded under one "Esri maps" line, English style with the key, 512 px stand-in (index.html ESRI_GROUPS)

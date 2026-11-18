@@ -121,6 +121,7 @@ jobs:
       # World view (tools/world_lib.mjs): the world list is a projection of every country's stories
       - run: node tests/world.test.mjs
       - run: node tests/an_auto.test.mjs
+      - run: node tests/rb_core.test.mjs
       - run: node tests/osirdraft.test.mjs
       # morning brief push: once a local morning per phone channel, Full-only summary kept from Mid (tools/push_brief.mjs)
       - run: node tests/push_brief.test.mjs
