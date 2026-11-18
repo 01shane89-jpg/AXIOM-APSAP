@@ -135,7 +135,7 @@ const inside = (a, b, pad = 6) => a && b && a.left <= b.left + pad && a.top <= b
   await p.keyboard.press("Escape"); await p.keyboard.press("Escape"); await p.waitForTimeout(300);
   await p.evaluate(() => window.OSAP_TIPS.check());
   const fu = await card(p);
-  ok(fu === "after-area" || fu === null, "drawing an area queues Area summary (or waits while the tool is open)", fu);
+  ok(fu === "after-area" || fu === "after-area-snip" || fu === null, "drawing an area queues its follow-up (or waits while the tool is open)", fu);
   if (fu === null) ok(await p.evaluate(() => [...document.querySelectorAll("#meas-card,#atk-pop,.osplit,[id$=dlg]")].some((e) => !e.hidden && e.offsetWidth > 0)), "the tip waits because a tool is open");
   await p.evaluate(() => window.OSAP_TIPS.close());
 
