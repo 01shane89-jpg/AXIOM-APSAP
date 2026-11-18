@@ -39,6 +39,7 @@
 <script src="assets/osap-heat.js"></script>
 <script src="assets/osap-sides.js"></script>
 <script src="assets/osap-conflicts.js"></script>
+<script src="assets/osap-space.js"></script>
 <script src="assets/osap-cf-iran.js"></script>
 <script src="assets/osap-cf-russia-ukraine.js"></script>
 <script src="assets/osap-cf-thailand.js"></script>
