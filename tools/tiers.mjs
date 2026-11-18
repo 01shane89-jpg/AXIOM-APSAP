@@ -51,7 +51,9 @@ export const SETS = { news: "free", alerts: "free", flood: "free", hazards: "fre
 export const SETS_DEFAULT = "mid";
 // Features inside a tool. team: Team workspace (assets/osap-team.js), creating or joining a team; the owner always has Full.
 // Like every lock on the page it is a sign only: a team's data never passes through OSAP's server.
-export const FEATURES = { team: "full" };
+// ask: Ask about this country (netlify/functions/osap-ask.mjs), which the server checks itself; it answers from the daily
+// summary's sources, a Full data file.
+export const FEATURES = { team: "full", ask: "full" };
 // Push alerts (netlify/functions/osap-push.mjs, assets/osap-push.js): how many push watches each plan may keep on OSAP's server.
 // Free has none, as the Watch tool itself needs Mid. The refresh job (tools/push_watches.mjs) checks each watch with only the
 // data its plan opens, so a push never carries what the plan cannot see in the app.
