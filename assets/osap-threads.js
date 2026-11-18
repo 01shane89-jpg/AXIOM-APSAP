@@ -101,6 +101,7 @@
     "#thv .thx{flex:0 0 auto;min-width:40px;min-height:40px;font-size:22px;line-height:1;background:none;border:1px solid var(--line,#ccc);border-radius:6px;color:var(--ink,#111);cursor:pointer}" +
     "#thv h2{margin:4px 0 2px;font-size:17px;line-height:1.3;overflow-wrap:anywhere}#thv h2 a{color:inherit}" +
     "#thv .thm{font-size:12.5px;color:var(--muted,#555);margin:2px 0}" +
+    "#thv .thshare{display:inline-flex;align-items:center;min-height:36px;margin:6px 0 0;padding:4px 14px;font:inherit;font-size:13px;font-weight:700;border:1px solid var(--accent,#1D5A86);border-radius:6px;background:var(--accent-soft,#D6E3EE);color:var(--ink,#111);cursor:pointer}#thv .thshare:disabled{opacity:.7;cursor:progress}" +
     "#thv .thtabs{display:flex;gap:2px;padding:2px;margin:8px 0 0;background:var(--surface2,#eee);border:1px solid var(--line,#ccc);border-radius:6px}" +
     "#thv .thtabs button{flex:1 1 0;min-width:0;min-height:36px;padding:4px 6px;font:inherit;font-size:13px;font-weight:600;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--muted,#555);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}" +
     "#thv .thtabs button[aria-selected=true]{background:var(--accent-soft,#D6E3EE);color:var(--ink,#111);border-color:var(--accent,#1D5A86)}" +
@@ -267,6 +268,8 @@
         '<p class="thm"><b>' + plural(t.n, "outlet") + "</b>, " + plural(t.r, "report") + " · " + esc(cName(top.cc)) + " · " + esc(when(t.d0)) + " to " + esc(when(t.d)) + "</p>" +
         '<p class="thm">' + [k.state ? k.state + " state media" : "", k.public ? k.public + " public" : "", k.other ? k.other + " private or independent" : ""].filter(Boolean).join(", ") +
           " · " + [o.dom ? o.dom + " based in " + esc(cName(top.cc)) : "", o.out ? o.out + " elsewhere" : ""].filter(Boolean).join(", ") + "</p>" +
+        // Share this trail (assets/osap-trail.js): the first report, repeats, denials and sources as one vertical picture
+        (W.OSAP_TRAIL ? '<button type="button" class="thshare" data-thshare title="A phone-sized picture of this story\'s reporting trail: the first report, who repeated it, headlines that deny or dispute it, and the sources. Claims, never a verdict.">Share this trail</button>' : "") +
         '<div class="thtabs" role="tablist">' + [["parts", "The story", "Story"], ["dev", "Timeline", "Timeline"], ["check", "Check it", "Check it"], ["conn", "Connections", "Links"], ["all", "All reports", "Reports"]].map(function (b) {
           return '<button type="button" role="tab" data-thtab="' + b[0] + '" aria-selected="' + (tab === b[0]) + '" aria-label="' + esc(b[1]) + '"><span class="thl">' + esc(b[1]) + '</span><span class="thsh">' + esc(b[2]) + "</span></button>"; }).join("") + "</div>" : "") +
       '</div><div class="thbody">' + body +
@@ -279,6 +282,7 @@
     var top = trail[trail.length - 1];
     if (b.hasAttribute("data-thclose")) close();
     else if (b.hasAttribute("data-thtab")) { tab = b.getAttribute("data-thtab"); render(); box.querySelector(".thbody").scrollTop = 0; }
+    else if (b.hasAttribute("data-thshare") && W.OSAP_TRAIL && top) W.OSAP_TRAIL.share(top.cc, top.id, b);
     else if (b.hasAttribute("data-thname")) { nameSel = b.getAttribute("data-thname"); render(); }
     else if (b.hasAttribute("data-thback")) { trail = trail.slice(0, +b.getAttribute("data-thback") + 1); tab = "parts"; nameSel = ""; render(); }
     else if (b.hasAttribute("data-thgo")) {
