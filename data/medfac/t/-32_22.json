@@ -16,7 +16,7 @@
 ["n356858617",-30.60216,23.50288,"za",{"name":"Britstown Airfield","aeroway":"aerodrome"}],
 ["n53672899",-31.40209,23.15424,"za",{"name":"Victoria West Airfield","aeroway":"aerodrome","icao":"FAVW","wikidata":"Q12695479"}],
 ["w1036630839",-31.40904,23.94928,"za",{"name":"Richmond Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"prevention_and_cure_of_tb.","beds":"180","operator":"Western Cape Department of Health","operator:type":"government","addr:city":"Durban Road, Richmond"}],
-["w1217511047",-31.96218,23.76951,"za",{"amenity":"hospital","wikidata":"Q57399553"}],
+["w1217511047",-31.96218,23.76951,"za",{"amenity":"hospital","healthcare":"hospital","wikidata":"Q57399553"}],
 ["w1233812316",-30.63761,23.91977,"za",{"name":"De Aar Military Airport","aeroway":"aerodrome","icao":"FADY","military":"airfield"}],
 ["w1233827005",-30.66553,23.99999,"za",{"name":"De Aar New Hospital Helipad","aeroway":"helipad","surface":"concrete"}],
 ["w395173344",-30.66674,23.99977,"za",{"name":"De Aar New Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"government","operator:type":"public","contact:phone":"+27 53 632 4013","addr:street":"Van der Merwe Street","addr:city":"De Aar","addr:postcode":"7000"}],

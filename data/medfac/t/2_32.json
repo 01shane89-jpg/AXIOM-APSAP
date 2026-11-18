@@ -340,6 +340,7 @@
 ["w176356025",2.77445,32.29787,"ug",{"name":"Marie Stops Health Center","amenity":"clinic"}],
 ["w176741399",2.77378,32.30068,"ug",{"name":"Gulu Child and Family Clinic","amenity":"clinic"}],
 ["w192395581",3.28955,32.88197,"ug",{"name":"AVSI","amenity":"hospital"}],
+["w196934803",3.97448,33.4476,"ss",{"amenity":"clinic","healthcare":"clinic"}],
 ["w333324849",2.24727,32.90993,"ug",{"name":"Lira Airport","operator":"Civil Aviation Authority of Uganda","phone":"+256 772 646261","aeroway":"aerodrome","icao":"HULI","wikidata":"Q6557577"}],
 ["w349607271",3.43405,32.58211,"ug",{"name":"Palabek Kal Health Center 3","amenity":"hospital"}],
 ["w349607272",3.43371,32.58232,"ug",{"name":"Palabek Kal Health Center 3","amenity":"hospital"}],

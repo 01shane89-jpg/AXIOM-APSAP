@@ -15,7 +15,7 @@
 ["w366219129",9.53317,45.55903,"so",{"name":"Burao Airport مطار برعو","name:en":"Burco International Airport","aeroway":"aerodrome","icao":"HCMV","iata":"BUO","wikidata":"Q15552"}],
 ["w368147204",9.40827,45.06437,"so",{"name":"Odweyne General Hospital","name:en":"Odweine General Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w430366600",9.52882,44.07507,"so",{"name":"International Hospital المستشفى الدولي","name:en":"Hargeisa International Hospital","amenity":"hospital","healthcare":"hospital","addr:street":"Airport Road","addr:city":"هرجيسا"}],
-["w430370067",9.5128,44.08415,"so",{"name":"Garoonka Diyaaradaha Caalamiga ah ee Egal مطار عقال الدولي","name:en":"Egal International Airport","aeroway":"aerodrome","icao":"HCMH","iata":"HGA","aerodrome:type":"public","wikidata":"Q15564"}],
+["w430370067",9.5128,44.08415,"so",{"name":"Garoonka Diyaaradaha Caalamiga ah ee Cigaal مطار عقال الدولي","name:en":"Egal International Airport","aeroway":"aerodrome","icao":"HCMH","iata":"HGA","aerodrome:type":"public","wikidata":"Q15564"}],
 ["w449347606",9.55973,44.06182,"so",{"name":"Gargaar Multi specialty Hospital","amenity":"hospital"}],
 ["w791242083",9.55106,44.06684,"so",{"name":"Dhakhtarka Adna مستشفى أدنا آدن","name:en":"Edna Adan Maternity Hospital","amenity":"hospital","healthcare":"hospital","phone":"+252 2138014","website":"https://www.ednahospital.org/","addr:city":"هرجيسا","wikidata":"Q5340013","opening_hours":"24/7"}],
 ["w791244577",9.56456,44.06006,"so",{"name":"Kaah medical centre","amenity":"hospital","healthcare":"hospital","addr:street":"Goljano Road"}],

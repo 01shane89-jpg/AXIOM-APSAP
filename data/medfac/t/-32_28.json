@@ -43,7 +43,7 @@
 ["w1268340606",-31.22098,28.20842,"za",{"name":"Ugie Airport","aeroway":"aerodrome","icao":"FAUG"}],
 ["w1278905117",-31.07752,29.49688,"za",{"name":"Flagstaff Community Health Centre","amenity":"hospital","healthcare":"hospital"}],
 ["w1283374436",-30.05151,28.45911,"ls",{"aeroway":"aerodrome"}],
-["w1298160381",-31.72012,28.68619,"za",{"amenity":"clinic"}],
+["w1298160381",-31.72012,28.68619,"za",{"amenity":"clinic","healthcare":"clinic"}],
 ["w1300759159",-30.04008,28.60838,"ls",{"name":"Nths'upe Medical Centre","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health","operator:type":"government"}],
 ["w1303589744",-30.33161,28.80715,"za",{"name":"Khotsong TB Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w1304270532",-31.5455,28.66308,"za",{"aeroway":"helipad","surface":"asphalt"}],

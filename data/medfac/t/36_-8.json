@@ -56,6 +56,8 @@
 ["n14112095256",36.62324,-6.37139,"es",{"emergency":"ambulance_station","addr:street":"Avd7 Diputacion s/n La forestal"}],
 ["n14252579508",36.51503,-6.28167,"es",{"amenity":"clinic","healthcare":"clinic","operator":"Sanitas","operator:type":"private"}],
 ["n14280054393",36.76856,-6.35341,"es",{"name":"Centro de Salud \"La Dehesilla\"","amenity":"hospital","healthcare":"hospital","emergency":"no","operator":"Junta de Andalucía","operator:type":"public","addr:street":"Calle Lentisco","addr:city":"Sanlúcar de Barrameda","addr:postcode":"11540"}],
+["n14298916227",37.40227,-6.00642,"es",{"name":"Quirónprevención","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"occupational","operator":"Quirón","operator:type":"private","addr:housenumber":"s/n","addr:street":"Charles Darwin","addr:city":"Sevilla","addr:postcode":"41092","opening_hours":"Mo-Fr 07:30-15:00"}],
+["n14299705904",36.51299,-6.28058,"es",{"name":"Dorsia","amenity":"clinic","healthcare":"clinic"}],
 ["n1568359217",36.4198,-6.14268,"es",{"name":"Centro de salud Padre Salado","amenity":"clinic"}],
 ["n1712568794",37.13717,-6.8277,"es",{"name":"Centro de Salud Mazagón","amenity":"clinic","healthcare":"clinic","emergency":"yes","phone":"+34 959 376 588","website":"https://palosfrontera.com/directory/centro-de-salud-mazagon/","addr:street":"Calle Hilaria"}],
 ["n1931608836",36.52805,-6.31454,"es",{"aeroway":"helipad"}],

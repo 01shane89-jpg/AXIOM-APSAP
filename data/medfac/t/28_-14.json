@@ -15,7 +15,7 @@
 ["n7768191786",28.48993,-13.87055,"es",{"amenity":"hospital","emergency":"yes","addr:housenumber":"6","addr:street":"Urb. las Granadas P18","addr:city":"Puerto del Rosario","addr:postcode":"35600"}],
 ["n8241484851",28.99774,-13.49185,"es",{"name":"Clinica Jorgani","amenity":"clinic","healthcare":"clinic","phone":"+34 928 34 68 68","website":"https://www.cmjorgani.com","wikidata":"Q87762386"}],
 ["n8807422184",28.92078,-13.6658,"es",{"name":"GP Surgery Of Lanzarote","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;covid19;dermatology","phone":"+34928514274","website":"https://lanzarote.care","addr:housenumber":"9","addr:street":"Acatife","addr:city":"Puerto del Carmen","addr:postcode":"35510","opening_hours":"24/7"}],
-["n8996477179",28.95467,-13.65497,"es",{"name":"Centro de salud de Tías","amenity":"clinic"}],
+["n8996477179",28.95467,-13.65497,"es",{"name":"Centro de salud de Tías","amenity":"clinic","healthcare":"clinic"}],
 ["r18314167",28.97454,-13.56612,"es",{"name":"Hospital General Jose Molina Orosa","amenity":"hospital"}],
 ["w1126346636",28.39057,-13.98298,"es",{"name":"Aeródromo el Jarde","name:en":"El Jarde Aerodrome","aeroway":"aerodrome","icao":"GCAT"}],
 ["w1213651745",28.85761,-13.81944,"es",{"aeroway":"helipad","surface":"concrete"}],

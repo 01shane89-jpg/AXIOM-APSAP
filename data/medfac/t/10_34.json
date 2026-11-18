@@ -8,5 +8,5 @@
 ["w1239732602",10.55772,34.25766,"sd",{"aeroway":"helipad"}],
 ["w188189774",10.06848,34.54471,"et",{"name":"Assosa Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w200437958",11.79887,34.35219,"sd",{"name":"مستشفى السلاح الطبى الدمازين","name:en":"AL-Silah AL- Tibi Hospital AL-Damazin","amenity":"hospital"}],
-["w219454652",11.78509,34.33667,"sd",{"name":"مطار الدمازين","name:en":"Damazin Airport","aeroway":"aerodrome","icao":"HSDZ","iata":"RSS"}],
+["w219454652",11.78509,34.33667,"sd",{"name":"مطار الدمازين","name:en":"Damazin Airport","aeroway":"aerodrome","icao":"HSDZ","iata":"RSS","wikidata":"Q1708778"}],
 ["w787549779",10.62222,35.66464,"et",{"name":"Afame Hospital","healthcare":"hospital"}]]

@@ -12,7 +12,7 @@
 ["w146820266",39.88272,4.25226,"es",{"aeroway":"helipad"}],
 ["w154492673",39.91373,4.12369,"es",{"aeroway":"helipad"}],
 ["w256922473",39.88656,4.256,"es",{"name":"Policlínica Virgen de Gracia","amenity":"clinic","emergency":"yes"}],
-["w306235566",39.93355,4.1423,"es",{"name":"Centre de Salut Es Banyer","amenity":"clinic","addr:housenumber":"1","addr:street":"Carrer del Mestre Duran","addr:city":"Alaior","addr:postcode":"07730","wikidata":"Q125924900"}],
+["w306235566",39.93355,4.1423,"es",{"name":"Centre de Salut Es Banyer","amenity":"clinic","healthcare":"clinic","addr:housenumber":"1","addr:street":"Carrer del Mestre Duran","addr:city":"Alaior","addr:postcode":"07730","wikidata":"Q125924900"}],
 ["w459027979",39.86303,4.22091,"es",{"name":"Aeroport de Menorca","name:en":"Menorca Airport","operator":"Aena","website":"https://www.aena.es/es/menorca.html","aeroway":"aerodrome","icao":"LEMH","iata":"MAH","aerodrome:type":"public","wikidata":"Q651372"}],
 ["w485358820",39.89127,4.25415,"es",{"name":"Centre de Salut Dalt Sant Joan","amenity":"clinic","healthcare":"clinic","operator":"IBSALUT","operator:type":"public","phone":"+34971353255","addr:housenumber":"107","addr:street":"Carrer de Fornells","addr:city":"Maó","wikidata":"Q125924897"}],
 ["w571072930",39.8476,4.25695,"es",{"name":"Unidad Básica de Salud de Sant Lluís","amenity":"clinic","healthcare":"clinic","phone":"+34 971 156 792","website":"https://www.ibsalut.es/asme/es/area-de-salud/atencion-primaria/zona-basica-de-salud-de-dalt-sant-joan/unidad-basica-de-salud-de-sant-lluis","opening_hours":"Mo,Tu,Th,Fr 08:00-15:00; We 13:30-20:00"}],

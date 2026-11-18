@@ -33,7 +33,7 @@
 ["n8493817332",5.50323,-54.02729,"fr",{"amenity":"clinic","healthcare":"clinic","operator":"CHOG","operator:type":"public","osap:withheld":"1"}],
 ["n8569982696",5.50529,-54.02959,"fr",{"name":"Association pour le Traitement de l'Insuffisance Rénale en Guyane","amenity":"clinic","healthcare":"clinic"}],
 ["n8807330342",5.70786,-54.01327,"sr",{"name":"Hulppoli Galibi","amenity":"clinic","operator":"Marowijne Regionale Gezondheidsdienst Suriname"}],
-["n8807348849",5.41643,-54.12627,"sr",{"name":"Hulppoli Bigi Ston","amenity":"clinic","operator":"Clinic Marowijne RGD"}],
+["n8807348849",5.41643,-54.12627,"sr",{"name":"Hulppoli Bigi Ston","amenity":"clinic","healthcare":"clinic","operator":"Clinic Marowijne RGD"}],
 ["n8807356577",4.77534,-54.46379,"sr",{"name":"Polinr Apoema","amenity":"clinic","operator":"Medische Zending"}],
 ["n8807384984",4.96075,-54.44539,"sr",{"name":"Polinr Snesiekondre","amenity":"clinic","operator":"Medische Zending"}],
 ["n8807396351",4.12693,-54.62633,"sr",{"name":"Polinir Karmel","amenity":"clinic","operator":"Medische Zending"}],
