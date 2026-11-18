@@ -87,7 +87,7 @@ async function page(hash, home) {
   ok(box && /1 strike report in the .+ tab/.test(box.text) && /Open the .+ tab/.test(box.text), "it names the conflict tab and offers to open it");
   ok(box && /Next expected passes over the pin/.test(box.text) && /Sentinel-2C/.test(box.text) && /20%/.test(box.text), "Check it from space is filled in: the next Sentinel-2 pass with its cloud forecast");
   ok(box && /Sentinel-1C T087/.test(box.text) && /radar, cloud does not matter/.test(box.text), "the radar pass is listed and needs no cloud");
-  ok(box && /Already passed since the report/.test(box.text) || /No Sentinel pass over the pin is listed since the report yet/.test(box && box.text), "it says what passed since the report");
+  ok(box && /Already passed since the (first )?report \(\d{4}-\d\d-\d\d \d\d:\d\dZ\)/.test(box.text) || /No Sentinel pass over the pin is listed since the (first )?report \(\d{4}-\d\d-\d\d \d\d:\d\dZ\) yet/.test(box && box.text), "it says what passed since the report, naming the report's time");
   ok(box && /space-v1/.test(box.html) && /not a picture of the event/.test(box.text) && /none confirms a report/.test(box.text), "rules named; never a confirmation");
   const wide = await p.evaluate(() => { const b = document.querySelector("#td-cover .cvspbox"); return b ? b.scrollWidth - b.clientWidth : 0; });
   ok(wide <= 2, "the box fits its card (" + wide + " px over)");
@@ -131,6 +131,21 @@ ok(asked.length >= 3 && asked.every((u) => !/\d\.\d{4,}/.test(u.replace(/\d{4}-\
   const noStrike = await p.evaluate(() => { const gs = document.getElementById("cf-list")._groups || []; const k = gs.findIndex((g) => g.all.every((x) => ["talks", "legal", "statement", "humanitarian"].includes(x.kind)));
     const e = k < 0 ? null : document.querySelector('#cf-list li[data-k="' + k + '"]'); return e ? !e.querySelector("details.ospx") : null; });
   ok(noStrike !== false, "an incident of talks or statements has no Check it from space" + (noStrike === null ? " (none listed)" : ""));
+  // 18 Nov 2026 (Qeshm Island): an incident led by a newer explainer counted "since the report" from that explainer, so a pass hours
+  // after the first strike reports showed as "before". Every incident's check runs from the FIRST timed strike report at its pin.
+  const firsts = await p.evaluate(() => { const X = window.OSAP_SPACE, gs = document.getElementById("cf-list")._groups || [], out = [];
+    document.querySelectorAll("#cf-list li[data-k] details.ospx").forEach((d) => {
+      const g = gs[+d.closest("li").getAttribute("data-k")]; if (!g) return;
+      const all = [g.lead].concat(g.all || []).filter(X.eligible), a = all[0];
+      const c = all.filter((x) => Math.abs(x.geo.la - a.geo.la) < 0.25 && Math.abs(x.geo.lo - a.geo.lo) < 0.25), timed = c.filter((x) => !/T00:00(:00)?Z?$/.test(String(x.date || "")));
+      const want = Math.min(...(timed.length ? timed : c).map((x) => Date.parse(String(x.date).slice(0, 16) + "Z")));
+      if (Math.abs(+d.getAttribute("data-ospla") - Math.round(a.geo.la * 1000) / 1000) > 0.001) return out.push({ n: c.length, ok: false, first: false, why: "pin moved" });
+      out.push({ n: c.length, ok: +d.getAttribute("data-ospt") === want, first: d.getAttribute("data-ospfirst") === "1", lead: Date.parse(String(g.lead.date).slice(0, 16) + "Z") });
+    });
+    return out; });
+  const multi = firsts.filter((f) => f.n > 1);
+  ok(firsts.length && firsts.every((f) => f.ok), "every incident's check stays on its pin and runs from the first timed strike report there (" + firsts.filter((f) => f.ok).length + "/" + firsts.length + ")");
+  ok(multi.every((f) => f.first) && firsts.filter((f) => f.n === 1).every((f) => !f.first), "an incident of several reports says the times count from the first report (" + multi.length + " such incidents)");
   ok(!errors.length, "conflict tab: no page errors " + JSON.stringify(errors.slice(0, 3)));
   await ctx.close();
 }

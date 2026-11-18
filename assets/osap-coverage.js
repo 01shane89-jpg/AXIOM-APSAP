@@ -115,7 +115,11 @@
       var g = ix[r[0]]; if (!g) { g = ix[r[0]] = { cid: String(r[0]), fps: [], pins: [] }; out.push(g); }
       if (g.fps.indexOf(r[1]) < 0) g.fps.push(r[1]);
       // one Check it from space per place: a pin within about 25 km of one already listed is the same place
-      if (isFinite(r[2]) && isFinite(r[3]) && !g.pins.some(function (p) { return Math.abs(p.la - r[2]) < 0.25 && Math.abs(p.lo - r[3]) < 0.25; })) g.pins.push({ la: +r[2], lo: +r[3], t: r[4] });
+      // and it runs from the earliest strike report at that place this card carries, so "since the report" means since it was first reported
+      if (!isFinite(r[2]) || !isFinite(r[3])) return;
+      var same = g.pins.filter(function (p) { return Math.abs(p.la - r[2]) < 0.25 && Math.abs(p.lo - r[3]) < 0.25; })[0];
+      if (!same) g.pins.push({ la: +r[2], lo: +r[3], t: r[4], n: 1 });
+      else { same.n++; if (String(r[4] || "") && String(r[4]) < String(same.t || "~")) same.t = r[4]; }
     });
     return out.length ? out : null;
   }
@@ -132,7 +136,7 @@
       var name = (T && T.name && T.name(g.cid)) || g.cid, box = T && T.sensorBox && W.OSAP_CF_SENSORS ? T.sensorBox(g.cid, g.fps) : "";
       h += "<h3>" + plural(g.fps.length, "strike report") + " in the " + esc(name) + " tab</h3>";
       h += box || (W.OSAP_CF_SENSORS ? '<p class="cfm">No open sensor reading is paired with ' + (g.fps.length === 1 ? "this report" : "these reports") + " yet. Nothing listed does not mean nothing happened.</p>" : "");
-      if (X) g.pins.slice(0, 2).forEach(function (p, k) { h += X.html({ la: p.la, lo: p.lo, t: p.t, what: g.pins.length > 1 ? "place " + (k + 1) : "" }, true); });
+      if (X) g.pins.slice(0, 2).forEach(function (p, k) { h += X.html({ la: p.la, lo: p.lo, t: p.t, first: p.n > 1, what: g.pins.length > 1 ? "place " + (k + 1) : "" }, true); });
       if (T && T.open) h += '<button type="button" class="cvmore" data-cvcf="' + esc(g.cid) + '">Open the ' + esc(name) + " tab</button>";
     });
     return h + '<p class="cfm">Reports are claims, not verified. Each reading may relate; none confirms a report.</p></div>';
