@@ -43,6 +43,10 @@ jobs:
       - run: node tests/sensors.test.mjs
       # ships gone quiet near chokepoints and AIS position jumps (tools/darkships_lib.mjs, rules dark-v1)
       - run: node tests/darkships.test.mjs
+      # military aircraft flying an orbit and emergency squawks (tools/milpat_lib.mjs, rules milpat-v1)
+      - run: node tests/milpat.test.mjs
+      # seismic check beside strike reports (tools/seismic_lib.mjs, rules seismic-v1)
+      - run: node tests/seismic.test.mjs
       # radiation near nuclear sites (tools/rad_lib.mjs, rules rad-v1)
       - run: node tests/rad.test.mjs
       # Ask about this country (tools/ask_lib.mjs, netlify/functions/osap-ask.mjs): cited answers only, plan, quota, off without the key
@@ -88,6 +92,7 @@ jobs:
       - run: node tests/places_areas.test.mjs
       - run: node tests/view_reports.test.mjs
       - run: node tests/sat.test.mjs
+      - run: node tests/ref_layers.test.mjs
       # daily summary rules (tools/daily_lib.mjs): grouping, AI output checks, citations dropped from inside sentences
       - run: node tests/daily.test.mjs
       - run: node tests/newimg.test.mjs

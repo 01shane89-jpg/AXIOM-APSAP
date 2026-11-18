@@ -16,6 +16,7 @@
 // description, or a call sign family publicly tied to drones), and the reason is kept with the item.
 import fs from "fs";
 import { COMMERCIAL } from "./nc_strip.mjs";
+import { orbitOf, roleOf } from "./milpat_lib.mjs";
 
 const OUT = process.argv[2] || "drones.json";
 const PREV = process.argv[3] || OUT;
@@ -117,6 +118,8 @@ async function main() {
     const last = tr[tr.length - 1];
     if (!last || last[0] !== r.lat || last[1] !== r.lon) tr.push([r.lat, r.lon, r.pos_ms]);
     r.tr = tr.slice(-40);
+    // flying an orbit or racetrack over one area (rules milpat-v1): the shape only, never a mission
+    const pat = orbitOf(r.tr, r); if (pat) { const role = roleOf(r.t); if (role) pat.role = role; r.pat = pat; } else delete r.pat;
     if (!r.why) delete r.why;
     if (!r.why && ROTOR.test((r.t || "").toUpperCase())) r.rotor = true; else delete r.rotor;
     ac.push(r);

@@ -112,6 +112,8 @@ tests/teams_smoke.mjs
 tests/gnss_smoke.mjs
 # ships gone quiet near chokepoints, AIS gaps and position jumps (assets/osap-darkships.js)
 tests/darkships_smoke.mjs
+# military aircraft flying an orbit and emergency squawks (rules milpat-v1, tools/milpat_lib.mjs)
+tests/milpat_smoke.mjs
 # radiation near nuclear sites from Safecast sensors (assets/osap-radiation.js, rules rad-v1)
 tests/rad_smoke.mjs
 tests/guide_smoke.mjs
@@ -200,6 +202,7 @@ tests/lz_landcover_smoke.mjs
 tests/terrain_smoke.mjs
 tests/lidar_smoke.mjs
 tests/terrain_layers_smoke.mjs
+tests/ref_layers_smoke.mjs
 tests/selected_contrast_smoke.mjs
 tests/event_pin_smoke.mjs
 tests/layout_list_smoke.mjs
