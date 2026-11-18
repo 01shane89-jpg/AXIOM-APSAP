@@ -307,7 +307,7 @@
   function releaseInput(p, clipsById) {
     var o = { tpl: p.tpl, no: p.no, title: p.title, handling: p.handling, aoi: p.aoi, author: p.author, asOf: p.asOf,
       blocks: p.blocks, kjs: p.kjs, srcs: p.srcs,
-      figs: (p.figs || []).map(function (f) { var c = clipsById[f.clip]; return { caption: f.caption || (c && c.caption) || "", snip: c ? c.digest || snipDigestInput(c) : "" }; }) };
+      figs: (p.figs || []).map(function (f) { var c = clipsById[f.clip]; return { caption: f.caption || (c && c.caption) || "", grid: f.grid === "mgrs" ? "mgrs" : "ll", snip: c ? c.digest || snipDigestInput(c) : "" }; }) };
     return canon(o);
   }
   /* returns the release record, or { error } when the QC check blocks and no override reason is given */

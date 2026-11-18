@@ -115,29 +115,59 @@
   /* ---------- drawing a snip: the Area report's map, plus the grid and the as-of stamp ---------- */
   function niceStep(span) { var n = [0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.25, 0.5, 1, 2, 5, 10, 15, 30], b = n[0]; n.forEach(function (x) { if (span / x >= 2.5) b = x; }); return b; }
   function fmtDeg(v, pos, neg) { var a = Math.abs(v), d = a >= 1 || a === 0 ? (a % 1 === 0 ? a.toFixed(0) : a.toFixed(a * 100 % 1 === 0 ? 2 : 3)) : a.toFixed(3); return d.replace(/\.?0+$/, "") + "°" + (v >= 0 ? pos : neg); }
-  function gridSvg(F, asOf) {
-    var Z = 256 * Math.pow(2, F.z);
+  /* the map grid: latitude and longitude lines, or MGRS grid lines (UTM easting and northing in the zone of the map centre,
+     with their two-digit kilometre values, as on a military map). Reference drawing only, computed from window.OSAP_GEO. */
+  function gridSvg(F, asOf, mode) {
+    var Z = 256 * Math.pow(2, F.z), G = W.OSAP_GEO;
     function lonAt(x) { return (F.x0 + x) / Z * 360 - 180; }
     function latAt(y) { var n = Math.PI - 2 * Math.PI * (F.y0 + y) / Z; return Math.atan(Math.sinh(n)) * 180 / Math.PI; }
-    var w0 = lonAt(0), w1 = lonAt(F.w), n0 = latAt(0), s0 = latAt(F.h), st = niceStep(Math.min(w1 - w0, n0 - s0)), out = "", lab = "";
-    for (var lo = Math.ceil(w0 / st) * st; lo < w1; lo += st) {
-      var x = F.px(n0, lo)[0]; out += "M" + x.toFixed(1) + " 0V" + F.h;
-      if (x > 190 && x < F.w - 48) lab += '<text x="' + x.toFixed(1) + '" y="11" text-anchor="middle">' + esc(fmtDeg(+lo.toFixed(6), "E", "W")) + "</text>";
+    var w0 = lonAt(0), w1 = lonAt(F.w), n0 = latAt(0), s0 = latAt(F.h), out = "", lab = "", tag = "WGS 84";
+    var cLat = (n0 + s0) / 2, cLon = (w0 + w1) / 2, U = mode === "mgrs" && G && G.toUtm && G.fromUtm ? G.toUtm(cLat, cLon) : null;
+    if (U) {
+      var cs = [[n0, w0], [n0, w1], [s0, w0], [s0, w1]].map(function (q) { return G.toUtm(q[0], q[1], U.zone); }).filter(Boolean);
+      var e0 = Math.min.apply(null, cs.map(function (u) { return u.e; })), e1 = Math.max.apply(null, cs.map(function (u) { return u.e; }));
+      var nn0 = Math.min.apply(null, cs.map(function (u) { return u.n; })), nn1 = Math.max.apply(null, cs.map(function (u) { return u.n; }));
+      var span = Math.min(e1 - e0, nn1 - nn0), step = 1000;
+      [1000, 2000, 5000, 10000, 20000, 50000, 100000].forEach(function (x) { if (span / x >= 2.5) step = x; });
+      var two = function (v) { var k = Math.floor((((v % 100000) + 100000) % 100000) / 1000); return (k < 10 ? "0" : "") + k; };
+      var line = function (pts) { return pts.map(function (q, i) { var ll = G.fromUtm(U.zone, U.south, q[0], q[1]), xy = F.px(ll[0], ll[1]); return (i ? "L" : "M") + xy[0].toFixed(1) + " " + xy[1].toFixed(1); }).join(""); };
+      var steps = 16;
+      for (var e = Math.ceil(e0 / step) * step; e <= e1; e += step) {
+        var pts = []; for (var i = 0; i <= steps; i++) pts.push([e, nn0 + (nn1 - nn0) * i / steps]);
+        out += line(pts);
+        var ll = G.fromUtm(U.zone, U.south, e, (nn0 + nn1) / 2), x = F.px(ll[0], ll[1])[0];
+        if (x > 190 && x < F.w - 48) lab += '<text x="' + x.toFixed(1) + '" y="11" text-anchor="middle" font-weight="700">' + two(e) + "</text>";
+      }
+      for (var n = Math.ceil(nn0 / step) * step; n <= nn1; n += step) {
+        var pn = []; for (var j = 0; j <= steps; j++) pn.push([e0 + (e1 - e0) * j / steps, n]);
+        out += line(pn);
+        var l2 = G.fromUtm(U.zone, U.south, (e0 + e1) / 2, n), y = F.px(l2[0], l2[1])[1];
+        if (y > 30 && y < F.h - 36) lab += '<text x="3" y="' + (y - 2).toFixed(1) + '" font-weight="700">' + two(n) + "</text>";
+      }
+      var sq = ""; try { sq = G.mgrs(cLat, cLon, 1).replace(/\s*\d+\s*\d+$/, ""); } catch (er) {}
+      tag = "MGRS " + sq + " · " + (step >= 1000 ? step / 1000 + " km" : step + " m") + " grid";
+    } else {
+      var st = niceStep(Math.min(w1 - w0, n0 - s0));
+      for (var lo = Math.ceil(w0 / st) * st; lo < w1; lo += st) {
+        var x2 = F.px(n0, lo)[0]; out += "M" + x2.toFixed(1) + " 0V" + F.h;
+        if (x2 > 230 && x2 < F.w - 48) lab += '<text x="' + x2.toFixed(1) + '" y="11" text-anchor="middle">' + esc(fmtDeg(+lo.toFixed(6), "E", "W")) + "</text>";
+      }
+      for (var la = Math.ceil(s0 / st) * st; la < n0; la += st) {
+        var y2 = F.px(la, w0)[1]; out += "M0 " + y2.toFixed(1) + "H" + F.w;
+        if (y2 > 30 && y2 < F.h - 36) lab += '<text x="3" y="' + (y2 - 2).toFixed(1) + '">' + esc(fmtDeg(+la.toFixed(6), "N", "S")) + "</text>";
+      }
     }
-    for (var la = Math.ceil(s0 / st) * st; la < n0; la += st) {
-      var y = F.px(la, w0)[1]; out += "M0 " + y.toFixed(1) + "H" + F.w;
-      if (y > 30 && y < F.h - 36) lab += '<text x="3" y="' + (y - 2).toFixed(1) + '">' + esc(fmtDeg(+la.toFixed(6), "N", "S")) + "</text>";
-    }
-    var stamp = '<g transform="translate(4,4)"><rect width="178" height="17" rx="2" fill="#fff" fill-opacity=".88" stroke="#12324a" stroke-width=".6"/>' +
-      '<text x="5" y="12" font-size="9.5" font-weight="700" fill="#12324a">AS OF ' + esc(C.dtg(asOf)) + " · WGS 84</text></g>";
-    return '<svg class="rbgrid" viewBox="0 0 ' + F.w + " " + F.h + '" aria-hidden="true" font-family="system-ui,sans-serif"><path d="' + out + '" stroke="#1b232b" stroke-opacity=".32" stroke-width=".7" fill="none"/>' +
+    var txt = "AS OF " + C.dtg(asOf) + " · " + tag, wd = Math.round(txt.length * 5.6 + 12);
+    var stamp = '<g transform="translate(4,4)"><rect width="' + wd + '" height="17" rx="2" fill="#fff" fill-opacity=".88" stroke="#12324a" stroke-width=".6"/>' +
+      '<text x="5" y="12" font-size="9.5" font-weight="700" fill="#12324a">' + esc(txt) + "</text></g>";
+    return '<svg class="rbgrid" data-grid="' + (U ? "mgrs" : "ll") + '" viewBox="0 0 ' + F.w + " " + F.h + '" aria-hidden="true" font-family="system-ui,sans-serif"><path d="' + out + '" stroke="#1b232b" stroke-opacity=".32" stroke-width=".7" fill="none"/>' +
       '<g font-size="8.5" fill="#1b232b" stroke="#fff" stroke-width="2.4" paint-order="stroke">' + lab + "</g>" + stamp + "</svg>";
   }
-  function drawSnip(c, cap) {
+  function drawSnip(c, cap, gridMode) {
     var ar = AR(); if (!ar) return { html: '<p class="obs">The map renderer is still loading.</p>', legend: "" };
     var r = ar._snipMap(c.P, c.marks, cap || c.caption || "Map snip", c.base);
     /* the grid goes under the area outline and marks: insert it before the overlay */
-    var html = r.html.replace('<svg class="arpover"', gridSvg(r.F, c.dataAsOf || c.captured) + '<svg class="arpover"');
+    var html = r.html.replace('<svg class="arpover"', gridSvg(r.F, c.dataAsOf || c.captured, gridMode) + '<svg class="arpover"');
     return { html: html, legend: r.legend, keys: r.keys, attr: r.attr };
   }
   function corners(c) {
@@ -201,8 +231,9 @@
   }
   function figEdit(f, i, byId) {
     var c = byId[f.clip]; if (!c) return '<li class="rbfig" data-fig="' + i + '"><p class="obs">Figure ' + (i + 1) + ': its snip was deleted.</p><button type="button" class="mini" data-rba="delfig">Remove</button></li>';
-    var d = drawSnip(c, f.caption);
+    var d = drawSnip(c, f.caption, f.grid);
     return '<li class="rbfig" data-fig="' + i + '"><div class="rbfh"><b>[F' + (i + 1) + ']</b> <input data-rb="fig.caption" value="' + esc(f.caption || "") + '" placeholder="Caption: what the map shows and why it matters" aria-label="Figure ' + (i + 1) + ' caption">' +
+      '<select data-rb="fig.grid" aria-label="Figure ' + (i + 1) + ' grid"><option value="ll"' + (f.grid === "mgrs" ? "" : " selected") + '>Lat/long grid</option><option value="mgrs"' + (f.grid === "mgrs" ? " selected" : "") + ">MGRS grid</option></select>" +
       '<button type="button" class="mini" data-rba="figup"' + (i ? "" : " disabled") + ' aria-label="Move up">↑</button><button type="button" class="mini" data-rba="delfig">Remove</button></div>' +
       '<div class="arpfig">' + d.html + "<aside><h4>Key</h4>" + d.legend + "</aside></div>" +
       '<p class="rbcm">' + c.items.length + " items, each cited as [F" + (i + 1) + ".I1], [F" + (i + 1) + ".R1], [F" + (i + 1) + ".M1]… · snipped " + esc(dual(c.captured)) + "</p></li>";
@@ -272,6 +303,7 @@
     else if (k === "asOf") { var ms = Date.parse(t.value + "Z"); if (isFinite(ms)) p.asOf = ms; }
     else if (k.indexOf("b.") === 0) { var bk = k.slice(2); p.blocks[bk].text = t.value.slice(0, 6000); if (p.blocks[bk].origin === "ai") p.blocks[bk].approved = false; }
     else if (k.indexOf("kj.") === 0 && (li = t.closest("[data-kj]"))) { var kj = p.kjs[+li.getAttribute("data-kj")]; if (kj) kj[k.slice(3)] = t.value.slice(0, 1200); }
+    else if (k === "fig.grid" && (li = t.closest("[data-fig]"))) { var fg = p.figs[+li.getAttribute("data-fig")]; if (fg) { fg.grid = t.value === "mgrs" ? "mgrs" : "ll"; touch(p); save(); render(); return; } }
     else if (k === "fig.caption" && (li = t.closest("[data-fig]"))) { var f = p.figs[+li.getAttribute("data-fig")]; if (f) f.caption = t.value.slice(0, 400); }
     else if (k.indexOf("src.") === 0 && (li = t.closest("[data-src]"))) {
       var s = p.srcs[+li.getAttribute("data-src")]; if (!s) return;
@@ -360,7 +392,7 @@
     }).join("") + "</ol>";
     var figs = p.figs.map(function (f, i) {
       var c = byId[f.clip]; if (!c) return "";
-      var d = drawSnip(c, f.caption), cn = corners(c), n = i + 1;
+      var d = drawSnip(c, f.caption, f.grid), cn = corners(c), n = i + 1;
       var rows = c.items.map(function (it) {
         var u = C.safeUrl(it.url);
         return '<tr id="rbr-F' + n + "-" + esc(it.no) + '"><td class="kn"><span class="arpno">F' + n + "." + esc(it.no) + '</span></td><td><div class="kt">' + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(it.title) + "</a>" : esc(it.title)) + "</div>" +
@@ -370,7 +402,7 @@
       }).join("");
       return '<figure class="rbpf" id="rbr-F' + n + '"><div class="arpfig">' + d.html + "<aside><h4>Key</h4>" + d.legend + "</aside></div>" +
         "<figcaption><b>Figure " + n + ".</b> " + esc(f.caption || c.caption) + '<br><span class="rbcm">Data as of ' + esc(C.dtg(c.dataAsOf || c.captured)) + " · snipped " + esc(C.dtg(c.captured)) + (c.period ? " · period " + esc(c.period) : "") +
-        " · centre " + esc(cn.ctr) + " · NW corner " + esc(cn.nw) + " · SE corner " + esc(cn.se) + " · " + c.marks.length + " marks, " + c.items.length + " items · base map " + esc(d.attr || c.baseAttr) +
+        " · " + (f.grid === "mgrs" ? "MGRS grid" : "latitude and longitude grid") + " · centre " + esc(cn.ctr) + " · NW corner " + esc(cn.nw) + " · SE corner " + esc(cn.se) + " · " + c.marks.length + " marks, " + c.items.length + " items · base map " + esc(d.attr || c.baseAttr) +
         "; borders Natural Earth; symbols NATO-style (APP-6), never hostile or friendly · snip SHA-256 " + esc(c.digest || "not available") + "</span></figcaption></figure>" +
         (rows ? '<table class="tlrkt arpkt rbit"><caption><b>Figure ' + n + " items.</b> Every mark and listing inside the snipped area, with its source.</caption><colgroup><col class=\"ckn\"><col></colgroup><thead><tr><th>Ref.</th><th>Item</th></tr></thead><tbody>" + rows + "</tbody></table>" : "");
     }).join("");
@@ -482,10 +514,45 @@
     "@media print{.rbp .rbit{font-size:9px}.rbp h3.tls{break-after:avoid}.rbp .rbannex{break-before:page;page-break-before:always}.rbt{-webkit-print-color-adjust:exact;print-color-adjust:exact}}";
   D.head.appendChild(css);
 
+  /* ---------- "Send to report": one story or event from the map into the open product as a numbered source ---------- */
+  function stypeOfRec(r) {
+    if (r.social) return "social";
+    if (r.type === "claim") return r.news ? "state-media" : "official";
+    if (r.type === "observation") return "sensor";
+    return "media";
+  }
+  function statusOfRec(r) {
+    if (r.social) return "Social media post, unverified";
+    if (r.type === "claim") return r.news ? "State media report, not confirmed" : "Official statement: a claim, not confirmed";
+    if (r.type === "observation") return "Observed, not reviewed";
+    return "Reported, not verified";
+  }
+  /* answers a promise of { product, ref, added } or null; the product is the one open in the builder, else the newest
+     draft, else a new SITREP. A source already in the product is not added twice (same SHA-256, else same link). */
+  function sendRecord(r) {
+    if (!r || !r.title) return Promise.resolve(null);
+    ST = load();
+    var now = Date.now(), p = (CUR && prod(CUR)) || (ui().cur && prod(ui().cur)) || ST.products[0] || null;
+    if (!p) { p = C.newProduct(ST, "sitrep", { id: uid("p"), aoi: countryLabel(), author: ui().author || "" }, now); p.kjs.push(C.newKj(now)); ST.products.unshift(p); }
+    CUR = p.id; setUi({ cur: CUR });
+    var a = A(), fpP = (a && a.fingerprints && a.fingerprints()[r.id]) ? Promise.resolve(a.fingerprints()[r.id]) : (a && a.fingerprint ? Promise.resolve(a.fingerprint(r)).then(null, function () { return ""; }) : Promise.resolve(""));
+    return fpP.then(function (fp) {
+      var url = C.safeUrl(r.url), pub = Date.parse(r.issued || r.ts);
+      for (var i = 0; i < p.srcs.length; i++) if ((fp && p.srcs[i].fp === fp) || (url && p.srcs[i].url === url)) return { product: p, ref: "S" + (i + 1), added: false };
+      var g = "", wk = W.OSAP_WORK;
+      try { var it = wk && wk.keyOf && wk.items()[wk.keyOf(r)]; if (it && it.grade && W.OSAP_GRADE) g = W.OSAP_GRADE.code(it.grade); } catch (e) {}
+      p.srcs.push({ title: String(r.title).slice(0, 300), url: url, src: r.src ? String(r.src.name || "").slice(0, 120) : "", stype: stypeOfRec(r), pub: isFinite(pub) ? pub : null,
+        cap: now, fp: /^[0-9a-f]{16,64}$/.test(fp || "") ? fp : "", status: statusOfRec(r), grade: g, place: [r.place, r.prov].filter(Boolean).join(", ").slice(0, 120) });
+      p.updated = now;
+      if (!save()) { p.srcs.pop(); return null; }
+      return { product: p, ref: "S" + p.srcs.length, added: true };
+    });
+  }
+
   /* ---------- entry points ---------- */
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "rbsnip", label: "Snip to report (map with sources)", run: function () {
     snipArea().then(function (c) { if (c) { toast("Snipped " + c.items.length + " items to the report sandbox."); open(); } });
   } });
-  W.OSAP_RB = { open: open, close: close, snipArea: snipArea, snipView: snipView, rerender: rerender, isOpen: isOpen,
+  W.OSAP_RB = { open: open, close: close, sendRecord: sendRecord, toast: toast, snipArea: snipArea, snipView: snipView, rerender: rerender, isOpen: isOpen,
     store: function () { return ST; }, current: function () { return CUR ? prod(CUR) : null; }, qc: function () { return LAST_QC.slice(); }, _productHtml: productHtml };
 })();

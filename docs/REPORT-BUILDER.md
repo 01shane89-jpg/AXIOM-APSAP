@@ -52,7 +52,9 @@ claims (D2). Counts describe the reporting, not events, and figures inside repor
 1. **This PR.** Map snip (drawn area or current view) with north arrow, scale bar, key, lat/long grid, as-of stamp and base
    credit; sandbox; SITREP template; QC check; versioned PDF export. Default standard: ICD 203/206-style until Shane names
    a unit SOP.
-2. Clip buttons on stories, events, timelines, satellite before/after and briefs ("Send to report"); MGRS grid option on
+2. **Part 1 (this PR): "Send to report" on every report window story (added once, as a numbered source with its link,
+   publisher, times, claim status, grade and SHA-256) and an MGRS grid option per figure (UTM lines in the centre zone,
+   grid zone and 100 km square in the stamp).** Still to come in milestone 2: clip buttons on stories, events, timelines, satellite before/after and briefs ("Send to report"); MGRS grid option on
    snips; source type from OSAP's outlet ownership data (state media flagged automatically); spot report, INTSUM and
    country brief templates; PowerPoint and Word export from the same product model.
 3. AI drafting through the existing AI gateway: BLUF, key judgments and gaps drafted from the product's own clips only,

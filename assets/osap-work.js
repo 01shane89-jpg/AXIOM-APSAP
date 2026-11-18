@@ -711,7 +711,9 @@
     d.className = "wkpkg"; d.setAttribute("data-k", k); d.setAttribute("data-g", gradeCode(it));
     d.innerHTML = '<div class="wkbtns"><button type="button" class="refresh" data-p="saved" aria-pressed="' + !!it.saved + '">' + (it.saved ? "★ Saved" : "☆ Save") + "</button>" +
       '<button type="button" class="refresh" data-p="reviewed" aria-pressed="' + !!it.reviewed + '" title="You looked at it. This does not verify the report.">' + (it.reviewed ? "✓ Reviewed" : "Mark reviewed") + "</button>" +
-      '<button type="button" class="refresh" data-p="note">' + (it.note ? "✎ Edit note" : "✎ Add note") + "</button>" + (isNew(k) ? '<span class="wknew">New since last visit</span>' : "") + "</div>" +
+      '<button type="button" class="refresh" data-p="note">' + (it.note ? "✎ Edit note" : "✎ Add note") + "</button>" +
+      /* the report builder (assets/osap-rb.js): the story into the open product as a numbered source, with its link and SHA-256 */
+      (window.OSAP_RB ? '<button type="button" class="refresh" data-p="report" title="Add this report to your open SITREP as a numbered source, with its link, times and SHA-256">Send to report</button>' : "") + (isNew(k) ? '<span class="wknew">New since last visit</span>' : "") + "</div>" +
       pickerFor(k, WORK.items[k] || null) +
       '<div class="wkanl"' + (it.note ? "" : " hidden") + '><span class="wktag">Your note · this device only · not part of the source</span><textarea rows="3" maxlength="4000" placeholder="Your own note">' + esc(it.note || "") + "</textarea></div>";
     var chips = pkg.querySelector(".pkgchips");
@@ -724,6 +726,16 @@
       var rr = recByKey(k); if (!rr) return;
       var p = b.getAttribute("data-p"), cur = WORK.items[k] || {};
       if (p === "note") { var an = d.querySelector(".wkanl"); an.hidden = false; an.querySelector("textarea").focus(); return; }
+      if (p === "report" && window.OSAP_RB) {
+        b.disabled = true;
+        window.OSAP_RB.sendRecord(rr).then(function (res) {
+          b.disabled = false;
+          if (!res) { toast("Could not add it to the report (storage full or blocked)."); return; }
+          b.textContent = "In report as [" + res.ref + "]";
+          window.OSAP_RB.toast((res.added ? "Added to " : "Already in ") + (res.product.title || res.product.no) + " as [" + res.ref + "]. Open Reports > Report builder to write it up.");
+        });
+        return;
+      }
       setFlag(rr, p, !cur[p]);
       d.remove(); pkgBar(pkg);
     });
