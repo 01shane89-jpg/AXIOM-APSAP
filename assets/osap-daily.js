@@ -33,7 +33,21 @@
     var ms = T.parseT(String(s || "").replace(/Z$/, ""));
     return isFinite(ms) ? T.dualT(ms, { date: date !== false }) : String(s || "");
   }
-  function day() { var d = W.OSAP_DAILY && W.OSAP_DAILY[CC]; return d && d.days && d.days[sel] || null; }
+  /* An AI line may not call a report confirmed or verified on its own authority: many outlets repeating a report is not confirmation.
+     The same rule as tools/daily_lib.mjs dropOverclaims, for summaries built before that check: such a line stays only when a headline
+     it cites uses the word itself; an AI summary left with no top line shows its rules top lines. */
+  var CONFIRM = /\b(?:confirm(?:s|ed|ing|ation)?|verif(?:y|ies|ied|ying|ication)|proven|proves|undoubtedly|definitively|beyond doubt)\b/i;
+  function noOverclaim(d) {
+    if (!d || d.method !== "ai" || d._oc) return d;
+    var keep = function (p) {
+      if (!p || !CONFIRM.test(String(p.text || ""))) return true;
+      return (p.refs || []).some(function (n) { var r = (d.refs || []).filter(function (x) { return x && x.n === n; })[0]; return !!r && (CONFIRM.test(String(r.title || "")) || CONFIRM.test(String(r.orig || ""))); });
+    };
+    d._oc = 1; d.bluf = (d.bluf || []).filter(keep); d.ai_watch = (d.ai_watch || []).filter(keep);
+    if (!d.bluf.length) { d.bluf = d.rules_bluf || []; d.method = "rules"; }
+    return d;
+  }
+  function day() { var d = W.OSAP_DAILY && W.OSAP_DAILY[CC]; return noOverclaim(d && d.days && d.days[sel] || null); }
   /* the first report digest (assets/osap-digest.js's file) among an event's sources; only read once that file is loaded */
   var DG_FILE = "data/live/digest.js", dgState = 0, dgWait = [];
   function dgLoad(cb) {
