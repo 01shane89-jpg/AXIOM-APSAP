@@ -315,6 +315,14 @@ const popWhere = (p, grp, test) => p.evaluate(([g, t]) => {
   ok(c.air === 2, "keep open: no duplicate marker for the open aircraft: " + c.air);
   await p.evaluate(() => window.__asapMap.closePopup()); await p.evaluate(() => window.OSAP_TRAFFIC.refresh()); await p.waitForTimeout(1500);
   ok((await count(p)).air === 2, "keep open: after closing, the next refresh draws it as usual");
+  // ships the same way (their refresh is every minute)
+  await p.evaluate(() => window.__asapMap.setView([13.4, 100.6], 10, { animate: false }));
+  await p.check('#ml-sea input[data-trf="sea"]'); await p.waitForTimeout(1500);
+  await p.evaluate(() => { const m = window.OSAP_TRAFFIC.layers().sea.getLayers().find((x) => /TANKER TWO/.test(x.getTooltip().getContent()(x))); m.openPopup(); }); await p.waitForTimeout(600);
+  await p.evaluate(() => window.OSAP_TRAFFIC.reload()); await p.waitForTimeout(1500);
+  await p.evaluate(() => window.OSAP_TRAFFIC.reload()); await p.waitForTimeout(1500);
+  const shipAfter = await p.evaluate(() => { const c = document.querySelector(".leaflet-popup-content .trafpop"); return c ? c.textContent : ""; });
+  ok(/TANKER TWO/.test(shipAfter) && (await count(p)).sea === 5, "keep open: the open ship's pop-up survives two ship refreshes, no duplicate marker");
   ok(errors.length === 0, "keep open: no page errors " + errors.join(" | "));
   await ctx.close();
 }
