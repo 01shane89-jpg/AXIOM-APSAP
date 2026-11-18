@@ -138,6 +138,32 @@ await p.click('#brief .rbclip [data-rba="rerender"]');
 await p.waitForFunction(() => window.OSAP_RB.store().clips.length === 2, null, { timeout: 20000 });
 const rr = await p.evaluate((id0) => { const st = window.OSAP_RB.store(); return { sup: st.clips[0].supersedes, kept: st.clips.some((c) => c.id === id0), fig: st.products[0].figs[0].clip === st.clips[0].id }; }, id0);
 ok(rr.sup === id0 && rr.kept && rr.fig, "Re-render adds a new version that names the old one, keeps the old, and the figure shows the new");
+// MGRS grid on a figure
+await p.waitForSelector("#brief .rbfig select[data-rb='fig.grid']");
+await p.selectOption("#brief .rbfig select[data-rb='fig.grid']", "mgrs");
+await p.waitForSelector("#brief .rbfig .rbgrid[data-grid='mgrs']", { timeout: 10000 });
+const mg = await p.evaluate(() => { const g = document.querySelector("#brief .rbfig .rbgrid"), t = [...g.querySelectorAll("text")].map((x) => x.textContent);
+  return { stamp: t.some((x) => /MGRS \d{2}[C-X] [A-Z]{2} · \d+ k?m grid/.test(x)), digits: t.filter((x) => /^\d\d$/.test(x)).length, lines: (g.querySelector("path").getAttribute("d").match(/M/g) || []).length, kept: window.OSAP_RB.current().figs[0].grid };
+});
+ok(mg.stamp && mg.digits >= 2 && mg.lines >= 4 && mg.kept === "mgrs", "MGRS grid: grid zone and square in the stamp, two-digit easting and northing labels, lines drawn, choice kept (" + JSON.stringify(mg) + ")");
+
+// Send to report from a story: added once as a numbered source with its fingerprint
+await p.evaluate(() => { window.OSAP_RB.close(); const b = [...document.querySelectorAll("#view-seg button[data-view]")].find((x) => !/^cf-/.test(x.getAttribute("data-view")) && !x.hidden); if (b) b.click(); });
+await p.waitForFunction(() => !document.documentElement.hasAttribute("data-cf"), null, { timeout: 10000 });
+const rec = await p.evaluate(() => { const r = window.TSAP.records.find((x) => x.news && /^https?:/.test(x.url || "") && x.title); return r ? { id: r.id, k: window.OSAP_WORK.keyOf(r), url: r.url } : null; });
+ok(!!rec, "a news report to send");
+if (rec) {
+  await p.evaluate((id) => { const rv = document.getElementById("rv"); if (rv && rv.hidden) { const b = document.querySelector('button[data-rv-mode="split"]'); if (b) b.click(); } setTimeout(() => window.TSAP.select(id, true, "rv-pkg"), 80); }, rec.id);
+  await p.waitForSelector('#rv-pkg .wkpkg [data-p="report"]', { timeout: 15000 });
+  const n0 = await p.evaluate(() => window.OSAP_RB.store().products[0].srcs.length);
+  await p.click('#rv-pkg .wkpkg [data-p="report"]');
+  await p.waitForFunction((n0) => window.OSAP_RB.store().products[0].srcs.length === n0 + 1, n0, { timeout: 10000 });
+  const sr = await p.evaluate(() => { const l = window.OSAP_RB.store().products[0].srcs; return l[l.length - 1]; });
+  ok(sr.url === rec.url && /^[0-9a-f]{16,64}$/.test(sr.fp) && sr.cap > 0 && sr.stype && sr.status, "Send to report adds the story as a source with link, capture time, type, status and SHA-256");
+  ok(await p.evaluate(() => /In report as \[S\d+\]/.test(document.querySelector('#rv-pkg .wkpkg [data-p="report"]').textContent)), "the button says which reference it became");
+  await p.click('#rv-pkg .wkpkg [data-p="report"]'); await p.waitForTimeout(600);
+  ok(await p.evaluate((n0) => window.OSAP_RB.store().products[0].srcs.length === n0 + 1, n0), "sending the same story again does not add it twice");
+}
 // the store travels with workspaces
 ok(await p.evaluate(() => !window.OSAP_WS || !window.OSAP_WS.scoped || window.OSAP_WS.scoped("osap-rb")), "the report sandbox belongs to the workspace");
 
