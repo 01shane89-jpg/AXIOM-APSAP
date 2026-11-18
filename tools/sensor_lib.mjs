@@ -4,7 +4,7 @@
 // of a strike, in place and time. What it is not: a confirmation. A heat reading can be a crop fire, a flare, a forest fire or a
 // different strike; a report can be placed at the wrong town. The page says "may relate" and shows distance and hours apart.
 // Rules "sensor-v1":
-//   - reports: violent kinds only (KINDS), with a pin at a named site (within 10 km) or a town (within 25 km); never a province
+//   - reports: violent kinds only (KINDS), never a reaction headline (NOT_EVENT: condemns, hearings, talks...), with a pin at a named site (within 10 km) or a town (within 25 km); never a province
 //     or country pin;
 //   - detections: VIIRS nominal or high confidence (low is dropped), from 36 hours before the report to 12 hours after it;
 //   - persistent heat is left out: a 2 km cell (0.02 degrees) seen on 3 or more different UTC days in the last 10 is a standing
@@ -41,8 +41,10 @@ export function parseFirms(text, satDefault = "") {
 }
 
 /** a report the rules look at: a violent kind, a site or town pin, a fingerprint and a time */
+// headlines about reactions, not events ("Qatar condemns...", "Senator grills...") are never paired, whatever their kind
+export const NOT_EVENT = /\b(condemn\w*|denounc\w*|grill\w*|hearings?|vot(e|es|ed|ing)|sanction\w*|talks|meet(s|ing)|summit|interview|op-ed|opinion|analysis|explainer)\b/i;
 export function eligible(i) {
-  return !!(i && KINDS.has(i.kind) && i.geo && i.geo.la != null && RADIUS[i.geo.p] && /^[0-9a-f]{64}$/.test(i.fp || "") && isFinite(ms(i.date)));
+  return !!(i && KINDS.has(i.kind) && !NOT_EVENT.test(String(i.title_en || i.title || "")) && i.geo && i.geo.la != null && RADIUS[i.geo.p] && /^[0-9a-f]{64}$/.test(i.fp || "") && isFinite(ms(i.date)));
 }
 
 /** hist: { cell: ["YYYY-MM-DD", ...] } updated with detections, trimmed to HIST_DAYS before now; returns the same object */

@@ -20,6 +20,7 @@ ok(eligible(rep), "a drone strike pinned at a town is checked");
 ok(!eligible({ ...rep, kind: "talks" }) && !eligible({ ...rep, kind: "legal" }), "talks and court news are never checked");
 ok(!eligible({ ...rep, geo: { la: 26, lo: 50, p: "country" } }) && !eligible({ ...rep, geo: { la: 26, lo: 50, p: "province" } }), "a country or province pin is never checked");
 ok(!eligible({ ...rep, fp: "x" }), "a report without a fingerprint is not checked");
+ok(!eligible({ ...rep, title: "Qatar condemns continued attacks on Bahrain" }) && !eligible({ ...rep, title: "Senator grills Navy secretary on cost of war" }) && eligible({ ...rep, title: "Drone strike hits radar site" }), "reaction headlines are not events");
 
 let r = pairReport(rep, rows, {});
 ok(r.pairs.length === 1 && r.pairs[0].km < 2 && r.pairs[0].h === -0.2 && r.pairs[0].sat === "NOAA-21", "heat 1 km away, 12 minutes before the report, pairs " + JSON.stringify(r.pairs));
