@@ -16,6 +16,8 @@
 //     Korean scramble (출격) into an attack (tools/mt_glossary.mjs, 2026-11-17), or loses a mine or the Strait of Hormuz
 //     ("Tabrak Ranjau", hit a mine, as "Collision with a Whale"; 荷姆茲 as "Homs");
 //   - names Iraq or Syria where the original names neither (Newtalk's 伊, Iran, as "Iraqi forces", 2026-11-17);
+//   - drops the original's "possible" or "suspected", or makes its radioactive bomb a nuclear one (LSM's "warns of a possible
+//     Iranian dirty bomb attack" as "Iran's Dirty Bomb Attack on Washington", Naewna's ระเบิดกัมมันตรังสี as "nuclear bomb", 2026-11-18);
 //   - gives a number the original does not have (a date moved from "05 Novembre" to "28 Novembre", "Gulf 28" turned into
 //     "Gulf Games 26", "The 100 Most Powerful People in the World" for an Armenian headline with no number in it).
 // looksEnglish() finds a headline that is already English under another language's label (a Gulf or West African outlet's
@@ -31,7 +33,7 @@ import { MONTHS } from "./mt_months.mjs";
 import { WEEKDAYS } from "./mt_weekdays.mjs";
 import { extraCount, extraHarm, numberWordValues } from "./mt_facts.mjs";
 import { missingThaiPlace } from "./th_places.mjs";
-import { termMissing, countryAdded } from "./mt_glossary.mjs";
+import { termMissing, countryAdded, hedgeLost } from "./mt_glossary.mjs";
 
 // any script's decimal digits as ASCII ("২০০১" -> "2001"), so a year written in Bengali or Thai digits is recognised
 export function asciiDigits(s) {
@@ -103,6 +105,8 @@ export function mtSuspect(orig, en, now = Date.now(), lang = "") {
   if (tm) return "term " + tm + " not kept";
   const ca = countryAdded(orig, en);
   if (ca) return "country " + ca + " not in the original";
+  const hl = hedgeLost(orig, en);
+  if (hl) return "the original's " + hl + " not kept";
   const n = extraNumber(orig, en);
   if (n) return "number " + n + " not in the original";
   const mo = extraMonth(orig, en);

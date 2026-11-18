@@ -40,6 +40,8 @@ const KEEP = [
   // Arabic, with its prefixes (بهرمز "in Hormuz"); باهرمز is a family name
   [/(?<![\u0600-\u06FF])(?:ال|[وبل]|وب)?هرمز(?![\u0600-\u06FF])/g, "Hormuz", /\bH[oe]rmoz|\bHormuz/i, "Strait of Hormuz"],
   [/ฮอร์มุซ/g, "Hormuz", /\bH[oe]rmoz|\bHormuz/i, "Strait of Hormuz"],
+  // Thai "radioactive bomb", which the model wrote as "nuclear bomb" (Naewna, 2026-11-18)
+  [/ระเบิดกัมมันต(?:ภาพ)?รังสี/g, "radioactive bomb", /radioactiv|radiolog|dirty/i, "radioactive bomb"],
   [/호르무즈/g, null, /\bH[oe]rmoz|\bHormuz/i, "Strait of Hormuz"],
 ];
 // Iraq and Syria named in the English when the original names neither (Newtalk's 伊, Iran, read as "Iraqi forces" and
@@ -64,6 +66,17 @@ const ADDED = [
   ["Iraq", /\bIraq(?:i|is)?\b/, named("IQ", "irak iraq iraak irač irák ірак ιρακ عراق عێراق بغداد baghdad bagdad багдад 巴格達 巴格达 バグダッド 바그다드")],
   ["Syria", /\bSyria(?:n|ns)?\b/, named("SY", "syri siri suri suuri szir syyri sýr σύρ سوري سوری شام 叙 敘 دمشق damas damask damasc дамаск 大馬士革 大马士革 ダマスカス 다마스쿠스")],
 ];
+// 2026-11-18, an Iranian "dirty bomb" warning: LSM's "ASV izlūkdienesti brīdina par iespējamu Irānas netīrās bumbas uzbrukumu"
+// (US intelligence warns of a possible Iranian dirty bomb attack) came out as "Iran's Dirty Bomb Attack on Washington, D.C.",
+// and Naewna's ระเบิดกัมมันตรังสี (a radioactive bomb) as "nuclear bomb". A radioactive or dirty bomb is not a nuclear one,
+// and a possible or suspected event is not one that happened.
+const RADIO = /กัมมันตรังสี|กัมมันตภาพรังสี|radioakti|radioacti|radiactiv|radioattiv|radioaktīv|радиоактив|радіоактив|放射性|放射能|방사능|방사성|phóng xạ|radyoakti|ραδιενεργ|רדיואקטיב|netīr\S* bumb|schmutzige\S* bombe|bombe sale|bomba sucia|bomba suja|грязн\S* бомб|脏弹|髒彈|ダーティボム|더티\s?밤|ระเบิดสกปรก|bom bẩn|bom kotor/i;
+const NUCLEAR = /นิวเคลียร์|nukle|nuclé|nuclea|ядерн|атомн|核|원자|핵|hạt nhân|nükleer|πυρην|نووي|גרעינ|kodol|atom/i;
+// A word saying the event is possible, suspected or alleged, in the languages of the index. The nouns for "possibilities,
+// opportunities" (mogelijkheden, возможности, možnosti) and 不可能 "impossible" are not hedges.
+const HEDGE = /iespējam|varētu|\bmöglich(?!keit)|mutma(?:ß|ss)lich|angeblich|(?<!notre |votre |leur )\bpossibles?\b|présumé|pourrait|\bposibles?\b|possíve(?:l|is)|\bpresunt|\bsupuest|\bsuposto|podría|poderia|\bpossibil[ei]\b|potrebbe|(?<!не)возможн(?!ост)|(?<!не)можлив(?!іст)|предполага|якобы|możliw(?!oś)|rzekom|domniema|(?<!不)可能(?!性?(?:接受|是))|疑似|가능성|kemungkinan|diduga|có thể|محتمل|مزعوم|يشتبه|olası|muhtemel|pravděpodob|\bmožn(?:é|á|ý)\b|lehetséges|feltételez|mogelijk(?!he)|vermoedelijk|πιθαν|\bmoguć(?!nost)/i;
+// what an English line keeps of it: a hedge, an attribution, a question
+const HEDGE_EN = /possib|potential|\bmay\b|might|could|likely|alleg|suspect|suspic|report|warn|fear|risk|threat|plan|claim|\bsa(?:y|ys|id)\b|accus|probe|investigat|probabl|\?|rumou?r|expect|would|\bcan\b|cannot|can't|unable|allow|enabl|presum|purport|supposed|perhaps|maybe|whether|consider|prepar|\bif\b|in case|\bany\b|unconfirmed|believ|estimat|chance|scenario|prospect|question|\bnot\b|\bno\b|doubt|unlikely|odds/i;
 // 출격 (a sortie, aircraft scrambled): "attack" in the English needs an attack word in the Korean
 const SORTIE = /출격/;
 const KO_ATTACK = /공격|습격|공습|타격|피격|테러|폭격|침공|기습|격추|포격|사격|발사|교전|공세|피습|침략|역습|반격/;
@@ -90,6 +103,14 @@ export function termMissing(orig, en) {
   if (hasZone(orig) && !ZONE_EN(en)) return "air defense identification zone";
   for (const [re, , must, lost] of KEEP) if (applies(orig, re) && !must.test(en)) return lost;
   if (SORTIE.test(orig) && /\battack/i.test(en) && !KO_ATTACK.test(orig) && !/\battack/i.test(orig)) return "attack (출격 is a scramble)";
+  return "";
+}
+
+// "" when the English keeps the original's hedge and kind of bomb, else what it dropped or hardened
+export function hedgeLost(orig, en) {
+  orig = String(orig || ""); en = String(en || "");
+  if (RADIO.test(orig) && !NUCLEAR.test(orig) && /\bnuclear|\batom/i.test(en) && !/radioactiv|radiolog|dirty|radiation/i.test(en)) return "radioactive, not nuclear";
+  if (HEDGE.test(orig) && !HEDGE_EN.test(en)) return "possible or suspected";
   return "";
 }
 
