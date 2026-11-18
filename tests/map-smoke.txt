@@ -115,6 +115,8 @@ tests/period_smoke.mjs
 tests/period14_smoke.mjs
 tests/search_smoke.mjs
 tests/search_all_smoke.mjs
+# news search on Today skips misdated days after tomorrow and still covers today and the two days before (2026-11-18)
+tests/news_search_smoke.mjs
 tests/news_speed_smoke.mjs
 tests/neighbour_redraw_smoke.mjs
 tests/grid_smoke.mjs

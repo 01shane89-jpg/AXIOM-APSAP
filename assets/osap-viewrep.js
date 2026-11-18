@@ -48,6 +48,10 @@
         S.busy = false; S.man = window.OSAP_NEWSIX || null;
         try { Object.keys(window.OSAP_NEWSIX_DAY || {}).forEach(function (d) { PRE[d] = window.OSAP_NEWSIX_DAY[d]; }); } catch (e) {}
         if (!S.man || !S.man.days) { S.err = "The reports index has not been built yet. It is made by the next refresh."; S.man = null; draw(); return; }
+        /* a day after tomorrow (UTC) holds only rows a feed misdated: not read (as in assets/osap-news.js) */
+        var tom = new Date(Date.now() + 864e5).toISOString().slice(0, 10), m = {};
+        Object.keys(S.man).forEach(function (k) { m[k] = S.man[k]; });
+        m.days = S.man.days.filter(function (x) { return x && x.d <= tom; }); S.man = m;
         ensure();
       };
       if (window.OSAP_NEWSIX && window.OSAP_NEWSIX.days) { got(); return; }

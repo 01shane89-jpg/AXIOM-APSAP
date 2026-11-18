@@ -153,6 +153,13 @@ jobs:
         timeout-minutes: 6
         run: node tools/refresh_topics.mjs; node tools/news_index.mjs; node tools/news_spikes.mjs; node tools/refresh_layerfeed.mjs; node tools/news_stories.mjs; node tools/world_pictures.mjs
         continue-on-error: true
+      # Real searches on the index just built, read the way the app reads it (tools/news_search_check.mjs): an error annotation on
+      # this run when a first search would come back empty or the index holds days after tomorrow. The data is still committed.
+      - name: Check news search on the real index
+        if: ${{ (!inputs.only && inputs.lane != 'fast') || inputs.only == 'news' || inputs.only == 'topics' || inputs.only == 'et' }}
+        timeout-minutes: 3
+        run: node tools/news_search_check.mjs
+        continue-on-error: true
       # The ET tab (UFO and UAP reports): the news pool's "uap" data set pinned on the map, official releases and the
       # notable cases in tools/et_cases.json, into data/live/et.js (tools/refresh_et.mjs).
       - name: Build the ET tab's data

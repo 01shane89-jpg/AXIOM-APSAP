@@ -89,6 +89,7 @@
 "tests/period14_smoke.mjs": 17,
 "tests/search_smoke.mjs": 34,
 "tests/search_all_smoke.mjs": 46,
+"tests/news_search_smoke.mjs": 25,
 "tests/news_speed_smoke.mjs": 7,
 "tests/grid_smoke.mjs": 23,
 "tests/comms_smoke.mjs": 82,

@@ -18,6 +18,13 @@ import { compileViews, viewsOf } from "./view_reports_lib.mjs";
 const DAYS = Number(process.env.NEWSIX_DAYS || 30), SUM = Number(process.env.NEWSIX_SUM || 0), OUT = "data/live/news-index.js", DIR = "data/live/news-index";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
 const cutoff = new Date(Date.now() - DAYS * 864e5).toISOString().slice(0, 16);
+// A headline dated ahead of this run cannot be real: an outlet's feed with a bad date (on 2026-11-18 EBC Ethiopia rows dated
+// 11 Dec, an El Nacional row dated 3 Dec and an NHC "no cyclones" note dated 19 Nov). The app searches the newest days first,
+// so three such rows made three near-empty "days" that were all a default search read, and every search found nothing.
+// A row more than FUTURE_H hours ahead is dated when OSAP first saw it, if it has that time; a carried row without it is left
+// out (its real date is unknown). The tolerance allows a feed's local time read as UTC (up to UTC+14).
+const FUTURE_H = Number(process.env.NEWSIX_FUTURE_H || 14), horizon = new Date(NOW + FUTURE_H * 36e5).toISOString().slice(0, 16);
+let future = 0, futureSeen = 0;
 // The data files open with "window.X=" (or "window.X=window.X||{};window.X[\"cc\"]="); only that opening is skipped, because a
 // headline or summary can itself contain "window." and "=" (one Pakistan item carried page script text and broke the whole pool).
 const JS_HEAD = /^(?:window\.\w+=window\.\w+\|\|\{\};)?window\.\w+(?:\["[^"]+"\])?=/;
@@ -37,7 +44,11 @@ function add(i, ccs) {
   if (i && i.via === "search" && !i.date_src) i = fixBingDate({ ...i });   // a Bing time stored before 2026-11-17 (tools/news_date.mjs)
   if (i && i.via === "search" && i.date_src !== "page") { const pd = cachedDate(PAGE_DATES, i.link); if (pd) { i = { ...i }; applyPageDate(i, pd, NOW); } }
   if (!i || !i.link || !/^https?:\/\//.test(i.link) || !(i.title || i.title_en)) return;
-  const d = i.date || (i.first_seen || "").replace(" ", "T").replace(/Z$/, "");
+  let d = i.date || (i.first_seen || "").replace(" ", "T").replace(/Z$/, "");
+  if (d && d > horizon) {
+    const fs0 = (i.first_seen || "").replace(" ", "T").replace(/Z$/, "").slice(0, 16);
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(fs0) && fs0 <= horizon) { d = fs0; futureSeen++; } else { future++; return; }
+  }
   if (!d || d < cutoff) return;
   const p = pool.get(i.link);
   if (p) { ccs.forEach((c) => p.ccs.add(c)); if (i.topics) i.topics.forEach((t) => p.tp.add(t)); if (!p.i.title_en && i.title_en) p.i = { ...i, date: d }; return; }
@@ -91,6 +102,7 @@ try {
     let old; try { old = readJs(DIR + "/" + f); } catch (e) { console.error("index day unreadable:", f, e.message); continue; }
     for (let r of Array.isArray(old) ? old : []) {
       if (!Array.isArray(r) || r.length < 10 || !r[5] || seen.has(r[5]) || r[1] < cutoff) continue;
+      if (r[1] > horizon) { future++; continue; }   // dated ahead of now (see FUTURE_H): its real date is unknown
       if (left.has(r[5])) { seen.add(r[5]); recheck++; continue; }
       // a carried row's machine translation passes today's guard too: one it fails shows the original headline (on 2026-11-16,
       // 1,600 stored rows carried a casualty count or a death the original does not give, "Kill 10" for a German report of a
@@ -106,6 +118,7 @@ try {
     }
   }
 } catch (e) {}
+if (future || futureSeen) console.log(`future dates: ${futureSeen} headlines dated ahead of now were dated when first seen, ${future} with no usable date were left out`);
 if (carried) console.log(`carried over ${carried} headlines already in the index whose history copy has rolled off`);
 if (redated) console.log(`search results: ${redated} carried Bing rows moved from Pacific time to UTC`);
 if (mtDropped) console.log(`machine translation: ${mtDropped} carried headlines failed the guard and show their original words`);
