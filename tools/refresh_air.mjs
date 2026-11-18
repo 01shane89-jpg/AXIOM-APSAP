@@ -23,6 +23,7 @@
 import fs from "fs";
 import path from "path";
 import * as gnss from "./gnss.mjs";
+import * as tracks from "./air_tracks.mjs";
 import { COMMERCIAL, usable } from "./nc_strip.mjs";
 import { FIELDS, row, str } from "./air_rows.mjs";
 import { EMERG, RULES as MILPAT } from "./milpat_lib.mjs";
@@ -42,6 +43,7 @@ const SRC = usable([
 const OSKY = { id: "osky", name: "OpenSky Network", site: "https://opensky-network.org/", url: "https://opensky-network.org/api/states/all",
   licence: "OpenSky Network terms (non-commercial and research use)", nc: true, track: "https://map.opensky-network.org/?icao={hex}" };
 const CELL = 10, EMPTY_EVERY = 6, MAX_AGE = 300, CARRY = 15 * 60, OSKY_EVERY = 15 * 60e3, R_NM = 240;
+let FIELDS_G;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // hex grid of circle centres: rows 6° apart, centres about 6.9° (at the equator) apart along a row, so 240 nm circles overlap
@@ -184,12 +186,18 @@ async function main() {
     counts[k] = list.length;
     fs.writeFileSync(path.join(OUT, "a", k + ".json"), JSON.stringify({ schema: "osap-air-cell/1", built, cell: k, ac: list }));
   }
+  // recent paths (tools/air_tracks.mjs): this sweep's position added to each aircraft's path from the previous sweep
+  // AIRFIELDS: OurAirports airports.csv (public domain; the workflow downloads it once a run) for where each flight left from
+  if (FIELDS_G === undefined) FIELDS_G = process.env.AIRFIELDS ? tracks.loadAirfields(process.env.AIRFIELDS) : null;
+  const TR = tracks.step(tracks.readTracks(PREV), [...seen.values()], nowS, FIELDS_G), trOut = tracks.writeTracks(OUT, TR, built);
   const total = seen.size, ages = [...seen.values()].map((x) => nowS - x[10]).sort((a, b) => a - b);
   const index = {
     schema: "osap-air-traffic/1", built, sweep, took_s: Math.round((Date.now() - t0) / 1000), cell: CELL, f: FIELDS,
     note: "Positions aircraft broadcast (ADS-B/MLAT), passed on by volunteer receiver networks. Reported, not verified. Only aircraft broadcasting ADS-B appear, and only where receivers hear them.",
     sources: ALL.map((s) => ({ id: s.id, name: s.name, site: s.site, licence: s.licence, nc: s.nc, track: s.track })),
     status: stat, asked: asked.length, unasked, carried, total, age_p50_s: Math.round(ages[ages.length >> 1] || 0), osky_at: oskyAt, cells: counts, circ,
+    // each aircraft's current flight in t/<first two hex digits>.json (tools/air_tracks.mjs)
+    tracks: trOut, airfields: FIELDS_G ? FIELDS_G.count : 0,
 
     // emergency squawks worldwide (7500, 7600, 7700, tools/milpat_lib.mjs), airborne only, as broadcast: the page lists them
     emerg: [...seen.values()].filter((x) => EMERG[x[12]] && !(x[14] & 4) && isFinite(x[5]) && isFinite(x[6])).sort((a, b) => b[10] - a[10]).slice(0, 50), emerg_rules: MILPAT,
@@ -204,7 +212,7 @@ async function main() {
   console.log("GPS interference: " + gN + " reports counted, " + gCur + " aircraft-cells this hour, " + GS.hours.length + " hours kept" +
     (gWrote.length ? ", wrote " + gWrote.join(" ") : ""));
   console.log(built.slice(11, 16) + "Z sweep " + sweep + ": " + total + " aircraft (" + carried + " carried on) in " + Object.keys(counts).length + " cells, median age " +
-    index.age_p50_s + " s, " + index.took_s + " s, " + index.asked + "/" + C.length + " circles asked" + (unasked ? ", " + unasked + " left for lack of time" : "") + " | " +
+    index.age_p50_s + " s, " + index.took_s + " s, " + index.asked + "/" + C.length + " circles asked, paths " + JSON.stringify(trOut) + (FIELDS_G ? "" : " (no airfield list)") + (unasked ? ", " + unasked + " left for lack of time" : "") + " | " +
     stat.map((s) => s.src + " ok " + s.ok + (s.busy ? " busy " + s.busy : "") + (s.failed ? " failed " + s.failed + " (" + s.err + ")" : "")).join("; "));
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === new URL(import.meta.url).pathname) main().catch((e) => { console.error(e); process.exit(1); });

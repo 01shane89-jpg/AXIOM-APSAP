@@ -11,8 +11,9 @@
    Paths: each aircraft and ship draws a short trail of the positions this page has seen it at (the last 10 minutes for
    aircraft, the last hour for ships; trails build while the map is open and are kept in memory only). Selecting one draws
    its whole path: a ship's from Open Waters AIS's own track for it (last 24 hours, or 7 days on request; gaps where no
-   receiver heard it are drawn dotted), an aircraft's current flight from OpenSky Network through OSAP's own server
-   (/api/air-track, netlify/edge-functions/osap-air-track.js), or, where that is not available, the positions seen here. */
+   receiver heard it are drawn dotted), an aircraft's current flight as OSAP's own sweep has heard it, about every five minutes
+   since it took off, with the airfield it left from where the sweep heard it on the ground or climbing out
+   (live-air t/<first two hex digits>.json, tools/air_tracks.mjs), joined to the newer positions seen here. */
 (function () {
   "use strict";
   var W = window, D = document;
@@ -32,7 +33,7 @@
   var map = null, renAir = null, renSea = null, renSel = null, gAir = null, gSea = null, timer = null, mvT = null, tick = 0;
   var A = { idx: null, cells: {}, err: "", busy: false, note: "", shown: 0, live: null, lerr: "", lbusy: false, loff: false, lnote: "" };
   var V = { list: {}, err: "", busy: false, note: "", shown: 0, trunc: false, attr: {}, at: 0 };
-  var gSel = null, gAirT = null, gSeaT = null, SEL = null, TRACK = "/api/air-track";
+  var gSel = null, gAirT = null, gSeaT = null, SEL = null;
 
   function lsGet() { try { return JSON.parse(localStorage.getItem(LSK) || "null"); } catch (e) { return null; } }
   function lsSet() { try { localStorage.setItem(LSK, JSON.stringify(S)); } catch (e) {} }
@@ -80,7 +81,7 @@
      its source where there is one (pathLoad). A jump faster than anything in the class can fly or sail, a long silence or a
      crossing of the 180th meridian starts a new piece instead of joining the dots */
   var TR = { air: {}, sea: {} }, TRAIL = { air: 10 * 60e3, sea: 60 * 60e3 }, KEEP = { air: 2 * 3600e3, sea: 6 * 3600e3 }, TMAX = 240, TIDS = 8000;
-  var VMAX = { air: 1300 * 1852 / 3600e3, sea: 60 * 1852 / 3600e3 }, GAP = { air: 10 * 60e3, sea: 2 * 3600e3 }, prT = { air: 0, sea: 0 };
+  var VMAX = { air: 1300 * 1852 / 3600e3, sea: 60 * 1852 / 3600e3 }, GAP = { air: 20 * 60e3, sea: 2 * 3600e3 }, prT = { air: 0, sea: 0 };
   function trAdd(kind, id, t, lat, lon, alt) {
     if (!id || !isFinite(t) || !isFinite(lat) || !isFinite(lon)) return;
     var s = TR[kind], a = s[id] || (s[id] = []), i = a.length - 1;
@@ -143,7 +144,15 @@
     var more = SEL.kind === "sea" && SEL.days < 7 && SEL.st === "ok" ? ' <button type="button" class="trnow" data-trpath-act="week">Show 7 days</button>' : "";
     return "<b>Path on the map</b> (" + esc(SEL.src) + "): " + n.toLocaleString() + " positions from " + esc(zt(t0)) + " to " + esc(zt(t1)) + " (" + esc(span(t1 - t0)) + ")" +
       (SEL.gaps ? ", " + SEL.gaps + " gap" + (SEL.gaps > 1 ? "s" : "") + " where no receiver heard it (dotted)" : "") + "." +
-      (SEL.note ? " " + esc(SEL.note) + "." : "") + " Each point is as broadcast, not verified." + more + hide;
+      (SEL.note ? " " + esc(SEL.note) + "." : "") + depText() + " Each point is as broadcast, not verified." + more + hide;
+  }
+  // where the flight left from: the airfield nearest to where OSAP first heard it on the ground or climbing out (an inference
+  // from positions, not a flight plan); or, heard first in the air, that it is not known
+  function depText() {
+    if (!SEL || SEL.kind !== "air" || SEL.st !== "ok" || SEL.pts.length < 2) return "";
+    if (SEL.dep) return " <b>Left from " + esc(SEL.dep.name || SEL.dep.id) + "</b> (" + esc(SEL.dep.id) + "), the nearest airfield to where it was first heard on the ground or climbing out" +
+      (SEL.dep.nm >= 1 ? ", " + esc(SEL.dep.nm) + " nm away" : "") + (isFinite(SEL.dep.t) ? ", " + esc(zt(SEL.dep.t)) : "") + ". Worked out from positions, not a flight plan.";
+    return " Where it took off is not known: OSAP first heard this flight in the air at " + esc(zt(SEL.pts[0][0])) + ".";
   }
   function pathFill() {
     legend();
@@ -172,7 +181,7 @@
   function pathPick(kind, id, priv) {
     var key = selKey(kind, id);
     if (SEL && SEL.key === key && SEL.st !== "err") { pathFill(); return; }
-    SEL = { key: key, kind: kind, id: id, st: priv ? "private" : "loading", pts: [], brk: null, src: "", note: "", days: 1, gaps: 0 };
+    SEL = { key: key, kind: kind, id: id, st: priv ? "private" : "loading", pts: [], brk: null, src: "", note: "", days: 1, gaps: 0, dep: null };
     pathDraw(); pathFill();
     if (!priv) pathLoad(SEL);
   }
@@ -195,17 +204,24 @@
       }).then(done);
       return;
     }
-    getJson(TRACK + "?hex=" + encodeURIComponent(sel.id), 15000).then(function (j) {
-      if (!j || j.schema !== "osap-air-track/1" || !Array.isArray(j.path) || !j.src) throw new Error("unexpected answer");
-      var pts = j.path.filter(function (r) { return Array.isArray(r) && typeof r[1] === "number" && typeof r[2] === "number"; }).map(function (r) { return [r[0] * 1000, r[1], r[2], r[3]]; });
-      var last = pts.length ? pts[pts.length - 1][0] : 0;
-      // newer positions this page has seen than the end of OpenSky's path
-      sessionPts("air", sel.id).forEach(function (p) { if (p[0] > last) pts.push(p); });
-      sel.pts = pts; sel.src = String(j.src.name || "OpenSky Network") + " flight path" + (j.src.nc ? ", non-commercial source" : ""); sel.st = "ok";
+    // this flight as OSAP's sweep heard it (tools/air_tracks.mjs), one file per first two hex digits of the ICAO address
+    var hex = String(sel.id).toLowerCase();
+    if (!/^[0-9a-f]{6}$/.test(hex)) { sel.pts = sessionPts("air", sel.id); sel.st = "err"; sel.src = "positions seen since the map was opened"; sel.note = "No flight record for this kind of address"; done(); return; }
+    getJson(AIR + "t/" + hex.slice(0, 2) + ".json", 20000).then(function (j) {
+      if (!j || j.schema !== "osap-air-tracks/2" || !j.tr) throw new Error("unexpected file");
+      var pts = (Array.isArray(j.tr[hex]) ? j.tr[hex] : []).filter(function (r) { return Array.isArray(r) && typeof r[0] === "number" && typeof r[1] === "number" && typeof r[2] === "number"; })
+        .map(function (r) { return [r[0] * 1000, r[1], r[2], r[3] == null ? null : r[3], r[4] ? 1 : 0]; });
+      var last = pts.length ? pts[pts.length - 1][0] : 0, first = pts.length > 0;
+      // newer positions this page has seen than the sweep's last one (all of them when the sweep has none)
+      sessionPts("air", sel.id).forEach(function (p) { if (!first || p[0] > last) pts.push(p); });
+      pts.sort(function (a, b) { return a[0] - b[0]; });
+      var d = j.dep && j.dep[hex];
+      sel.dep = Array.isArray(d) && d[0] ? { id: String(d[0]), name: String(d[1] || ""), nm: +d[2] || 0, t: +d[3] * 1000 } : null;
+      sel.pts = pts; sel.st = "ok"; sel.src = "OSAP's air traffic sweep, a position about every 5 min, plus those seen here";
+      if (!pts.length) sel.note = "OSAP has not heard this aircraft long enough to draw its flight yet";
     }).catch(function (e) {
-      var m = String(e && e.message || e);
       sel.pts = sessionPts("air", sel.id); sel.st = "err"; sel.src = "positions seen since the map was opened";
-      sel.note = /^HTTP 401/.test(m) ? "Sign in for the whole flight from OpenSky" : /^HTTP 404/.test(m) ? "No earlier flight path from OpenSky for this aircraft" : "OpenSky's flight path did not load (" + m.slice(0, 80) + ")";
+      sel.note = "OSAP's flight record did not load (" + String(e && e.message || e).slice(0, 80) + ")";
     }).then(done);
   }
 

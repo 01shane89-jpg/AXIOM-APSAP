@@ -64,15 +64,15 @@ async function open(opts, mode = {}) {
     if (mode.air === "down") return r.fulfill({ status: 404, body: "404: Not Found" });
     if (/index\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(mode.air === "stale" ? { ...INDEX, built: new Date(Date.now() - 340 * 60e3).toISOString() } : INDEX) });
     if (/a\/10_100\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ schema: "osap-air-cell/1", built, cell: "10_100", ac: AC }) });
+    // each aircraft's current flight kept by the sweep (tools/air_tracks.mjs), by the first two hex digits (mode.track)
+    if (/t\/88\.json$/.test(u) && mode.track === "ok") {
+      const t = Math.round(Date.now() / 1000);
+      return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ schema: "osap-air-tracks/2", built, keep_s: 72000, f: ["t", "lat", "lon", "alt", "gnd"], df: ["ident", "name", "nm", "t"],
+        tr: { "880844": [[t - 3600, 13.682, 100.748, null, 1], [t - 3000, 13.75, 100.72, 12000, 0], [t - 2400, 13.8, 100.68, 30000, 0], [t - 120, 13.89, 100.61, 38000, 0]],
+          "880999": [[t - 900, 13.5, 100.5, 30000, 0], [t - 600, 13.6, 100.45, 30000, 0]] },
+        dep: { "880844": ["VTBS", "Suvarnabhumi <b>Airport</b>", 0.1, t - 3600] } }) });
+    }
     return r.fulfill({ status: 404, body: "" });
-  });
-  // one aircraft's flight from OpenSky through netlify/edge-functions/osap-air-track.js (mode.track), else 404 as on GitHub Pages
-  if (mode.track) await ctx.route(/\/api\/air-track\?/, (r) => {
-    const t = Math.round(Date.now() / 1000);
-    if (mode.track === "down") return r.fulfill({ status: 502, contentType: "application/json", body: '{"error":"OpenSky HTTP 503"}' });
-    return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ schema: "osap-air-track/1", hex: "880844", cs: "AIQ3074", start: t - 3600, end: t - 120, built: new Date().toISOString(),
-      src: { id: "osky", name: "OpenSky Network", licence: "OpenSky Network terms (non-commercial and research use)", nc: true }, f: ["t", "lat", "lon", "alt", "trk", "gnd"],
-      path: [[t - 3600, 13.69, 100.75, 0, 10, 1], [t - 3000, 13.75, 100.72, 12000, 12, 0], [t - 2400, 13.8, 100.68, 30000, 14, 0], [t - 120, 13.89, 100.61, 38000, 145, 0]] }) });
   });
   await ctx.route(/ais\.openwaters\.io/, (r) => {
     const u = r.request().url();
@@ -245,13 +245,18 @@ const popWhere = (p, grp, test) => p.evaluate(([g, t]) => {
   let n = await p.evaluate(() => window.OSAP_TRAFFIC.layers().airTrails.getLayers().length);
   ok(n === 1, "paths: one trail drawn (the aircraft seen twice): " + n);
   ok((await count(p)).air === 2, "paths: trails are not counted as aircraft");
-  // select it: OpenSky's flight path, joined to the newer positions seen here
+  // select it: the flight as the sweep kept it from takeoff, joined to the newer positions seen here
   let pop = await p.evaluate(() => { const ms = window.OSAP_TRAFFIC.layers().air.getLayers(); const m = ms.find((x) => /AIQ3074/.test(x.getTooltip() && typeof x.getTooltip().getContent() === "function" ? x.getTooltip().getContent()(x) : "")); m.openPopup();
     return new Promise((r) => setTimeout(() => r((document.querySelector("[data-trpath]") || {}).textContent || ""), 900)); });
   let path = await p.evaluate(() => window.OSAP_TRAFFIC.path());
-  ok(path && path.kind === "air" && path.id === "880844" && path.st === "ok" && path.pts.length === 6 && path.gaps === 1, "paths: aircraft path = OpenSky's 4 points + the 2 newer seen here, the 38-min silence dotted: " + (path && path.pts.length));
-  ok(/Path on the map \(OpenSky Network flight path, non-commercial source\)/.test(pop) && /6 positions/.test(pop) && /as broadcast, not verified/.test(pop), "paths: pop-up says where the path came from: " + pop);
+  ok(path && path.kind === "air" && path.id === "880844" && path.st === "ok" && path.pts.length === 6 && path.gaps === 1, "paths: aircraft path = the sweep's 4 points from the ground + the 2 newer seen here, the 38-min silence dotted: " + (path && path.pts.length));
+  ok(/Path on the map \(OSAP's air traffic sweep/.test(pop) && /6 positions/.test(pop) && /Left from Suvarnabhumi <b>Airport<\/b> \(VTBS\)/.test(pop) && /not a flight plan/.test(pop) && /as broadcast, not verified/.test(pop), "paths: pop-up says where the path came from: " + pop);
   ok(await p.evaluate(() => window.OSAP_TRAFFIC.layers().path.getLayers().length >= 3), "paths: selected path drawn (line, outline, earliest point)");
+  // first heard in the air: the page says where it took off is not known, and claims no airfield
+  { const t2 = await p.evaluate(() => { window.OSAP_TRAFFIC.pick("air", "880999"); return new Promise((r) => setTimeout(() => r((window.OSAP_TRAFFIC.path() || {}).st), 900)); });
+    const txt = await p.evaluate(() => { const e = document.createElement("div"); e.setAttribute("data-trpath", "air:880999"); document.body.appendChild(e); window.OSAP_TRAFFIC.pick("air", "880999"); const x = e.textContent; e.remove(); return x; });
+    ok(t2 === "ok" && /Where it took off is not known: OSAP first heard this flight in the air/.test(txt) && !/Left from/.test(txt), "paths: flight first heard in the air: departure not known, none claimed: " + txt); }
+  await p.evaluate(() => { const m = window.OSAP_TRAFFIC.layers().air.getLayers().find((x) => /AIQ3074/.test(x.getTooltip().getContent()(x))); m.openPopup(); }); await p.waitForTimeout(600);
   ok(await p.evaluate(() => /Selected aircraft's path/.test(document.querySelector(".leaflet-control-container").innerHTML)), "paths: legend names the selected path with Hide path");
   // trails off: none drawn, path stays; Hide path clears it
   await p.uncheck('#ml-air input[data-trf="trail"]'); await p.waitForTimeout(400);
@@ -280,14 +285,14 @@ const popWhere = (p, grp, test) => p.evaluate(([g, t]) => {
   ok(errors.length === 0, "paths: no page errors " + errors.join(" | "));
   await ctx.close();
 }
-// aircraft path where OSAP's server cannot give one: the positions seen here, and it says why
+// aircraft path where the sweep's flight file does not load: the positions seen here, and it says why
 {
   const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } }, { live: "ok", track: "down" });
   await p.evaluate(() => { window.__asapMap.setView([13.7, 100.6], 9, { animate: false }); }); await om(p);
   await p.check('#ml-air input[data-trf="air"]'); await p.waitForTimeout(1800);
   await p.evaluate(() => { const m = window.OSAP_TRAFFIC.layers().air.getLayers().find((x) => /AIQ3074/.test(x.getTooltip().getContent()(x))); m.openPopup(); }); await p.waitForTimeout(900);
   const path = await p.evaluate(() => window.OSAP_TRAFFIC.path()), t = await p.evaluate(() => (document.querySelector("[data-trpath]") || {}).textContent || "");
-  ok(path && path.st === "err" && path.pts.length === 2 && /positions seen since the map was opened/.test(t) && /OpenSky's flight path did not load \(HTTP 502/.test(t), "paths down: falls back to positions seen here and says why: " + t);
+  ok(path && path.st === "err" && path.pts.length === 2 && /positions seen since the map was opened/.test(t) && /OSAP's flight record did not load \(HTTP 404/.test(t), "paths down: falls back to positions seen here and says why: " + t);
   ok(errors.length === 0, "paths down: no page errors " + errors.join(" | "));
   await ctx.close();
 }

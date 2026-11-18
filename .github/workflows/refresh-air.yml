@@ -48,6 +48,7 @@ jobs:
           # sold version: adsb.fi and OpenSky (non-commercial terms) are not asked (tools/nc_strip.mjs)
           OSAP_COMMERCIAL: ${{ vars.OSAP_COMMERCIAL }}
           GNSS_FLUSH: ${{ inputs.gnss_flush || '0' }}
+          AIRFIELDS: /tmp/la/airports.csv
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -55,6 +56,8 @@ jobs:
           # carry on from the last published files (which circles had aircraft, aircraft not asked about again yet)
           git fetch -q --depth=1 origin "$TARGET" 2>/dev/null && git archive FETCH_HEAD | tar -x -C /tmp/la/prev 2>/dev/null || true
           git worktree add -q --detach /tmp/lawt
+          # airfields for where each flight left from (tools/air_tracks.mjs): OurAirports, public domain; without it paths still work
+          curl -sfL --max-time 90 -o /tmp/la/airports.csv https://davidmegginson.github.io/ourairports-data/airports.csv || echo "airfield list not loaded"
           for i in $(seq 1 "$SWEEPS"); do
             rm -rf /tmp/la/out
             if node tools/refresh_air.mjs /tmp/la/out /tmp/la/prev 290; then
