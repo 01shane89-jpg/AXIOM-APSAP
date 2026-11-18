@@ -10,7 +10,8 @@
 // starts again (persistent heat is then learned over 3 days). Logs carry counts only.
 // Env: SENSORS_FORCE=1 (read FIRMS now), SENSORS_EVERY_H (3).
 import fs from "node:fs";
-import { RULES, parseFirms, eligible, addHistory, keepNear, pairReport } from "./sensor_lib.mjs";
+import { RULES, parseFirms, eligible, addHistory, keepNear, pairReport, km } from "./sensor_lib.mjs";
+import * as seis from "./seismic_lib.mjs";
 
 const DIR = "data/live/conflicts", OUT = DIR + "/sensors.js", STATE = DIR + "/sensors-state.json", SCHEMA = "osap-cf-sensors/1";
 const BASE = "https://firms.modaps.eosdis.nasa.gov/data/active_fire/";
@@ -67,9 +68,45 @@ for (const [id, list] of Object.entries(items)) {
     if (pairs.length) { (by[id] = by[id] || {})[i.fp] = pairs; paired++; }
   }
 }
-const body = { schema: SCHEMA, rules: RULES, asof, src, by, skipped };
+// seismic check (tools/seismic_lib.mjs, rules seismic-v1): USGS and EMSC events near the same reports, read every run
+// (SEIS_EVERY_H, default 1); only events within reach of a report are kept between runs
+let sev = Array.isArray(prev.sev) ? prev.sev : [], sAsof = prev.seis_asof || "", sSrc = prev.seis_src || [];
+const sDue = process.env.SENSORS_FORCE || !sAsof || now - Date.parse(sAsof.replace(" ", "T")) >= Math.max(0.5, +(process.env.SEIS_EVERY_H || 1)) * 36e5;
+if (sDue && elig.length) {
+  sSrc = []; const got = [], start = new Date(now - seis.KEEP_H * 36e5).toISOString().slice(0, 19);
+  const SEIS = [
+    { net: "USGS", url: "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&limit=20000&starttime=" + start, parse: seis.parseUsgs, lic: "USGS, public domain" },
+    { net: "EMSC", url: "https://www.seismicportal.eu/fdsnws/event/1/query?format=json&orderby=time&limit=20000&starttime=" + start, parse: seis.parseEmsc, lic: "EMSC, CC BY 4.0" },
+  ];
+  for (const s of SEIS) {
+    try {
+      const r = await fetch(s.url, { headers: { "user-agent": "AXIOM-OSAP/1.0 (situational awareness; seismic check)" }, signal: AbortSignal.timeout(90000) });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const rows = s.parse(await r.json()); got.push(rows);
+      sSrc.push({ net: s.net, ok: true, rows: rows.length, lic: s.lic });
+    } catch (e) { sSrc.push({ net: s.net, ok: false, error: String(e.message || e).slice(0, 120), lic: s.lic }); }
+  }
+  if (sSrc.some((s) => s.ok)) {
+    const pins = elig.map((i) => [i.geo.la, i.geo.lo]);
+    const near = (e) => pins.some((p) => Math.abs(p[0] - e.la) < 1 && km(p[0], p[1], e.la, e.lo) <= seis.NEAR_KM);
+    sev = seis.merge([...got, sev.filter((e) => !got.some((l) => l.some((x) => x.id === e.id)))], now).filter(near);
+    sAsof = new Date(now).toISOString().slice(0, 16).replace("T", " ") + "Z";
+  }
+}
+const seisBy = {}, prevSeis = prev.seis || {};
+let sPaired = 0, sDeep = 0;
+for (const [id, list] of Object.entries(items)) {
+  for (const i of list) {
+    if (!eligible(i)) continue;
+    let { pairs, deep } = seis.pairSeismic(i, sev); sDeep += deep;
+    if (!pairs.length && prevSeis[id] && prevSeis[id][i.fp]) pairs = prevSeis[id][i.fp];
+    if (pairs.length) { (seisBy[id] = seisBy[id] || {})[i.fp] = pairs; sPaired++; }
+  }
+}
+const body = { schema: SCHEMA, rules: RULES, asof, src, by, skipped, seis: seisBy, seis_rules: seis.RULES, seis_asof: sAsof, seis_src: sSrc };
 fs.mkdirSync(DIR, { recursive: true });
 fs.writeFileSync(OUT, "window.OSAP_CF_SENSORS=" + JSON.stringify(body).replace(/<\//g, "<\\/") + ";\n");
-fs.writeFileSync(STATE, JSON.stringify({ asof, src, det, hist }) + "\n");
+fs.writeFileSync(STATE, JSON.stringify({ asof, src, det, hist, sev, seis_asof: sAsof, seis_src: sSrc }) + "\n");
 console.log(`sensors ${RULES}: ${elig.length} reports checked, ${paired} with heat nearby, ${Object.values(skipped).reduce((a, b) => a + b, 0)} persistent left out; ` +
+  `seismic ${seis.RULES}: ${sPaired} reports with an event nearby, ${sDeep} deep events left out, kept ${sev.length} events (${sDue ? sSrc.map((s) => s.net + (s.ok ? " " + s.rows : " failed: " + s.error)).join(", ") : "not due"}); ` +
   `FIRMS ${due ? src.map((s) => s.sat + (s.ok ? " " + s.rows : " failed: " + s.error)).join(", ") : "not due (read " + asof + ")"}; kept ${det.length} detections, ${Object.keys(hist).length} cells`);
