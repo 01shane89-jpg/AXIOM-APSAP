@@ -460,13 +460,16 @@
     /* the news search keeps its own box: re-drawing the rest (every few seconds as records arrive) never wipes what is typed */
     if (!box.querySelector("#td-body")) {
       box.innerHTML = '<div class="tdwrap"><div id="td-head"></div><section id="td-news" class="tdcard tdq" aria-label="Search the news"></section>' +
-        '<section id="td-daily" class="tdcard" aria-label="Daily summary" hidden></section><section id="td-ask" class="tdcard" aria-label="Ask about this country" hidden></section><section id="td-spike" class="tdcard" aria-label="Reporting level" hidden></section><section id="td-cover" class="tdcard" aria-label="Story coverage" hidden></section>' +
+        '<section id="td-daily" class="tdcard" aria-label="Daily summary" hidden></section><section id="td-ask" class="tdcard" aria-label="Ask about this country" hidden></section><section id="td-asia" class="tdcard" aria-label="Asia security" hidden></section><section id="td-spike" class="tdcard" aria-label="Reporting level" hidden></section><section id="td-cover" class="tdcard" aria-label="Story coverage" hidden></section>' +
         '<div id="td-body"></div></div>';
       if (window.OSAP_NEWSQ) window.OSAP_NEWSQ.mount(box.querySelector("#td-news"), CC, countryName()); else box.querySelector("#td-news").hidden = true;
       /* the daily summary (assets/osap-daily.js) keeps its own box too, so a picked day survives the redraws */
       if (window.OSAP_DAILYQ) window.OSAP_DAILYQ.mount(box.querySelector("#td-daily"), CC, countryName());
       /* Ask about this country (assets/osap-ask.js): a cited AI draft from the summary's own sources, hidden until switched on */
       if (window.OSAP_ASKQ) window.OSAP_ASKQ.mount(box.querySelector("#td-ask"), CC, countryName());
+      /* Asia security shortcuts (assets/osap-asiasec.js): on an Asian country, one tap to jets scrambled and ADIZ, the
+         Thailand–Cambodia border tab and the South China Sea; hidden elsewhere */
+      if (window.OSAP_ASIASECQ) window.OSAP_ASIASECQ.mount(box.querySelector("#td-asia"), CC, countryName());
       /* Reporting level (assets/osap-spikes.js): this country's headlines against its normal level, and spikes elsewhere */
       if (window.OSAP_SPIKESQ) window.OSAP_SPIKESQ.mount(box.querySelector("#td-spike"), CC, countryName());
       /* Story coverage (assets/osap-coverage.js): which outlets carried each story, and the blindspots; its own box, like the summary */

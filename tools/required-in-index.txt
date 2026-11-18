@@ -24,6 +24,7 @@
 <script src="assets/osap-threads.js"></script>
 <script src="assets/osap-outletfacts.js"></script>
 <script src="assets/osap-coverage.js"></script>
+<script src="assets/osap-asiasec.js"></script>
 <script src="assets/osap-spikes.js"></script>
 <script src="assets/osap-locate.js"></script>
 <script src="assets/osap-keydates.js"></script>

@@ -88,6 +88,8 @@ tests/newimg_smoke.mjs
 tests/plumes_smoke.mjs
 tests/keydates_smoke.mjs
 tests/coverage_smoke.mjs
+# Asia security shortcuts on Today: jets scrambled and ADIZ, the Thailand–Cambodia border tab, South China Sea (assets/osap-asiasec.js)
+tests/asiasec_smoke.mjs
 # Go deeper: a story in layers, its timeline and connections (assets/osap-threads.js)
 tests/threads_smoke.mjs
 tests/spikes_smoke.mjs
