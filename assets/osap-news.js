@@ -219,5 +219,11 @@
     ".nqh{font-weight:600;font-size:14.5px;color:var(--ink);text-decoration:none;overflow-wrap:anywhere}.nqh:hover{text-decoration:underline}.nqorig{overflow-wrap:anywhere}" +
     ".nqtags{display:flex;flex-wrap:wrap;gap:4px}.nqweb{text-decoration:none;display:inline-flex;align-items:center}";
   var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
-  window.OSAP_NEWSQ = { mount: mount };
+  /* open a data set's headlines from elsewhere on Today (assets/osap-asiasec.js): where "all" searches every country */
+  function pick(topic, where) {
+    if (!S.el) return;
+    S.topic = String(topic || ""); if (where === "all" || where === "here") S.where = where; S.shown = PAGE;
+    drawChips(); ensure(); draw();
+  }
+  window.OSAP_NEWSQ = { mount: mount, pick: pick };
 })();
