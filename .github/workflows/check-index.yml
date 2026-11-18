@@ -47,6 +47,8 @@ jobs:
       - run: node tests/milpat.test.mjs
       # seismic check beside strike reports (tools/seismic_lib.mjs, rules seismic-v1)
       - run: node tests/seismic.test.mjs
+      # radiation near nuclear sites (tools/rad_lib.mjs, rules rad-v1)
+      - run: node tests/rad.test.mjs
       # Ask about this country (tools/ask_lib.mjs, netlify/functions/osap-ask.mjs): cited answers only, plan, quota, off without the key
       - run: node tests/ask.test.mjs
       # team shared cases (tools/cases.mjs, netlify/functions/osap-cases.mjs): roles, case isolation, decision records
