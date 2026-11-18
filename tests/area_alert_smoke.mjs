@@ -98,10 +98,13 @@ async function open(opts, { searchDown = false } = {}) {
     const A = window.TSAP.areaApi, ms = window.OSAP_WATCH.matches({ area: w.area, layers: [], kw: [], minSev: 1 });
     const R = window.TSAP.records || [];
     // find the records whose match keys these are, by title and time, and check where they are
-    const far = ms.filter((m) => { const r = R.find((x) => String(x.title || "").slice(0, 200) === m.rt && (x.issued || x.ts) === m.ts && x.lat != null); return r && !A.inPoly(r.lat, r.lon, w.area); });
-    return { n: ms.length, far: far.length };
+    // a title and time can belong to more than one record (the same story placed in two spots), so a match is
+    // outside only when every record with its key lies outside
+    const far = ms.filter((m) => { const rs = R.filter((x) => String(x.title || "").slice(0, 200) === m.rt && (x.issued || x.ts) === m.ts && x.lat != null); return rs.length && !rs.some((r) => A.inPoly(r.lat, r.lon, w.area)); });
+    const dup = ms.filter((m) => R.filter((x) => String(x.title || "").slice(0, 200) === m.rt && (x.issued || x.ts) === m.ts && x.lat != null).length > 1).length;
+    return { n: ms.length, far: far.length, dup };
   }, w);
-  ok(strict.far === 0, `no match lies outside the circle (${strict.n} checked)`);
+  ok(strict.far === 0, `no match lies outside the circle (${strict.n} checked, ${strict.dup} share a title and time with another record)`);
 
   // 2. a typed grid needs no network
   await p.evaluate(() => window.OSAP_WATCH.open());
