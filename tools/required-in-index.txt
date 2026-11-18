@@ -195,6 +195,8 @@ data-ev-tlr="1"
 
 # the user guide: Settings (the gear) > User guide, offline and printable (claude/user-guide)
 <script src="assets/osap-guide.js"></script>
+# tips, the tour and "Show me in the app": Settings > Show tips / Take the tour (claude/tips-and-tour)
+<script src="assets/osap-tips.js"></script>
 <script src="assets/osap-i18n.js"></script>
 offline: { name: "Offline map"
 
