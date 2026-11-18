@@ -15,7 +15,7 @@
    Kept in localStorage: "osap-setup" (pending, done or skipped), "osap-mycc" {pins, role}, "osap-mycc-seen" {cc: ms}.
    Automated browsers (navigator.webdriver) are not shown the first-run sheet, so the other headless checks open as before;
    tests/mycountries_smoke.mjs sets window.OSAP_SETUP_TEST to see it.
-   window.OSAP_MYCC { pins, role, isPinned, togglePin, go, openSetup, headHtml, pinHtml, cardHtml, isNew, newCount, since } */
+   window.OSAP_MYCC { pins, role, isPinned, togglePin, go, openSetup, headHtml, pinHtml, cardHtml, isNew, counted, newCount, since } */
 (function () {
   "use strict";
   var W = window, D = document;
@@ -349,7 +349,7 @@
     pins: function () { return my().pins; }, role: function () { return my().role; },
     isPinned: function (id) { return my().pins.indexOf(id) >= 0; }, togglePin: togglePin, go: go,
     openSetup: function () { openSetup(false); }, isSetupOpen: function () { return !!sheet && !sheet.hidden; },
-    headHtml: headHtml, pinHtml: pinHtml, cardHtml: cardHtml, newTag: newTag, isNew: isNew,
+    headHtml: headHtml, pinHtml: pinHtml, cardHtml: cardHtml, newTag: newTag, isNew: isNew, counted: counted,
     newCount: function () { return newCount(view.base); }, since: function () { return view.base; }
   };
   (function wait(n) { if (W.TSAP && W.TSAP.records && W.OSAP_TODAY && D.body) start(); else if (n < 400) setTimeout(function () { wait(n + 1); }, 50); else if (W.TSAP && D.body) start(); })(0);

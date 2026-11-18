@@ -354,7 +354,10 @@
       if (!aboutHere(r0 || { title: ev.title, url: ev.reports[0].url })) return;
       /* one outlet counts once, however it reached OSAP ("Amarin TV", "AmarinTV on MSN (via Bing News search)") */
       var srcs = {}; ev.reports.forEach(function (r) { srcs[outlet(r.source)] = 1; used[r.url] = 1; });
-      out.push({ ev: true, pic: pic, title: ev.title, n: Object.keys(srcs).length, ms: ev.to, rec: r0, url: ev.reports[0].url, src: Object.keys(srcs).slice(0, 3).join(", "), xb: ev.crossBorder,
+      /* the time "new since you last looked" goes by: its newest report that the count counts (a headline, or an official
+         warning of some weight), so a story is never tagged New for an official post the header does not count */
+      var nms = NaN, M = MY(); ev.reports.forEach(function (x) { var rx = recByUrl(x.url), m = rx && M && M.counted && M.counted(rx) ? recMs(rx) : NaN; if (m > nms || (isFinite(m) && !isFinite(nms))) nms = m; });
+      out.push({ ev: true, pic: pic, title: ev.title, n: Object.keys(srcs).length, ms: ev.to, nms: nms, rec: r0, url: ev.reports[0].url, src: Object.keys(srcs).slice(0, 3).join(", "), xb: ev.crossBorder,
         status: ev.reports.every(function (r) { return r.status === "Observed"; }) ? "observation" : "event", sev: ev.sev || 1 });
     });
     out.sort(function (a, b) { return b.n - a.n || b.ms - a.ms; });
@@ -368,7 +371,7 @@
     var recent = news.filter(function (x) { return now - x.ms <= NEWS_RECENT; });
     (recent.length >= 3 ? recent : news).slice(0, 9 - out.length).forEach(function (x) {
       var r = x.r;
-      out.push({ pic: r.img, title: r.title, ms: x.ms, rec: r, url: r.url, src: r.src ? r.src.name : "", state: r.src && /State media/.test(r.src.kind || ""), mt: !!r.orig, status: r.type });
+      out.push({ pic: r.img, title: r.title, ms: x.ms, nms: x.ms, rec: r, url: r.url, src: r.src ? r.src.name : "", state: r.src && /State media/.test(r.src.kind || ""), mt: !!r.orig, status: r.type });
     });
     if (out.length < 4) {
       var F = xFeeds();
@@ -409,12 +412,12 @@
       /* the outlet's own picture, linked from its site (never copied), small and lazy: a fixed 96 x 72 box, so the list does not
          move as pictures arrive, and a picture that fails leaves the empty box. Stories without one keep the full width. */
       var h = "", pic = s.pic || (s.rec && s.rec.thumb) || "", st = STATUS[s.status] || STATUS.event, url = safeUrl(s.url);
-      h += '<article class="tdst' + (pic ? " haspic" : "") + '">' +
+      h += '<article class="tdst' + (pic ? " haspic" : "") + '"' + (isFinite(s.nms) ? ' data-new="' + s.nms + '"' : "") + '>' +
         (pic ? '<span class="tdpic"><img src="' + esc(pic) + '" alt="" width="96" height="72" loading="lazy" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'"></span>' : "") +
         '<div class="tdstb">' + (s.rec ? '<button type="button" class="tdsth" data-rec="' + esc(s.rec.id) + '">' + esc(s.title) + "</button>"
           : url ? '<a class="tdsth" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(s.title) + "</a>" : '<span class="tdsth">' + esc(s.title) + "</span>") +
         '<span class="tdsub">' + (s.ev ? "<b>" + s.n + " sources</b>: " : "") + esc(s.src) + (isFinite(s.ms) ? " · " + esc(ago(s.ms) || when(s.ms)) : "") + "</span>" +
-        '<span class="tdtags">' + (MY() ? MY().newTag(CC, s.ms) : "") + '<span class="tdtag ' + st[1] + '">' + st[0] + "</span>" + (s.state ? '<span class="tdtag claim">State media</span>' : "") +
+        '<span class="tdtags">' + (MY() ? MY().newTag(CC, s.nms) : "") + '<span class="tdtag ' + st[1] + '">' + st[0] + "</span>" + (s.state ? '<span class="tdtag claim">State media</span>' : "") +
         (s.mt ? '<span class="tdtag mt">Machine translated</span>' : "") + (s.xb ? '<span class="tdtag xb">Across the border</span>' : "") +
         (url && s.rec ? '<a class="tdsrcl" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Source ↗</a>' : "") + "</span></div></article>";
       return h;
