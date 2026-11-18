@@ -6969,7 +6969,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      whenever the data set changes, and on start. The base map choice stays. */
   /* elevation shading (data-hs, data-lidar) and country borders (data-bd) belong with the base map, so they stay on across tabs */
   function extrasOff() {
-    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-dsx]):not([data-hs]):not([data-bd]):not([data-pop]):not([data-lidar]):not([data-satg]), input[data-ter]").forEach(function (i) {
+    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-dsx]):not([data-hs]):not([data-bd]):not([data-pop]):not([data-lidar]):not([data-tl]):not([data-satg]), input[data-ter]").forEach(function (i) {
       if (!i.checked) return;
       i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true }));
     });
@@ -10040,8 +10040,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <!-- Satellite before/after (Area menu and Map overlays > Satellite imagery): Sentinel-2 passes and NASA daily true color -->
 <script src="assets/osap-sat.js"></script>
 <script src="assets/osap-newimg.js"></script>
+<!-- Pollution plumes (Map overlays > Satellite imagery): Sentinel-5P NO2 / SO2 daily from NASA GIBS, with 30 days earlier to compare -->
+<script src="assets/osap-plumes.js"></script>
 <!-- LiDAR hillshade and LiDAR coverage (Map overlays > Elevation and terrain analysis), LiDAR heights for Terrain analysis -->
 <script src="assets/osap-lidar.js"></script>
+<!-- terrain layers over the whole map: slope, aspect, contours, elevation colors, ridges and valleys, low ground (Map overlays > Elevation and terrain analysis) -->
+<script src="assets/osap-terrainlayers.js"></script>
 <script src="assets/osap-offline.js"></script>
 <script src="assets/osap-move.js"></script>
 <script src="assets/osap-safety.js"></script>
@@ -10054,6 +10058,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-cases.js"></script>
 <!-- GPS interference map from aircraft accuracy reports (Map overlays > Live aircraft; tools/gnss.mjs) -->
 <script src="assets/osap-gnss.js"></script>
+<!-- ships gone quiet near chokepoints, AIS gaps and position jumps (Map overlays > Ships; tools/darkships_lib.mjs) -->
+<script src="assets/osap-darkships.js"></script>
 <!-- economic stress signals: the Economy card on Today and a page in the Country brief (data/live/econ, refreshed daily) -->
 <script src="assets/osap-econ.js"></script>
 <!-- risk rating equivalents: derived five-level country and city ratings, a card on Today and a page in the Country brief (data/live/risk, every 6 h) -->
