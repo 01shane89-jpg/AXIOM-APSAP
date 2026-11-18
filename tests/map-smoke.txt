@@ -83,6 +83,7 @@ tests/pop_smoke.mjs
 tests/warngeo_smoke.mjs
 tests/sat_smoke.mjs
 tests/newimg_smoke.mjs
+tests/plumes_smoke.mjs
 tests/keydates_smoke.mjs
 tests/coverage_smoke.mjs
 # Go deeper: a story in layers, its timeline and connections (assets/osap-threads.js)
