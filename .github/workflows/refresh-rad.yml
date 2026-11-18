@@ -1,0 +1,40 @@
+name: Refresh radiation near nuclear sites
+
+# Radiation near nuclear sites (tools/refresh_rad.mjs, rules rad-v1 in tools/rad_lib.mjs): every 30 minutes, Safecast's live
+# sensor list (CC0, no key) is read once; rad.json (the page's file) and state.json (each sensor's hourly readings, 7 days)
+# are written to the live-rad branch, one commit replaced each time so the branch never grows. The page reads rad.json from
+# raw.githubusercontent.com. Nothing is committed to main.
+on:
+  schedule:
+    - cron: "11,41 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-rad-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  rad:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Read and publish
+        env:
+          # main publishes to live-rad, the page's source; a test run on any other branch publishes to live-rad-test
+          TARGET: ${{ github.ref == 'refs/heads/main' && 'live-rad' || 'live-rad-test' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/rad/prev
+          git fetch -q --depth=1 origin "$TARGET" 2>/dev/null && git archive FETCH_HEAD | tar -x -C /tmp/rad/prev 2>/dev/null || true
+          node tools/refresh_rad.mjs /tmp/rad/out /tmp/rad/prev
+          git worktree add -q --detach /tmp/radwt
+          cd /tmp/radwt && git checkout -q --orphan rad && git rm -rfq . 2>/dev/null; cp /tmp/rad/out/rad.json /tmp/rad/out/state.json . && git add rad.json state.json &&
+            git commit -qm "Radiation near nuclear sites $(date -u +%FT%H:%MZ)" && git push -q -f origin "HEAD:refs/heads/$TARGET"

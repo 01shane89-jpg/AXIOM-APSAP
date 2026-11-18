@@ -109,6 +109,8 @@ tests/cases_move_smoke.mjs
 # team plans: set up, sandbox checkout, seat gives Full, invite into team and team case, removal takes both away
 tests/teams_smoke.mjs
 tests/gnss_smoke.mjs
+# radiation near nuclear sites from Safecast sensors (assets/osap-radiation.js, rules rad-v1)
+tests/rad_smoke.mjs
 tests/guide_smoke.mjs
 # tips, the tour and Show me in the app: Settings switch, follow-ups, never over a window, fits a phone (assets/osap-tips.js)
 tests/tips_smoke.mjs
