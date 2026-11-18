@@ -4,7 +4,9 @@
 // files for the last 24 hours (three satellites, no key; at most every 3 hours, FIRMS adds a pass about every 12 hours per
 // satellite). Writes data/live/conflicts/sensors.js, window.OSAP_CF_SENSORS:
 //   { schema, rules, asof (last FIRMS read), src: [{ sat, ok, rows | error }],
-//     by: { conflict: { report fp: [{ km, h, t, sat, frp, conf }] } }, skipped: { conflict: n persistent detections left out } }
+//     by: { conflict: { report fp: [{ km, h, t, sat, frp, conf }] } }, skipped: { conflict: n persistent detections left out },
+//     seis: { conflict: { fp: [seismic event] } } (seismic-v1),
+//     pic: { conflict: { fp: { g: GPS interference cell, a: [AIS events], r: radiation site, n: [IODA signals] } } }, pic_rules, pic_src (picture-v1) }
 // and data/live/conflicts/sensors-state.json, this job's own memory between runs (the page never reads it): det, the
 // detections kept near reports (72 h), and hist, { 2 km cell: [UTC days seen] } (10 days, for persistent heat). Rebuildable: delete the file and the next run
 // starts again (persistent heat is then learned over 3 days). Logs carry counts only.
@@ -12,6 +14,8 @@
 import fs from "node:fs";
 import { RULES, parseFirms, eligible, addHistory, keepNear, pairReport, km } from "./sensor_lib.mjs";
 import * as seis from "./seismic_lib.mjs";
+import * as pic from "./picture_lib.mjs";
+import { usable } from "./nc_strip.mjs";
 
 const DIR = "data/live/conflicts", OUT = DIR + "/sensors.js", STATE = DIR + "/sensors-state.json", SCHEMA = "osap-cf-sensors/1";
 const BASE = "https://firms.modaps.eosdis.nasa.gov/data/active_fire/";
@@ -103,10 +107,40 @@ for (const [id, list] of Object.entries(items)) {
     if (pairs.length) { (seisBy[id] = seisBy[id] || {})[i.fp] = pairs; sPaired++; }
   }
 }
-const body = { schema: SCHEMA, rules: RULES, asof, src, by, skipped, seis: seisBy, seis_rules: seis.RULES, seis_asof: sAsof, seis_src: sSrc };
+// sensor picture (tools/picture_lib.mjs, rules picture-v1): GPS interference cell, ships gone quiet or jumping, radiation near a
+// nuclear site and internet outage signals beside the same reports, plus outage reports. GNSS days and IODA come from this
+// repository; dark ships and radiation from their live branches (raw.githubusercontent.com). A source that cannot be read is
+// named in pic_src and the pairings an earlier run made are kept.
+const LIVE = "https://raw.githubusercontent.com/01shane89-jpg/AXIOM-APSAP/";
+const picSrc = [], psrc = { gnss: {} };
+for (const f of (() => { try { return fs.readdirSync("data/live/gnss"); } catch (e) { return []; } })()) {
+  if (!/^\d{4}-\d\d-\d\d\.json$/.test(f)) continue;
+  try { psrc.gnss[f.slice(0, 10)] = JSON.parse(fs.readFileSync("data/live/gnss/" + f, "utf8")); } catch (e) {}
+}
+picSrc.push({ id: "gnss", ok: Object.keys(psrc.gnss).length > 0, days: Object.keys(psrc.gnss).length });
+psrc.ioda = readJs("data/live/outages.js"); picSrc.push({ id: "ioda", ok: !!(psrc.ioda && psrc.ioda.items), asof: psrc.ioda && psrc.ioda.asof || "" });
+for (const s of usable([{ id: "ais", url: LIVE + "live-ais/darkships.json", nc: true }, { id: "rad", url: LIVE + "live-rad/rad.json", nc: false }])) {
+  try {
+    const r = await fetch(s.url, { headers: { "user-agent": "AXIOM-OSAP/1.0 (situational awareness; sensor picture)" }, signal: AbortSignal.timeout(30000) });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    psrc[s.id] = await r.json(); picSrc.push({ id: s.id, ok: true, built: String(psrc[s.id].built || "").slice(0, 16), nc: s.nc });
+  } catch (e) { picSrc.push({ id: s.id, ok: false, error: String(e.message || e).slice(0, 120), nc: s.nc }); }
+}
+const picBy = {}, prevPic = prev.pic || {};
+let pPaired = 0;
+for (const [id, list] of Object.entries(items)) {
+  for (const i of list) {
+    if (!pic.wanted(i)) continue;
+    const p = pic.mergePrev(pic.pictureFor(i, psrc, now), prevPic[id] && prevPic[id][i.fp]);
+    if (p) { (picBy[id] = picBy[id] || {})[i.fp] = p; pPaired++; }
+  }
+}
+const body = { schema: SCHEMA, rules: RULES, asof, src, by, skipped, seis: seisBy, seis_rules: seis.RULES, seis_asof: sAsof, seis_src: sSrc,
+  pic: picBy, pic_rules: pic.RULES, pic_src: picSrc };
 fs.mkdirSync(DIR, { recursive: true });
 fs.writeFileSync(OUT, "window.OSAP_CF_SENSORS=" + JSON.stringify(body).replace(/<\//g, "<\\/") + ";\n");
 fs.writeFileSync(STATE, JSON.stringify({ asof, src, det, hist, sev, seis_asof: sAsof, seis_src: sSrc }) + "\n");
 console.log(`sensors ${RULES}: ${elig.length} reports checked, ${paired} with heat nearby, ${Object.values(skipped).reduce((a, b) => a + b, 0)} persistent left out; ` +
+  `picture ${pic.RULES}: ${pPaired} reports with a reading (${picSrc.map((x) => x.id + (x.ok ? "" : " unread")).join(", ")}); ` +
   `seismic ${seis.RULES}: ${sPaired} reports with an event nearby, ${sDeep} deep events left out, kept ${sev.length} events (${sDue ? sSrc.map((s) => s.net + (s.ok ? " " + s.rows : " failed: " + s.error)).join(", ") : "not due"}); ` +
   `FIRMS ${due ? src.map((s) => s.sat + (s.ok ? " " + s.rows : " failed: " + s.error)).join(", ") : "not due (read " + asof + ")"}; kept ${det.length} detections, ${Object.keys(hist).length} cells`);

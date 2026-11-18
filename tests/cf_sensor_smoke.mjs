@@ -1,7 +1,7 @@
 // Headless check of the sensor check on a conflict tab (assets/osap-conflicts.js sensorHtml, rules tools/sensor_lib.mjs sensor-v1).
 // A fixture data/live/conflicts/sensors.js pairs satellite heat with one placed Myanmar report: its incident shows "Satellite heat
 // nearby, may relate" with the satellite, time, distance and hours apart, and says it is not a confirmation; another incident
-// shows nothing. Run from the repo root: node tests/cf_sensor_smoke.mjs   (playwright and Chromium; OUT=dir saves a screenshot)
+// shows nothing. The same box holds the sensor picture (picture-v1): GPS interference, ships, radiation, internet. Run from the repo root: node tests/cf_sensor_smoke.mjs   (playwright and Chromium; OUT=dir saves a screenshot)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
@@ -29,7 +29,12 @@ const FIX = { schema: "osap-cf-sensors/1", rules: "sensor-v1", asof: "2026-11-18
   by: { [ID]: { [A.fp]: [{ km: 3.4, h: -5.2, t: "2026-11-17T19:30", sat: "NOAA-21", frp: 14.2, conf: "h" }] } },
   seis_rules: "seismic-v1", seis_asof: "2026-11-18 00:00Z", seis_src: [],
   seis: { [ID]: { [A.fp]: [{ km: 6.2, h: -0.7, t: "2026-11-17T19:12:05Z", net: "EMSC", mag: 2.9, magType: "ml", dep: 1, type: "explosion", blast: true, url: "https://www.seismicportal.eu/eventdetails.html?unid=x", place: "MYANMAR" },
-    { km: 21, h: -9, t: "2026-11-17T10:00:00Z", net: "USGS", mag: 4.2, magType: "mb", dep: 10, type: "earthquake", blast: false, url: "https://evil.example/", place: "" }] } } };
+    { km: 21, h: -9, t: "2026-11-17T10:00:00Z", net: "USGS", mag: 4.2, magType: "mb", dep: 10, type: "earthquake", blast: false, url: "https://evil.example/", place: "" }] } },
+  pic_rules: "picture-v1", pic_src: [],
+  pic: { [ID]: { [A.fp]: { g: { day: "2026-11-17", level: "high", pct: 62, n: 40, cell: "21,96" },
+    a: [{ k: "jump", name: "SEA <b>STAR</b>", flag: "PA", km: 12, h: -2.5, t: "2026-11-17T22:00", gap_h: 0.1, jkm: 18 }, { k: "quiet", name: "RIVER ONE", flag: "MM", km: 30, h: 3, t: "2026-11-18T03:00", gap_h: 5.5 }],
+    r: { id: "x", name: "Test reactor", st: "above", n: 4, above: 1, km: 61, read: "2026-11-18T00:10" },
+    n: [{ start: "2026-11-17T21:00", minutes: 150, source: "bgp", region: "Myanmar", cc: "mm" }] } } } };
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1400, height: 900 } });
 await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
@@ -54,7 +59,15 @@ ok(a && /Seismic event nearby, may relate \(2\)/.test(a.text) && /EMSC event at 
 ok(a && /EMSC lists it as <b>explosion<\/b>/.test(a.html) && /USGS lists it as earthquake/.test(a.text) && /often a default, not measured/.test(a.text), "seismic: the network's own label, and the 10 km default depth flagged");
 ok(a && /does not tell an explosion from an earthquake/.test(a.html) && /seismic-v1/.test(a.html) && /CC BY 4.0/.test(a.html) && !/evil\.example/.test(a.html), "seismic: caveat, rules, licences; a link off the network's site is not shown");
 ok(b && !/Seismic event nearby/.test(b.text), "seismic: an incident without a pairing shows nothing");
-if (OUT) { await p.evaluate((k) => { const d = document.querySelector('#cf-list li[data-k="' + k + '"] details.cfmt:last-of-type'); if (d) { d.open = true; d.scrollIntoView(); } }, a.k); await p.screenshot({ path: OUT + "/cf-sensor.png" }); }
+if (OUT) { await p.evaluate((k) => { const ds = document.querySelectorAll('#cf-list li[data-k="' + k + '"] details.cfmt'); ds.forEach((d) => { d.open = true; }); const bx = document.querySelector('#cf-list li[data-k="' + k + '"] .cfpic'); if (bx) bx.scrollIntoView(); }, a.k); await p.screenshot({ path: OUT + "/cf-sensor.png" }); }
+// sensor picture (picture-v1): one box with every reading under one heading
+ok(a && (a.html.match(/class="cfpic"/g) || []).length === 1 && /Sensor picture, may relate/i.test(a.text) && a.html.indexOf("cfpich") < a.html.indexOf("Satellite heat nearby"), "one Sensor picture box per incident, heat and seismic inside it");
+ok(a && /GPS interference in this area that day, may relate/.test(a.text) && /High interference in the 1-degree cell at 21,96 on 2026-11-17: 62% of 40 aircraft-hours/.test(a.text), "picture: GPS interference cell, level, share and day");
+ok(a && /Ship AIS gaps or jumps nearby, may relate \(2\)/.test(a.text) && /\(PA\) jumped 18 km in 6 min, 12 km from the report's pin, 3 h before the report/.test(a.text) && /RIVER ONE \(MM\) went quiet \(5.5 h so far\), 30 km/.test(a.text) && !/<b>STAR/.test(a.html) && /non-commercial/.test(a.text), "picture: AIS events, closest first, escaped, NC source named");
+ok(a && /Radiation sensors near Test reactor, may relate/.test(a.text) && /1 of 4 read above their usual level/.test(a.text) && /61 km from the report's pin/.test(a.text), "picture: radiation site, distance and status");
+ok(a && /Internet outage signal in the country, may relate \(1\)/.test(a.text) && /IODA saw a drop in bgp for Myanmar from 2026-11-17 21:00Z for 2.5 h/.test(a.text), "picture: IODA signal with time and length");
+ok(a && /picture-v1/.test(a.html) && /none confirms a report/.test(a.text) && /nothing listed does not mean nothing happened/.test(a.text), "picture: rules named, never a confirmation");
+ok(b && !/cfpic/.test(b.html), "an incident with no reading shows no picture box");
 ok(!errors.length, "no page errors " + JSON.stringify(errors.slice(0, 3)));
 await browser.close(); server.close();
 console.log(fails ? fails + " failed" : "all passed"); process.exit(fails ? 1 : 0);

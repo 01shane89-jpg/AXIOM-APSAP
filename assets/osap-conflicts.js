@@ -80,7 +80,7 @@
     "#cf-rail .cfrv{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:5px 0 0}#cf-rail .cfrv button,#cf-rail .cfrv select{font:inherit;font-size:12px;padding:3px 9px;min-height:28px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink);cursor:pointer}" +
     "#cf-rail .cfrv button[data-cfcode]{border-color:#1F8A4C;color:#1F8A4C;font-weight:600}#cf-rail .cfrv button[data-cfv=reject_incident]{border-color:var(--bad,#C0392B);color:var(--bad,#C0392B)}",
     // the incident record: the coded line of a confirmed incident, and the per-field coding form of the review queue
-    "#cf-rail .cfmt{margin:4px 0 0;font-size:12px;line-height:1.45}#cf-rail .cfmt summary{cursor:pointer;color:var(--muted,#555);font-size:12px;font-weight:400}#cf-rail .cfmt .mt{margin:3px 0 0;padding:4px 7px;border-left:3px dashed #8a8f98}" +
+    "#cf-rail .cfpic{margin:6px 0 0;padding:4px 8px 2px;border:1px dashed #8a8f98;border-radius:6px}#cf-rail .cfpich{font-size:11px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--muted,#555)}#cf-rail .cfpic>.cfm{margin:4px 0 2px}#cf-rail .cfmt{margin:4px 0 0;font-size:12px;line-height:1.45}#cf-rail .cfmt summary{cursor:pointer;color:var(--muted,#555);font-size:12px;font-weight:400}#cf-rail .cfmt .mt{margin:3px 0 0;padding:4px 7px;border-left:3px dashed #8a8f98}" +
     "#cf-rail .cfmt .mt button{font-size:11px;margin:2px 4px 0 0}#cf-rail .cflnk{margin:4px 0 0;padding:4px 7px;border-left:3px solid #1F8A4C;font-size:12px;line-height:1.45}" +
     "#cf-rail .cfrec{margin:4px 0 0;padding:4px 7px;border-left:3px solid #1F8A4C;background:var(--surface-2,rgba(31,138,76,.06));font-size:12px;line-height:1.45}" +
     "#cf-rail .cfcf{margin:6px 0 2px;padding:7px 8px;border:1px solid #1F8A4C;border-radius:5px;font-size:12px}#cf-rail .cfcf h4{margin:0 0 4px;font-size:12px}" +
@@ -465,7 +465,55 @@
      VIIRS heat detections (NASA FIRMS) close to the incident's reports in place and time, from data/live/conflicts/sensors.js.
      A reading that may relate, never a confirmation: a fire, flare or other strike can sit there too, and a report can be pinned
      at the wrong town. Standing heat (seen on 3 of the last 10 days) is left out. Read-only: it changes no record. */
-  function sensorHtml(g) { return heatHtml(g) + seisHtml(g); }
+  /* One "Sensor picture, may relate" box per incident: every open reading paired with its reports, under one heading (heat,
+     seismic, and picture-v1's GPS interference, ships, radiation and internet). Nothing is shown when nothing paired. */
+  function sensorHtml(g) {
+    var parts = heatHtml(g) + seisHtml(g) + picHtml(g); if (!parts) return "";
+    var S = W.OSAP_CF_SENSORS || {};
+    return '<div class="cfpic"><div class="cfpich">Sensor picture, may relate</div>' + parts +
+      '<p class="cfm">Open readings near these reports in place and time (rules ' + esc([S.rules, S.seis_rules, S.pic_rules].filter(Boolean).join(", ")) +
+      "). Each may relate; none confirms a report, and nothing listed does not mean nothing happened.</p></div>";
+  }
+  /* sensor picture (tools/picture_lib.mjs rules picture-v1): GPS interference in the report's 1-degree cell that day, ships gone
+     quiet or jumping nearby (AIS), a nuclear site's radiation sensors nearby, and IODA internet outage signals for the country */
+  function picHtml(g) {
+    var S = W.OSAP_CF_SENSORS, m = S && S.pic && active && S.pic[active]; if (!m) return "";
+    var gp = null, ais = [], rad = null, net = [], seen = {}, RANK = { high: 3, medium: 2, low: 1 };
+    g.all.forEach(function (x) {
+      var p = m[x.fp]; if (!p) return;
+      if (p.g && (!gp || (RANK[p.g.level] || 0) > (RANK[gp.level] || 0))) gp = p.g;
+      (p.a || []).forEach(function (e) { var k = "a" + e.k + e.name + e.t; if (!seen[k]) { seen[k] = 1; ais.push(e); } });
+      if (p.r && (!rad || p.r.km < rad.km)) rad = p.r;
+      (p.n || []).forEach(function (e) { var k = "n" + e.start + e.source; if (!seen[k]) { seen[k] = 1; net.push(e); } });
+    });
+    var hrs = function (h) { var a = Math.abs(h); return (a < 1 ? "under 1 h" : Math.round(a) + " h") + (h < 0 ? " before" : " after") + " the report"; };
+    var dur = function (mn) { return mn >= 120 ? Math.round(mn / 6) / 10 + " h" : Math.round(mn) + " min"; };
+    var h = [];
+    if (gp) h.push('<details class="cfmt"><summary title="Aircraft in this area reported degraded GPS accuracy that day (GPS interference map). It may relate. It does not show who or why: jamming has many sources and covers wide areas.">' +
+      "GPS interference in this area that day, may relate</summary>" +
+      '<div class="mt"><b>' + esc(gp.level.charAt(0).toUpperCase() + gp.level.slice(1)) + "</b> interference in the 1-degree cell at " + esc(gp.cell) + " on " + esc(gp.day) + ": " + esc(gp.pct) + "% of " + num(gp.n) + " aircraft-hours reported degraded GPS</div>" +
+      '<p class="cfm">From ADS-B accuracy reports (adsb.lol, adsb.fi). Map overlays &gt; GPS interference shows the whole map.</p></details>');
+    if (ais.length) {
+      ais.sort(function (a, b) { return a.km - b.km || Math.abs(a.h) - Math.abs(b.h); });
+      h.push('<details class="cfmt"><summary title="Ships near these reports whose AIS went quiet, came back, or jumped position (rules dark-v1). It may relate. AIS gaps have many causes: receiver coverage, a switched-off transponder, a busy channel.">' +
+        "Ship AIS gaps or jumps nearby, may relate (" + ais.length + ")</summary>" + ais.slice(0, 3).map(function (e) {
+          var what = e.k === "quiet" ? "went quiet" + (e.gap_h != null ? " (" + esc(e.gap_h) + " h so far)" : "") : e.k === "reappeared" ? "reappeared after " + esc(e.gap_h) + " h quiet" : "jumped " + esc(e.jkm) + " km in " + esc(Math.max(1, Math.round((e.gap_h || 0) * 60))) + " min";
+          return '<div class="mt">' + esc(e.name || "A ship") + (e.flag ? " (" + esc(e.flag) + ")" : "") + " " + what + ", " + (e.km < 1 ? "under 1 km" : num(e.km) + " km") + " from the report's pin, " + hrs(e.h) + "</div>";
+        }).join("") + '<p class="cfm">Open Waters AIS, free for personal use (non-commercial). Only 14 chokepoints are watched. Map overlays &gt; Ships &gt; Ships gone quiet.</p></details>');
+    }
+    if (rad) {
+      var st = rad.st === "above" ? "<b>" + esc(rad.above) + " of " + esc(rad.n) + " read above their usual level</b>" : rad.st === "usual" ? "all " + esc(rad.n) + " read at their usual level" : esc(rad.n) + " are too new to compare with their usual level";
+      h.push('<details class="cfmt"><summary title="Open radiation sensors near a nuclear site within 100 km of these reports (rules rad-v1), as read when the check ran. It may relate. A single high reading is often a sensor fault.">' +
+        "Radiation sensors near " + esc(rad.name) + ", may relate</summary>" +
+        '<div class="mt">' + esc(rad.name) + " is " + num(rad.km) + " km from the report's pin. Of its nearby open sensors, " + st + " (read " + esc(String(rad.read).replace("T", " ")) + "Z)</div>" +
+        '<p class="cfm">Safecast volunteer sensors (CC0). Map overlays &gt; Infrastructure &gt; Radiation near nuclear sites.</p></details>');
+    }
+    if (net.length) h.push('<details class="cfmt"><summary title="An internet outage signal for this country close to the report time (IODA). It may relate. Outages have many causes: power, cables, shutdowns, maintenance.">' +
+      "Internet outage signal in the country, may relate (" + net.length + ")</summary>" + net.map(function (e) {
+        return '<div class="mt">IODA saw a drop in ' + esc(e.source || "a signal") + (e.region ? " for " + esc(e.region) : "") + " from " + esc(String(e.start).replace("T", " ")) + "Z for " + dur(e.minutes) + "</div>";
+      }).join("") + '<p class="cfm">IODA, Georgia Tech, country-level signals. <a href="https://ioda.inetintel.cc.gatech.edu/" target="_blank" rel="noopener noreferrer">IODA dashboard</a></p></details>');
+    return h.join("");
+  }
   /* seismic check (tools/seismic_lib.mjs rules seismic-v1): an event USGS or EMSC located close to the reports in place and time,
      with the network's own label, magnitude and depth. OSAP never labels an event; most strikes are too small to record. */
   function seisHtml(g) {
