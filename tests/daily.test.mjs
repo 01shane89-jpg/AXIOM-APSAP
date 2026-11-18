@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { compileRelevance } from "../tools/topics_lib.mjs";
-import { buildRules, buildWorld, validateAi, stripInlineCites, cluster, softSection, unent, fromRow, fingerprint, aiQueue } from "../tools/daily_lib.mjs";
+import { buildRules, buildWorld, validateAi, stripInlineCites, cluster, softSection, unent, fromRow, fingerprint, aiQueue, overclaims, dropOverclaims } from "../tools/daily_lib.mjs";
 
 const R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")));
 const end = Date.parse("2026-09-28T01:00:00Z");
@@ -77,6 +77,30 @@ t("AI output: citations repeated inside the sentence are dropped (the page shows
   assert.equal(stripInlineCites("Talks (Trump talks mentioned in La Nouvelle Tribune, 2026-11-17T00:18) went on."), "Talks (Trump talks mentioned in La Nouvelle Tribune, 2026-11-17T00:18) went on.");
   const v = validateAi({ bluf: [{ text: "Outlet A reports a bomb killed three soldiers in Pattani (1, 2).", refs: [1, 2] }] }, d.refs.length);
   assert.equal(v.bluf[0].text, "Outlet A reports a bomb killed three soldiers in Pattani.");
+});
+t("AI output: a line may not call a report confirmed on its own authority (18 Nov World BLUF: 'outlets confirming this threat')", () => {
+  const refs = [{ n: 1, title: "Iran plots dirty bomb attack on US capital, report says" }, { n: 2, title: "China confirms trilateral summit at APEC" },
+    { n: 3, title: "Ministère : le gouvernement confirme l'attaque", orig: "Ministère : le gouvernement confirme l'attaque" }];
+  const v = validateAi({ bluf: [
+    { text: "Iran is reportedly planning a dirty bomb attack, with multiple news outlets confirming this threat.", refs: [1] },
+    { text: "China confirms a trilateral summit with the US and Russia at APEC.", refs: [2] },
+    { text: "Outlet A reports Iran is planning a dirty bomb attack on the US capital.", refs: [1] }],
+    watch: [{ text: "Watch whether officials verify the reported plot.", refs: [1] }] }, 3, refs);
+  assert.deepEqual(v.bluf.map((b) => b.refs[0]), [2, 1], "the self-confirming line is dropped; the headline's own 'confirms' and the attributed line stay");
+  assert.equal(v.watch.length, 0, "'verify' with no cited headline saying so is dropped from What to watch too");
+  assert.equal(overclaims("Reports from Dawn confirm these incidents.", ["Three terrorists killed in Mastung"]), true);
+  assert.equal(overclaims("The ministry confirms the attack.", ["Le gouvernement confirme l'attaque"]), true, "a French 'confirme' is not the English word; stay strict");
+  assert.equal(overclaims("Unconfirmed reports say a plane crashed.", []), false, "'unconfirmed' is a hedge, not a claim of confirmation");
+  assert.equal(overclaims("Outlet A reports a fire.", []), false);
+  // a kept summary is checked again; one left with no top line falls back to its rules top lines
+  const day = { method: "ai", refs, rules_bluf: [{ text: "Most reported: Iran plots dirty bomb attack (1 outlet)", refs: [1] }],
+    bluf: [{ text: "Several outlets confirm the dirty bomb plot.", refs: [1] }], ai_watch: [{ text: "Watch for proven links to the plot.", refs: [1] }, { text: "Watch for US statements.", refs: [1] }] };
+  assert.equal(dropOverclaims(day), 2);
+  assert.equal(day.method, "rules"); assert.equal(day.bluf[0].text, "Most reported: Iran plots dirty bomb attack (1 outlet)");
+  assert.deepEqual(day.ai_watch.map((w) => w.text), ["Watch for US statements."]);
+  assert.equal(dropOverclaims(day), 0, "a rules summary is left alone");
+  const kept = { method: "ai", refs, bluf: [{ text: "China confirms a trilateral summit.", refs: [2] }], ai_watch: [] };
+  assert.equal(dropOverclaims(kept), 0); assert.equal(kept.method, "ai");
 });
 t("fingerprint is stable and ignores the build time", () => {
   assert.equal(fingerprint({ ...d, made: "a" }), fingerprint({ ...d, made: "b" }));

@@ -185,12 +185,36 @@ const CITE_SRC = /\s*\((?:[^();]{1,80}?,\s*\d{4}-\d\d-\d\dT\d\d:\d\dZ?\s*;?\s*)+
 export function stripInlineCites(t) {
   return String(t || "").replace(CITE_NUMS, "").replace(CITE_SRC, "").replace(/\s+([.,;:])/g, "$1").replace(/\s{2,}/g, " ").trim();
 }
-// keep only AI sentences that cite existing sources; returns null when nothing usable is left
-export function validateAi(o, nRefs) {
+// An AI line may not call a report confirmed or verified on its own authority (18 Nov 2026: the World BLUF said Iran planned a dirty
+// bomb attack "with multiple intelligence reports and news outlets confirming this threat"; the outlets only repeated one
+// unverified report). Many outlets repeating a claim is not confirmation, and OSAP never rules a claim true. A line using that
+// language is kept only when one of the headlines it cites uses it too (then it is the source's word, e.g. "China confirms summit").
+// assets/osap-daily.js applies the same rule to summaries built before this check.
+export const CONFIRM_RE = /\b(?:confirm(?:s|ed|ing|ation)?|verif(?:y|ies|ied|ying|ication)|proven|proves|undoubtedly|definitively|beyond doubt)\b/i;
+export function overclaims(text, heads) {
+  return CONFIRM_RE.test(String(text || "")) && !(heads || []).some((h) => CONFIRM_RE.test(String(h || "")));
+}
+const headsOf = (refs, ns) => (ns || []).flatMap((n) => { const r = (refs || []).find((x) => x && x.n === n); return r ? [r.title, r.orig] : []; });
+// A kept AI summary is checked again with this rule; an AI summary left with no top line falls back to its rules top lines.
+// Returns the number of AI lines dropped.
+export function dropOverclaims(d) {
+  if (!d || d.method !== "ai") return 0;
+  const keep = (p) => !overclaims(p && p.text, headsOf(d.refs, p && p.refs));
+  const before = (d.bluf || []).length + (d.ai_watch || []).length;
+  d.bluf = (d.bluf || []).filter(keep); d.ai_watch = (d.ai_watch || []).filter(keep);
+  const n = before - d.bluf.length - d.ai_watch.length;
+  if (!n) return 0;
+  d.ai_overclaim = (d.ai_overclaim || 0) + n;
+  if (!d.bluf.length) { d.bluf = d.rules_bluf || []; d.method = "rules"; }
+  return n;
+}
+// keep only AI sentences that cite existing sources (and, given the numbered sources, that do not call a report confirmed when no
+// cited headline says so); returns null when nothing usable is left
+export function validateAi(o, nRefs, refs) {
   const clean = (s, n) => String(s || "").replace(/\s+/g, " ").trim().slice(0, n);
   const ok = (a) => [...new Set((Array.isArray(a) ? a : []).map((x) => +String(x).replace(/\D/g, "")).filter((x) => x >= 1 && x <= nRefs))].slice(0, 6);
   const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: stripInlineCites(clean(p && p.text, 400).replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, "")), refs: ok(p && p.refs) }))
-    .filter((p) => p.text.length > 15 && p.refs.length).slice(0, max);
+    .filter((p) => p.text.length > 15 && p.refs.length && !overclaims(p.text, headsOf(refs, p.refs))).slice(0, max);
   const bluf = list(o && o.bluf, 3), watch = list(o && o.watch, 3);
   if (!bluf.length) return null;
   return { bluf, watch };
