@@ -296,6 +296,36 @@ const popWhere = (p, grp, test) => p.evaluate(([g, t]) => {
   ok(errors.length === 0, "paths down: no page errors " + errors.join(" | "));
   await ctx.close();
 }
+// ---------- an open aircraft stays open through the 15-second live refresh (Shane 18 Nov: "the info pop-up is only up for a
+// few seconds then disappears") ----------
+{
+  const { ctx, p, errors, live } = await open({ viewport: { width: 1360, height: 860 } }, { live: "ok" });
+  await p.evaluate(() => { window.__asapMap.setView([13.7, 100.6], 9, { animate: false }); }); await om(p);
+  await p.check('#ml-air input[data-trf="air"]'); await p.waitForTimeout(1800);
+  // where the Details panel is hidden (Map layout, a conflict tab) the details stay a pop-up on the map
+  await p.evaluate(() => document.documentElement.setAttribute("data-cf", "1"));
+  await p.evaluate(() => { const m = window.OSAP_TRAFFIC.layers().air.getLayers().find((x) => /AIQ3074/.test(x.getTooltip().getContent()(x))); m.openPopup(); }); await p.waitForTimeout(600);
+  const open1 = await p.evaluate(() => !!document.querySelector(".leaflet-popup-content .trafpop"));
+  const n = live.length;
+  await p.evaluate(() => window.OSAP_TRAFFIC.refresh()); await p.waitForTimeout(1500);
+  await p.evaluate(() => window.OSAP_TRAFFIC.refresh()); await p.waitForTimeout(1500);
+  const after = await p.evaluate(() => { const c = document.querySelector(".leaflet-popup-content .trafpop"); return c ? c.textContent : ""; });
+  ok(open1 && live.length > n && /AIQ3074/.test(after), "keep open: the open aircraft's pop-up survives two live refreshes (" + (live.length - n) + " asks)");
+  const c = await count(p);
+  ok(c.air === 2, "keep open: no duplicate marker for the open aircraft: " + c.air);
+  await p.evaluate(() => window.__asapMap.closePopup()); await p.evaluate(() => window.OSAP_TRAFFIC.refresh()); await p.waitForTimeout(1500);
+  ok((await count(p)).air === 2, "keep open: after closing, the next refresh draws it as usual");
+  // ships the same way (their refresh is every minute)
+  await p.evaluate(() => window.__asapMap.setView([13.4, 100.6], 10, { animate: false }));
+  await p.check('#ml-sea input[data-trf="sea"]'); await p.waitForTimeout(1500);
+  await p.evaluate(() => { const m = window.OSAP_TRAFFIC.layers().sea.getLayers().find((x) => /TANKER TWO/.test(x.getTooltip().getContent()(x))); m.openPopup(); }); await p.waitForTimeout(600);
+  await p.evaluate(() => window.OSAP_TRAFFIC.reload()); await p.waitForTimeout(1500);
+  await p.evaluate(() => window.OSAP_TRAFFIC.reload()); await p.waitForTimeout(1500);
+  const shipAfter = await p.evaluate(() => { const c = document.querySelector(".leaflet-popup-content .trafpop"); return c ? c.textContent : ""; });
+  ok(/TANKER TWO/.test(shipAfter) && (await count(p)).sea === 5, "keep open: the open ship's pop-up survives two ship refreshes, no duplicate marker");
+  ok(errors.length === 0, "keep open: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
 // ---------- phone ----------
 {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
