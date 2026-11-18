@@ -7,6 +7,10 @@
 //     by: { conflict: { report fp: [{ km, h, t, sat, frp, conf }] } }, skipped: { conflict: n persistent detections left out },
 //     seis: { conflict: { fp: [seismic event] } } (seismic-v1),
 //     pic: { conflict: { fp: { g: GPS interference cell, a: [AIS events], r: radiation site, n: [IODA signals] } } }, pic_rules, pic_src (picture-v1) }
+// It also writes data/live/conflicts/sensor-links.js, window.OSAP_CF_LINKS, so a Story coverage card on Today can open the Sensor
+// picture and Check it from space for the strike reports it carries (assets/osap-coverage.js):
+//   { schema, asof, by: { report link: [conflict, fp, la, lo, date, pin kind, kind] } }
+// for the eligible reports (sensor-v1) whose link is one of the headlines in data/live/stories/<cc>.js or threads/<cc>.js now.
 // and data/live/conflicts/sensors-state.json, this job's own memory between runs (the page never reads it): det, the
 // detections kept near reports (72 h), and hist, { 2 km cell: [UTC days seen] } (10 days, for persistent heat). Rebuildable: delete the file and the next run
 // starts again (persistent heat is then learned over 3 days). Logs carry counts only.
@@ -139,7 +143,26 @@ const body = { schema: SCHEMA, rules: RULES, asof, src, by, skipped, seis: seisB
   pic: picBy, pic_rules: pic.RULES, pic_src: picSrc };
 fs.mkdirSync(DIR, { recursive: true });
 fs.writeFileSync(OUT, "window.OSAP_CF_SENSORS=" + JSON.stringify(body).replace(/<\//g, "<\\/") + ";\n");
+// the story links: only reports whose link a Story coverage card carries now, so the file stays small
+const LINKS = DIR + "/sensor-links.js", storyLinks = new Set();
+for (const sub of ["stories", "threads"]) {
+  let files = []; try { files = fs.readdirSync("data/live/" + sub).filter((f) => /^[a-z]{2,3}\.js$/.test(f)); } catch (e) {}
+  for (const f of files) {
+    const t = (() => { try { return fs.readFileSync(`data/live/${sub}/${f}`, "utf8"); } catch (e) { return ""; } })();
+    let o = null; try { o = JSON.parse(t.slice(t.indexOf("=") + 1).trim().replace(/;\s*$/, "")); } catch (e) {}
+    for (const c of (o && (o.stories || o.threads)) || []) for (const r of c.src || c.rows || []) if (r && typeof r[5] === "string") storyLinks.add(r[5]);
+  }
+}
+const lk = { schema: "osap-cf-links/1", asof: new Date(now).toISOString().slice(0, 16).replace("T", " ") + "Z", by: {} };
+for (const [id, list] of Object.entries(items)) {
+  for (const i of list) {
+    if (!eligible(i) || !i.link || !storyLinks.has(i.link)) continue;
+    lk.by[i.link] = [id, i.fp, +i.geo.la.toFixed(4), +i.geo.lo.toFixed(4), String(i.date).slice(0, 16), i.geo.p, i.kind];
+  }
+}
+fs.writeFileSync(LINKS, "window.OSAP_CF_LINKS=" + JSON.stringify(lk).replace(/<\//g, "<\\/") + ";\n");
 fs.writeFileSync(STATE, JSON.stringify({ asof, src, det, hist, sev, seis_asof: sAsof, seis_src: sSrc }) + "\n");
+console.log(`story links: ${Object.keys(lk.by).length} strike reports carried by Story coverage cards`);
 console.log(`sensors ${RULES}: ${elig.length} reports checked, ${paired} with heat nearby, ${Object.values(skipped).reduce((a, b) => a + b, 0)} persistent left out; ` +
   `picture ${pic.RULES}: ${pPaired} reports with a reading (${picSrc.map((x) => x.id + (x.ok ? "" : " unread")).join(", ")}); ` +
   `seismic ${seis.RULES}: ${sPaired} reports with an event nearby, ${sDeep} deep events left out, kept ${sev.length} events (${sDue ? sSrc.map((s) => s.net + (s.ok ? " " + s.rows : " failed: " + s.error)).join(", ") : "not due"}); ` +

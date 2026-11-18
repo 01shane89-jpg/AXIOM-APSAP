@@ -467,8 +467,8 @@
      at the wrong town. Standing heat (seen on 3 of the last 10 days) is left out. Read-only: it changes no record. */
   /* One "Sensor picture, may relate" box per incident: every open reading paired with its reports, under one heading (heat,
      seismic, and picture-v1's GPS interference, ships, radiation and internet). Nothing is shown when nothing paired. */
-  function sensorHtml(g) {
-    var parts = heatHtml(g) + seisHtml(g) + picHtml(g); if (!parts) return "";
+  function sensorHtml(g, cid) {
+    var parts = heatHtml(g, cid) + seisHtml(g, cid) + picHtml(g, cid); if (!parts) return "";
     var S = W.OSAP_CF_SENSORS || {};
     return '<div class="cfpic"><div class="cfpich">Sensor picture, may relate</div>' + parts +
       '<p class="cfm">Open readings near these reports in place and time (rules ' + esc([S.rules, S.seis_rules, S.pic_rules].filter(Boolean).join(", ")) +
@@ -476,8 +476,8 @@
   }
   /* sensor picture (tools/picture_lib.mjs rules picture-v1): GPS interference in the report's 1-degree cell that day, ships gone
      quiet or jumping nearby (AIS), a nuclear site's radiation sensors nearby, and IODA internet outage signals for the country */
-  function picHtml(g) {
-    var S = W.OSAP_CF_SENSORS, m = S && S.pic && active && S.pic[active]; if (!m) return "";
+  function picHtml(g, cid) {
+    var A = cid || active, S = W.OSAP_CF_SENSORS, m = S && S.pic && A && S.pic[A]; if (!m) return "";
     var gp = null, ais = [], rad = null, net = [], seen = {}, RANK = { high: 3, medium: 2, low: 1 };
     g.all.forEach(function (x) {
       var p = m[x.fp]; if (!p) return;
@@ -516,8 +516,8 @@
   }
   /* seismic check (tools/seismic_lib.mjs rules seismic-v1): an event USGS or EMSC located close to the reports in place and time,
      with the network's own label, magnitude and depth. OSAP never labels an event; most strikes are too small to record. */
-  function seisHtml(g) {
-    var S = W.OSAP_CF_SENSORS, m = S && S.seis && active && S.seis[active]; if (!m) return "";
+  function seisHtml(g, cid) {
+    var A = cid || active, S = W.OSAP_CF_SENSORS, m = S && S.seis && A && S.seis[A]; if (!m) return "";
     var best = [], seen = {};
     g.all.forEach(function (x) { (m[x.fp] || []).forEach(function (p) { var key = p.net + p.t; if (!seen[key]) { seen[key] = 1; best.push(p); } }); });
     if (!best.length) return "";
@@ -534,8 +534,8 @@
       "Seismic event nearby, may relate (" + best.length + ")</summary>" + rows.join("") +
       '<p class="cfm">USGS (public domain) and EMSC (CC BY 4.0) catalogues' + (S.seis_asof ? ", read " + esc(S.seis_asof) : "") + ". The label is the network's own; OSAP does not tell an explosion from an earthquake. Nothing recorded does not mean nothing happened.</p></details>";
   }
-  function heatHtml(g) {
-    var S = W.OSAP_CF_SENSORS, m = S && S.by && active && S.by[active]; if (!m) return "";
+  function heatHtml(g, cid) {
+    var A = cid || active, S = W.OSAP_CF_SENSORS, m = S && S.by && A && S.by[A]; if (!m) return "";
     var best = [], seen = {};
     g.all.forEach(function (x) { (m[x.fp] || []).forEach(function (p) { var key = p.t + p.sat + p.km; if (!seen[key]) { seen[key] = 1; best.push({ p: p, x: x }); } }); });
     if (!best.length) return "";
@@ -549,6 +549,13 @@
     return '<details class="cfmt"><summary title="Satellite heat close to these reports in place and time (rules ' + esc(S.rules || "") + '). It may relate. It is not a confirmation: a fire, a flare or another strike can be there too, and a report can be pinned at the wrong place.">' +
       "Satellite heat nearby, may relate (" + best.length + ")</summary>" + rows.join("") +
       '<p class="cfm">NASA FIRMS VIIRS active fire detections' + (S.asof ? ", read " + esc(S.asof) : "") + '. Standing heat sources are left out. <a href="https://firms.modaps.eosdis.nasa.gov/map/" target="_blank" rel="noopener noreferrer">FIRMS map</a></p></details>';
+  }
+  /* Check it from space (assets/osap-space.js, rules space-v1): the next Sentinel-2 and Sentinel-1 passes over a strike report's
+     pin, with the cloud forecast; closed until opened, so nothing is asked for until someone wants it */
+  function spaceHtml(g) {
+    var X = W.OSAP_SPACE; if (!X) return "";
+    var i = [g.lead].concat(g.all || []).filter(X.eligible)[0];
+    return i ? X.html({ la: i.geo.la, lo: i.geo.lo, t: i.date }) : "";
   }
   function matchHtml(g, k) {
     var M = W.OSAP_CF_MATCH, d = cur.data; if (!M || !d || !g.all.every(reviewable)) return "";
@@ -1063,7 +1070,7 @@
       if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Export PDF (' + num(gs.length) + ")</button>" +
         (F.vs === "confirmed" && codedN() ? ' <button type="button" class="refresh" data-cfcsv="1" title="Download the coded incident records of this tab (CSV, ACLED-like columns). Fatalities are as reported; actors are as attributed.">Download incident record (' + num(codedN()) + ")</button>" : "") + "</p>");
       if (!it.length) h.push('<p class="cfm">No reports in this period with these filters.</p>');
-      h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + vsHtml(g) + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + reviewHtml(g, k) + matchHtml(g, k) + sensorHtml(g) + "</li>"; }).join("") + "</ol>");
+      h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + vsHtml(g) + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + reviewHtml(g, k) + matchHtml(g, k) + sensorHtml(g) + spaceHtml(g) + "</li>"; }).join("") + "</ol>");
       if (gs.length > lim) h.push('<button type="button" class="refresh more" data-cfmore="1">Show ' + Math.min(60, gs.length - lim) + " more</button>");
       else if (F.days > 90 && needOlder() && cur.data.older.items) h.push(cur.data._olderP ? '<p class="cfm">Loading older reports…</p>' :
         (cur.data._olderFail ? '<p class="cfbad">Older reports could not be loaded.</p>' : "") +
@@ -1256,6 +1263,9 @@
   // additions that count incidents the way the tab does (assets/osap-cf-dspat.js)
   W.OSAP_CONFLICT_TABS = { open: open, activate: activate, active: function () { return active; }, inPeriod: inWin,
     items: allItems, grouped: grouped, family: family, kindName: kindName,
+    // the Sensor picture box for a conflict's reports by fingerprint, for a Story coverage card on Today (assets/osap-coverage.js);
+    // needs data/live/conflicts/sensors.js loaded; "" when nothing paired
+    sensorBox: function (cid, fps) { return sensorHtml({ all: (fps || []).map(function (fp) { return { fp: fp }; }) }, cid); },
     layers: function (id) { var m = absorbed(); return Object.keys(m).filter(function (l) { return m[l] === id; }); },
     name: function (id) { var c = byId(id); return c ? c.short || c.name : ""; } };
 })();

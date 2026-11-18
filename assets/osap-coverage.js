@@ -12,10 +12,16 @@
      on a topic"): every headline of one event joined, however it was worded, with a Go deeper button that opens it in layers.
      Until then, and where a country has no threads, it lists the stories as before.
    - Under Who carried it, each outlet can show About this outlet (assets/osap-outletfacts.js): who owns it and how it is paid
-     for, from its Wikidata record. */
+     for, from its Wikidata record.
+   - A card that carries a strike report from a conflict tab gets a Sensor picture button (Shane 2026-11-18: satellite and sensor
+     checks of military claims are what people want). One tap opens, under the card, the conflict tab's Sensor picture box for
+     those reports (heat, seismic, GPS, ships, radiation, internet; each "may relate", never a confirmation) and Check it from space
+     (assets/osap-space.js: the next Sentinel passes over the report's pin with the cloud forecast). The link from a headline to a
+     report comes from data/live/conflicts/sensor-links.js (tools/refresh_sensors.mjs); the readings from sensors.js, read on the
+     first tap. */
 (function () {
   "use strict";
-  var D = document, W = window, CC = "", NAME = "", el = null, state = 0, view = "top", bsel = "", shown = 10, open = {};
+  var D = document, W = window, CC = "", NAME = "", el = null, state = 0, view = "top", bsel = "", shown = 10, open = {}, spOpen = {}, sensP = null, linksP = null;
   var PAGE = 10;
   var KIND = { state: "State media", public: "Public broadcaster", other: "Private or independent" };
   var BLIND = {
@@ -74,6 +80,12 @@
     ".cvsrc li{padding:3px 0;font-size:12.5px}.cvsrc a{font-weight:600}.cvo{color:var(--muted)}" +
     ".cvdeep{display:inline-flex;align-items:center;margin-top:6px;min-height:36px;padding:3px 14px;font:inherit;font-size:13px;font-weight:700;border:1px solid var(--accent,#1D5A86);border-radius:6px;background:var(--accent-soft,#D6E3EE);color:var(--ink);cursor:pointer}" +
     ".cvdeep::after{content:' \\203A';margin-left:4px}.cvparts b{font-weight:600;color:var(--ink)}" +
+    ".cvdeep.cvsp{margin-left:6px;background:var(--surface);font-weight:600}.cvdeep.cvsp[aria-expanded=true]::after{content:' \\2039'}" +
+    ".cvspbox{margin:6px 0 2px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface2,var(--surface))}.cvspbox h3{margin:0 0 4px;font-size:13px}" +
+    // the same look as the conflict tab's Sensor picture box (assets/osap-conflicts.js, #cf-rail .cfpic)
+    ".cvspbox .cfpic{margin:6px 0;padding:4px 8px 2px;border:1px dashed #8a8f98;border-radius:6px}.cvspbox .cfpich{font-size:11px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}" +
+    ".cvspbox details.cfmt{margin:4px 0 0;font-size:12.5px;line-height:1.45}.cvspbox details.cfmt>summary{cursor:pointer;min-height:28px;padding-top:4px;color:var(--accent,#1f5f99)}" +
+    ".cvspbox .mt{font-size:12.5px;margin:3px 0 0;padding:4px 7px;border-left:3px dashed #8a8f98}.cvspbox .cfm{font-size:11.5px;color:var(--muted);margin:3px 0}" +
     ".cvmore{margin-top:6px;min-height:32px;padding:3px 12px;font-weight:600}.cvfoot{margin-top:8px;font-size:12px;color:var(--muted)}.cvfoot p{margin:3px 0}" +
     "@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .cvb{color:#fed7aa;background:#4a2412;border-color:#9a3412}}:root[data-theme=dark] .cvb{color:#fed7aa;background:#4a2412;border-color:#9a3412}";
 
@@ -94,6 +106,52 @@
     if (o.unk) where.push(o.unk + " not placed");
     return parts.join(" ") + (where.length ? " · " + where.join(", ") : "");
   }
+  /* strike reports this card carries (by headline link, data/live/conflicts/sensor-links.js), grouped by conflict */
+  function spRefs(links) {
+    var L = W.OSAP_CF_LINKS, by = L && L.by; if (!by) return null;
+    var out = [], ix = {};
+    links.forEach(function (u) {
+      var r = u && by[u]; if (!r || !Array.isArray(r) || r.length < 5 || !/^[0-9a-f]{64}$/.test(r[1] || "")) return;
+      var g = ix[r[0]]; if (!g) { g = ix[r[0]] = { cid: String(r[0]), fps: [], pins: [] }; out.push(g); }
+      if (g.fps.indexOf(r[1]) < 0) g.fps.push(r[1]);
+      // one Check it from space per place: a pin within about 25 km of one already listed is the same place
+      if (isFinite(r[2]) && isFinite(r[3]) && !g.pins.some(function (p) { return Math.abs(p.la - r[2]) < 0.25 && Math.abs(p.lo - r[3]) < 0.25; })) g.pins.push({ la: +r[2], lo: +r[3], t: r[4] });
+    });
+    return out.length ? out : null;
+  }
+  function cardLinks(rows, u) { var a = (rows || []).map(function (r) { return r && r[5]; }); if (u) a.unshift(u); return a; }
+  function spBtn(id, refs) {
+    if (!refs) return "";
+    return '<button type="button" class="cvdeep cvsp" data-cvsp="' + esc(id) + '" aria-expanded="' + !!spOpen[id] + '" title="Open satellite and sensor readings near the strike report this story carries, and when Sentinel next passes over it">Sensor picture</button>';
+  }
+  function spPanel(id, refs) {
+    if (!refs || !spOpen[id]) return "";
+    var T = W.OSAP_CONFLICT_TABS, X = W.OSAP_SPACE, h = '<div class="cvspbox" data-cvspbox="' + esc(id) + '">';
+    if (!W.OSAP_CF_SENSORS && sensP) h += '<p class="tdobs">Loading the sensor readings…</p>';
+    refs.slice(0, 2).forEach(function (g) {
+      var name = (T && T.name && T.name(g.cid)) || g.cid, box = T && T.sensorBox && W.OSAP_CF_SENSORS ? T.sensorBox(g.cid, g.fps) : "";
+      h += "<h3>" + plural(g.fps.length, "strike report") + " in the " + esc(name) + " tab</h3>";
+      h += box || (W.OSAP_CF_SENSORS ? '<p class="cfm">No open sensor reading is paired with ' + (g.fps.length === 1 ? "this report" : "these reports") + " yet. Nothing listed does not mean nothing happened.</p>" : "");
+      if (X) g.pins.slice(0, 2).forEach(function (p, k) { h += X.html({ la: p.la, lo: p.lo, t: p.t, what: g.pins.length > 1 ? "place " + (k + 1) : "" }, true); });
+      if (T && T.open) h += '<button type="button" class="cvmore" data-cvcf="' + esc(g.cid) + '">Open the ' + esc(name) + " tab</button>";
+    });
+    return h + '<p class="cfm">Reports are claims, not verified. Each reading may relate; none confirms a report.</p></div>';
+  }
+  function loadSensors() {
+    if (sensP) return sensP;
+    sensP = new Promise(function (ok) {
+      var s = D.createElement("script"); s.src = "data/live/conflicts/sensors.js?m=" + Math.floor(Date.now() / 6e5); s.async = true;
+      s.onload = s.onerror = function () { s.remove(); ok(); }; D.head.appendChild(s);
+    });
+    return sensP;
+  }
+  function loadLinks(done) {
+    if (!linksP) linksP = new Promise(function (ok) {
+      var s = D.createElement("script"); s.src = "data/live/conflicts/sensor-links.js?m=" + Math.floor(Date.now() / 6e5); s.async = true;
+      s.onload = s.onerror = function () { s.remove(); ok(); }; D.head.appendChild(s);
+    });
+    linksP.then(done);
+  }
   function storyHtml(s) {
     var u = safeUrl(s.u), b = s.b && BLIND[s.b], t = txt(s.t);
     var h = "<li>" + (u ? '<a class="cvt" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(t) + "</a>" : '<span class="cvt">' + esc(t) + "</span>");
@@ -102,6 +160,8 @@
     if (b) h += '<span class="cvb" tabindex="0" title="' + esc(b[1]) + '">' + esc(b[0]) + "</span>";
     var th = W.OSAP_THREADSQ && W.OSAP_THREADSQ.ofLinks(CC, (s.src || []).map(function (r) { return r[5]; }));
     if (th) h += '<button type="button" class="cvdeep" data-cvdeep="' + esc(th.id) + '">Go deeper</button>';
+    var sp = spRefs(cardLinks(s.src, s.u));
+    h += spBtn("s" + s.id, sp) + spPanel("s" + s.id, sp);
     h += '<details class="cvsrc" data-cvid="' + esc(s.id) + '"' + (open[s.id] ? " open" : "") + "><summary>Who carried it</summary><ul>" + (s.src || []).map(function (r) {
       /* [outlet, kind, home, outlet's country, date, link, headline, machine translated, country inferred] */
       var ru = safeUrl(r[5]), place = r[3] ? cName(r[3]) + (r[8] ? " (placed by where its stories are filed)" : "") : "country not known";
@@ -123,7 +183,8 @@
     h += '<span class="cvmeta">' + (ago(ms(t.d)) ? "latest " + esc(ago(ms(t.d))) : "") + (ago(ms(t.d0)) ? " · first " + esc(ago(ms(t.d0))) : "") + "</span>";
     if (parts.length) h += '<span class="cvmeta cvparts">' + parts.map(function (p) { return esc(p[1]) + " <b>" + p[2] + "</b>"; }).join(" · ") + "</span>";
     if (t.names && t.names.length) h += '<span class="cvmeta">Names: ' + esc(t.names.slice(0, 5).map(function (n) { return n[0]; }).join(", ")) + "</span>";
-    return h + '<button type="button" class="cvdeep" data-cvdeep="' + esc(t.id) + '">Go deeper</button></li>';
+    var sp = spRefs(cardLinks(t.rows, t.u));
+    return h + '<button type="button" class="cvdeep" data-cvdeep="' + esc(t.id) + '">Go deeper</button>' + spBtn("t" + t.id, sp) + spPanel("t" + t.id, sp) + "</li>";
   }
   function threads() { var Q = W.OSAP_THREADSQ, f = Q && Q.get(CC); return f && f.threads && f.threads.length ? f.threads : null; }
   function list() {
@@ -162,6 +223,7 @@
       (sd.home ? plural(sd.home, esc(NAME) + " outlet") + " with " + plural(sd.homeReports || 0, "headline") + " in the window." : "") + "</p>") +
       "<p>" + esc(S.method || "") + "</p></div>";
     el.innerHTML = h; el.hidden = false;
+    if (W.OSAP_SPACE) Array.prototype.forEach.call(el.querySelectorAll("details.ospx[open]"), W.OSAP_SPACE.fill);
   }
   function load() {
     if (state) return; state = 1;
@@ -170,6 +232,8 @@
     s.async = true;
     s.onload = s.onerror = function () {
       s.remove(); state = 2; render();
+      // then which cards carry a strike report, for the Sensor picture button
+      if (data()) loadLinks(function () { if (W.OSAP_CF_LINKS) render(); });
       // then the threads, for Go deeper: Most covered switches to them when they are in
       if (W.OSAP_THREADSQ && data()) W.OSAP_THREADSQ.load(CC, function () { render(); });
       // then who owns and pays for each outlet (assets/osap-outletfacts.js), for "About this outlet" under Who carried it
@@ -186,6 +250,18 @@
       else if (t.hasAttribute("data-cvb")) { bsel = t.getAttribute("data-cvb"); shown = PAGE; render(); }
       else if (t.hasAttribute("data-cvmore")) { shown += PAGE; render(); }
       else if (t.hasAttribute("data-cvplans") && W.OSAP_TIER) W.OSAP_TIER.open();
+      else if (t.hasAttribute("data-cvsp")) {
+        var id = t.getAttribute("data-cvsp"); spOpen[id] = !spOpen[id];
+        if (spOpen[id] && !W.OSAP_CF_SENSORS) loadSensors().then(render);
+        render();
+        var bx = el.querySelector('[data-cvspbox="' + id.replace(/"/g, "") + '"]'); if (bx && bx.scrollIntoView) bx.scrollIntoView({ block: "nearest" });
+      }
+      else if (t.hasAttribute("data-cvcf") && W.OSAP_CONFLICT_TABS) {
+        var cid = t.getAttribute("data-cvcf"), ix = W.OSAP_CONFLICTS && W.OSAP_CONFLICTS.conflicts || [], c = ix.filter(function (x) { return x.id === cid; })[0];
+        var cs = (c && c.countries) || [], c0 = cs.indexOf(CC) >= 0 ? CC : cs[0] || CC;
+        if (W.OSAP_TODAY && W.OSAP_TODAY.hide) W.OSAP_TODAY.hide();
+        W.OSAP_CONFLICT_TABS.open(cid, c0);
+      }
       else if (t.hasAttribute("data-cvdeep") && W.OSAP_THREADSQ) W.OSAP_THREADSQ.open(CC, t.getAttribute("data-cvdeep"));
     });
     el.addEventListener("toggle", function (e) { var d = e.target; if (d.classList && d.classList.contains("cvsrc")) open[d.getAttribute("data-cvid")] = d.open; }, true);
