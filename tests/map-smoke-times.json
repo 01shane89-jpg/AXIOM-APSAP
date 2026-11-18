@@ -83,6 +83,7 @@
 "tests/teams_smoke.mjs": 13,
 "tests/gnss_smoke.mjs": 23,
 "tests/guide_smoke.mjs": 4,
+"tests/tips_smoke.mjs": 25,
 "tests/lang_smoke.mjs": 14,
 "tests/ai_smoke.mjs": 17,
 "tests/timeline_scope_smoke.mjs": 45,

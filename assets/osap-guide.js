@@ -56,6 +56,24 @@
         "Installed, OSAP opens full screen, can send watch alerts, and the browser is less likely to clear your saved maps.",
         "To open quickly on a phone, OSAP downloads only what your plan includes and what the open country needs: Thailand's flood and border maps load only for Thailand, and the border map only when you open it."]) },
 
+    { id: "news", t: "News and stories on Today", h:
+      "<p>Under the daily summary, Today has cards that help you see what is being reported and by whom. Each line is an outlet's own headline and link; OSAP does not judge whether a story is true.</p>" +
+      ul([b("Daily summary") + ": the key events of the last 24 hours, with every source. Pick " + b("World") + " in the country list for the most reported stories of every country.",
+        b("Reporting level") + ": the country's headline count for the last 24 hours against its normal level and typical range, with the last 15 days, and every country and data set that is spiking now. A spike is a count of headlines, not of events: a prompt to look, not a finding.",
+        b("Story coverage") + ": the stories of the last 72 hours that two or more outlets carried, how many carried each, who owns them (state media, public broadcasters, private or independent outlets) and where they are based. " + b("Most covered") + " lists the biggest stories; " + b("Go deeper") + " opens every headline about one event, however it was worded.",
+        b("Blindspots") + " (in Story coverage): stories only state media carried, stories this country's state media did not carry, and stories only outlets elsewhere carried. A blindspot means no matching headline was found in the outlets OSAP reads, not that the story went unreported.",
+        b("Risk equivalent") + ": OSAP's own rating for the country and its major cities, levels 1 Minimal to 5 Extreme, in five categories (security and conflict, crime, health and medical, natural hazards now, infrastructure and services). It is worked out every 6 hours from open indicators, each with its points and source. It is not an official rating: the U.S. State Department advisory is never an input and stays in its own box in the country report.",
+        b("Top stories") + " and " + b("New since your last visit") + " list the newest reports for the country.",
+        "Open a report and press " + b("Read the full article") + " to read it at the outlet; OSAP shows the headline only, because the article's text belongs to the outlet. Publishers whose open licence allows it (such as The Conversation and GOV.UK) show " + b("Read it here") + ": the whole article, unedited and credited, with its licence and a link to the original.",
+        "When the news search finds little, " + b("Search older days") + " looks further back than the last few days."]) },
+
+    { id: "tabs", t: "Lists and tabs", h:
+      ul(["The reports list sits under the map on a phone (drag it up) and beside the map on a computer. Its tabs change what it lists.",
+        b("Timeline") + ": the master timeline, every report in the period in time order. " + b("Alerts") + " holds the alerts for the open country, with how many there are.",
+        "Each data set you show has a tab of its own, and so do the conflict tabs, such as " + b("Thai–Cambodian border") + " and " + b("Deep South") + " in Thailand. Opening a tab makes it the timeline's topic.",
+        "Tap a report for its details: what the source said, its link, its record fingerprint and related reports.",
+        b("Reports") + ", " + b("Summary of this tab") + " and " + b("Report list (print)") + " turn the open tab into a page to print or save."]) },
+
     { id: "map", t: "The map screen", h:
       fig("map", "The map with the toolbar down the right") +
       ul(["The " + b("toolbar") + " runs down the right of the map. The arrow at its top folds it away; tap again to bring it back. On a phone, scroll the toolbar when a down arrow shows more tools below.",
@@ -298,6 +316,9 @@
       ul(["Tap " + b("Reports") + " for every report OSAP makes: country brief, country report, daily summary, weather brief, 5-day weather chart and detailed weather, night illumination, timeline report, area summary, medical plan, route plan and situation report.",
         "A grayed entry says what to do first, for example " + b("Draw an area first") + " or " + b("Plan a route first") + ".",
         "Each report opens as a page with one " + b("Export PDF") + " button. It opens the print dialog: choose " + b("Save as PDF") + " and A4 or Letter. Every page carries the report's title, when it was exported (Zulu and local time), " + b("Page X of Y") + " and, where any part is AI generated, a note saying so; source links stay clickable in the PDF.",
+        b("Intelligence brief (PowerPoint)") + ": pick the country, a region (the whole country, one province or the drawn area), a topic and the dates, then " + b("Make PowerPoint") + ". The deck is built on your device and downloads; nothing is sent anywhere. OSAP writes no judgments: the bottom line is a machine count, and every slide that needs one carries a red " + b("NEEDS ANALYST REVIEW") + " box.",
+        b("OSIR (Open Source Intelligence Report)") + ": a printable report in OSIR format, with every source and its SHA-256 fingerprint. " + b("Daily brief (PDF)") + " and " + b("Area brief (PDF)") + " make today's summary, or the last 24 hours inside the drawn area, as a PDF in one tap.",
+        b("TAK package") + ": workspaces in " + b("My work") + ", the Route tab, evacuation plans, the medical plan and landing zones can be saved as a TAK data package (.zip) that opens in ATAK and WinTAK, markers and areas included.",
         "The country brief ends with the country's " + b("Key dates") + ": every holiday, election, religious date and anniversary of the past 7 and next 60 days, with its source."]) },
 
     { id: "settings", t: "Settings", h:
@@ -307,7 +328,8 @@
         b("Language") + ": English, Thai, Vietnamese, Filipino, Indonesian, Malay, Chinese, Japanese or Korean for the app's menus and buttons. Reports stay in their original language. The translations are AI drafts, marked AI generated.",
         b("My countries and setup") + ": your pinned countries and how you use OSAP, the questions asked the first time.",
         b("Install OSAP as an app") + ": its own icon and window, working offline; one tap in Edge, Chrome and on Android, the steps on iPhone. Gone from the list once OSAP is installed.",
-        b("User guide") + ": this guide."]) +
+        b("User guide") + ": this guide. " + b("Show tips") + " turns the tips on or off and " + b("Take the tour") + " runs the tour of the toolbar (see Tips and the tour).",
+        "The safety settings (" + b("Protected mode") + ", " + b("Lock my saved work") + ", " + b("Staying hidden online") + ", " + b("Erase this device") + ") are in Staying secure."]) +
       "<h3>Offline maps and data</h3>" +
       ul(["Save a country so OSAP opens and works with no signal: the Offline map, the country's layers, brief, news, history and the medical plan's hospitals.",
         "Pick " + b("Whole country") + " or " + b("What the map shows now") + ", choose the detail, and press " + b("Download for offline") + ". Pressing again later fetches only what is missing.",
@@ -333,6 +355,20 @@
         "OSAP uses the browser's own model if it has one, or your own AI server on your network, or OSAP's own small model.",
         "OSAP's model is under 1 GB and downloads once (Wi-Fi is best), then works offline. It needs a recent Chrome or Edge, or Safari on iOS 26 or later.",
         "Press " + b("Check it works") + " to test it."]) },
+
+    { id: "security", t: "Staying secure", h:
+      "<p>For users who must keep their device and their work private. Each is in Settings, under the gear.</p>" +
+      ul([b("Protected mode") + ": off until you turn it on. The page then contacts no outside service itself: maps, weather and search go through OSAP's own server, so those services never see your device. Traffic cameras, sync, push and the AI download stay off. Turning it on reloads OSAP.",
+        b("Lock my saved work") + ": keeps your saved points, photos, areas, routes, watches, workspaces and plans encrypted on this device whenever OSAP is locked. Unlocking needs Face ID, Touch ID or Windows Hello, or a passphrase where the device cannot give those.",
+        b("Staying hidden online") + ": plain advice on hiding who and where you are while using OSAP, and a check of where OSAP's server sees your device connecting from.",
+        b("Erase this device") + ": after one confirm (" + b("Erase now") + "), erases everything OSAP keeps in this browser. Opening OSAP with #panic on the end of the address shows the same confirm screen at once. Nothing is erased without that tap."]) },
+
+    { id: "tips", t: "Tips and the tour", h:
+      ul(["Now and then a small " + b("Tip") + " at the foot of the screen suggests a tool, chosen by what you are doing: after you draw an area it suggests " + b("Area summary") + "; on Today it points out " + b("Story coverage") + "; otherwise a tool you have not used yet.",
+        b("Show me") + " rings the tool on screen and " + b("Open it") + " opens it. " + b("Next tip") + " shows another, " + b("More in the guide") + " opens this guide at the right place.",
+        "Tips never cover an open window, plan or menu, never come while you are tapping or typing, and come a few times a visit at most. They keep coming until you turn them off: press " + b("Turn off tips") + " on a tip, or untick " + b("Show tips") + " in Settings.",
+        b("Take the tour") + " in Settings rings each toolbar button in turn and says what it is for. Most sections of this guide have " + b("Show me in the app") + ", which does the same for that feature.",
+        "What you have seen and used is kept on this device only, never sent anywhere."]) },
 
     { id: "reading", t: "Reading what you see", h:
       "<h3>Reports are claims</h3>" +
@@ -376,14 +412,18 @@
       '<input type="search" class="gfind" placeholder="Find in the guide" aria-label="Find in the guide">' +
       '<nav class="gtoc" aria-label="Contents">' + S.map(function (s) { return '<a href="#" data-gto="' + s.id + '">' + esc(s.t) + "</a>"; }).join("") + "</nav>" +
       '<p class="gnone" hidden>Nothing in the guide matches that.</p>' +
-      S.map(function (s) { return '<section class="gsec" data-gsec="' + s.id + '"><h2>' + esc(s.t) + "</h2>" + s.h + '<a href="#" class="gtop" data-gto="top">Back to contents</a></section>'; }).join("") +
+      S.map(function (s) {
+        /* "Show me in the app": the tips' ring walks through this feature's buttons (assets/osap-tips.js) */
+        var walk = W.OSAP_TIPS && W.OSAP_TIPS.hasWalk(s.id) ? '<button type="button" class="gshow" data-gwalk="' + s.id + '">Show me in the app</button>' : "";
+        return '<section class="gsec" data-gsec="' + s.id + '"><h2>' + esc(s.t) + "</h2>" + walk + s.h + '<a href="#" class="gtop" data-gto="top">Back to contents</a></section>'; }).join("") +
       "</div>";
     D.body.appendChild(box);
     /* a picture that has not been saved yet is left out rather than shown broken */
     Array.prototype.forEach.call(box.querySelectorAll(".gfig img"), function (im) { im.addEventListener("error", function () { var f = im.closest("figure"); if (f) f.hidden = true; }); });
     box.addEventListener("click", function (e) {
-      var t = e.target.closest && e.target.closest("[data-g],[data-gto]"); if (!t) return;
+      var t = e.target.closest && e.target.closest("[data-g],[data-gto],[data-gwalk]"); if (!t) return;
       e.preventDefault();
+      if (t.hasAttribute("data-gwalk")) { if (W.OSAP_TIPS) W.OSAP_TIPS.walk(t.getAttribute("data-gwalk")); return; }
       var g = t.getAttribute("data-g"), to = t.getAttribute("data-gto");
       if (g === "close") close();
       else if (g === "print") print();
@@ -454,11 +494,13 @@
       "#guidedlg .gfig figcaption{font-size:13px;color:var(--muted,#56626F);margin-top:2px}" +
       "#guidedlg .gtop{display:inline-block;margin-top:6px;font-size:13px;color:var(--accent,#1D5A86)}" +
       "#guidedlg .gnone{color:var(--muted,#56626F)}" +
+      "#guidedlg .gshow{display:inline-flex;align-items:center;min-height:40px;margin:0 0 4px;padding:0 14px;border:1px solid var(--accent,#1D5A86);border-radius:999px;background:none;color:var(--accent,#1D5A86);font:inherit;font-size:14px;font-weight:600;cursor:pointer}" +
+      "@media (pointer:coarse){#guidedlg .gshow{min-height:44px}}" +
       /* print: only the guide, all of it, in ink on paper */
       "@media print{html.guide-open body>*:not(#guidedlg){display:none!important}" +
       "html.guide-open #guidedlg{position:static;display:block;background:#fff;color:#000}" +
       "html.guide-open #guidedlg .gbody{overflow:visible;padding:0;font-size:11pt}" +
-      "html.guide-open #guidedlg .gbtn,html.guide-open #guidedlg .gx,html.guide-open #guidedlg .gfind,html.guide-open #guidedlg .gtop{display:none}" +
+      "html.guide-open #guidedlg .gbtn,html.guide-open #guidedlg .gx,html.guide-open #guidedlg .gfind,html.guide-open #guidedlg .gtop,html.guide-open #guidedlg .gshow{display:none}" +
       "html.guide-open #guidedlg .gtoc a{background:none;padding:0 6px;min-height:0}" +
       "html.guide-open #guidedlg .gsec{break-inside:auto}html.guide-open #guidedlg .gsec>h2{break-after:avoid}" +
       "html.guide-open #guidedlg .gfig{break-inside:avoid;float:right;width:56mm;margin:0 0 3mm 5mm}html.guide-open #guidedlg .gfig img{max-width:100%;max-height:105mm;width:auto}" +

@@ -110,6 +110,8 @@ tests/cases_move_smoke.mjs
 tests/teams_smoke.mjs
 tests/gnss_smoke.mjs
 tests/guide_smoke.mjs
+# tips, the tour and Show me in the app: Settings switch, follow-ups, never over a window, fits a phone (assets/osap-tips.js)
+tests/tips_smoke.mjs
 tests/lang_smoke.mjs
 tests/ai_smoke.mjs
 tests/timeline_scope_smoke.mjs
