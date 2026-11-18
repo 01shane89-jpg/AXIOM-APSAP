@@ -15,7 +15,8 @@ const PROBES = [
   { cc: "in", q: "police", min: 5 }, { cc: "au", q: "police", min: 3 }, { cc: "ph", q: "police", min: 3 },
   { cc: "", q: "attack", min: 20 },
 ];
-const readJs = (f) => { const t = fs.readFileSync(f, "utf8"); const i = t.lastIndexOf("]=") > 0 && /^window\.OSAP_NEWSIX_DAY/.test(t) ? t.indexOf("]=") + 2 : t.indexOf("=") + 1; return JSON.parse(t.slice(i).trim().replace(/;$/, "")); };
+// a day file opens with window.OSAP_NEWSIX_DAY=…||{};window.OSAP_NEWSIX_DAY["<day>"]=, the manifest with window.OSAP_NEWSIX=
+const readJs = (f) => { const t = fs.readFileSync(f, "utf8"), i = /^window\.OSAP_NEWSIX_DAY/.test(t) ? t.indexOf("]=") + 2 : t.indexOf("=") + 1; return JSON.parse(t.slice(i).trim().replace(/;$/, "")); };
 const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const fails = [], notes = [];
 const fail = (m) => { fails.push(m); console.log("FAIL " + m); };
