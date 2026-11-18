@@ -66,8 +66,25 @@ async function open(opts, mode = {}) {
     if (/a\/10_100\.json$/.test(u)) return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ schema: "osap-air-cell/1", built, cell: "10_100", ac: AC }) });
     return r.fulfill({ status: 404, body: "" });
   });
+  // one aircraft's flight from OpenSky through netlify/edge-functions/osap-air-track.js (mode.track), else 404 as on GitHub Pages
+  if (mode.track) await ctx.route(/\/api\/air-track\?/, (r) => {
+    const t = Math.round(Date.now() / 1000);
+    if (mode.track === "down") return r.fulfill({ status: 502, contentType: "application/json", body: '{"error":"OpenSky HTTP 503"}' });
+    return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ schema: "osap-air-track/1", hex: "880844", cs: "AIQ3074", start: t - 3600, end: t - 120, built: new Date().toISOString(),
+      src: { id: "osky", name: "OpenSky Network", licence: "OpenSky Network terms (non-commercial and research use)", nc: true }, f: ["t", "lat", "lon", "alt", "trk", "gnd"],
+      path: [[t - 3600, 13.69, 100.75, 0, 10, 1], [t - 3000, 13.75, 100.72, 12000, 12, 0], [t - 2400, 13.8, 100.68, 30000, 14, 0], [t - 120, 13.89, 100.61, 38000, 145, 0]] }) });
+  });
   await ctx.route(/ais\.openwaters\.io/, (r) => {
-    sea.push(r.request().url());
+    const u = r.request().url();
+    if (/\/vessels\/\d+\/track/.test(u)) {
+      (mode.tracks || (mode.tracks = [])).push(u);
+      const h = (n) => new Date(Date.now() - n * 3600e3).toISOString().slice(0, 19) + "Z";
+      return r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify({ type: "Feature", id: 563000002,
+        attribution: { aishub: "Open Waters AIS (https://openwaters.io/ais/). AISHub (https://www.aishub.net)" },
+        geometry: { type: "LineString", coordinates: [[100.2, 13.0], [100.3, 13.1], [100.4, 13.2], [100.55, 13.28], [100.6, 13.3]] },
+        properties: { mmsi: 563000002, breaks: [3], times: [h(20), h(18), h(16), h(2), h(0.05)], simplified: true, points: 5 } }) });
+    }
+    sea.push(u);
     if (mode.sea === "busy") return r.fulfill({ status: 429, body: "too many requests" });
     return r.fulfill({ status: 200, contentType: "application/geo+json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(SHIPS) });
   });
@@ -213,6 +230,65 @@ const popWhere = (p, grp, test) => p.evaluate(([g, t]) => {
   const c = await count(p), st = await p.evaluate(() => document.getElementById("tra-st").textContent);
   ok(c.air === 5 && /Live positions unavailable \(the live providers did not answer\)/.test(st), "live down: falls back to the sweep and says so (" + c.air + "): " + st);
   ok(errors.length === 0, "live down: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- paths: trails behind each one, the whole path when one is selected ----------
+{
+  const mode = { live: "ok", track: "ok" };
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } }, mode);
+  await p.evaluate(() => { window.__asapMap.setView([13.7, 100.6], 9, { animate: false }); }); await om(p);
+  ok(await p.evaluate(() => document.querySelectorAll('input[data-trf="trail"]').length === 2 && [...document.querySelectorAll('input[data-trf="trail"]')].every((x) => x.checked)), "paths: Trails switch in both sections, on by default");
+  await p.check('#ml-air input[data-trf="air"]'); await p.waitForTimeout(1800);
+  // 880844 was seen by the sweep (60 s ago) and again live (2 s ago): a trail joins the two
+  let tr = await p.evaluate(() => window.OSAP_TRAFFIC.trails("air"));
+  ok(tr["880844"] && tr["880844"].length === 2 && tr["880844"][0][0] < tr["880844"][1][0], "paths: both positions of one aircraft kept, in time order " + JSON.stringify(tr["880844"]));
+  let n = await p.evaluate(() => window.OSAP_TRAFFIC.layers().airTrails.getLayers().length);
+  ok(n === 1, "paths: one trail drawn (the aircraft seen twice): " + n);
+  ok((await count(p)).air === 2, "paths: trails are not counted as aircraft");
+  // select it: OpenSky's flight path, joined to the newer positions seen here
+  let pop = await p.evaluate(() => { const ms = window.OSAP_TRAFFIC.layers().air.getLayers(); const m = ms.find((x) => /AIQ3074/.test(x.getTooltip() && typeof x.getTooltip().getContent() === "function" ? x.getTooltip().getContent()(x) : "")); m.openPopup();
+    return new Promise((r) => setTimeout(() => r((document.querySelector("[data-trpath]") || {}).textContent || ""), 900)); });
+  let path = await p.evaluate(() => window.OSAP_TRAFFIC.path());
+  ok(path && path.kind === "air" && path.id === "880844" && path.st === "ok" && path.pts.length === 6 && path.gaps === 1, "paths: aircraft path = OpenSky's 4 points + the 2 newer seen here, the 38-min silence dotted: " + (path && path.pts.length));
+  ok(/Path on the map \(OpenSky Network flight path, non-commercial source\)/.test(pop) && /6 positions/.test(pop) && /as broadcast, not verified/.test(pop), "paths: pop-up says where the path came from: " + pop);
+  ok(await p.evaluate(() => window.OSAP_TRAFFIC.layers().path.getLayers().length >= 3), "paths: selected path drawn (line, outline, earliest point)");
+  ok(await p.evaluate(() => /Selected aircraft's path/.test(document.querySelector(".leaflet-control-container").innerHTML)), "paths: legend names the selected path with Hide path");
+  // trails off: none drawn, path stays; Hide path clears it
+  await p.uncheck('#ml-air input[data-trf="trail"]'); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => window.OSAP_TRAFFIC.layers().airTrails.getLayers().length === 0 && !document.querySelector('#ml-sea input[data-trf="trail"]').checked), "paths: Trails off hides them (both switches follow)");
+  await p.check('#ml-air input[data-trf="trail"]'); await p.waitForTimeout(300);
+  await p.evaluate(() => document.querySelector('[data-trpath-act="hide"]').click()); await p.waitForTimeout(300);
+  ok(await p.evaluate(() => !window.OSAP_TRAFFIC.path() && window.OSAP_TRAFFIC.layers().path.getLayers().length === 0), "paths: Hide path clears it");
+  // ships: Open Waters' own track, its gap dotted; 7 days on request; private craft get no history
+  await p.evaluate(() => window.__asapMap.setView([13.4, 100.6], 10, { animate: false }));
+  await p.check('#ml-sea input[data-trf="sea"]'); await p.waitForTimeout(1500);
+  pop = await p.evaluate(() => { const m = window.OSAP_TRAFFIC.layers().sea.getLayers().find((x) => /TANKER TWO/.test(x.getTooltip().getContent()(x))); m.openPopup();
+    return new Promise((r) => setTimeout(() => r((document.querySelector("[data-trpath]") || {}).textContent || ""), 900)); });
+  path = await p.evaluate(() => window.OSAP_TRAFFIC.path());
+  ok(path && path.kind === "sea" && path.st === "ok" && path.pts.length === 5 && path.gaps === 1, "paths: ship path from Open Waters, 5 points, 1 gap: " + JSON.stringify(path && { n: path.pts.length, g: path.gaps, st: path.st }));
+  ok(/Open Waters AIS track, AISHub/.test(pop) && /1 gap where no receiver heard it \(dotted\)/.test(pop) && /Show 7 days/.test(pop), "paths: ship pop-up gives source, gap and 7 days: " + pop);
+  await p.evaluate(() => document.querySelector('[data-trpath-act="week"]').click()); await p.waitForTimeout(900);
+  const tq = mode.tracks || [];
+  ok(tq.some((u) => /\/vessels\/563000002\/track\?from=/.test(u)), "paths: Show 7 days asks with a start date " + tq.join(" "));
+  await p.evaluate(() => { const m = window.OSAP_TRAFFIC.layers().sea.getLayers().find((x) => /Pleasure craft/.test(x.getTooltip().getContent()(x))); m.openPopup(); }); await p.waitForTimeout(600);
+  path = await p.evaluate(() => window.OSAP_TRAFFIC.path());
+  ok(path && path.st === "private" && path.pts.length === 0, "paths: no path history fetched for small private craft");
+  // switching the layer off clears its path
+  await p.evaluate(() => { const m = window.OSAP_TRAFFIC.layers().sea.getLayers().find((x) => /CARGO ONE/.test(x.getTooltip().getContent()(x))); m.openPopup(); }); await p.waitForTimeout(900);
+  await p.uncheck('#ml-sea input[data-trf="sea"]'); await p.waitForTimeout(300);
+  ok(await p.evaluate(() => !window.OSAP_TRAFFIC.path()), "paths: switching Ships off clears the ship's path");
+  ok(errors.length === 0, "paths: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// aircraft path where OSAP's server cannot give one: the positions seen here, and it says why
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } }, { live: "ok", track: "down" });
+  await p.evaluate(() => { window.__asapMap.setView([13.7, 100.6], 9, { animate: false }); }); await om(p);
+  await p.check('#ml-air input[data-trf="air"]'); await p.waitForTimeout(1800);
+  await p.evaluate(() => { const m = window.OSAP_TRAFFIC.layers().air.getLayers().find((x) => /AIQ3074/.test(x.getTooltip().getContent()(x))); m.openPopup(); }); await p.waitForTimeout(900);
+  const path = await p.evaluate(() => window.OSAP_TRAFFIC.path()), t = await p.evaluate(() => (document.querySelector("[data-trpath]") || {}).textContent || "");
+  ok(path && path.st === "err" && path.pts.length === 2 && /positions seen since the map was opened/.test(t) && /OpenSky's flight path did not load \(HTTP 502/.test(t), "paths down: falls back to positions seen here and says why: " + t);
+  ok(errors.length === 0, "paths down: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- phone ----------
