@@ -2,7 +2,7 @@
 // prepareForModel). The rejected lines are real MADLAD-400 output from the news pool, 2026-11-17 (Russian aircraft entering the
 // Korean and Japanese air defense identification zones). Run: node tests/mt_glossary.test.mjs
 import assert from "node:assert/strict";
-import { protectTerms, termMissing, countryAdded } from "../tools/mt_glossary.mjs";
+import { protectTerms, termMissing, countryAdded, hedgeLost } from "../tools/mt_glossary.mjs";
 import { mtSuspect } from "../tools/mt_guard.mjs";
 import { prepareForModel } from "../tools/translate.mjs";
 
@@ -94,6 +94,31 @@ t("the model is given Hormuz and the mine in English", () => {
   assert.equal(protectTerms("ชนทุ่นระเบิดในช่องแคบฮอร์มุซ"), "ชน mine ในช่องแคบ Hormuz");
   assert.equal(protectTerms("trúng thủy lôi ở eo biển Hormuz"), "trúng naval mine ở eo biển Hormuz");
   assert.equal(protectTerms("北 지뢰폭발"), "北 지뢰폭발", "Korean is left alone");
+});
+
+// 2026-11-18, the Iranian "dirty bomb" warning: real output from the stored index
+t("a possible attack made into one that happened is rejected", () => {
+  assert.match(mtSuspect("ASV izlūkdienesti brīdina par iespējamu Irānas netīrās bumbas uzbrukumu Vašingtonā",
+    "Iran's Dirty Bomb Attack on Washington, D.C.", now, "lv"), /possible or suspected/);
+  assert.equal(hedgeLost("ASV izlūkdienesti brīdina par iespējamu Irānas netīrās bumbas uzbrukumu Vašingtonā",
+    "US intelligence warns of a possible Iranian dirty bomb attack in Washington"), "");
+  assert.match(hedgeLost("Zeker 180 mensen met mogelijk ebola op de vlucht", "180 people with Ebola on the run"), /possible/);
+  assert.match(hedgeLost("Fallece estudiante presuntamente en accidente de motocicleta", "Medical Student Dies in Motorcycle Accident"), /possible/);
+  assert.equal(hedgeLost("Caso La Reina: prisión preventiva por presunto lavado de activos", "Detained on Suspicion of Asset Laundering"), "");
+  // not hedges: "opportunities", "impossible", "make possible", "did our best"
+  assert.equal(hedgeLost("Suriname en VAE onderzoeken nieuwe investeringsmogelijkheden", "Suriname and UAE explore new investment opportunities"), "");
+  assert.equal(hedgeLost("Возобновление транзита газа через Украину невозможно", "Gas transit through Ukraine is ruled out"), "");
+  assert.equal(hedgeLost("Nieuwe regels maken harder optreden tegen milieucriminaliteit mogelijk", "New rules allow tougher action against environmental crime"), "");
+  assert.equal(hedgeLost("« Convaincus d’avoir fait tout notre possible »", "“Convinced we did our best”"), "");
+  assert.equal(hedgeLost("習近平再提「一國兩制」 陸委會：不可能接受", "Mainland Affairs Council rejects Xi's call"), "");
+});
+
+t("a radioactive bomb made into a nuclear one is rejected", () => {
+  assert.match(mtSuspect("ผวาทั้งประเทศ ข่าวกรองสหรัฐฯ แฉแผนลับ 'อิหร่าน' เตรียมใช้ 'ระเบิดกัมมันตรังสี' สังหารคนของ",
+    "\"Iran's secret plan to use nuclear bomb against Trump administration\".", now, "th"), /radioactive/);
+  assert.equal(termMissing("แฉอิหร่านวางแผนลอบวาง 'ระเบิดกัมมันตรังสี-อาวุธเคมี'", "Iran plans to smuggle 'radiological-chemical bomb'"), "");
+  assert.equal(hedgeLost("อิหร่านเร่งพัฒนาอาวุธนิวเคลียร์และสารกัมมันตรังสี", "Iran speeds up nuclear weapons work"), "", "the original says nuclear too");
+  assert.equal(protectTerms("เตรียมใช้ 'ระเบิดกัมมันตรังสี' สังหาร"), "เตรียมใช้ 'radioactive bomb' สังหาร");
 });
 
 console.log(ok + " passed");
