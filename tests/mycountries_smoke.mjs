@@ -149,10 +149,10 @@ let pick = null;
   ok(typeof seen1.th === "number", "the look is remembered for Thailand");
   /* a last look before the newest few headlines and warnings */
   pick = await p.evaluate(() => {
-    /* just before the newest story Today shows, so at least that line is strictly newer (the newest record overall may not be shown) */
-    const R = {}; window.TSAP.records.forEach((r) => { R[r.id] = r; });
-    const ms = [...document.querySelectorAll("#today .tdst [data-rec]")].map((b) => R[b.getAttribute("data-rec")]).filter(Boolean)
-      .map(window.OSAP_TODAY.recMs).filter((m) => isFinite(m) && m <= Date.now() + 36e5).sort((a, b) => b - a);
+    /* just before the newest story Today shows, by the time the count goes by (data-new: a story's newest counted report; a
+       story made only of official posts the count leaves out has none), so at least that line is strictly newer */
+    const ms = [...document.querySelectorAll("#today .tdst[data-new]")].map((a) => +a.getAttribute("data-new"))
+      .filter((m) => isFinite(m) && m <= Date.now() + 36e5).sort((a, b) => b - a);
     return ms.length ? ms[0] - 60000 : null;
   });
   ok(pick != null, "the page holds timed headlines to count");
@@ -175,14 +175,10 @@ let pick = null;
   ok(s.n > 0 && new RegExp("^" + s.n + " new since (?:\\d{1,2} [A-Z][a-z]{2} \\d{4} )?\\d{4}Z").test(s.txt), "Today says \"N new since HHMMZ\"", s.txt);
   /* new lines on the summary carry a New tag; when none of them made the summary the note points to the full lists instead */
   ok(s.tags > 0 ? /marked New below/.test(s.txt) : /All local news and All alerts/.test(s.txt), "new lines carry a New tag, or the note names the full lists", s.tags + " " + s.txt);
-  const wrong = await p.evaluate((t) => {
-    const R = {}; window.TSAP.records.forEach((r) => { R[r.id] = r; });
-    return [...document.querySelectorAll("#today .tdst")].filter((a) => {
-      const b = a.querySelector("[data-rec]"); if (!b || !R[b.getAttribute("data-rec")]) return false;
-      const ms = window.OSAP_TODAY.recMs(R[b.getAttribute("data-rec")]), tagged = !!a.querySelector(".mcnewtag");
-      return tagged !== ms > t;
-    }).length;
-  }, pick);
+  const wrong = await p.evaluate((t) => [...document.querySelectorAll("#today .tdst")].filter((a) => {
+    const ms = a.hasAttribute("data-new") ? +a.getAttribute("data-new") : NaN, tagged = !!a.querySelector(".mcnewtag");
+    return tagged !== (ms > t && ms <= Date.now() + 36e5);
+  }).length, pick);
   ok(wrong === 0, "only stories timed after the last look are tagged New", wrong);
   await p.evaluate(() => window.OSAP_TODAY.hide());
   await p.waitForTimeout(300);
