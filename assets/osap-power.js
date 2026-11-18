@@ -176,7 +176,9 @@
     var fin = function () { S.newsBusy = false; rows.sort(function (a, b) { return String(b[1]).localeCompare(String(a[1])); }); S.news = rows; paint(); };
     var man = function (ok) { if (W.OSAP_NEWSIX && W.OSAP_NEWSIX.days) ok(); else script("data/live/news-index.js" + bust(), ok, function () { S.newsBusy = false; S.newsErr = "The news index could not be read just now."; paint(); }); };
     man(function () {
-      var days = ((W.OSAP_NEWSIX || {}).days || []).slice(0, DAYS).map(function (d) { return d.d; });
+      /* the newest DAYS days up to today (UTC); a later day holds only rows a feed misdated (as in assets/osap-news.js) */
+      var today = new Date().toISOString().slice(0, 10);
+      var days = ((W.OSAP_NEWSIX || {}).days || []).filter(function (d) { return d && d.d <= today; }).slice(0, DAYS).map(function (d) { return d.d; });
       if (!days.length) { S.newsBusy = false; S.newsErr = "The news index has not been built yet."; paint(); return; }
       var left = days.length;
       days.forEach(function (day) {

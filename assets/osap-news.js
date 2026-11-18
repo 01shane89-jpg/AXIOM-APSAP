@@ -15,7 +15,22 @@
   "use strict";
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;
   var PAGE = 30, FIRST_DAYS = 3, MORE_DAYS = 7;
-  var S = { q: "", where: "here", topic: "", shown: PAGE, loaded: 0, want: FIRST_DAYS, busy: false, err: "", man: null, rows: [], el: null, cc: "", name: "" };
+  var S = { q: "", where: "here", topic: "", shown: PAGE, loaded: 0, want: FIRST_DAYS, busy: false, err: "", man: null, days: [], rows: [], el: null, cc: "", name: "" };
+  /* The index's days, newest first, that a search reads. A day after tomorrow (UTC) is left out: only a feed with a bad date
+     can fill it (on 2026-11-18 three such days, 11 Dec, 3 Dec and 19 Nov, held 12 headlines, and the 3 days a search reads
+     first were those, so every search found nothing). Tomorrow (a feed's local time read as UTC) is read but not counted as one
+     of the days searched, so the first search always covers today and the full days before it, also when the index is a few
+     hours behind and today holds only a handful of headlines. */
+  function ymd(ms) { return new Date(ms).toISOString().slice(0, 10); }
+  function pickDays(man) {
+    var now = Date.now(), tom = ymd(now + 864e5);
+    return (man.days || []).filter(function (x) { return x && /^\d{4}-\d{2}-\d{2}$/.test(x.d) && x.d <= tom; })
+      .sort(function (a, b) { return a.d < b.d ? 1 : a.d > b.d ? -1 : 0; })
+      .map(function (x) { return { d: x.d, n: x.n, ahead: x.d > ymd(now) }; });
+  }
+  function counted(k) { var c = 0; for (var i = 0; i < k && i < S.days.length; i++) if (!S.days[i].ahead) c++; return c; }
+  /* how many of S.days to read so that S.want counted days are read */
+  function upto(want) { var c = 0, i = 0; for (; i < S.days.length && c < want; i++) if (!S.days[i].ahead) c++; return i; }
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   /* stored headlines can carry entity codes (&#8216;) from double-escaped feeds: decode them to text before escaping */
@@ -77,12 +92,13 @@
       script("data/live/news-index.js" + bust(), function () {
         S.busy = false; S.man = window.OSAP_NEWSIX || null;
         if (!S.man || !S.man.days) { S.err = "The news search index has not been built yet. It is made by the next refresh."; draw(); return; }
+        S.days = pickDays(S.man);
         drawChips(); ensure();
       }, function () { S.busy = false; S.err = navigator.onLine === false ? "Offline: the news search needs a connection the first time." : "The news search index could not be read just now."; draw(); });
       return;
     }
-    if (S.loaded >= Math.min(S.want, S.man.days.length)) { draw(); return; }
-    var day = S.man.days[S.loaded].d;
+    if (S.loaded >= upto(S.want)) { draw(); return; }
+    var day = S.days[S.loaded].d;
     S.busy = true; draw();
     var have = function (ok) { if (window.OSAP_NEWSIX_DAY && window.OSAP_NEWSIX_DAY[day]) ok(); else script("data/live/news-index/" + encodeURIComponent(day) + ".js" + bust(), ok, bad); };
     var bad = function () { S.loaded++; S.busy = false; S.err = "One day of the index (" + day + ") could not be read; the others are searched."; ensure(); };
@@ -134,13 +150,13 @@
   function draw() {
     if (!S.el) return;
     var box = S.el.querySelector(".nqres"); if (!box) return;
-    var R = results(), h = "", total = S.man ? S.man.days.length : 0;
+    var R = results(), h = "", total = S.man ? counted(S.days.length) : 0, done = S.man ? counted(S.loaded) : 0;
     if (R === null) {
       box.innerHTML = S.err ? '<p class="nqnote">' + esc(S.err) + "</p>" : "";
       return;
     }
     var status = S.busy && !S.man ? "Opening the news index…" :
-      (S.man ? "Searched " + S.loaded + " of " + total + " days" + (S.busy ? " (reading the next day…)" : "") + " · " + S.rows.length.toLocaleString() + " headlines" : "");
+      (S.man ? "Searched " + done + " of " + total + " days" + (S.busy ? " (reading the next day…)" : "") + " · " + S.rows.length.toLocaleString() + " headlines" : "");
     h += '<div class="nqstat"><span><b>' + R.length.toLocaleString() + "</b> " + (R.length === 1 ? "headline" : "headlines") +
       (S.where === "here" ? " filed under " + esc(S.name) : " from every country") + "</span><span class=\"nqobs\">" + esc(status) + "</span></div>";
     if (S.err) h += '<p class="nqnote">' + esc(S.err) + "</p>";
@@ -158,11 +174,11 @@
     });
     var more = [];
     if (R.length > S.shown) more.push('<button type="button" class="tdlink" data-nq="more">Show ' + Math.min(PAGE, R.length - S.shown) + " more</button>");
-    if (S.man && S.loaded < total && !S.busy) more.push('<button type="button" class="tdlink" data-nq="older">Search older days (' + (total - S.loaded) + " more)</button>");
+    if (S.man && done < total && !S.busy) more.push('<button type="button" class="tdlink" data-nq="older">Search older days (' + (total - done) + " more)</button>");
     more.push(S.where === "here" ? '<button type="button" class="tdlink" data-nq="all">Search every country</button>' : '<button type="button" class="tdlink" data-nq="here">Only ' + esc(S.name) + "</button>");
     more.push('<a class="tdlink nqweb" href="' + esc(webUrl()) + '" target="_blank" rel="noopener noreferrer">' + (R.length < 5 ? "Find more on the web ↗" : "More on the web ↗") + "</a>");
     h += '<div class="tdlinks">' + more.join("") + "</div>";
-    if (!R.length && !S.busy && S.man && S.loaded >= total) h += '<p class="nqnote">Nothing in the last ' + total + " days of the pool. The web link above searches Bing News instead.</p>";
+    if (!R.length && !S.busy && S.man && done >= total) h += '<p class="nqnote">Nothing in the last ' + total + " days of the pool. The web link above searches Bing News instead.</p>";
     box.innerHTML = h;
   }
   var deb = 0;
@@ -187,7 +203,7 @@
       if (t != null) { S.topic = S.topic === t ? "" : t; S.shown = PAGE; drawChips(); ensure(); draw(); return; }
       if (a === "load") { ensure(); return; }
       if (a === "more") { S.shown += PAGE; draw(); return; }
-      if (a === "older") { S.want = Math.min(S.want + MORE_DAYS, S.man.days.length); ensure(); return; }
+      if (a === "older") { S.want = Math.min(S.want + MORE_DAYS, counted(S.days.length)); ensure(); return; }
       if (a === "all" || a === "here") { S.where = a; S.shown = PAGE; drawChips(); draw(); }
     });
     draw();
