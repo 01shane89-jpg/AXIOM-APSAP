@@ -160,7 +160,9 @@
   function css() { if (D.getElementById("osp-css")) return; var s = D.createElement("style"); s.id = "osp-css"; s.textContent = CSS; D.head.appendChild(s); }
   function cloudTxt(c) { return c == null ? "not known" : '<span class="ospc' + (c <= 30 ? 0 : c <= 70 ? 1 : 2) + '">' + esc(c) + "%</span>"; }
   function satTag(p) { return p.src === "s1" ? '<span class="ospk ospr" title="Radar: sees through cloud, smoke and night. Not a photo.">radar</span>' : '<span class="ospk" title="10 m true color picture. Cloud hides the ground.">picture</span>'; }
-  function draw(r) {
+  // first: the check runs from the first of several strike reports (the incident or card says which report the times count from)
+  function draw(r, first) {
+    var rep = (first ? "the first report" : "the report") + (isFinite(r.t0) ? " (" + zulu(r.t0) + ")" : "");
     var h = [], now = r.now;
     if (!r.ok.s2 && !r.ok.s1) return '<p class="osp">The Sentinel pass lists could not be read just now (Element 84 Earth Search, NASA CMR). Try again in a few minutes.</p>';
     h.push('<p class="osp"><b>Next expected passes over the pin</b> (next ' + AHEAD_D + " days)</p>");
@@ -174,12 +176,12 @@
       }).join("") + "</ul>");
     } else h.push('<p class="osp">No pass is expected in the next ' + AHEAD_D + " days from the passes seen over this pin in the last " + LOOK_D + " days" +
       (r.ok.s1 ? "" : " (Sentinel-1 could not be read)") + (r.ok.s2 ? "" : " (Sentinel-2 could not be read)") + ".</p>");
-    if (r.since.length) h.push('<p class="osp"><b>Already passed since the report</b>: ' + r.since.slice(0, 6).map(function (p) {
+    if (r.since.length) h.push('<p class="osp"><b>Already passed since ' + esc(rep) + '</b>: ' + r.since.slice(0, 6).map(function (p) {
       return esc(p.sat) + " " + esc(zulu(p.t)) + (p.src === "s1" ? " (radar)" : ", scene cloud " + cloudTxt(p.cloud));
     }).join("; ") + ". Newest imagery here can show them (Sentinel-1 radar appears a few days after the pass).</p>");
-    else h.push('<p class="osp">No Sentinel pass over the pin is listed since the report yet.</p>');
+    else h.push('<p class="osp">No Sentinel pass over the pin is listed since ' + esc(rep) + ' yet.</p>');
     var b = r.before || r.beforeAny;
-    if (b) h.push('<p class="osp"><b>Before the report</b>: ' + esc(b.sat) + " " + esc(zulu(b.t)) + ", scene cloud " + cloudTxt(b.cloud) + (r.before ? " (the newest with 30% cloud or less)" : " (no clearer one in the window)") + ".</p>");
+    if (b) h.push('<p class="osp"><b>Before ' + esc(rep) + '</b>: ' + esc(b.sat) + " " + esc(zulu(b.t)) + ", scene cloud " + cloudTxt(b.cloud) + (r.before ? " (the newest with 30% cloud or less)" : " (no clearer one in the window)") + ".</p>");
     h.push('<div class="ospb"><button type="button" data-osp="newest">Newest imagery here</button><button type="button" data-osp="ba">Satellite before/after here</button></div>');
     h.push('<p class="ospm">Expected from each satellite\'s repeat orbit (Sentinel-2 every 10 days, Sentinel-1 every 12) and the passes it took over this pin (rules ' + RULES +
       "). ESA's acquisition plan decides whether a pass is taken, and a pass is not a picture of the event: it may not show what the report describes. " +
@@ -191,7 +193,7 @@
     if (!ref || !isFinite(ref.la) || !isFinite(ref.lo)) return "";
     css();
     var t = parseT(ref.t);
-    return '<details class="cfmt ospx" data-ospla="' + esc(r3(ref.la)) + '" data-osplo="' + esc(r3(ref.lo)) + '" data-ospt="' + esc(isFinite(t) ? t : "") + '"' + (open ? " open" : "") + ">" +
+    return '<details class="cfmt ospx" data-ospla="' + esc(r3(ref.la)) + '" data-osplo="' + esc(r3(ref.lo)) + '" data-ospt="' + esc(isFinite(t) ? t : "") + '"' + (ref.first ? ' data-ospfirst="1"' : "") + (open ? " open" : "") + ">" +
       '<summary title="When Sentinel-2 (10 m picture) and Sentinel-1 (radar) are next expected over this report\'s pin, with the cloud forecast, and the passes already taken since the report. Expected passes, not pictures of the event.">' +
       "Check it from space: next Sentinel passes" + (ref.what ? " over " + esc(ref.what) : "") + '</summary><div class="ospbody"><p class="osp">Reading the Sentinel pass lists…</p></div></details>';
   }
@@ -200,7 +202,7 @@
     var la = +d.getAttribute("data-ospla"), lo = +d.getAttribute("data-osplo"), t0 = +d.getAttribute("data-ospt") || Date.now(), body = d.querySelector(".ospbody");
     if (!isFinite(la) || !isFinite(lo) || !body) return;
     d.setAttribute("data-ospdone", "1");
-    run(la, lo, t0).then(function (r) { body.innerHTML = draw(r); if (!r.ok.s2 && !r.ok.s1) d.removeAttribute("data-ospdone"); },
+    run(la, lo, t0).then(function (r) { body.innerHTML = draw(r, d.getAttribute("data-ospfirst") === "1"); if (!r.ok.s2 && !r.ok.s1) d.removeAttribute("data-ospdone"); },
       function () { body.innerHTML = '<p class="osp">The check could not run just now.</p>'; d.removeAttribute("data-ospdone"); });
   }
   /* open the place in the app's own imagery tools: the map centred on the pin, then Newest imagery or Satellite before/after */

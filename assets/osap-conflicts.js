@@ -552,10 +552,18 @@
   }
   /* Check it from space (assets/osap-space.js, rules space-v1): the next Sentinel-2 and Sentinel-1 passes over a strike report's
      pin, with the cloud forecast; closed until opened, so nothing is asked for until someone wants it */
+  /* The check runs from the FIRST strike report at the incident's place, not its newest (the lead): "passed since the report" means
+     since the event was first reported there. 18 Nov 2026: the Qeshm Island incident (US strikes first reported 16-17 Nov) led with an
+     18 Nov 14:34Z explainer, so a clear Sentinel-2 pass at 07:02Z that morning, hours after the strikes, showed as "Before the report".
+     The place stays the lead's pin (the first eligible report, as before); only reports within about 25 km of it count, the same
+     "same place" rule as Story coverage. A report dated by day only (time 00:00) is used only when none there has a time of day. */
   function spaceHtml(g) {
     var X = W.OSAP_SPACE; if (!X) return "";
-    var i = [g.lead].concat(g.all || []).filter(X.eligible)[0];
-    return i ? X.html({ la: i.geo.la, lo: i.geo.lo, t: i.date }) : "";
+    var c = [g.lead].concat(g.all || []).filter(X.eligible), a = c[0]; if (!a) return "";
+    var here = c.filter(function (x) { return Math.abs(x.geo.la - a.geo.la) < 0.25 && Math.abs(x.geo.lo - a.geo.lo) < 0.25; });
+    var timed = here.filter(function (x) { return !/T00:00(:00)?Z?$/.test(String(x.date || "")); });
+    var i = (timed.length ? timed : here).slice().sort(function (p, q) { return String(p.date) < String(q.date) ? -1 : String(p.date) > String(q.date) ? 1 : 0; })[0];
+    return X.html({ la: a.geo.la, lo: a.geo.lo, t: i.date, first: here.length > 1 });
   }
   function matchHtml(g, k) {
     var M = W.OSAP_CF_MATCH, d = cur.data; if (!M || !d || !g.all.every(reviewable)) return "";
