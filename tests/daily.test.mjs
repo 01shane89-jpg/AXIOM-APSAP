@@ -2,13 +2,19 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { compileRelevance } from "../tools/topics_lib.mjs";
-import { buildRules, buildWorld, validateAi, stripInlineCites, cluster, softSection, unent, fromRow, fingerprint } from "../tools/daily_lib.mjs";
+import { buildRules, buildWorld, validateAi, stripInlineCites, cluster, softSection, unent, fromRow, fingerprint, aiQueue } from "../tools/daily_lib.mjs";
 
 const R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")));
 const end = Date.parse("2026-09-28T01:00:00Z");
 const row = (t, outlet, url, date = "2026-09-27T20:00", flags = "") => fromRow(["xx", date, t, "", outlet, url, "", flags, ""]);
 let ok = 0; const t = (name, f) => { f(); ok++; console.log("ok -", name); };
 
+t("AI queue: priority and conflict countries first, then every other country by reports; a retry skips today's drafts", () => {
+  const rep = { ww: 50, th: 5, ua: 40, fr: 30, de: 60, zz: 0 }, opts = { priority: ["ww", "th"], conflict: (c) => c === "ua" || c === "th", reports: (c) => rep[c] };
+  assert.deepEqual(aiQueue(["de", "fr", "ua", "th", "ww"], opts), ["th", "ww", "ua", "de", "fr"]);
+  assert.deepEqual(aiQueue(["de", "fr", "ua", "th", "ww"], { ...opts, doneToday: (c) => c === "th" || c === "de", skipDone: true }), ["ww", "ua", "fr"]);
+  assert.deepEqual(aiQueue(["de", "th"], { ...opts, doneToday: () => true }), ["th", "de"]);   // a forced run redrafts them
+});
 t("soft sections are never news", () => {
   assert.equal(softSection("https://www.bangkokpost.com/sports/3327400/greece-stun-germany"), true);
   assert.equal(softSection("https://www.bangkokpost.com/thailand/general/3327405/city-hall"), false);

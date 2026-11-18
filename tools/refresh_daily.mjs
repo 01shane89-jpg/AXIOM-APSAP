@@ -6,7 +6,7 @@
 //   data/live/daily.js        window.OSAP_DAILY_INDEX = { asof, date, countries: { cc: { method, reports } }, ai: {...} }
 // AI (optional): through tools/ai_gateway.mjs, GitHub Models (the workflow's own GITHUB_TOKEN, permission models: read; no
 // personal key) or an open-weight model on the runner itself (OSAP_LOCAL_LLM, .github/workflows/refresh-ai.yml), the
-// top lines and watch lines of the priority countries are redrafted from the same numbered sources the rules used. The sources
+// top lines and watch lines of every country with sources are redrafted (priority areas first) from the same numbered sources the rules used. The sources
 // go to the model as quoted data, never as instructions. A sentence without a valid citation is dropped; a draft with no cited
 // top line is thrown away and the rules summary stays. AI text is labelled "AI generated" in the app.
 // Env: GITHUB_TOKEN, DAILY_MODEL, DAILY_FORCE=1 (build today again), DAILY_AI_PER_RUN, DAILY_AI_BUDGET_MIN (stop starting new
@@ -14,14 +14,15 @@
 import fs from "node:fs";
 import { gateway, parseJsonReply } from "./ai_gateway.mjs";
 import { compileRelevance } from "./topics_lib.mjs";
-import { buildRules, buildWorld, validateAi, fromRow, fromConflict, fingerprint, scrubDay, softSection, SCHEMA, WW } from "./daily_lib.mjs";
+import { buildRules, buildWorld, validateAi, fromRow, fromConflict, fingerprint, scrubDay, softSection, aiQueue, SCHEMA, WW } from "./daily_lib.mjs";
 
 const DIR = "data/live/daily", INDEX = "data/live/daily.js", KEEP = 7, PROMPT_V = "daily/2";
 const MODEL = process.env.DAILY_MODEL || "openai/gpt-4.1-mini";
 const AI_PER_RUN = +(process.env.DAILY_AI_PER_RUN || 45), AI_BUDGET_MS = +(process.env.DAILY_AI_BUDGET_MIN || 0) * 60e3;
 const AI = gateway({ githubModel: MODEL });
 const LABEL = "Draft, AI-generated from the cited sources, not analyst-approved";
-// AI goes first to World (the area a new user opens on), then the originally researched areas and the countries with an active conflict tab; the rest keep the rules summary
+// AI goes first to World (the area a new user opens on), then the originally researched areas and the countries with an active conflict tab,
+// then every other country by its number of reports (tools/daily_lib.mjs aiQueue). A country the day's runs don't reach keeps the rules summary.
 const PRIORITY = "ww th kh la mm vn my sg id bn ph tl cn tw jp oki kr kp mn in pk bd np bt lk mv au nz pg".split(" ");
 const end = process.env.DAILY_END ? Date.parse(process.env.DAILY_END) : Date.now(), today = new Date(end).toISOString().slice(0, 10);
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -106,9 +107,10 @@ async function ask(user) {
 }
 const prev = {};
 for (const cc of only || ccs) { const p = readWin(`${DIR}/${cc}.js`, "OSAP_DAILY"); prev[cc] = p && p[cc]; }
-const want = (only || ccs).filter((cc) => built[cc].refs.length >= 2 && built[cc].events.length)
-  .sort((a, b) => (PRIORITY.includes(b) + !!confByCc[b]) - (PRIORITY.includes(a) + !!confByCc[a]) || built[b].basis.reports - built[a].basis.reports);
-const focus = want.filter((cc) => PRIORITY.includes(cc) || confByCc[cc]);
+// a retry (not forced) skips the countries an earlier run already drafted today, so it carries on down the list
+const draftedToday = (cc) => { const o = prev[cc] && prev[cc].days && prev[cc].days[0]; return !!(o && o.date === today && o.method === "ai"); };
+const focus = aiQueue((only || ccs).filter((cc) => built[cc].refs.length >= 2 && built[cc].events.length), {
+  priority: PRIORITY, conflict: (cc) => !!confByCc[cc], reports: (cc) => built[cc].basis.reports, doneToday: draftedToday, skipDone: !process.env.DAILY_FORCE });
 let made = 0, hardErrs = 0; const errs = [], aiT0 = Date.now(), byProvider = {};
 if (AI.available()) for (const cc of focus) {
   if (stop || made >= AI_PER_RUN) break;
@@ -131,7 +133,9 @@ if (AI.available()) for (const cc of focus) {
 }
 index.ai.made = made; index.ai.due = focus.length - made; index.ai.stopped = stop || (AI.available() ? "" : aiStop()); index.ai.errors = errs.slice(0, 5);
 index.ai.providers = byProvider; if (process.env.OSAP_LOCAL_LLM) index.ai.local = process.env.OSAP_LOCAL_MODEL || "local";
-index.ai.retry = !!(stop && made < focus.length);   // a later run today tries the AI step again (the rules summaries stay)
+// a later run today tries the AI step again for the countries not yet drafted, whether this run stopped or used its per-run
+// share (the rules summaries stay meanwhile)
+index.ai.retry = made < focus.length;
 
 // ---------- write ----------
 fs.mkdirSync(DIR, { recursive: true });
@@ -154,6 +158,7 @@ for (const cc of only || ccs) {
   index.countries[cc] = { method: d.method, reports: d.basis.reports };
 }
 if (mtScrubbed) console.log(`daily: ${mtScrubbed} source headlines in kept summaries failed the machine translation guard and now show their original words`);
+index.ai.total = Object.values(index.countries).filter((c) => c.method === "ai").length;   // countries whose summary today is an AI draft
 if (!only) fs.writeFileSync(INDEX, "window.OSAP_DAILY_INDEX=" + JSON.stringify(index) + ";\n");
 const n = Object.values(built), quiet = n.filter((d) => !d.basis.reports).length;
-console.log(`daily ${today}: ${n.length} countries, ${n.length - quiet} with reports, ${quiet} quiet; AI top lines ${made} of ${focus.length} priority` + (stop ? `; AI stopped: ${stop}` : "") + (errs.length ? `; errors: ${errs.join(" | ")}` : ""));
+console.log(`daily ${today}: ${n.length} countries, ${n.length - quiet} with reports, ${quiet} quiet; AI top lines ${made} this run, ${index.ai.total} of ${n.length} today, ${focus.length - made} still due` + (stop ? `; AI stopped: ${stop}` : "") + (errs.length ? `; errors: ${errs.join(" | ")}` : ""));

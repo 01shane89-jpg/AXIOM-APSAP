@@ -263,3 +263,15 @@ export function buildWorld(inp, R) {
 }
 
 export function fingerprint(d) { const { fp, made, ...rest } = d; return sha256(rest); }
+
+// Which countries get an AI draft of their top lines, in order (Shane 2026-11-18 "close the gap": every country, not only the
+// priority ones). World and the originally researched areas, and the countries with an active conflict tab, come first as
+// before; then every other country with sources, most reported first. A retry later the same day (skipDone) leaves out the
+// countries already drafted today, so each retry reaches further down the list instead of redrafting the same ones.
+// ccs: candidate countries (two or more sources and at least one event); priority: list; conflict(cc), reports(cc): numbers;
+// doneToday(cc): true when today's kept summary is already an AI draft.
+export function aiQueue(ccs, { priority = [], conflict = () => 0, reports = () => 0, doneToday = () => false, skipDone = false } = {}) {
+  const rank = (c) => (priority.includes(c) ? 1 : 0) + (conflict(c) ? 1 : 0);
+  return ccs.filter((c) => !(skipDone && doneToday(c)))
+    .sort((a, b) => rank(b) - rank(a) || reports(b) - reports(a) || (a < b ? -1 : a > b ? 1 : 0));
+}
