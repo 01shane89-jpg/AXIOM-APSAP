@@ -1,0 +1,1 @@
+{"schema":"osap-air-tracks/2","built":"2026-11-18T13:50:27.773Z","keep_s":72000,"f":["t","lat","lon","alt","gnd"],"df":["ident","name","nm","t"],"tr":{"3532ce":[[1795009526,49.496,11.071,null,1]]},"dep":{"3532ce":["EDDN","Nuremberg Airport",0.3,1795009526]}}
