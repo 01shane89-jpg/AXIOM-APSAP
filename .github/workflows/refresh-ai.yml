@@ -55,7 +55,8 @@ concurrency:
 jobs:
   daily:
     runs-on: ubuntu-latest
-    timeout-minutes: 170
+    # a 3-hourly round took 133 minutes on 18 Nov 2026 before the daily carry-on step (up to 25 more); the commit is last
+    timeout-minutes: 185
     permissions:
       contents: write
       models: read
@@ -135,6 +136,21 @@ jobs:
           DAILY_ONLY: ${{ inputs.only }}
           DAILY_AI_PER_RUN: ${{ inputs.per_run || '45' }}
           DAILY_AI_BUDGET_MIN: "80"
+        run: node tools/refresh_daily.mjs
+      # One daily pass reaches about 30 to 45 countries in its 80 minutes, and the news lane's retries can't draft (GitHub Models
+      # answers "OK"), so 18 Nov 2026 stopped at 26 of 175. Every other run with the model up (the 3-hourly rounds, and a late
+      # 01:23 cron after the daily pass already ran) carries on down today's queue, skipping countries already drafted.
+      - name: Carry on today's daily drafts
+        if: ${{ (github.event_name == 'schedule' && !(github.event.schedule == '23 1 * * *' && steps.today.outputs.done != '1')) || (github.event_name != 'schedule' && inputs.task == 'cycle') }}
+        timeout-minutes: 25
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          OSAP_LOCAL_LLM: http://127.0.0.1:8080
+          OSAP_LOCAL_MODEL: ${{ steps.pick.outputs.file }} (${{ steps.pick.outputs.licence }}, on-runner)
+          DAILY_CONTINUE: "1"
+          DAILY_AI_PER_RUN: ${{ inputs.per_run || '45' }}
+          DAILY_AI_BUDGET_MIN: "15"
         run: node tools/refresh_daily.mjs
       - name: Draft incident summaries
         if: ${{ github.event_name == 'schedule' || (inputs.task != 'daily' && inputs.task != 'osir' && inputs.task != 'digest') }}
