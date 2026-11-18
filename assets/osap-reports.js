@@ -86,6 +86,11 @@
     ["routesearch", "Route", "Route search brief", "Reports and news along the route, summarized with sources",
       function () { return !!shown('[data-rt="search"]') || "Plan a route first"; }, function () { press(shown('[data-rt="search"]')); }, openRoute],
 
+    /* the report builder (assets/osap-rb.js): snips and sources in a sandbox, a SITREP template, a QC check before export */
+    ["rbuild", "Products", "Report builder (SITREP)", "Build a finished SITREP from map snips and sources: BLUF, key judgments with likelihood and confidence, maps with north arrow, scale, key and grid, every item cited with its SHA-256; a QC check runs before the PDF",
+      function () { return !!W.OSAP_RB || "Still loading"; }, function () { W.OSAP_RB.open(); }],
+    ["rbsnip", "Drawn area", "Snip to report", "The drawn box as a print-quality map with north arrow, scale, key, grid and every item's source, into the report sandbox",
+      function () { return (areaOn() && !!W.OSAP_RB) || "Draw an area first"; }, function () { W.OSAP_RB.snipArea().then(function (c) { if (c) W.OSAP_RB.open(); }); }, drawArea],
     ["sitrep", "My work", "Situation report", "The open tab or all reports in the period, to print or save as PDF",
       function () { return !!(W.OSAP_WORK && W.OSAP_WORK.open) || "Not available for this view"; }, function () { W.OSAP_WORK.open("export"); }]
   ];

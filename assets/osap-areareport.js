@@ -127,7 +127,8 @@
   if (BASES.esri.url) BASES.sat = BASES.esri;
   delete BASES.esri;
   if (!BASES.sat.url) delete BASES.sat;
-  function base() { var b = BASES.streets ? "streets" : "none"; try { b = localStorage.getItem("osap-arp-base") || b; } catch (e) {} return BASES[b] ? b : BASES.streets ? "streets" : "none"; }
+  var OVR = null;   /* a base map asked for by the report builder snip (assets/osap-rb.js), for one render */
+  function base() { if (OVR && BASES[OVR]) return OVR; var b = BASES.streets ? "streets" : "none"; try { b = localStorage.getItem("osap-arp-base") || b; } catch (e) {} return BASES[b] ? b : BASES.streets ? "streets" : "none"; }
   function wx(lon, z) { return (lon + 180) / 360 * 256 * Math.pow(2, z); }
   function wy(lat, z) { var s = Math.sin(Math.max(-85, Math.min(85, lat)) * Math.PI / 180); return (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * 256 * Math.pow(2, z); }
   /* one frame for every map in the report: the area plus a margin. The zoom is fractional so the area fills the frame;
@@ -222,6 +223,20 @@
     return '<ul class="arpleg">' + rows.join("") + "</ul>";
   }
 
+  /* one item as a map mark: its NATO-style symbol where it has one, else a dot */
+  function markOf(it) { return { lat: it.lat, lon: it.lon, sym: it.obj ? it.sym : (INC_KEYS[it.ik] || it.ik === "diplomatic" ? it.ik : ""), no: it.no, kind: it.kind }; }
+  /* the report builder's map snip (assets/osap-rb.js): one map of area P with the given marks on base b, drawn by the same code
+     as this report's maps, with its key. Symbols the library does not have are drawn as dots, and the key says so. */
+  function snipMap(P, marks, cap, b) {
+    OVR = b || null;
+    try {
+      var s = S(), F = frame(P), m = mapHtml(F, P, marks, cap);
+      var dots = marks.some(function (x) { return !(x.sym && s && s.d[x.sym]); });
+      return { html: m.html, keys: m.keys, n: m.n, dropped: m.dropped, dots: dots, legend: legendHtml(m.keys, dots), base: base(), attr: BASES[base()].attr, F: F };
+    } finally { OVR = null; }
+  }
+  function basesList() { return Object.keys(BASES).map(function (k) { return { id: k, name: BASES[k].name, attr: BASES[k].attr }; }); }
+
   /* ---------- tables ---------- */
   function stChip(it) {
     var st = it.kind === "open" ? "Open data" : it.kind === "social" ? "Social post, unverified" : it.status === "Observed" ? "Observed, not reviewed" : "Reported, not verified";
@@ -304,7 +319,7 @@
       '<div class="tlrsubt">' + esc(A0.ccName ? A0.ccName() : "") + " · about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km² · center " + esc(grid(cen[0], cen[1])) + " · " + esc(c.g.period) + "</div></div>" +
       '<div class="tlrg">Generated <br><b>' + esc(T().dualT(now, { date: true })) + "</b></div></header><div class=\"tlrrule\"></div>";
     var mapped = function (l) { return l.filter(function (it) { return it.lat != null && isFinite(it.lat); }); };
-    var mk = function (it) { return { lat: it.lat, lon: it.lon, sym: it.obj ? it.sym : (INC_KEYS[it.ik] || it.ik === "diplomatic" ? it.ik : ""), no: it.no, kind: it.kind }; };
+    var mk = markOf;
     var ov = mapHtml(F, c.P, mapped(c.inc).concat(mapped(c.rep), c.obj).map(mk), "Overview map of the drawn area");
     ov.html = ov.html.replace('class="arpnum"', 'class="arpnum" display="none"');
     var fig = 1, sec = 2, html = bar + '<article class="bpage tlr arp">' + head;
@@ -443,5 +458,5 @@
   /* in the Area menu beside Summarise area (assets/osap-atak.js runs it once a shape is drawn) */
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "areareport", label: "Area report (print, with maps)", run: function () { open(); } },
     { id: "areabrief", label: "Area brief, last 24 h (PDF)", run: function () { brief(); } });
-  W.OSAP_AREAREPORT = { open: open, brief: brief, close: close, _collect: collect, _incKind: incKind, _merc: function (lat, lon, z) { return [wx(lon, z), wy(lat, z)]; } };
+  W.OSAP_AREAREPORT = { open: open, brief: brief, close: close, _collect: collect, _incKind: incKind, _mark: markOf, _snipMap: snipMap, _bases: basesList, _base: base, _merc: function (lat, lon, z) { return [wx(lon, z), wy(lat, z)]; } };
 })();

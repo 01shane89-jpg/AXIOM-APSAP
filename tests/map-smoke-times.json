@@ -22,6 +22,7 @@
 "tests/draw_style_rulers_smoke.mjs": 46,
 "tests/draw_planning_smoke.mjs": 37,
 "tests/area_report_smoke.mjs": 26,
+"tests/report_builder_smoke.mjs": 40,
 "tests/sold_mode_smoke.mjs": 53,
 "tests/esri_basemaps_smoke.mjs": 25,
 "tests/osir_smoke.mjs": 41,
