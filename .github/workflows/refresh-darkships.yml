@@ -1,0 +1,59 @@
+name: Refresh ships gone quiet
+
+# Ships gone quiet near chokepoints and AIS position jumps (tools/refresh_darkships.mjs, rules dark-v1 in
+# tools/darkships_lib.mjs): every five minutes while a run lasts, Open Waters AIS is asked once per chokepoint box and
+# darkships.json (the page's file) and state.json (the job's memory) are written to the live-ais branch, one commit replaced
+# each time so the branch never grows. The page reads darkships.json from raw.githubusercontent.com (served for up to five
+# minutes). Nothing is committed to main.
+on:
+  schedule:
+    # each run sweeps three times, five minutes apart; GitHub starts scheduled runs late when busy, so gaps are normal
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+    inputs:
+      sweeps:
+        description: "Sweeps in this run (five minutes apart)"
+        required: false
+        default: "3"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-darkships-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  darkships:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Sweep and publish
+        env:
+          SWEEPS: ${{ inputs.sweeps || '3' }}
+          # main publishes to live-ais, the page's source; a test run on any other branch publishes to live-ais-test
+          TARGET: ${{ github.ref == 'refs/heads/main' && 'live-ais' || 'live-ais-test' }}
+          # sold version: Open Waters AIS (personal use only) is not asked (tools/nc_strip.mjs)
+          OSAP_COMMERCIAL: ${{ vars.OSAP_COMMERCIAL }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/ds/prev
+          # carry on from the last published files (the held ships and coverage)
+          git fetch -q --depth=1 origin "$TARGET" 2>/dev/null && git archive FETCH_HEAD | tar -x -C /tmp/ds/prev 2>/dev/null || true
+          git worktree add -q --detach /tmp/dswt
+          for i in $(seq 1 "$SWEEPS"); do
+            start=$(date +%s)
+            rm -rf /tmp/ds/out
+            if node tools/refresh_darkships.mjs /tmp/ds/out /tmp/ds/prev; then
+              rm -rf /tmp/ds/prev && cp -r /tmp/ds/out /tmp/ds/prev
+              ( cd /tmp/dswt && git checkout -q --orphan "ds-$i" && git rm -rfq . 2>/dev/null; cp /tmp/ds/out/darkships.json /tmp/ds/out/state.json . && git add darkships.json state.json &&
+                git commit -qm "Ships gone quiet $(date -u +%FT%H:%MZ)" && git push -q -f origin "HEAD:refs/heads/$TARGET" ) || echo "publish failed"
+            fi
+            [ "$i" -lt "$SWEEPS" ] || break
+            left=$(( 300 - ($(date +%s) - start) )); [ "$left" -gt 0 ] && sleep "$left"
+          done
