@@ -5,6 +5,9 @@
 //   - every 15 s asks USGS's live event search for the last hour's M2.5+ quakes (the hour feed if it fails) and lays them over
 //     data/live/quakes.js (tools/quake_rows.mjs);
 //   - every 2 min asks GDACS for its current alerts (tools/refresh_feeds.mjs with FEEDS=gdacs);
+//   - every 60 s asks the NOAA tsunami warning centers (PTWC and NTWC) for their bulletins (tools/refresh_more.mjs with ONLY=tsu),
+//     which the page reads as official tsunami bulletin records, so a watch on a coast hears of one within about a minute, not
+//     after the hourly lane (competitor gap, Shane 2026-11-18 "close the gap");
 //   - every 60 s fetches main's newest commit and takes its data/ (so the fast and news lanes' commits are checked within a
 //     minute of landing, not after the push job's own start-up);
 //   - whenever any of that changed and there is at least one push watch, runs tools/push_watches.mjs on the new data, so the
@@ -12,7 +15,7 @@
 // Nothing is committed: the lanes still own the published files. The push job in refresh-flood.yml stands aside while a loop
 // runs or waits, so one seen-list (PUSH_STATE, kept in the Actions cache) decides what was sent and nothing goes out twice.
 // Logs name quake ids, magnitudes and counts only, never report text.
-// Env: FLASH_LOOP_MIN (default 320), FLASH_QUAKE_S (15), FLASH_GDACS_S (120), FLASH_MAIN_S (60), FLASH_LIST_S (300),
+// Env: FLASH_LOOP_MIN (default 320), FLASH_QUAKE_S (15), FLASH_GDACS_S (120), FLASH_TSU_S (60), FLASH_MAIN_S (60), FLASH_LIST_S (300),
 //      FLASH_NO_MAIN=1 (do not take main's data: a branch test of this file), plus tools/push_watches.mjs's own env.
 import fs from "node:fs";
 import { execFileSync, spawn } from "node:child_process";
@@ -22,9 +25,9 @@ import { median } from "./flash_lib.mjs";
 
 const env = process.env, S = (k, d) => Math.max(5, +(env[k] || d)) * 1000;
 const END = Date.now() + Math.max(1, +(env.FLASH_LOOP_MIN || 320)) * 60e3;
-const EVERY = { quake: S("FLASH_QUAKE_S", 15), gdacs: S("FLASH_GDACS_S", 120), main: S("FLASH_MAIN_S", 60), list: S("FLASH_LIST_S", 300) };
-const QFILE = "data/live/quakes.js", GFILE = "data/live/gdacs.js";
-const due = { quake: 0, gdacs: 0, main: 0, list: 0 };
+const EVERY = { quake: S("FLASH_QUAKE_S", 15), gdacs: S("FLASH_GDACS_S", 120), tsu: S("FLASH_TSU_S", 60), main: S("FLASH_MAIN_S", 60), list: S("FLASH_LIST_S", 300) };
+const QFILE = "data/live/quakes.js", GFILE = "data/live/gdacs.js", TFILE = "data/live/tsunami.js";
+const due = { quake: 0, gdacs: 0, tsu: 0, main: 0, list: 0 };
 const zt = () => new Date().toISOString().slice(11, 19) + "Z";
 const log = (s) => console.log(`flash ${zt()} ${s}`);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -94,6 +97,23 @@ function gdacs() {
   return gKey() !== before;
 }
 
+// ---------- tsunami bulletins ----------
+// what a push check would see change: each bulletin's title, time and link (asof alone changes every run)
+const tKey = () => { const t = readJs(TFILE); return JSON.stringify(((t && t.items) || []).map((i) => [i.title, i.date, i.link])); };
+let tsuN = -1, tsuFail = 0;
+function tsunami() {
+  const before = tKey();
+  try { execFileSync(process.execPath, ["tools/refresh_more.mjs"], { env: { ...env, ONLY: "tsu" }, stdio: "ignore", timeout: 60000 }); tsuFail = 0; }
+  catch (e) {
+    // the old file stays; a long outage is logged on its first minute and then every 30 minutes, not every minute
+    if (tsuFail++ % 30 === 0) throw new Error(`tsunami step failed (${tsuFail} in a row)`);
+    return false;
+  }
+  const after = tKey(), n = JSON.parse(after).length;
+  if (n !== tsuN) { log(`tsunami bulletins in the last 30 days: ${n}`); tsuN = n; }
+  return after !== before;
+}
+
 // ---------- main's newest data ----------
 let mainSha = "";
 try { mainSha = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(); } catch (e) {}   // the job checked out main's tip
@@ -129,7 +149,7 @@ function pushCheck(why) {
 }
 
 // ---------- the loop ----------
-log(`started; runs until ${new Date(END).toISOString().slice(11, 16)}Z; quakes every ${EVERY.quake / 1000} s, GDACS every ${EVERY.gdacs / 1000} s, main every ${EVERY.main / 1000} s`);
+log(`started; runs until ${new Date(END).toISOString().slice(11, 16)}Z; quakes every ${EVERY.quake / 1000} s, GDACS every ${EVERY.gdacs / 1000} s, tsunami bulletins every ${EVERY.tsu / 1000} s, main every ${EVERY.main / 1000} s`);
 let checks = 0, errors = 0;
 if (env.FLASH_NO_MAIN) due.main = Infinity;
 while (Date.now() < END) {
@@ -148,6 +168,7 @@ while (Date.now() < END) {
   await step("main", main);
   await step("quake", quakes);
   await step("gdacs", gdacs);
+  await step("tsu", tsunami);
   if (why.length && watches > 0) { checks++; await pushCheck(why.join("+")); }
   await sleep(Math.max(1000, Math.min(...Object.values(due)) - Date.now()));
 }
