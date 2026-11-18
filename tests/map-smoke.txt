@@ -83,6 +83,7 @@ tests/pop_smoke.mjs
 tests/warngeo_smoke.mjs
 tests/sat_smoke.mjs
 tests/newimg_smoke.mjs
+tests/plumes_smoke.mjs
 tests/keydates_smoke.mjs
 tests/coverage_smoke.mjs
 # Go deeper: a story in layers, its timeline and connections (assets/osap-threads.js)
@@ -109,6 +110,8 @@ tests/cases_move_smoke.mjs
 # team plans: set up, sandbox checkout, seat gives Full, invite into team and team case, removal takes both away
 tests/teams_smoke.mjs
 tests/gnss_smoke.mjs
+# ships gone quiet near chokepoints, AIS gaps and position jumps (assets/osap-darkships.js)
+tests/darkships_smoke.mjs
 # radiation near nuclear sites from Safecast sensors (assets/osap-radiation.js, rules rad-v1)
 tests/rad_smoke.mjs
 tests/guide_smoke.mjs
@@ -196,6 +199,7 @@ tests/dzso_smoke.mjs
 tests/lz_landcover_smoke.mjs
 tests/terrain_smoke.mjs
 tests/lidar_smoke.mjs
+tests/terrain_layers_smoke.mjs
 tests/selected_contrast_smoke.mjs
 tests/event_pin_smoke.mjs
 tests/layout_list_smoke.mjs

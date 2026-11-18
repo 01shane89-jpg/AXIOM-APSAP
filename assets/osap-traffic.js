@@ -7,7 +7,12 @@
    no key, CORS open), which re-serves AISHub, Kystverket, Fintraffic and volunteer receivers, each with its own credit.
    Every item is a position the aircraft or ship itself broadcast, passed on as reported: not verified, not an identification,
    and not everything out there (transponders can be off, and areas without receivers show nothing). Read-only: it never adds
-   a record. Off by default; nothing is fetched until a switch is on, and nothing refreshes while the page is hidden. */
+   a record. Off by default; nothing is fetched until a switch is on, and nothing refreshes while the page is hidden.
+   Paths: each aircraft and ship draws a short trail of the positions this page has seen it at (the last 10 minutes for
+   aircraft, the last hour for ships; trails build while the map is open and are kept in memory only). Selecting one draws
+   its whole path: a ship's from Open Waters AIS's own track for it (last 24 hours, or 7 days on request; gaps where no
+   receiver heard it are drawn dotted), an aircraft's current flight from OpenSky Network through OSAP's own server
+   (/api/air-track, netlify/edge-functions/osap-air-track.js), or, where that is not available, the positions seen here. */
 (function () {
   "use strict";
   var W = window, D = document;
@@ -22,11 +27,12 @@
     ["fast", "High-speed craft", "#f9a825"], ["leisure", "Sailing and pleasure craft", "#ad1457"], ["other", "Other or not stated", "#757575"]];
   var KC = {}; KINDS.forEach(function (k) { KC[k[0]] = k[2]; });
   var S = lsGet() || {};
-  S.air = !!S.air; S.ground = !!S.ground; S.sea = !!S.sea; S.k = S.k || {};
+  S.air = !!S.air; S.ground = !!S.ground; S.sea = !!S.sea; S.trail = S.trail !== false; S.k = S.k || {};
   KINDS.forEach(function (k) { if (S.k[k[0]] == null) S.k[k[0]] = true; });
-  var map = null, renAir = null, renSea = null, gAir = null, gSea = null, timer = null, mvT = null, tick = 0;
+  var map = null, renAir = null, renSea = null, renSel = null, gAir = null, gSea = null, timer = null, mvT = null, tick = 0;
   var A = { idx: null, cells: {}, err: "", busy: false, note: "", shown: 0, live: null, lerr: "", lbusy: false, loff: false, lnote: "" };
   var V = { list: {}, err: "", busy: false, note: "", shown: 0, trunc: false, attr: {}, at: 0 };
+  var gSel = null, gAirT = null, gSeaT = null, SEL = null, TRACK = "/api/air-track";
 
   function lsGet() { try { return JSON.parse(localStorage.getItem(LSK) || "null"); } catch (e) { return null; } }
   function lsSet() { try { localStorage.setItem(LSK, JSON.stringify(S)); } catch (e) {} }
@@ -68,6 +74,141 @@
     }
   });
 
+  /* ---------- paths ---------- */
+  /* every position this page receives is kept per aircraft (ICAO address) or ship (MMSI), in memory only, in time order:
+     [time ms, lat, lon, alt ft or null]. Trails draw the last few minutes of it; the selected one's whole path comes from
+     its source where there is one (pathLoad). A jump faster than anything in the class can fly or sail, a long silence or a
+     crossing of the 180th meridian starts a new piece instead of joining the dots */
+  var TR = { air: {}, sea: {} }, TRAIL = { air: 10 * 60e3, sea: 60 * 60e3 }, KEEP = { air: 2 * 3600e3, sea: 6 * 3600e3 }, TMAX = 240, TIDS = 8000;
+  var VMAX = { air: 1300 * 1852 / 3600e3, sea: 60 * 1852 / 3600e3 }, GAP = { air: 10 * 60e3, sea: 2 * 3600e3 }, prT = { air: 0, sea: 0 };
+  function trAdd(kind, id, t, lat, lon, alt) {
+    if (!id || !isFinite(t) || !isFinite(lat) || !isFinite(lon)) return;
+    var s = TR[kind], a = s[id] || (s[id] = []), i = a.length - 1;
+    while (i >= 0 && a[i][0] > t) i--;
+    if (i >= 0 && a[i][0] === t) return; // the same report again
+    a.splice(i + 1, 0, [t, lat, lon, alt == null ? null : alt]);
+    if (a.length > TMAX) a.splice(0, a.length - TMAX);
+  }
+  function trPrune(kind) {
+    var now = Date.now(); if (now - prT[kind] < 60e3) return; prT[kind] = now;
+    var s = TR[kind], ids = Object.keys(s);
+    ids.forEach(function (id) { var a = s[id]; while (a.length && now - a[0][0] > KEEP[kind]) a.shift(); if (!a.length) delete s[id]; });
+    ids = Object.keys(s);
+    if (ids.length > TIDS) ids.sort(function (x, y) { return s[x][s[x].length - 1][0] - s[y][s[y].length - 1][0]; }).slice(0, ids.length - TIDS).forEach(function (id) { delete s[id]; });
+  }
+  // points -> { solid: [[latlng, ...], ...], gaps: [[latlng, latlng], ...] }; brk: indexes where the source says a gap starts
+  function pieces(kind, pts, brk) {
+    var solid = [], gaps = [], cur = [], bset = {};
+    (brk || []).forEach(function (i) { bset[i] = 1; });
+    for (var i = 0; i < pts.length; i++) {
+      var p = pts[i], q = pts[i - 1];
+      if (q) {
+        var wrap = Math.abs(p[2] - q[2]) > 180, dt = Math.max(1, p[0] - q[0]), d = map ? map.distance([q[1], q[2]], [p[1], p[2]]) : 0;
+        var gap = bset[i] || dt > GAP[kind], jump = d / dt > VMAX[kind] && d > 2000;
+        if (wrap || gap || jump) {
+          if (cur.length > 1) solid.push(cur);
+          if (gap && !wrap && !jump) gaps.push([[q[1], q[2]], [p[1], p[2]]]);
+          cur = [];
+        }
+      }
+      cur.push([p[1], p[2]]);
+    }
+    if (cur.length > 1) solid.push(cur);
+    return { solid: solid, gaps: gaps };
+  }
+  function trailOf(kind, id, upto) {
+    var a = TR[kind][id]; if (!a || a.length < 2) return null;
+    var from = upto - TRAIL[kind], pts = a.filter(function (p) { return p[0] >= from && p[0] <= upto; });
+    return pts.length > 1 ? pieces(kind, pts).solid : null;
+  }
+  function drawTrail(g, ren, pane, kind, id, upto, col) {
+    var segs = S.trail && trailOf(kind, id, upto); if (!segs) return;
+    segs.forEach(function (ll) { g.addLayer(L.polyline(ll, { renderer: ren, pane: pane, interactive: false, color: col, weight: kind === "air" ? 1.6 : 2, opacity: 0.55, lineCap: "round", lineJoin: "round" })); });
+  }
+
+  /* the selected one's whole path. key "air:<hex>" or "sea:<mmsi>"; the pop-up (and its copy in the Details panel) carries
+     a line data-trpath=key that says where the path came from, how long and how many positions */
+  function selKey(kind, id) { return kind + ":" + id; }
+  function pathLine(kind, id) {
+    return '<p class="obs trpath" style="margin:4px 0" data-trpath="' + esc(selKey(kind, id)) + '">' + pathText(selKey(kind, id)) + "</p>";
+  }
+  function span(ms) { var m = Math.round(ms / 60e3); return m < 60 ? m + " min" : m < 2880 ? Math.floor(m / 60) + " h" + (m % 60 ? " " + m % 60 + " min" : "") : Math.round(m / 1440) + " days"; }
+  function pathText(key) {
+    if (!SEL || SEL.key !== key) return "Path: tap to show.";
+    var hide = ' <button type="button" class="trnow" data-trpath-act="hide">Hide path</button>';
+    if (SEL.st === "loading") return "Path: loading…" + hide;
+    if (SEL.st === "private") return "Path history is not shown for small private craft." + hide;
+    var n = SEL.pts.length, t0 = n ? SEL.pts[0][0] : 0, t1 = n ? SEL.pts[n - 1][0] : 0;
+    if (n < 2) return "<b>Path</b>: " + esc(SEL.note || "no earlier positions yet") + "." + hide;
+    var more = SEL.kind === "sea" && SEL.days < 7 && SEL.st === "ok" ? ' <button type="button" class="trnow" data-trpath-act="week">Show 7 days</button>' : "";
+    return "<b>Path on the map</b> (" + esc(SEL.src) + "): " + n.toLocaleString() + " positions from " + esc(zt(t0)) + " to " + esc(zt(t1)) + " (" + esc(span(t1 - t0)) + ")" +
+      (SEL.gaps ? ", " + SEL.gaps + " gap" + (SEL.gaps > 1 ? "s" : "") + " where no receiver heard it (dotted)" : "") + "." +
+      (SEL.note ? " " + esc(SEL.note) + "." : "") + " Each point is as broadcast, not verified." + more + hide;
+  }
+  function pathFill() {
+    legend();
+    if (!SEL) return;
+    Array.prototype.forEach.call(D.querySelectorAll("[data-trpath]"), function (e) { e.innerHTML = pathText(e.getAttribute("data-trpath")); });
+  }
+  function pathDraw() {
+    if (!gSel) return;
+    gSel.clearLayers();
+    if (!SEL || SEL.pts.length < 2 || !map) { if (map && map.hasLayer(gSel) && !SEL) map.removeLayer(gSel); return; }
+    if (!map.hasLayer(gSel)) gSel.addTo(map);
+    // its own canvas in its own pane above both kinds, so the path is not buried under a busy port's markers; never tappable
+    var air = SEL.kind === "air", ren = renSel, pane = "trafselpane", col = air ? "#ff6d00" : "#d500f9";
+    var pc = pieces(SEL.kind, SEL.pts, SEL.brk);
+    SEL.gaps = pc.gaps.length;
+    pc.gaps.forEach(function (ll) { gSel.addLayer(L.polyline(ll, { renderer: ren, pane: pane, interactive: false, color: col, weight: 2.5, opacity: 0.9, dashArray: "3 6" })); });
+    pc.solid.forEach(function (ll) {
+      gSel.addLayer(L.polyline(ll, { renderer: ren, pane: pane, interactive: false, color: "#fff", weight: 6.5, opacity: 0.85, lineCap: "round", lineJoin: "round" }));
+      gSel.addLayer(L.polyline(ll, { renderer: ren, pane: pane, interactive: false, color: col, weight: 3.5, opacity: 1, lineCap: "round", lineJoin: "round" }));
+    });
+    var f = SEL.pts[0];
+    gSel.addLayer(L.circleMarker([f[1], f[2]], { renderer: ren, pane: pane, interactive: false, radius: 4, color: col, weight: 2, fillColor: "#fff", fillOpacity: 1 }));
+  }
+  function pathHide() { SEL = null; pathDraw(); pathFill(); Array.prototype.forEach.call(D.querySelectorAll("[data-trpath]"), function (e) { e.innerHTML = "Path hidden."; }); }
+  function sessionPts(kind, id) { return (TR[kind][id] || []).slice(); }
+  function pathPick(kind, id, priv) {
+    var key = selKey(kind, id);
+    if (SEL && SEL.key === key && SEL.st !== "err") { pathFill(); return; }
+    SEL = { key: key, kind: kind, id: id, st: priv ? "private" : "loading", pts: [], brk: null, src: "", note: "", days: 1, gaps: 0 };
+    pathDraw(); pathFill();
+    if (!priv) pathLoad(SEL);
+  }
+  function pathLoad(sel) {
+    var done = function () { if (SEL !== sel) return; pathDraw(); pathFill(); };
+    if (sel.kind === "sea") {
+      var q = sel.days > 1 ? "?from=" + encodeURIComponent(new Date(Date.now() - sel.days * 864e5).toISOString().slice(0, 19) + "Z") : "";
+      getJson(SEA + "/" + encodeURIComponent(sel.id) + "/track" + q, 25000).then(function (j) {
+        var g = j && j.geometry, p = j && j.properties, c = g && g.coordinates, t = p && p.times;
+        if (!g || g.type !== "LineString" || !Array.isArray(c) || !Array.isArray(t) || c.length !== t.length) throw new Error("unexpected answer");
+        var pts = [];
+        for (var i = 0; i < c.length; i++) { var ms = Date.parse(t[i]); if (c[i] && typeof c[i][0] === "number" && typeof c[i][1] === "number" && isFinite(ms)) pts.push([ms, c[i][1], c[i][0], null]); }
+        sel.pts = pts; sel.brk = Array.isArray(p.breaks) ? p.breaks.filter(function (x) { return typeof x === "number"; }) : null;
+        sel.src = "Open Waters AIS track" + (j.attribution ? ", " + Object.keys(j.attribution).map(function (k) { return { udp: "volunteer receivers", aishub: "AISHub", aisstream: "aisstream.io", barentswatch: "BarentsWatch" }[k] || k.slice(0, 30); }).join(", ") : "");
+        sel.note = (p.simplified ? "Simplified by the source" : "") + (p.truncated ? (p.simplified ? "; " : "") + "cut short by the source" : "");
+        sel.st = "ok";
+      }).catch(function (e) {
+        sel.pts = sessionPts("sea", sel.id); sel.st = "err"; sel.src = "positions seen since the map was opened";
+        sel.note = "Open Waters AIS did not give this ship's track (" + String(e && e.message || e).slice(0, 80) + ")";
+      }).then(done);
+      return;
+    }
+    getJson(TRACK + "?hex=" + encodeURIComponent(sel.id), 15000).then(function (j) {
+      if (!j || j.schema !== "osap-air-track/1" || !Array.isArray(j.path) || !j.src) throw new Error("unexpected answer");
+      var pts = j.path.filter(function (r) { return Array.isArray(r) && typeof r[1] === "number" && typeof r[2] === "number"; }).map(function (r) { return [r[0] * 1000, r[1], r[2], r[3]]; });
+      var last = pts.length ? pts[pts.length - 1][0] : 0;
+      // newer positions this page has seen than the end of OpenSky's path
+      sessionPts("air", sel.id).forEach(function (p) { if (p[0] > last) pts.push(p); });
+      sel.pts = pts; sel.src = String(j.src.name || "OpenSky Network") + " flight path" + (j.src.nc ? ", non-commercial source" : ""); sel.st = "ok";
+    }).catch(function (e) {
+      var m = String(e && e.message || e);
+      sel.pts = sessionPts("air", sel.id); sel.st = "err"; sel.src = "positions seen since the map was opened";
+      sel.note = /^HTTP 401/.test(m) ? "Sign in for the whole flight from OpenSky" : /^HTTP 404/.test(m) ? "No earlier flight path from OpenSky for this aircraft" : "OpenSky's flight path did not load (" + m.slice(0, 80) + ")";
+    }).then(done);
+  }
+
   /* ---------- aircraft ---------- */
   var EMERG = { "7500": "7500 (unlawful interference)", "7600": "7600 (radio failure)", "7700": "7700 (emergency)" };
   function acObj(x, f) { var o = {}; for (var i = 0; i < f.length; i++) o[f[i]] = x[i]; return o; }
@@ -86,7 +227,7 @@
         "Reported " + esc(zt(pos)) + " (" + esc(ago(pos)) + ")" + (a.fl & 2 ? " · placed by receiver timing (MLAT)" : "") + (a.fl & 8 ? " · relayed by ground radar (TIS-B)" : "") + "</p>" +
       (a.fl & 1 ? '<p class="obs" style="margin:4px 0">Marked military in the aggregator\'s aircraft database.</p>' : "") +
       '<p class="obs" style="margin:4px 0">Source: ' + (track ? '<a href="' + esc(track) + '" target="_blank" rel="noopener noreferrer">' + esc(s.name || "") + " live track</a>" : esc(s.name || "")) +
-        " (" + esc(s.licence || "") + (s.nc ? ", non-commercial source" : "") + ")</p>" +
+        " (" + esc(s.licence || "") + (s.nc ? ", non-commercial source" : "") + ")</p>" + pathLine("air", a.hex) +
       '<p class="obs" style="font-size:10.5px">A position the aircraft broadcast, relayed by volunteer receivers and ' + (a.live ? "asked live by OSAP's server for the area on screen." : "collected by OSAP every few minutes.") + ' Reported, not verified, and not an identification. Record fingerprint <span class="trfp" data-fp="' +
         esc([a.hex, a.cs, a.reg, a.t, a.lat, a.lon, a.alt, a.gs, a.trk, a.pos, s.name, a.sqk].join("␟")) + '">computing…</span></p></div>';
   }
@@ -148,25 +289,26 @@
       }).catch(function (e) { A.err = String(e && e.message || e); });
     })).then(airDraw);
   }
-  function addAc(a) {
+  function addAc(a, q) { q.push(a); A.shown++; }
+  function drawAc(a) {
     var col = acColour(a), m = new Glyph([a.lat, a.lon], { renderer: renAir, pane: "trafairpane", radius: EMERG[a.sqk] ? 8 : 5.5, hdg: a.fl & 4 ? null : a.trk,
       shape: "air", color: "#fff", weight: 1, fillColor: col, fillOpacity: 0.95 });
-    m.bindPopup(function () { return acPop(a); }, { maxWidth: 330 });
+    m.bindPopup(function () { pathPick("air", a.hex); return acPop(a); }, { maxWidth: 330 });
     m.bindTooltip(function () { return acTip(a); }, { direction: "top", offset: [0, -6] });
-    gAir.addLayer(m); A.shown++;
+    gAir.addLayer(m);
   }
   function airDraw() {
     if (!gAir) return;
-    gAir.clearLayers(); A.shown = 0;
-    var lv = S.air && map ? liveFresh() : null, lhex = {};
+    gAir.clearLayers(); gAirT.clearLayers(); A.shown = 0;
+    var lv = S.air && map ? liveFresh() : null, lhex = {}, q = [];
     if (lv) {
       var lb = map.getBounds().pad(0.15), lc = L.latLng(lv.lat, lv.lon), lnow = Date.now();
       lv.ac.forEach(function (x) {
         var a = acObj(x, lv.f); a.S = lv.src; a.live = true;
         if (a.lat == null || a.lon == null || !a.hex) return;
-        lhex[a.hex] = 1;
+        lhex[a.hex] = 1; trAdd("air", a.hex, a.pos * 1000, a.lat, a.lon, a.alt);
         if (!lb.contains([a.lat, a.lon]) || ((a.fl & 4) && !S.ground) || lnow - a.pos * 1000 > AIR_STALE) return;
-        addAc(a);
+        addAc(a, q);
       });
     }
     if (S.air && A.idx && A.note !== "zoom") {
@@ -175,15 +317,21 @@
         var c = A.cells[k]; if (!c || !A.idx.cells[k]) return;
         c.ac.forEach(function (x) {
           var a = acObj(x, f);
-          if (a.lat == null || a.lon == null || !b.contains([a.lat, a.lon])) return;
+          if (a.lat == null || a.lon == null || !a.hex) return;
+          trAdd("air", a.hex, a.pos * 1000, a.lat, a.lon, a.alt);
+          if (!b.contains([a.lat, a.lon])) return;
           if ((a.fl & 4) && !S.ground) return;
           if (now - a.pos * 1000 > AIR_STALE) return;
           // inside the live circle the live answer is the picture; the sweep only fills in beyond it
           if (lv && (lhex[a.hex] || map.distance(lc, [a.lat, a.lon]) / 1852 < lv.nm)) return;
-          addAc(a);
+          addAc(a, q);
         });
       });
     }
+    trPrune("air");
+    // trails first, so every aircraft is drawn over the lines
+    q.forEach(function (a) { if (!(a.fl & 4)) drawTrail(gAirT, renAir, "trafairpane", "air", a.hex, a.pos * 1000, acColour(a)); });
+    q.forEach(drawAc);
     legend(); panel();
   }
 
@@ -228,7 +376,7 @@
         "Position " + where(v.lat, v.lon) + "<br>" +
         "Last heard " + (isFinite(seen) ? esc(zt(seen)) + " (" + esc(ago(seen)) + ")" : "time not given") + "</p>" +
       (priv ? '<p class="obs" style="margin:4px 0">Name and call sign of small private craft are not shown.</p>' : "") +
-      '<p class="obs" style="margin:4px 0">Source: <a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">Open Waters AIS vessel page</a> · ' + esc(attr) + "</p>" +
+      '<p class="obs" style="margin:4px 0">Source: <a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">Open Waters AIS vessel page</a> · ' + esc(attr) + "</p>" + pathLine("sea", p.mmsi) +
       '<p class="obs" style="font-size:10.5px">A position the ship broadcast on AIS, as reported. AIS can be switched off or spoofed; not verified and not an identification. Record fingerprint <span class="trfp" data-fp="' +
         esc([p.mmsi, priv ? "" : p.name, v.lat, v.lon, p.sog, p.cog, p.heading, p.seen, p.source].join("␟")) + '">computing…</span></p></div>';
   }
@@ -267,6 +415,7 @@
           if (!p || !c || typeof c[0] !== "number" || typeof c[1] !== "number" || p.mmsi == null) return;
           if (p.kind && p.kind !== "vessel") return;
           got[p.mmsi] = { lat: c[1], lon: c[0], p: p };
+          trAdd("sea", String(p.mmsi), Date.parse(p.seen), c[1], c[0], null);
         });
       }).catch(function (e) { errs.push(String(e && e.message || e)); });
     })).then(function () {
@@ -279,17 +428,23 @@
   }
   function seaDraw() {
     if (!gSea) return;
-    gSea.clearLayers(); V.shown = 0;
+    gSea.clearLayers(); gSeaT.clearLayers(); V.shown = 0;
     if (S.sea && V.note !== "zoom") {
-      var b = map.getBounds().pad(0.15), now = Date.now();
+      var b = map.getBounds().pad(0.15), now = Date.now(), q = [];
+      trPrune("sea");
       Object.keys(V.list).forEach(function (id) {
         var v = V.list[id], p = v.p, k = kindOf(p.type), seen = Date.parse(p.seen);
         if (!S.k[k] || !b.contains([v.lat, v.lon])) return;
         if (isFinite(seen) && now - seen > SEA_STALE) return;
+        q.push(id);
+        drawTrail(gSeaT, renSea, "trafseapane", "sea", String(p.mmsi), isFinite(seen) ? seen : now, KC[k]);
+      });
+      q.forEach(function (id) {
+        var v = V.list[id], p = v.p, k = kindOf(p.type);
         var moving = p.sog != null && p.sog >= 0.5, hdg = moving ? (p.heading != null && p.heading < 360 ? p.heading : p.cog) : null;
         var m = new Glyph([v.lat, v.lon], { renderer: renSea, pane: "trafseapane", radius: moving ? 5 : 3.5, hdg: hdg, shape: "ship",
           color: "#fff", weight: 1, fillColor: KC[k], fillOpacity: 0.9 });
-        m.bindPopup(function () { return shPop(v); }, { maxWidth: 330 });
+        m.bindPopup(function () { pathPick("sea", String(p.mmsi), k === "leisure"); return shPop(v); }, { maxWidth: 330 });
         m.bindTooltip(function () { return shTip(v); }, { direction: "top", offset: [0, -6] });
         gSea.addLayer(m); V.shown++;
       });
@@ -303,10 +458,15 @@
     W.OSAP_LEGEND.set("traffic-air", S.air ? "<h3>Air traffic (ADS-B)</h3>" +
       [["#0277bd", "Aircraft"], ["#33691e", "Military (aggregator database)"], ["#d50000", "Emergency squawk"]].concat(S.ground ? [["#9e9e9e", "On the ground"]] : [])
         .map(function (r) { return '<p class="mlkey" style="margin:2px 0"><span style="background:' + r[0] + '"></span>' + r[1] + "</p>"; }).join("") +
-      '<p class="mlkey" style="margin:2px 0">Pointed to the heading.</p>' + airAge() : "");
+      '<p class="mlkey" style="margin:2px 0">Pointed to the heading.' + (S.trail ? " Line behind: positions seen in the last 10 min." : "") + "</p>" + selLegend("air") + airAge() : "");
     W.OSAP_LEGEND.set("traffic-sea", S.sea ? "<h3>Ships (AIS)</h3>" +
       KINDS.filter(function (k) { return S.k[k[0]]; }).map(function (k) { return '<p class="mlkey" style="margin:2px 0"><span style="background:' + k[2] + '"></span>' + esc(k[1]) + "</p>"; }).join("") +
-      '<p class="mlkey" style="margin:2px 0">Pointed to the heading when moving; small dot when stopped.</p>' : "");
+      '<p class="mlkey" style="margin:2px 0">Pointed to the heading when moving; small dot when stopped.' + (S.trail ? " Line behind: positions seen in the last hour." : "") + "</p>" + selLegend("sea") : "");
+  }
+  function selLegend(kind) {
+    if (!SEL || SEL.kind !== kind || SEL.pts.length < 2) return "";
+    return '<p class="mlkey" style="margin:2px 0"><span style="background:' + (kind === "air" ? "#ff6d00" : "#d500f9") + '"></span>Selected ' + (kind === "air" ? "aircraft" : "ship") +
+      "'s path (open circle = earliest point, dotted = not heard) " + '<button type="button" class="trnow" data-trpath-act="hide">Hide path</button></p>';
   }
   // how old the aircraft on the map are, on the map itself (the legend), so old positions never pass for live ones
   function secAgo(ms) { var x = Math.max(0, Math.round((Date.now() - ms) / 1000)); return x < 90 ? x + " s ago" : ago(ms); }
@@ -357,6 +517,7 @@
       var d = D.createElement("div"); d.id = "ml-trair";
       d.innerHTML = '<label class="mlrow"><input type="checkbox" data-trf="air"' + (S.air ? " checked" : "") + '><span><b>All air traffic</b><i>Every aircraft broadcasting ADS-B, from adsb.fi, adsb.lol and OpenSky. Zoomed in, positions come live for the area on screen every 15 seconds; zoomed out, from OSAP&#39;s world sweep (5 to 15 minutes old). Each pop-up gives its age</i></span></label>' +
         '<label class="mlrow trsub"><input type="checkbox" data-trf="ground"' + (S.ground ? " checked" : "") + '><span><b>Include aircraft on the ground</b></span></label>' +
+        '<label class="mlrow trsub"><input type="checkbox" data-trf="trail"' + (S.trail ? " checked" : "") + '><span><b>Trails behind aircraft and ships</b><i>The last 10 minutes (aircraft) or hour (ships) of positions seen while the map is open. Tap one for its whole path</i></span></label>' +
         '<p class="mlkey" id="tra-st"></p>';
       d.style.cssText = "border-top:1px solid var(--line,#ddd);margin-top:6px;padding-top:4px";
       air.appendChild(d); // after the drone switches and their notes
@@ -368,6 +529,7 @@
         '<div class="trkinds">' + KINDS.map(function (k) {
           return '<label><input type="checkbox" data-trk="' + k[0] + '"' + (S.k[k[0]] ? " checked" : "") + '><span class="trsw" style="background:' + k[2] + '"></span>' + esc(k[1]) + "</label>";
         }).join("") + "</div>" +
+        '<label class="mlrow trsub"><input type="checkbox" data-trf="trail"' + (S.trail ? " checked" : "") + '><span><b>Trails behind ships</b><i>Tap a ship for its whole path (last 24 hours, from Open Waters AIS)</i></span></label>' +
         '<p class="mlkey" id="trs-st"></p>' +
         '<p class="mlkey">Only ships with AIS switched on appear, and only where a receiver hears them: coastal coverage is good, open ocean thin (no satellite AIS in the free feed). Military ships often transmit nothing. Positions and names are as broadcast, not verified.</p>';
       air.parentNode.insertBefore(s, air.nextSibling);
@@ -376,10 +538,11 @@
   }
   function run() {
     var any = S.air || S.sea;
-    if (S.air) { if (!map.hasLayer(gAir)) gAir.addTo(map); if (!A.idx) airLoad(); else airCells(); }
-    else if (map.hasLayer(gAir)) map.removeLayer(gAir);
-    if (S.sea) { if (!map.hasLayer(gSea)) gSea.addTo(map); seaLoad(); }
-    else if (map.hasLayer(gSea)) map.removeLayer(gSea);
+    // each kind's trails (gAirT, gSeaT) are their own group, cleared and drawn before the markers so the lines lie under them
+    if (S.air) { if (!map.hasLayer(gAirT)) gAirT.addTo(map); if (!map.hasLayer(gAir)) gAir.addTo(map); if (!A.idx) airLoad(); else airCells(); }
+    else { if (map.hasLayer(gAir)) map.removeLayer(gAir); if (map.hasLayer(gAirT)) map.removeLayer(gAirT); }
+    if (S.sea) { if (!map.hasLayer(gSeaT)) gSeaT.addTo(map); if (!map.hasLayer(gSea)) gSea.addTo(map); seaLoad(); }
+    else { if (map.hasLayer(gSea)) map.removeLayer(gSea); if (map.hasLayer(gSeaT)) map.removeLayer(gSeaT); }
     if (S.air) liveLoad();
     // every 15 s: live positions for the area on screen; every fourth tick the sweep index and the ships
     if (any && !timer) timer = setInterval(function () {
@@ -390,6 +553,7 @@
       if (S.air) airLoad(); if (S.sea) seaLoad();
     }, LIVE_EVERY);
     if (!any && timer) { clearInterval(timer); timer = null; }
+    if (SEL && !(SEL.kind === "air" ? S.air : S.sea)) pathHide();
     airDraw(); seaDraw();
   }
   function start(n) {
@@ -401,7 +565,8 @@
       "@media (max-width:420px){#ml-sea .trkinds{grid-template-columns:1fr}}" +
       ".trnow{font:inherit;font-size:11px;padding:1px 8px;margin-left:4px;border:1px solid var(--line,#bbb);border-radius:10px;background:var(--panel,#fff);color:inherit;cursor:pointer}";
     D.head.appendChild(css);
-    ["trafseapane", "trafairpane"].forEach(function (p, i) { if (!map.getPane(p)) { map.createPane(p); map.getPane(p).style.zIndex = 660 + i; } });
+    ["trafseapane", "trafairpane", "trafselpane"].forEach(function (p, i) { if (!map.getPane(p)) { map.createPane(p); map.getPane(p).style.zIndex = 660 + i; } });
+    map.getPane("trafselpane").style.pointerEvents = "none"; // the selected path (pathDraw) is never tapped: taps go through to the markers
     /* each kind draws on a canvas in its own pane, above the base map's shapes. One shared canvas without a pane went into
        Leaflet's overlay pane, level with the map's own canvas, so on a page with a tappable outline under the aircraft (a US
        state such as Texas) the map-click finder in index.html reached the outline first and a tap on an aircraft opened
@@ -410,10 +575,15 @@
     var tol = W.matchMedia && matchMedia("(pointer: coarse)").matches ? 14 : 4;
     renAir = L.canvas({ pane: "trafairpane", padding: 0.2, tolerance: tol });
     renSea = L.canvas({ pane: "trafseapane", padding: 0.2, tolerance: tol });
-    gAir = L.layerGroup(); gSea = L.layerGroup();
+    renSel = L.canvas({ pane: "trafselpane", padding: 0.2 });
+    gAir = L.layerGroup(); gSea = L.layerGroup(); gSel = L.layerGroup(); gAirT = L.layerGroup(); gSeaT = L.layerGroup();
     D.addEventListener("change", function (e) {
       var t = e.target, k = t.dataset && t.dataset.trf, kk = t.dataset && t.dataset.trk;
-      if (k) { S[k] = t.checked; lsSet(); run(); }
+      if (k) {
+        S[k] = t.checked; lsSet();
+        if (k === "trail") Array.prototype.forEach.call(D.querySelectorAll('[data-trf="trail"]'), function (x) { x.checked = S.trail; });
+        run();
+      }
       else if (kk) { S.k[kk] = t.checked; lsSet(); seaDraw(); }
     });
     map.on("moveend", function () {
@@ -429,10 +599,21 @@
       });
     });
     D.addEventListener("visibilitychange", function () { if (D.hidden) return; if (S.air) { airLoad(); liveLoad(); } if (S.sea) seaLoad(); });
-    D.addEventListener("click", function (e) { var t = e.target && e.target.closest && e.target.closest("[data-trf-now]"); if (t) { e.preventDefault(); refreshNow(); } });
+    D.addEventListener("click", function (e) {
+      var t = e.target && e.target.closest && e.target.closest("[data-trf-now]"); if (t) { e.preventDefault(); refreshNow(); return; }
+      var pa = e.target && e.target.closest && e.target.closest("[data-trpath-act]"); if (!pa || !SEL) return;
+      e.preventDefault();
+      if (pa.getAttribute("data-trpath-act") === "hide") pathHide();
+      else if (SEL.kind === "sea") { SEL.days = 7; SEL.st = "loading"; pathFill(); pathLoad(SEL); }
+    });
     if (S.air || S.sea) run(); else panel();
   }
-  W.OSAP_TRAFFIC = { air: function () { return A; }, sea: function () { return V; }, layers: function () { return { air: gAir, sea: gSea }; }, kindOf: kindOf, boxes: function () { return map && seaBoxes(); },
-    reload: function () { airLoad(); seaLoad(); }, refresh: refreshNow, live: function () { return liveFresh(); } };
+  W.OSAP_TRAFFIC = { air: function () { return A; }, sea: function () { return V; }, layers: function () { return { air: gAir, sea: gSea, airTrails: gAirT, seaTrails: gSeaT, path: gSel }; }, kindOf: kindOf, boxes: function () { return map && seaBoxes(); },
+    reload: function () { airLoad(); seaLoad(); }, refresh: refreshNow, live: function () { return liveFresh(); },
+    // paths (assets/osap-traffic.js "paths"): the positions kept per aircraft/ship, and the selected one's whole path. Read-only
+    // copies, so another layer (AIS gaps, for example) can read them without changing what is drawn
+    trails: function (kind) { var o = {}, s = TR[kind === "sea" ? "sea" : "air"]; for (var k in s) o[k] = s[k].map(function (p) { return p.slice(); }); return o; },
+    path: function () { return SEL ? { kind: SEL.kind, id: SEL.id, st: SEL.st, src: SEL.src, note: SEL.note, gaps: SEL.gaps, pts: SEL.pts.map(function (p) { return p.slice(); }) } : null; },
+    pick: function (kind, id) { pathPick(kind === "sea" ? "sea" : "air", String(id)); }, hidePath: function () { pathHide(); } };
   start(0);
 })();

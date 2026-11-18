@@ -175,6 +175,7 @@ data-ev-tlr="1"
 <script src="assets/osap-pop.js"></script>
 <script src="assets/osap-sat.js"></script>
 <script src="assets/osap-newimg.js"></script>
+<script src="assets/osap-plumes.js"></script>
 :not([data-pop])
 # data centres, AI and all, in Map overlays > Infrastructure (claude/ai-datacenters)
 <script>window.OSAP_LATER("assets/osap-dc.js");</script>
@@ -213,6 +214,8 @@ id="ml-viewsheds"
 /* ---------- the map wraps round the globe ----------
 L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
 <script src="assets/osap-gnss.js"></script>
+# ships gone quiet near chokepoints (claude/dark-ships)
+<script src="assets/osap-darkships.js"></script>
 <script src="assets/osap-warngeo.js"></script>
 <script src="assets/osap-grade.js"></script>
 <script src="assets/osap-econ.js"></script>
