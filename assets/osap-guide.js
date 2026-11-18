@@ -319,7 +319,14 @@
         b("Intelligence brief (PowerPoint)") + ": pick the country, a region (the whole country, one province or the drawn area), a topic and the dates, then " + b("Make PowerPoint") + ". The deck is built on your device and downloads; nothing is sent anywhere. OSAP writes no judgments: the bottom line is a machine count, and every slide that needs one carries a red " + b("NEEDS ANALYST REVIEW") + " box.",
         b("OSIR (Open Source Intelligence Report)") + ": a printable report in OSIR format, with every source and its SHA-256 fingerprint. " + b("Daily brief (PDF)") + " and " + b("Area brief (PDF)") + " make today's summary, or the last 24 hours inside the drawn area, as a PDF in one tap.",
         b("TAK package") + ": workspaces in " + b("My work") + ", the Route tab, evacuation plans, the medical plan and landing zones can be saved as a TAK data package (.zip) that opens in ATAK and WinTAK, markers and areas included.",
-        "The country brief ends with the country's " + b("Key dates") + ": every holiday, election, religious date and anniversary of the past 7 and next 60 days, with its source."]) },
+        "The country brief ends with the country's " + b("Key dates") + ": every holiday, election, religious date and anniversary of the past 7 and next 60 days, with its source."]) +
+      "<h3>Report builder</h3>" +
+      ul(["Turns your clips into a finished SITREP. Open it from " + b("Reports") + ", " + b("Report builder (SITREP)") + ".",
+        b("Sandbox") + ": the open workspace's map snips and sources. Draw a box, circle or lasso with " + b("Area") + " and pick " + b("Snip to report") + " (in the Area menu or in Reports), or press " + b("Snip drawn area") + " or " + b("Snip this view") + " in the builder. Saved items from " + b("My work") + " can be added as sources.",
+        "A snip is data, not a screenshot: the area, the base map and every item inside it, each with its title, link, publisher, times, claim status and SHA-256 fingerprint. Its map is drawn with a north arrow, scale bar, a key that lists only the symbols shown, a lat/long grid, the as-of time and the base map credit. " + b("Re-render") + " snips the same area with today's data as a new version and keeps the old one.",
+        b("New SITREP") + " starts the product: header, BLUF, situation, key judgments (each with a likelihood word, a separate confidence level and citations), figures, gaps, outlook and numbered sources. Cite a source as [S1], a figure as [F1] and one item on it as [F1.I3]. " + b("Data statistics") + " counts what the product cites: items, sources, dates and source types.",
+        b("QC check") + " runs fixed rules as you write, with no AI. A block stops " + b("Export PDF") + " unless you give a reason, which is printed in the product; warnings must be acknowledged. Each export is a numbered version with its SHA-256 in the QC annex.",
+        "Nothing in the builder changes a report, a claim status or a grade. A snip is a reference, not evidence."]) },
 
     { id: "settings", t: "Settings", h:
       fig("settings", "Settings, under the gear") +
@@ -392,6 +399,7 @@
 
     { id: "help", t: "Quick answers", h:
       ul(["<b>The map is blank or stuck.</b> Check the Data badge, then close and reopen OSAP. If it stays blank, open <a href=\"reset.html\">the reset page</a>. It resets the layout and keeps your saved work.",
+        "<b>A news search finds nothing.</b> It reads the last few days first. Press " + b("Search older days") + " to look further back, or widen the period.",
         "<b>A layer shows nothing.</b> Check the period: 24 h may hide older reports. Some layers draw only when you zoom in.",
         "<b>“Point not saved: storage is full”.</b> Delete some saved items or workspaces you no longer need, then try again.",
         "<b>No alerts arrive.</b> On iPhone, open OSAP from the Home Screen. For alerts while OSAP is closed, use Push to phone.",

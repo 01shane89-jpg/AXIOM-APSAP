@@ -94,6 +94,7 @@
     { id: "watch", ctx: "map", tool: "Watch", guide: "watch", t: b("Watch") + " tells you about new reports inside an area you choose." },
     { id: "mywork", ctx: "map", tool: "My work", guide: "mywork", t: b("My work") + " keeps your points, areas, routes and workspaces, and exports KML or a " + b("TAK package") + "." },
     { id: "reports", ctx: "map", tool: "Reports", guide: "reports", t: b("Reports") + " makes a country brief, an OSIR, a PowerPoint brief and more, ready to save as PDF." },
+    { id: "rbuild", ctx: "map", tool: "Reports", guide: "reports", t: b("Reports") + ", " + b("Report builder (SITREP)") + " turns map snips and sources into a finished SITREP, with a QC check before export." },
     { id: "ring", ctx: "map", guide: "ring", t: "Long-press the map (right-click on a computer) for actions at that spot: " + b("Measure") + ", " + b("Route") + ", " + b("Watch") + ", " + b("Find LZ") + " and " + b("Terrain") + "." },
     { id: "offline", ctx: "map", sel: "#tidy-set", guide: "settings", t: "Settings, " + b("Offline maps and data") + " saves a country so OSAP keeps working with no signal." },
     { id: "guide", ctx: "map", sel: "#tidy-set", guide: "start", t: "The " + b("User guide") + " in Settings explains every tool, works offline and prints as a PDF." },
@@ -104,6 +105,7 @@
     { id: "risk", ctx: "today", card: "Risk equivalent", guide: "news", t: b("Risk equivalent") + " is OSAP's own computed rating from open indicators, kept apart from official advisories." },
     /* follow-ups: shown soon after the tool named in "after" was used */
     { id: "after-area", ctx: "after", after: "Area", tool: "Reports", guide: "area", t: "Area drawn? " + b("Reports") + ", " + b("Area summary") + " sums up everything inside it, with sources." },
+    { id: "after-area-snip", ctx: "after", after: "Area", tool: "Reports", guide: "reports", t: "Or " + b("Snip to report") + ": the drawn area as a print-ready map with every item's source, into the report builder." },
     { id: "after-point", ctx: "after", after: "Point", tool: "Watch", guide: "watch", t: "Point saved. " + b("Watch") + " can tell you about new reports around it." },
     { id: "after-route", ctx: "after", after: "Route", tool: "Reports", guide: "route", t: "Route planned? " + b("Reports") + ", " + b("Route search brief") + " sums up the reports and news along it." },
     { id: "after-datasets", ctx: "after", after: "Data sets", tool: "Data sets", guide: "toolbar", t: b("Clear map") + " at the foot of " + b("Data sets") + " takes every set off the map at once." },
@@ -148,7 +150,7 @@
     comms: [planStep("Comms")],
     lz: [{ tool: "Plans", t: "Open " + b("Plans") + " and pick " + b("Landing zones (HLZ finder)") + ", or long-press the map and pick " + b("Find LZ") + "." }],
     terrain: [{ tool: "Plans", t: "Open " + b("Plans") + " and pick " + b("Terrain analysis") + ", or long-press the map and pick " + b("Terrain") + "." }],
-    reports: [{ tool: "Reports", t: "Tap " + b("Reports") + " and pick a report. A grayed one says what to do first." }],
+    reports: [{ tool: "Reports", t: "Tap " + b("Reports") + " and pick a report. A grayed one says what to do first. " + b("Report builder (SITREP)") + " is there too." }],
     settings: [{ sel: "#tidy-set", t: "Tap the gear for Settings." }],
     security: [{ sel: "#tidy-set", t: "Tap the gear: " + b("Protected mode") + ", " + b("Lock my saved work") + ", " + b("Staying hidden online") + " and " + b("Erase this device") + " are there." }],
     tips: [{ sel: "#tidy-set", t: "Tap the gear: " + b("Show tips") + " turns tips on or off, and " + b("Take the tour") + " runs the tour again." }]
@@ -407,7 +409,10 @@
     var bt = e.target.closest && e.target.closest("#atk-tools .atk-list button[aria-label]"); if (!bt) return;
     var name = bt.getAttribute("aria-label");
     upd(function (v) { v.used = v.used || {}; v.used[name] = Date.now(); });
-    for (var i = 0; i < TIPS.length; i++) if (TIPS[i].after === name) { queued = TIPS[i]; queuedAt = Date.now(); break; }
+    /* the follow-up for this tool seen longest ago (Area has two: Area summary and Snip to report) */
+    var seen = st().seen || {}, best = null;
+    for (var i = 0; i < TIPS.length; i++) if (TIPS[i].after === name && (!best || (seen[TIPS[i].id] || 0) < (seen[best.id] || 0))) best = TIPS[i];
+    if (best) { queued = best; queuedAt = Date.now(); }
   }, true);
   setInterval(tick, 5000);
 
