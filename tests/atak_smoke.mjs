@@ -56,10 +56,12 @@ const ringBtn = (p, k) => p.click(`#atk-ring [data-rk="${k}"]`);
   // the local time and military zone letter at the grid, beside Zulu (assets/osap-zonetime.js): Thailand is G (UTC+7)
   await p.waitForFunction(() => window.OSAP_ZTIME && window.OSAP_ZTIME.ready(), null, { timeout: 15000 }).catch(() => {});
   await p.evaluate(() => window.__asapMap && window.__asapMap.setView([13.75, 100.5], 9, { animate: false })); await p.waitForTimeout(300);
+  const t0 = Date.now(); // minute before the page reads its clock: a rollover between the two must not fail the check
   const tm = await p.evaluate(() => { const e = document.querySelector("#atk-bar .atk-tm"), b = document.getElementById("atk-bar").getBoundingClientRect(), r = e && e.getBoundingClientRect(); return e ? { lt: e.querySelector(".atk-lt").textContent, zt: e.querySelector(".atk-zt").textContent, title: e.title, inBar: r.width > 0 && r.right <= b.right + 1 } : null; });
-  const zt = new Date().toISOString().slice(11, 16), lt = new Date(Date.now() + 7 * 3600e3).toISOString().slice(11, 16);
+  const t1 = Date.now(), zt = new Date(t1).toISOString().slice(11, 16), lt = new Date(t1 + 7 * 3600e3).toISOString().slice(11, 16);
+  const okZ = [t0, t1].map((t) => new Date(t).toISOString().slice(11, 16) + "Z"), okL = [t0, t1].map((t) => new Date(t + 7 * 3600e3).toISOString().slice(11, 16));
   ok(tm && /^\d\d:\d\dG$/.test(tm.lt) && /^\d\d:\d\dZ$/.test(tm.zt) && tm.inBar, "phone: readout shows local G time and Zulu beside the grid: " + JSON.stringify(tm));
-  ok(tm && (tm.zt === zt + "Z" || tm.lt.slice(0, 5) === lt) && /Local time zone at this point: G \(UTC\+7\)/.test(tm.title), "phone: the times are right and the tooltip names the zone (" + lt + "G / " + zt + "Z)");
+  ok(tm && (okZ.includes(tm.zt) || okL.includes(tm.lt.slice(0, 5))) && /Local time zone at this point: G \(UTC\+7\)/.test(tm.title), "phone: the times are right and the tooltip names the zone (" + lt + "G / " + zt + "Z)");
   await p.click('#atk-bar [data-sb="fmt"]'); ok(/°[NS] /.test(await p.textContent("#atk-bar .atk-v")), "phone: tap readout switches to degrees");
   await p.click('#atk-bar [data-sb="fmt"]'); await p.click('#atk-bar [data-sb="fmt"]');
   if (OUT) await p.screenshot({ path: OUT + "/phone-toolbar.png" });
