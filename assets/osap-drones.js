@@ -46,7 +46,9 @@
   }
 
   function kindOf(a) { return a.why ? "uav" : a.rotor ? "rw" : "fw"; }
-  var NAME = { uav: "Drone (unmanned aircraft)", fw: "Military aircraft", rw: "Military helicopter" };
+  var NAME = { uav: "Drone (unmanned aircraft)", fw: "Military aircraft", rw: "Military helicopter" }, ORB = "#6a1b9a";
+  function shown(a) { var k = kindOf(a); return (k === "uav" ? ON.uav : ON.mil) && Date.now() - a.pos_ms <= STALE; }
+  function orbiting() { return DATA ? DATA.ac.filter(function (a) { return a.pat && a.pat.k === "orbit" && Array.isArray(a.pat.c) && shown(a); }) : []; }
   function pop(a) {
     var s = DATA.sources[a.src] || {}, k = kindOf(a), track = safeUrl(String(s.track || "").replace("{hex}", encodeURIComponent(a.hex)));
     var alt = a.alt === "ground" ? "on the ground" : a.alt != null ? a.alt.toLocaleString() + " ft (barometric)" : "not sent";
@@ -59,6 +61,9 @@
         "Position " + esc(a.lat.toFixed(4) + ", " + a.lon.toFixed(4)) + (mgrs(a.lat, a.lon) ? " · MGRS " + esc(mgrs(a.lat, a.lon)) : "") + "<br>" +
         "Reported " + esc(zt(a.pos_ms)) + " (" + esc(ago(a.pos_ms)) + ")" + (a.mlat ? " · placed by receiver timing (MLAT)" : "") + "</p>" +
       (a.why ? '<p class="obs" style="margin:4px 0">Shown as a drone because of: ' + esc(a.why.join("; ")) + ".</p>" : "") +
+      (a.pat && a.pat.k === "orbit" ? '<p class="obs" style="margin:4px 0;color:' + ORB + '"><b>Flying an orbit or racetrack</b>: turned ' + esc(Math.abs(a.pat.turn)) + "° " + (a.pat.turn > 0 ? "clockwise" : "anticlockwise") +
+        " in " + esc(a.pat.min) + " min, staying within " + esc(a.pat.km) + " km of one point (dashed ring)." + (a.pat.role ? " " + esc(a.t) + " is a " + esc(a.pat.role) + "." : "") +
+        '<br><span style="font-size:11px;color:inherit;opacity:.85">Common for surveillance, refuelling tracks, airborne early warning, training and holding. The shape only, from its own broadcast positions: not a mission. Rules ' + esc(a.pat.rules) + ".</span></p>" : "") +
       '<p class="obs" style="margin:4px 0">Source: ' + (track ? '<a href="' + esc(track) + '" target="_blank" rel="noopener noreferrer">' + esc(s.name || "") + " live track</a>" : esc(s.name || "")) +
         " (" + esc(s.licence || "") + (s.nc ? ", non-commercial source" : "") + ")</p>" +
       '<p class="obs" style="font-size:10.5px">A position the aircraft broadcast, relayed by volunteer receivers. Reported, not verified, and not an identification. Record fingerprint ' +
@@ -75,7 +80,9 @@
       var k = kindOf(a);
       if (k === "uav" ? !ON.uav : !ON.mil) return;
       if (Date.now() - a.pos_ms > STALE) return;
-      if (a.tr && a.tr.length > 1) grp.addLayer(L.polyline(a.tr.map(function (p) { return [p[0], p[1]]; }), { pane: "airpane", color: k === "uav" ? "#b8860b" : "#607d8b", weight: 2, opacity: 0.8, dashArray: "4 4", interactive: false }));
+      var orb = a.pat && a.pat.k === "orbit" && Array.isArray(a.pat.c);
+      if (a.tr && a.tr.length > 1) grp.addLayer(L.polyline(a.tr.map(function (p) { return [p[0], p[1]]; }), { pane: "airpane", color: orb ? ORB : k === "uav" ? "#b8860b" : "#607d8b", weight: orb ? 2.5 : 2, opacity: 0.8, dashArray: "4 4", interactive: false }));
+      if (orb) { var ring = L.circle(a.pat.c, { pane: "airpane", radius: Math.max(2, a.pat.km) * 1000, color: ORB, weight: 1.5, opacity: 0.7, dashArray: "6 6", fill: false, interactive: false }); ring.orbit = a.hex; grp.addLayer(ring); }
       var ic = sym ? W.osapSym("air_" + k, { text: k === "uav" ? a.cs || a.t || "" : "" }) : null;
       var m = ic ? L.marker([a.lat, a.lon], { icon: ic, pane: "airpane", keyboard: false, title: (a.cs || a.hex) + (a.t ? " " + a.t : "") })
         : L.circleMarker([a.lat, a.lon], { pane: "airpane", radius: k === "uav" ? 7 : 5, color: "#fff", weight: 1.5, fillColor: k === "uav" ? "#b8860b" : "#607d8b", fillOpacity: 0.95,
@@ -94,6 +101,7 @@
       (DATA ? (function (b, old) {
         return '<p class="mlkey" style="margin:2px 0' + (old ? ";color:#c62828;font-weight:600" : "") + '">' + (old ? "Stale: " : "") + "data " + esc(ago(b).replace(" ago", "")) + " old (updated " + esc(zt(b)) + ").</p>";
       })(Date.parse(DATA.built), Date.now() - Date.parse(DATA.built) > STALE) : '<p class="mlkey" style="margin:2px 0">Loading…</p>') +
+      (orbiting().length ? '<p class="mlkey" style="margin:2px 0"><span style="background:none;border:2px dashed ' + ORB + ';border-radius:50%;width:9px;height:9px"></span>Flying an orbit or racetrack (shape only)</p>' : "") +
       '<p class="mlkey" style="margin:2px 0">Only aircraft broadcasting ADS-B.</p>');
   }
 
@@ -106,15 +114,17 @@
     return (old ? '<b style="color:#c62828">Stale:</b> ' : "") + "Updated " + esc(zt(b)) + " (" + esc(ago(b)) + "). " +
       n + " drone" + (n === 1 ? "" : "s") + " and " + mil + " other military aircraft broadcasting worldwide" +
       (DATA.nopos && DATA.nopos.length ? "; " + DATA.nopos.length + " more drone" + (DATA.nopos.length === 1 ? "" : "s") + " heard without a position" : "") + "." +
+      (orbiting().length ? " <b>" + orbiting().length + "</b> flying an orbit or racetrack now." : "") +
       (failed.length ? " Not answering this time: " + esc(failed.join(", ")) + "." : "") + (ERR ? " Last update failed (" + esc(ERR) + "); showing the previous one." : "");
   }
   function listHtml() {
-    if (!DATA || !ON.uav) return "";
-    var d = DATA.ac.filter(function (a) { return a.why && Date.now() - a.pos_ms <= STALE; });
-    if (!d.length) return "";
-    return '<ul class="airlist">' + d.map(function (a) {
-      return '<li><button type="button" data-airgo="' + esc(a.hex) + '">' + esc(a.cs || a.hex.toUpperCase()) + (a.t ? " · " + esc(a.t) : "") + " · " + esc(ago(a.pos_ms)) + "</button></li>";
-    }).join("") + "</ul>";
+    if (!DATA) return "";
+    var d = ON.uav ? DATA.ac.filter(function (a) { return a.why && Date.now() - a.pos_ms <= STALE; }) : [];
+    // orbiting: reconnaissance, early warning, patrol and tanker types first, trainers last
+    var o = orbiting().sort(function (a, b) { var r = function (x) { return !x.pat.role ? 1 : /trainer/.test(x.pat.role) ? 2 : 0; }; return r(a) - r(b) || b.pat.min - a.pat.min; });
+    var li = function (a, extra) { return '<li><button type="button" data-airgo="' + esc(a.hex) + '">' + esc(a.cs || a.hex.toUpperCase()) + (a.t ? " · " + esc(a.t) : "") + (extra || "") + " · " + esc(ago(a.pos_ms)) + "</button></li>"; };
+    return (d.length ? '<ul class="airlist">' + d.map(function (a) { return li(a); }).join("") + "</ul>" : "") +
+      (o.length ? '<p class="mlkey" style="margin:4px 0 0"><b>Flying an orbit or racetrack now</b></p><ul class="airlist airorb">' + o.slice(0, 12).map(function (a) { return li(a, " · " + Math.abs(a.pat.turn) + "° in " + a.pat.min + " min"); }).join("") + "</ul>" : "");
   }
   function panel() {
     var st = D.getElementById("air-st"), li = D.getElementById("air-list");

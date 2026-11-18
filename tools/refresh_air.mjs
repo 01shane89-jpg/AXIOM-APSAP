@@ -25,6 +25,7 @@ import path from "path";
 import * as gnss from "./gnss.mjs";
 import { COMMERCIAL, usable } from "./nc_strip.mjs";
 import { FIELDS, row, str } from "./air_rows.mjs";
+import { EMERG, RULES as MILPAT } from "./milpat_lib.mjs";
 export { FIELDS, row };
 
 const OUT = process.argv[2] || "air-out";
@@ -189,6 +190,9 @@ async function main() {
     note: "Positions aircraft broadcast (ADS-B/MLAT), passed on by volunteer receiver networks. Reported, not verified. Only aircraft broadcasting ADS-B appear, and only where receivers hear them.",
     sources: ALL.map((s) => ({ id: s.id, name: s.name, site: s.site, licence: s.licence, nc: s.nc, track: s.track })),
     status: stat, asked: asked.length, unasked, carried, total, age_p50_s: Math.round(ages[ages.length >> 1] || 0), osky_at: oskyAt, cells: counts, circ,
+
+    // emergency squawks worldwide (7500, 7600, 7700, tools/milpat_lib.mjs), airborne only, as broadcast: the page lists them
+    emerg: [...seen.values()].filter((x) => EMERG[x[12]] && !(x[14] & 4) && isFinite(x[5]) && isFinite(x[6])).sort((a, b) => b[10] - a[10]).slice(0, 50), emerg_rules: MILPAT,
   };
   if (!stat.some((s) => s.ok)) { console.error("every source failed", JSON.stringify(stat)); process.exit(2); }
   fs.writeFileSync(path.join(OUT, "index.json"), JSON.stringify(index));

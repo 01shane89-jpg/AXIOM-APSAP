@@ -345,9 +345,22 @@
       (V.trunc ? " Busy area: the feed left out some ships not heard for over 30 minutes." : "") +
       (V.err ? " Part of the update failed (" + esc(V.err) + ")." : "");
   }
+  // emergency squawks worldwide from the sweep's index (tools/refresh_air.mjs, rules milpat-v1): a list that takes the map there
+  function emergList() {
+    var x = S.air && A.idx && Array.isArray(A.idx.emerg) ? A.idx.emerg : [], f = (A.idx && A.idx.f) || [];
+    var ix = function (k) { return f.indexOf(k); }, now = Date.now() / 1000;
+    x = x.filter(function (r) { return Array.isArray(r) && EMERG[r[ix("sqk")]] && now - r[ix("pos")] <= AIR_STALE / 1000 + 900; });
+    if (!x.length) return "";
+    return '<p class="mlkey" style="margin:4px 0 0;color:#d50000"><b>Emergency squawks now (' + x.length + ")</b>, as broadcast, not confirmed</p>" +
+      '<ul class="tremlist">' + x.slice(0, 10).map(function (r) {
+        var la = r[ix("lat")], lo = r[ix("lon")];
+        return '<li><button type="button" data-trgo="' + esc(la + "," + lo) + '">' + esc(r[ix("cs")] || String(r[ix("hex")]).toUpperCase()) + (r[ix("t")] ? " · " + esc(r[ix("t")]) : "") + " · " + esc(EMERG[r[ix("sqk")]]) + " · " + esc(ago(r[ix("pos")] * 1000)) + "</button></li>";
+      }).join("") + "</ul>";
+  }
   function panel() {
-    var a = D.getElementById("tra-st"), s = D.getElementById("trs-st");
+    var a = D.getElementById("tra-st"), s = D.getElementById("trs-st"), em = D.getElementById("tra-em");
     if (a) a.innerHTML = airStatus();
+    if (em) em.innerHTML = emergList();
     if (s) s.innerHTML = seaStatus();
   }
   function mount() {
@@ -357,7 +370,7 @@
       var d = D.createElement("div"); d.id = "ml-trair";
       d.innerHTML = '<label class="mlrow"><input type="checkbox" data-trf="air"' + (S.air ? " checked" : "") + '><span><b>All air traffic</b><i>Every aircraft broadcasting ADS-B, from adsb.fi, adsb.lol and OpenSky. Zoomed in, positions come live for the area on screen every 15 seconds; zoomed out, from OSAP&#39;s world sweep (5 to 15 minutes old). Each pop-up gives its age</i></span></label>' +
         '<label class="mlrow trsub"><input type="checkbox" data-trf="ground"' + (S.ground ? " checked" : "") + '><span><b>Include aircraft on the ground</b></span></label>' +
-        '<p class="mlkey" id="tra-st"></p>';
+        '<p class="mlkey" id="tra-st"></p><div id="tra-em"></div>';
       d.style.cssText = "border-top:1px solid var(--line,#ddd);margin-top:6px;padding-top:4px";
       air.appendChild(d); // after the drone switches and their notes
     }
@@ -399,6 +412,8 @@
     css.textContent = "#ml-trair .trsub{padding-left:22px}#ml-sea .trkinds{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;margin:2px 0 4px 22px;font-size:12px}" +
       "#ml-sea .trkinds label{display:flex;gap:5px;align-items:center;cursor:pointer}#ml-sea .trsw{display:inline-block;width:10px;height:10px;border-radius:2px;flex:none}" +
       "@media (max-width:420px){#ml-sea .trkinds{grid-template-columns:1fr}}" +
+      "#ml-trair .tremlist{list-style:none;margin:2px 0 6px;padding:0}#ml-trair .tremlist button{font:inherit;font-size:12px;background:none;border:0;padding:4px 0;min-height:32px;color:#d50000;text-decoration:underline;cursor:pointer;text-align:left}" +
+      "@media (pointer:coarse){#ml-trair .tremlist button{min-height:44px}}" +
       ".trnow{font:inherit;font-size:11px;padding:1px 8px;margin-left:4px;border:1px solid var(--line,#bbb);border-radius:10px;background:var(--panel,#fff);color:inherit;cursor:pointer}";
     D.head.appendChild(css);
     ["trafseapane", "trafairpane"].forEach(function (p, i) { if (!map.getPane(p)) { map.createPane(p); map.getPane(p).style.zIndex = 660 + i; } });
@@ -430,6 +445,10 @@
     });
     D.addEventListener("visibilitychange", function () { if (D.hidden) return; if (S.air) { airLoad(); liveLoad(); } if (S.sea) seaLoad(); });
     D.addEventListener("click", function (e) { var t = e.target && e.target.closest && e.target.closest("[data-trf-now]"); if (t) { e.preventDefault(); refreshNow(); } });
+    D.addEventListener("click", function (e) {
+      var b = e.target && e.target.closest && e.target.closest("[data-trgo]"); if (!b || !map) return;
+      var p = b.getAttribute("data-trgo").split(",").map(Number); if (p.length === 2 && isFinite(p[0]) && isFinite(p[1])) map.setView(p, Math.max(map.getZoom(), 8));
+    });
     if (S.air || S.sea) run(); else panel();
   }
   W.OSAP_TRAFFIC = { air: function () { return A; }, sea: function () { return V; }, layers: function () { return { air: gAir, sea: gSea }; }, kindOf: kindOf, boxes: function () { return map && seaBoxes(); },
