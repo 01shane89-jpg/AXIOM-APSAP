@@ -92,6 +92,8 @@ tests/coverage_smoke.mjs
 tests/asiasec_smoke.mjs
 # Go deeper: a story in layers, its timeline and connections (assets/osap-threads.js)
 tests/threads_smoke.mjs
+# Share this trail: the reporting trail of a Go deeper story as a 1080 x 1920 picture, and its ?trail= link (assets/osap-trail.js)
+tests/trail_smoke.mjs
 tests/spikes_smoke.mjs
 tests/maploading_smoke.mjs
 tests/streets_english_smoke.mjs
