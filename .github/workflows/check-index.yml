@@ -66,6 +66,8 @@ jobs:
       - run: node tests/health.test.mjs
       # live air traffic relay for the area on screen (netlify/edge-functions/osap-air.js)
       - run: node tests/air_live.test.mjs
+      # one aircraft's flight path from OpenSky for the selected aircraft (netlify/edge-functions/osap-air-track.js)
+      - run: node tests/air_track.test.mjs
       - run: node tests/osm_sources.test.mjs
       - run: node tests/avwx.test.mjs
       - run: node tests/claims.test.mjs
