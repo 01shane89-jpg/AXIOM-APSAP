@@ -306,16 +306,32 @@
     })).then(airDraw);
   }
   function addAc(a, q) { q.push(a); A.shown++; }
+  /* the redraw (every 15 s with live positions, every minute for ships) replaces every marker. A marker whose pop-up is open
+     is kept instead and moved to its new position, so the pop-up the user is reading does not vanish under them; it is
+     redrawn as new once the pop-up closes */
+  function clearKeep(g) {
+    var keep = null;
+    g.eachLayer(function (m) { if (!keep && m.isPopupOpen && m.isPopupOpen() && m._trid) keep = m; });
+    g.eachLayer(function (m) { if (m !== keep) g.removeLayer(m); });
+    return keep;
+  }
+  function moveKept(m, ll, hdg, col) {
+    m.options.hdg = hdg; m.setLatLng(ll); if (col) m.setStyle({ fillColor: col });
+    if (m.getPopup()) m.getPopup().setLatLng(ll);
+  }
+  var keepAir = null, keepSea = null;
   function drawAc(a) {
+    if (keepAir && keepAir._trid === a.hex) { moveKept(keepAir, [a.lat, a.lon], a.fl & 4 ? null : a.trk, acColour(a)); return; }
     var col = acColour(a), m = new Glyph([a.lat, a.lon], { renderer: renAir, pane: "trafairpane", radius: EMERG[a.sqk] ? 8 : 5.5, hdg: a.fl & 4 ? null : a.trk,
       shape: "air", color: "#fff", weight: 1, fillColor: col, fillOpacity: 0.95 });
+    m._trid = a.hex;
     m.bindPopup(function () { pathPick("air", a.hex); return acPop(a); }, { maxWidth: 330 });
     m.bindTooltip(function () { return acTip(a); }, { direction: "top", offset: [0, -6] });
     gAir.addLayer(m);
   }
   function airDraw() {
     if (!gAir) return;
-    gAir.clearLayers(); gAirT.clearLayers(); A.shown = 0;
+    keepAir = clearKeep(gAir); gAirT.clearLayers(); A.shown = 0;
     var lv = S.air && map ? liveFresh() : null, lhex = {}, q = [];
     if (lv) {
       var lb = map.getBounds().pad(0.15), lc = L.latLng(lv.lat, lv.lon), lnow = Date.now();
@@ -444,7 +460,7 @@
   }
   function seaDraw() {
     if (!gSea) return;
-    gSea.clearLayers(); gSeaT.clearLayers(); V.shown = 0;
+    keepSea = clearKeep(gSea); gSeaT.clearLayers(); V.shown = 0;
     if (S.sea && V.note !== "zoom") {
       var b = map.getBounds().pad(0.15), now = Date.now(), q = [];
       trPrune("sea");
@@ -458,8 +474,10 @@
       q.forEach(function (id) {
         var v = V.list[id], p = v.p, k = kindOf(p.type);
         var moving = p.sog != null && p.sog >= 0.5, hdg = moving ? (p.heading != null && p.heading < 360 ? p.heading : p.cog) : null;
+        if (keepSea && keepSea._trid === String(p.mmsi)) { moveKept(keepSea, [v.lat, v.lon], hdg, KC[k]); V.shown++; return; }
         var m = new Glyph([v.lat, v.lon], { renderer: renSea, pane: "trafseapane", radius: moving ? 5 : 3.5, hdg: hdg, shape: "ship",
           color: "#fff", weight: 1, fillColor: KC[k], fillOpacity: 0.9 });
+        m._trid = String(p.mmsi);
         m.bindPopup(function () { pathPick("sea", String(p.mmsi), k === "leisure"); return shPop(v); }, { maxWidth: 330 });
         m.bindTooltip(function () { return shTip(v); }, { direction: "top", offset: [0, -6] });
         gSea.addLayer(m); V.shown++;
