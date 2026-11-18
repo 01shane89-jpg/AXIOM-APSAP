@@ -24,7 +24,7 @@ export function knownReports(dir = CF_DIR, parties = null, ucdp = null) {
   if (!fs.existsSync(dir)) return known;
   for (const f of fs.readdirSync(dir).sort()) {
     const m = f.match(/^([a-z0-9][a-z0-9-]*?)(\.older)?\.js$/);
-    if (!m || /^(index|auto|bundle|verified|suggest)$/.test(m[1])) continue;
+    if (!m || /^(index|auto|bundle|verified|suggest|sensors)$/.test(m[1])) continue;
     let o; try { o = readJs(path.join(dir, f)); } catch (e) { continue; }
     if (!known.has(m[1])) known.set(m[1], new Map());
     if (parties && !m[2] && Array.isArray(o.parties)) parties[m[1]] = o.parties.map(String);

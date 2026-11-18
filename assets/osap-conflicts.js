@@ -239,7 +239,8 @@
     var m = Math.floor(Date.now() / 60000);
     if (!codeP) codeP = W.OSAP_CF_CODE ? Promise.resolve() : load("assets/osap-cf-code.js").catch(function () { codeP = null; });
     if (!matchP) matchP = W.OSAP_CF_MATCH ? Promise.resolve() : load("assets/osap-cf-match.js").catch(function () { matchP = null; });
-    return Promise.all([load("data/live/conflicts/verified.js?m=" + m).catch(function () {}), load("data/live/conflicts/suggest.js?m=" + m).catch(function () {}), codeP, matchP])
+    return Promise.all([load("data/live/conflicts/verified.js?m=" + m).catch(function () {}), load("data/live/conflicts/suggest.js?m=" + m).catch(function () {}),
+      load("data/live/conflicts/sensors.js?m=" + m).catch(function () {}), codeP, matchP])
       .then(function () { vLoaded = Date.now(); });
   }
   function vrec(i) { var v = W.OSAP_CF_VERIFIED, m = v && v.by && active && v.by[active]; return m && i && i.fp ? m[i.fp] || null : null; }
@@ -459,6 +460,26 @@
     return day(e.date) + (e.end && e.end !== e.date ? " to " + day(e.end) : "") + " · " + esc(UTYPE[e.type] || "UCDP event") + " · " + esc(e.sideA || "") + (e.sideB ? " vs " + esc(e.sideB) : "") +
       " · " + (e.best == null ? "deaths not given" : num(e.best) + " deaths (UCDP best estimate" + (e.low != null && e.high != null && (e.low !== e.best || e.high !== e.best) ? ", " + num(e.low) + " to " + num(e.high) : "") + ")") +
       (e.where ? '<br><span class="cfm">' + esc(e.where) + "</span>" : "");
+  }
+  /* ---------- sensor check: satellite heat near a strike report (tools/sensor_lib.mjs rules sensor-v1) ----------
+     VIIRS heat detections (NASA FIRMS) close to the incident's reports in place and time, from data/live/conflicts/sensors.js.
+     A reading that may relate, never a confirmation: a fire, flare or other strike can sit there too, and a report can be pinned
+     at the wrong town. Standing heat (seen on 3 of the last 10 days) is left out. Read-only: it changes no record. */
+  function sensorHtml(g) {
+    var S = W.OSAP_CF_SENSORS, m = S && S.by && active && S.by[active]; if (!m) return "";
+    var best = [], seen = {};
+    g.all.forEach(function (x) { (m[x.fp] || []).forEach(function (p) { var key = p.t + p.sat + p.km; if (!seen[key]) { seen[key] = 1; best.push({ p: p, x: x }); } }); });
+    if (!best.length) return "";
+    best.sort(function (a, b) { return a.p.km - b.p.km || Math.abs(a.p.h) - Math.abs(b.p.h); });
+    var hrs = function (h) { var a = Math.abs(h); return (a < 1 ? "under 1 h" : Math.round(a) + " h") + (h < 0 ? " before" : " after") + " the report"; };
+    var rows = best.slice(0, 3).map(function (b) {
+      var p = b.p;
+      return '<div class="mt">Heat seen by ' + esc(p.sat) + " at " + esc(String(p.t).replace("T", " ")) + "Z, " + (p.km < 1 ? "under 1 km" : num(Math.round(p.km)) + " km") + " from the report's pin, " + hrs(p.h) +
+        (p.frp ? " · " + esc(String(p.frp)) + " MW" : "") + (p.conf === "h" ? " · high confidence" : "") + "</div>";
+    });
+    return '<details class="cfmt"><summary title="Satellite heat close to these reports in place and time (rules ' + esc(S.rules || "") + '). It may relate. It is not a confirmation: a fire, a flare or another strike can be there too, and a report can be pinned at the wrong place.">' +
+      "Satellite heat nearby, may relate (" + best.length + ")</summary>" + rows.join("") +
+      '<p class="cfm">NASA FIRMS VIIRS active fire detections' + (S.asof ? ", read " + esc(S.asof) : "") + '. Standing heat sources are left out. <a href="https://firms.modaps.eosdis.nasa.gov/map/" target="_blank" rel="noopener noreferrer">FIRMS map</a></p></details>';
   }
   function matchHtml(g, k) {
     var M = W.OSAP_CF_MATCH, d = cur.data; if (!M || !d || !g.all.every(reviewable)) return "";
@@ -973,7 +994,7 @@
       if (it.length) h.push('<p><button type="button" class="refresh" data-cfprint="1" title="Print or save as PDF every report in this list, with the filters shown">Export PDF (' + num(gs.length) + ")</button>" +
         (F.vs === "confirmed" && codedN() ? ' <button type="button" class="refresh" data-cfcsv="1" title="Download the coded incident records of this tab (CSV, ACLED-like columns). Fatalities are as reported; actors are as attributed.">Download incident record (' + num(codedN()) + ")</button>" : "") + "</p>");
       if (!it.length) h.push('<p class="cfm">No reports in this period with these filters.</p>');
-      h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + vsHtml(g) + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + reviewHtml(g, k) + matchHtml(g, k) + "</li>"; }).join("") + "</ol>");
+      h.push('<ol class="cfl">' + gs.slice(0, lim).map(function (g, k) { var i = g.lead; return '<li data-k="' + k + '">' + vsHtml(g) + repHtml(i) + alsoHtml(g) + (i.geo ? ' <span class="cfm"><button type="button" data-cfgo="' + k + '">Show on map</button></span>' : "") + reviewHtml(g, k) + matchHtml(g, k) + sensorHtml(g) + "</li>"; }).join("") + "</ol>");
       if (gs.length > lim) h.push('<button type="button" class="refresh more" data-cfmore="1">Show ' + Math.min(60, gs.length - lim) + " more</button>");
       else if (F.days > 90 && needOlder() && cur.data.older.items) h.push(cur.data._olderP ? '<p class="cfm">Loading older reports…</p>' :
         (cur.data._olderFail ? '<p class="cfbad">Older reports could not be loaded.</p>' : "") +
