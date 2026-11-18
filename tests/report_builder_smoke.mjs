@@ -117,16 +117,17 @@ const out = await p.evaluate(() => {
     itemRows: d.querySelectorAll("tr[id^='rbr-F1-']").length, rowFp: [...d.querySelectorAll("tr[id^='rbr-F1-'] .fpx")].every((x) => /SHA-256 [0-9a-f]{16,64}/.test(x.textContent)),
     cites: [...d.querySelectorAll("a.arpc")].length, badCite: [...d.querySelectorAll("a.arpc")].filter((a) => !d.querySelector(a.getAttribute("href"))).length,
     annex: !!d.querySelector(".rbannex") && /Almost certain/.test(d.querySelector(".rbannex").textContent), digest: /[0-9a-f]{64}/.test(d.querySelector(".rbannex").textContent),
-    rel: r.length, relD: r[0] && r[0].digest, cap: d.querySelector("figcaption") ? d.querySelector("figcaption").textContent : "" };
+    stats: d.querySelector(".rbstt") ? d.querySelector(".rbstt").textContent : "", bars: d.querySelectorAll(".rbstc rect").length, rel: r.length, relD: r[0] && r[0].digest, cap: d.querySelector("figcaption") ? d.querySelector("figcaption").textContent : "" };
 });
 ok(/^OSAP-SR-\d{8}-01 /.test(out.title), "the PDF is named by product number: " + out.title);
 ok(out.hand >= 2, "the handling line prints at the top and bottom");
-ok(["Bottom line", "Situation", "Key judgments", "Maps and figures", "Intelligence gaps", "Outlook", "Sources"].every((h) => out.h3.some((x) => x.indexOf(h) >= 0)), "every SITREP section prints in order");
+ok(["Bottom line", "Situation", "Key judgments", "Maps and figures", "Data statistics", "Intelligence gaps", "Outlook", "Sources"].every((h) => out.h3.some((x) => x.indexOf(h) >= 0)), "every SITREP section prints in order");
 ok(/Analyst judgment/.test(out.kj) && /Likely/.test(out.kj) && /55-80%/.test(out.kj) && /Moderate confidence/.test(out.kj), "the key judgment prints its label, likelihood and confidence");
 ok(out.fig === 1 && /Figure 1\./.test(out.cap) && /centre/.test(out.cap) && /snip SHA-256 [0-9a-f]{64}/.test(out.cap), "the figure prints with caption, grid references and snip digest");
 ok(out.itemRows === s.items && out.rowFp, "every item on the snip prints as its own reference with its SHA-256 (" + out.itemRows + ")");
 ok(out.cites >= 4 && out.badCite === 0, "every citation in the product links to its reference (" + out.cites + ")");
 ok(out.annex && out.digest && out.rel === 1 && /^[0-9a-f]{64}$/.test(out.relD), "the QC annex, analytic standards and product SHA-256 print; release v1 is recorded");
+ok(/Distinct sources/.test(out.stats) && /By source type/.test(out.stats) && out.bars > 0, "the data statistics print with source mix and the items-per-day chart");
 if (OUT) { await p.emulateMedia({ media: "print" }); await p.pdf({ path: join(OUT, "rb-product.pdf"), format: "A4", printBackground: true }); await p.emulateMedia({ media: "screen" }); }
 
 // re-render keeps the earlier version and moves the figure to the new one

@@ -40,6 +40,13 @@ cited (warn); casualty and count figures in the situation are cited (warn).
 Maps: caption, area, base map credit, capture time (block); the key lists exactly the symbols drawn (block); more than 120
 marks, items cut at 300, empty map, snip older than 24 h before the as-of time, figure never cited (warn).
 
+## Data statistics
+
+Shane, 2026-11-18: "having data statistics is always good too". Section 5 of the SITREP counts what the product cites, each
+item once: items, distinct sources, publish-date span, mapped and linked shares, source-type mix, top sources and items per
+day for the last 14 days. QC warns when more than half the items come from one source (D1) or are official or state-media
+claims (D2). Counts describe the reporting, not events, and figures inside reports are never added up.
+
 ## Milestones
 
 1. **This PR.** Map snip (drawn area or current view) with north arrow, scale bar, key, lat/long grid, as-of stamp and base

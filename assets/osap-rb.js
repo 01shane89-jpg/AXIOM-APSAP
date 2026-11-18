@@ -229,6 +229,7 @@
       '<h3>6. Outlook and indicators to watch</h3>' + txtArea("b.outlook", b.outlook.text, 3, "Indicators and the time frame") +
       '<h3>Sources</h3><ol class="rbsrcs">' + p.srcs.map(srcLine).join("") + "</ol>" +
       '<div class="rbrow"><button type="button" class="mini" data-rba="addsrc">+ Source link</button> <button type="button" class="mini" data-rba="addwork">+ Saved items from My work</button></div>' +
+      '<h3>Data statistics</h3>' + statsHtml(C.stats(p, byId)) +
       "</section>";
   }
   function qcHtml(list) {
@@ -391,10 +392,35 @@
       '<h3 class="tls">2. Situation' + originTag(b.situation) + "</h3>" + (b.situation.text.trim() ? paras(b.situation.text) : '<p class="bm">Not stated.</p>') +
       '<h3 class="tls">3. Key judgments</h3>' + kj +
       (figs ? '<h3 class="tls">4. Maps and figures</h3>' + figs : "") +
-      '<h3 class="tls">5. Intelligence gaps' + originTag(b.gaps) + "</h3>" + (b.gaps.text.trim() ? paras(b.gaps.text) : '<p class="bm">Not stated.</p>') +
-      '<h3 class="tls">6. Outlook and indicators to watch' + originTag(b.outlook) + "</h3>" + (b.outlook.text.trim() ? paras(b.outlook.text) : '<p class="bm">Not stated.</p>') +
+      '<h3 class="tls">' + (figs ? 5 : 4) + '. Data statistics</h3>' + statsHtml(C.stats(p, byId)) +
+      '<h3 class="tls">' + (figs ? 6 : 5) + '. Intelligence gaps' + originTag(b.gaps) + "</h3>" + (b.gaps.text.trim() ? paras(b.gaps.text) : '<p class="bm">Not stated.</p>') +
+      '<h3 class="tls">' + (figs ? 7 : 6) + '. Outlook and indicators to watch' + originTag(b.outlook) + "</h3>" + (b.outlook.text.trim() ? paras(b.outlook.text) : '<p class="bm">Not stated.</p>') +
       '<h3 class="tls">Sources</h3>' + srcs + annex +
       '<footer class="tlrf">' + esc(p.no) + " v" + rel.v + " · built in OSAP from open sources; sources are linked, not stored. Nothing in this product changes what a source said." + '<div class="rbhand">' + esc(p.handling) + "</div></footer></article>";
+  }
+  /* data statistics: fixed counts, never added-up casualty figures */
+  function statsHtml(st) {
+    if (!st.n) return '<p class="bm">No items yet: add a snip or a source.</p>';
+    var pct = function (n) { var v = 100 * n / st.n; return (v > 0 && v < 1 ? "<1" : Math.round(v)) + "%"; };
+    var max = st.days.reduce(function (x, d) { return Math.max(x, d[1]); }, 1), bw = 26, H = 70;
+    var bars = st.days.map(function (d, i) {
+      var h = d[1] ? Math.max(2, Math.round(H * d[1] / max)) : 0, x = i * bw;
+      return '<rect x="' + (x + 3) + '" y="' + (H - h + 14) + '" width="' + (bw - 6) + '" height="' + h + '" fill="#2b6a99"/>' +
+        (d[1] ? '<text x="' + (x + bw / 2) + '" y="' + (H - h + 11) + '" text-anchor="middle">' + d[1] + "</text>" : "") +
+        '<text x="' + (x + bw / 2) + '" y="' + (H + 26) + '" text-anchor="middle">' + d[0].slice(8) + "</text>";
+    }).join("");
+    var chart = st.days.length ? '<figure class="rbstc"><svg viewBox="0 0 ' + st.days.length * bw + " " + (H + 30) + '" role="img" aria-label="Items per day, last 14 days" font-family="system-ui,sans-serif" font-size="9" fill="#26323c">' +
+      '<path d="M0 ' + (H + 14) + "H" + st.days.length * bw + '" stroke="#9fb0bf"/>' + bars + "</svg><figcaption>Items per day (UTC), the 14 days to " + esc(st.days[st.days.length - 1][0]) + ", by publish date.</figcaption></figure>" : "";
+    return '<div class="rbst"><table class="tlrkt rbstt"><tbody>' +
+      "<tr><th>Items cited from</th><td>" + st.n + " (each counted once)</td></tr>" +
+      "<tr><th>Distinct sources</th><td>" + st.sources + "</td></tr>" +
+      "<tr><th>Publish dates</th><td>" + (st.from ? esc(C.dtg(st.from)) + " to " + esc(C.dtg(st.to)) + " · " + st.dated + " dated" : "none stated") + "</td></tr>" +
+      "<tr><th>On the map</th><td>" + st.mapped + " (" + pct(st.mapped) + ")</td></tr>" +
+      "<tr><th>With a link</th><td>" + st.linked + " (" + pct(st.linked) + ")</td></tr>" +
+      "<tr><th>By source type</th><td>" + st.types.map(function (t) { return esc(LBL[t[0]] || t[1]) + " " + t[2] + " (" + pct(t[2]) + ")"; }).join(" · ") + "</td></tr>" +
+      "<tr><th>Top sources</th><td>" + st.top.map(function (s) { return esc(s[0]) + " " + s[1]; }).join(" · ") + "</td></tr>" +
+      "</tbody></table>" + chart + "</div>" +
+      '<p class="rbcm">Counts of what this product cites, by fixed rules. They describe the reporting, not events on the ground: one event can be reported many times, and figures inside reports are never added up.</p>';
   }
   function exportPdf(p, btn) {
     var box = el.querySelector(".rbqc"), msg = box && box.querySelector("[data-rb-msg]");
@@ -450,6 +476,8 @@
     ".rbt.cl{background:#eef2f6;color:#26323c;border:1px solid #c9d3dd}.rbt.ob{background:#e3f1e5;color:#1f5f2a;border:1px solid #b9dbbf}.rbt.aj{background:#e5edf7;color:#0b2340;border:1px solid #9fb6d3}" +
     ".rbp .rbkjp{padding-left:20px}.rbp .rbkjp li{margin:5px 0 8px;line-height:1.4}.rbp .rbkm{font-size:12px;color:#26323c;margin-top:2px}.rbp figure{margin:6px 0 8px;break-inside:avoid;page-break-inside:avoid}.rbp figcaption{font-size:12.5px;margin-top:4px;line-height:1.35}" +
     ".rbp table.rbit{table-layout:fixed;width:100%;border-collapse:collapse}.rbp table.rbit col.ckn{width:64px}.rbp table.rbit td{vertical-align:top;padding:3px 4px;border-top:1px solid #dde3e8;overflow-wrap:anywhere}.rbp table.rbit th{text-align:left}" +
+    ".rbst{display:block}.rbst table.rbstt{width:100%;table-layout:fixed;border-collapse:collapse}.rbstt th{width:130px;text-align:left;font-weight:600;padding:3px 8px 3px 0;vertical-align:top}.rbstt td{padding:3px 0;overflow-wrap:anywhere;white-space:normal}" +
+    ".rbstt tr{border-top:1px solid #dde3e8}.rbstc{margin:8px 0 0;max-width:440px;break-inside:avoid;page-break-inside:avoid}.rbstc svg{display:block;width:100%;height:auto}.rbstc figcaption{font-size:11.5px;color:#4a5866}" +
     ".rbp .rbsp li{margin:4px 0;font-size:12.5px;overflow-wrap:anywhere}.rbp .rbscale{max-width:360px}.rbp .rbconf,.rbp .rbqlp{font-size:12px}.rbp .mg{font-family:ui-monospace,monospace;font-size:11px;overflow-wrap:anywhere}" +
     "@media print{.rbp .rbit{font-size:9px}.rbp h3.tls{break-after:avoid}.rbp .rbannex{break-before:page;page-break-before:always}.rbt{-webkit-print-color-adjust:exact;print-color-adjust:exact}}";
   D.head.appendChild(css);

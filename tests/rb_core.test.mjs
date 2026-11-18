@@ -101,6 +101,16 @@ p.title = "Hormuz";
 const i1 = C.releaseInput(p, byId); snip.caption = "x"; ok(C.releaseInput(p, byId) === i1, "release digest input ignores the snip's own caption when the figure has one");
 p.figs[0].caption = "changed"; ok(C.releaseInput(p, byId) !== i1, "release digest input changes when the figure caption changes");
 
+// data statistics
+const st = C.stats(p, byId);
+ok(st.n === 3 && st.sources === 3 && st.mapped === 2 && st.linked === 3, "stats: items counted once, sources, mapped and linked (" + JSON.stringify([st.n, st.sources, st.mapped, st.linked]) + ")");
+ok(st.official === 1 && st.types.some((t) => t[0] === "official" && t[2] === 1) && st.days.length === 14 && st.from && st.to, "stats: source types and the 14-day series");
+p.figs.push({ clip: "c1", caption: "same snip twice" }); ok(C.stats(p, byId).n === 3, "an item on two figures counts once"); p.figs.pop();
+const many = C.makeSnip({ id: "c2", P: snip.P, baseAttr: "x", items: Array.from({ length: 6 }, (_, i) => ({ no: "R" + (i + 1), title: "Statement " + i, url: "https://gov.example/" + i, src: "Ministry", claim: true, fp: String(i).repeat(64) })) }, NOW);
+const p2 = C.newProduct(store, "sitrep", {}, NOW); p2.figs.push({ clip: "c2", caption: "x" });
+const q2 = C.qc(p2, { c2: many }, NOW);
+ok(q2.some((x) => x.id === "D1") && q2.some((x) => x.id === "D2"), "one-source and mostly-official reporting both warn");
+
 // store hygiene
 const bad = C.normStore({ schema: "osap-rb/1", clips: [{ id: "x", kind: "evidence" }, null, { id: "c", kind: "snip" }], products: [{ id: "p", tpl: "nope" }] });
 ok(bad.clips.length === 1 && bad.products.length === 0, "the store drops unknown clip kinds and templates");

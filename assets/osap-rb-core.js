@@ -55,7 +55,7 @@
   var TEMPLATES = {
     sitrep: { name: "SITREP", long: "Situation report", code: "SR",
       sections: [["bluf", "Bottom line up front"], ["situation", "Situation"], ["kj", "Key judgments"], ["figs", "Maps and figures"],
-        ["gaps", "Intelligence gaps"], ["outlook", "Outlook and indicators to watch"], ["sources", "Sources"]] }
+        ["stats", "Data statistics"], ["gaps", "Intelligence gaps"], ["outlook", "Outlook and indicators to watch"], ["sources", "Sources"]] }
   };
   var LIMITS = { bluf: 700, situation: 6000, block: 4000, kj: 600, title: 140, kjs: 12, figs: 12, sources: 60, crowded: 120, staleH: 24, snipItems: 300 };
 
@@ -168,6 +168,32 @@
     return out;
   }
 
+  /* ---------- data statistics: fixed counts over everything the product cites from (Shane 2026-11-18: "having data
+     statistics is always good too"). Items shown on more than one figure count once (same SHA-256, else same link and title). */
+  function stats(p, clipsById) {
+    var seen = {}, rows = [];
+    (p.figs || []).forEach(function (f) { var c = clipsById[f.clip]; if (c) c.items.forEach(function (it) { rows.push(it); }); });
+    (p.srcs || []).forEach(function (s) { rows.push({ title: s.title, url: s.url, src: s.src, pub: s.pub, stype: s.stype || "", fp: s.fp, lat: null, standalone: 1 }); });
+    rows = rows.filter(function (it) { var k = it.fp || (it.url + "|" + it.title); if (seen[k]) return false; seen[k] = 1; return true; });
+    var byType = {}, bySrc = {}, days = {}, mapped = 0, linked = 0, t0 = 0, t1 = 0;
+    rows.forEach(function (it) {
+      var ty = it.stype || "other"; byType[ty] = (byType[ty] || 0) + 1;
+      var sn = String(it.src || "").trim() || (/^https?:\/\/([^\/?#]+)/i.exec(it.url || "") || [])[1] || "Not stated"; sn = sn.replace(/^www\./, "");
+      bySrc[sn] = (bySrc[sn] || 0) + 1;
+      if (it.lat != null) mapped++;
+      if (safeUrl(it.url)) linked++;
+      if (it.pub) { t0 = t0 ? Math.min(t0, it.pub) : it.pub; t1 = Math.max(t1, it.pub); var d = new Date(it.pub).toISOString().slice(0, 10); days[d] = (days[d] || 0) + 1; }
+    });
+    var srcs = Object.keys(bySrc).map(function (k) { return [k, bySrc[k]]; }).sort(function (a, b) { return b[1] - a[1] || a[0].localeCompare(b[0]); });
+    var types = SRC_TYPES.map(function (t) { return [t[0], t[1], byType[t[0]] || 0]; }).filter(function (t) { return t[2]; });
+    /* the last 14 days that hold items, ending at the newest */
+    var dayList = [];
+    if (t1) for (var i = 13; i >= 0; i--) { var dd = new Date(Date.parse(new Date(t1).toISOString().slice(0, 10)) - i * 864e5).toISOString().slice(0, 10); dayList.push([dd, days[dd] || 0]); }
+    var top = srcs.length ? srcs[0][1] / rows.length : 0;
+    return { n: rows.length, sources: srcs.length, top: srcs.slice(0, 8), types: types, mapped: mapped, linked: linked, dated: Object.keys(days).reduce(function (x, d) { return x + days[d]; }, 0),
+      from: t0 || null, to: t1 || null, days: dayList, topShare: top, official: byType.official || 0, state: byType["state-media"] || 0, social: byType.social || 0 };
+  }
+
   /* ---------- the product QC check ---------- */
   function qc(p, clipsById, now) {
     var out = [], T = TEMPLATES[p.tpl] || TEMPLATES.sitrep, refs = refMap(p, clipsById), used = {};
@@ -264,6 +290,10 @@
       if (!s.fp) add("warn", "S3", w, "No SHA-256 fingerprint.");
       if (!used["S" + (i + 1)]) add("warn", "S6", w, "Listed but never cited.");
     });
+    /* data balance: a product that leans on one source, or mostly on official claims, says so */
+    var st = stats(p, clipsById);
+    if (st.n >= 5 && st.topShare > 0.5) add("warn", "D1", "Data statistics", Math.round(st.topShare * 100) + "% of the items come from one source (" + st.top[0][0] + "). Say so in the judgments, or add independent sources.");
+    if (st.n >= 5 && (st.official + st.state) / st.n > 0.5) add("warn", "D2", "Data statistics", "Most items are official or state-media claims (" + (st.official + st.state) + " of " + st.n + "). Treat the picture as the government's account.");
     figs.forEach(function (f, i) { if (!used["F" + (i + 1)]) add("warn", "F9", "Figure " + (i + 1), "Not referred to in the text. Cite [F" + (i + 1) + "] or an item on it."); });
     return out;
   }
@@ -296,5 +326,5 @@
   return { SCHEMA: SCHEMA, LIKELIHOOD: LIKELIHOOD, CONFIDENCE: CONFIDENCE, SRC_TYPES: SRC_TYPES, TEMPLATES: TEMPLATES, LIMITS: LIMITS,
     lik: lik, conf: conf, srcType: srcType, dtg: dtg, canon: canon, safeUrl: safeUrl, emptyStore: emptyStore, normStore: normStore,
     newProduct: newProduct, newKj: newKj, block: block, makeSnip: makeSnip, snipDigestInput: snipDigestInput, refMap: refMap, cites: cites,
-    qc: qc, qcSummary: qcSummary, releaseInput: releaseInput, release: release };
+    qc: qc, qcSummary: qcSummary, stats: stats, releaseInput: releaseInput, release: release };
 });
