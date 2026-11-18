@@ -194,6 +194,7 @@ tests/dzso_smoke.mjs
 tests/lz_landcover_smoke.mjs
 tests/terrain_smoke.mjs
 tests/lidar_smoke.mjs
+tests/terrain_layers_smoke.mjs
 tests/ref_layers_smoke.mjs
 tests/selected_contrast_smoke.mjs
 tests/event_pin_smoke.mjs

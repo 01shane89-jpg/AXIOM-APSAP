@@ -142,6 +142,7 @@ jobs:
       - run: node tests/flash.test.mjs
       - run: node tests/flash_loop.test.mjs
       - run: node tests/terrain.test.mjs
+      - run: node tests/terrain_layers.test.mjs
       - run: node tests/facility_intel.test.mjs
       - run: node tests/econ.test.mjs
       # risk rating equivalents: the formula, the job on the repo's feeds, official advisories never an input (tools/risk_lib.mjs)

@@ -6977,7 +6977,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      whenever the data set changes, and on start. The base map choice stays. */
   /* elevation shading (data-hs, data-lidar) and country borders (data-bd) belong with the base map, so they stay on across tabs */
   function extrasOff() {
-    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-dsx]):not([data-hs]):not([data-bd]):not([data-pop]):not([data-lidar]):not([data-satg]):not([data-rl]), input[data-ter]").forEach(function (i) {
+    document.querySelectorAll(".mlpanel input[type=checkbox]:not([data-ds]):not([data-dsx]):not([data-hs]):not([data-bd]):not([data-pop]):not([data-lidar]):not([data-tl]):not([data-satg]):not([data-rl]), input[data-ter]").forEach(function (i) {
       if (!i.checked) return;
       i.checked = false; i.dispatchEvent(new Event("change", { bubbles: true }));
     });
@@ -10052,6 +10052,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-reflayers.js"></script>
 <!-- LiDAR hillshade and LiDAR coverage (Map overlays > Elevation and terrain analysis), LiDAR heights for Terrain analysis -->
 <script src="assets/osap-lidar.js"></script>
+<!-- terrain layers over the whole map: slope, aspect, contours, elevation colors, ridges and valleys, low ground (Map overlays > Elevation and terrain analysis) -->
+<script src="assets/osap-terrainlayers.js"></script>
 <script src="assets/osap-offline.js"></script>
 <script src="assets/osap-move.js"></script>
 <script src="assets/osap-safety.js"></script>
