@@ -100,7 +100,14 @@
      line opens the country brief, and a flashpoint, warning or AI line unfolds the reports behind it, each linking to the original.
      A flashpoint built before its line carried its reports finds them in the watch list file (data/live/aiwatch.js) by name. */
   var openW = {}, AIW_FILE = "data/live/aiwatch.js", aiwState = 0;
-  function watchAll(d) { return (d.ai_watch || []).map(function (w) { return { from: "ai", text: w.text, refs: w.refs }; }).concat(d.watch || []); }
+  /* a country brief's watch point is an AI draft from its as_of day: shown only while that is within 30 days of the summary's
+     window (the same rule as tools/daily_lib.mjs briefFresh), so summaries built before that rule never show a stale draft */
+  function briefOk(w, d) {
+    if (w.from !== "brief") return true;
+    var t = Date.parse(String(w.asof || "").slice(0, 10) + "T00:00:00Z"), e = Date.parse((d.window && d.window.to) || "") || Date.now();
+    return isFinite(t) && e - t <= 30 * 864e5 && t - e <= 864e5;
+  }
+  function watchAll(d) { return (d.ai_watch || []).map(function (w) { return { from: "ai", text: w.text, refs: w.refs }; }).concat((d.watch || []).filter(function (w) { return briefOk(w, d); })); }
   function aiwItem(w) {
     var A = W.OSAP_AIWATCH, a = A && A.areas && A.areas[CC], t = w.fp || "";
     var it = a && (a.items || []).filter(function (x) { return x && x.title && (t ? x.title === t : String(w.text).indexOf(x.title) === 0); })[0];
@@ -207,7 +214,7 @@
       "<h2>Key events</h2><ol>" + (d.events || []).map(function (e) { return "<li><b>" + esc(e.text) + "</b>" + cite(e.refs) + '<div class="pm">' + (e.where ? esc(e.where) + " · " : "") + esc(e.outlets.join(", ")) + " · " + esc(when(e.when)) + (e.claim ? " · state media or official, a claim" : e.some_state ? " · includes state media" : "") + (e.mt ? " · machine translated" : "") + "</div>" +
         (function (x) { return x ? '<div class="dg">(AI generated digest of [' + x.n + "], draft, not analyst-approved) " + esc(x.g.what) + (x.g.where ? " (" + esc(x.g.where) + ")" : "") + "</div>" : ""; })(digestOf(e, d)) + "</li>"; }).join("") + "</ol>" +
       "<h2>What to watch</h2><ul>" + (d.ai_watch || []).map(function (w) { return "<li>(AI generated) " + esc(ct(w.text)) + cite(w.refs) + "</li>"; }).join("") +
-      (d.watch || []).map(function (w) { return "<li>" + esc((FROM[w.from] ? FROM[w.from] + (w.from === "brief" && w.asof ? " of " + w.asof + ", AI draft" : "") + ": " : "") + w.text) + cite(w.refs) + "</li>"; }).join("") + "</ul>" +
+      (d.watch || []).filter(function (w) { return briefOk(w, d); }).map(function (w) { return "<li>" + esc((FROM[w.from] ? FROM[w.from] + (w.from === "brief" && w.asof ? " of " + w.asof + ", AI draft" : "") + ": " : "") + w.text) + cite(w.refs) + "</li>"; }).join("") + "</ul>" +
       "<h2>Sources</h2><ol>" + d.refs.map(function (r) { return '<li class="pm">' + esc(r.outlet) + ", " + esc(when(r.date)) + ": " + esc(r.title) + (/g/.test(r.flags || "") ? " (official or state media: a claim)" : "") + (/m/.test(r.flags || "") ? " (machine translated)" : "") + " · " + esc(r.url) + "</li>"; }).join("") + "</ol>" +
       '<p class="pm">From ' + (b.reports || 0) + " reports by " + (b.outlets || 0) + " outlets. Situational awareness only: reports are the sources' claims and are not verified; statements by any government, including figures, are its claims. " +
       ((d.gaps || []).length ? "Gaps: " + esc(d.gaps.join(" ")) + " " : "") + "SHA-256 " + esc(d.fp || "") + "</p>";
