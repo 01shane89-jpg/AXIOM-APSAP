@@ -1004,27 +1004,61 @@
   var KCOL = { P: "ff3e8a2b", A: "ffd67e1c", C: "ff0c59e8", E: "ff2a2ac9", "": "ff70665c" };
   /* the package as KML: a folder per option with its line, nodes and findings; every placemark carries source, time, basis
      and fingerprint */
-  function toKml(pk) {
+  /* the icons a KMZ carries (files/<key>.png, drawn here), so Google Earth and ATAK show them with no connection */
+  var KICO = { origin: ["#212529", "O"], dest: ["#5c6670", "D"], cp: ["#212529", "CP"], node: ["#343a40", "N"], dep: ["#e67700", "B"], air: ["#1864ab", "H"],
+    haz: ["#c92a2a", "!"], fuel: ["#2b8a3e", "F"], post: ["#5f3dc4", "E"], pt: ["#7048e8", "PT"], gxp: ["#2b8a3e", "GXP"], axp: ["#1864ab", "AXP"] };
+  function kIcons() {
+    return Object.keys(KICO).map(function (k) {
+      var c = D.createElement("canvas"), s = 64; c.width = c.height = s;
+      var g = c.getContext("2d"), t = KICO[k][1];
+      g.beginPath(); g.arc(s / 2, s / 2, s / 2 - 3, 0, 2 * Math.PI); g.fillStyle = KICO[k][0]; g.fill(); g.lineWidth = 5; g.strokeStyle = "#fff"; g.stroke();
+      g.fillStyle = "#fff"; g.font = "bold " + (t.length > 2 ? 17 : t.length > 1 ? 22 : 30) + "px sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(t, s / 2, s / 2 + 1);
+      var b = atob(c.toDataURL("image/png").split(",")[1]), u = new Uint8Array(b.length);
+      for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
+      return { name: "files/" + k + ".png", data: u };
+    });
+  }
+  /* the plan as KML: a folder per option (route, legs, destination, checkpoints, nodes, crossings, air, hazards, fuel, posts),
+     then the analyst's control measures and points. Every point says its MGRS grid. icons: the KMZ carries files/<key>.png */
+  function toKml(pk, icons) {
     var pl = pk.plan, h = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + xml(pk.name) + "</name>" +
-      "<description>" + xml("OSAP evacuation route package, frozen " + new Date(pk.made).toISOString() + ". Automatic draft from open data; roles and statuses are the analyst's. SHA-256 of the plan: " + pk.fp) + "</description>";
+      "<description>" + xml("OSAP evacuation plan, exported " + new Date(pk.made).toISOString() + ". Automatic draft from open data; roles, statuses and confirmed checkpoints are the analyst's, everything else is OSAP's proposal and unverified." + (pk.fp ? " SHA-256 of the plan: " + pk.fp : "")) + "</description>";
     Object.keys(KCOL).forEach(function (k) { h += '<Style id="r' + (k || "x") + '"><LineStyle><color>' + KCOL[k] + "</color><width>4</width></LineStyle></Style>"; });
-    function pm(name, lat, lon, f, extra) {
-      return "<Placemark><name>" + xml(name) + "</name>" + (extra ? "<description>" + xml(extra) + "</description>" : "") +
-        (f ? "<ExtendedData>" + [["source", f.srcRef || f.src || f.url || ""], ["retrieved", f.got ? new Date(f.got).toISOString() : ""], ["basis", f.basis || ""], ["sha256", f.fp || ""]].map(function (d) { return '<Data name="' + d[0] + '"><value>' + xml(d[1]) + "</value></Data>"; }).join("") + "</ExtendedData>" : "") +
+    h += '<Style id="lfly"><LineStyle><color>ffab6418</color><width>2</width></LineStyle></Style><Style id="lgnd"><LineStyle><color>ff70665c</color><width>3</width></LineStyle></Style>';
+    Object.keys(KICO).forEach(function (k) {
+      h += '<Style id="i' + k + '"><IconStyle><scale>' + (k === "haz" || k === "fuel" || k === "dep" ? 0.7 : 0.9) + "</scale>" + (icons ? "<Icon><href>files/" + k + ".png</href></Icon>" : "") +
+        "</IconStyle><LabelStyle><scale>0.8</scale></LabelStyle></Style>";
+    });
+    function ext(f, gr) {
+      var d = [["grid", gr]];
+      if (f) d = d.concat([["source", f.srcRef || f.src || f.url || ""], ["retrieved", f.got ? new Date(f.got).toISOString() : ""], ["basis", f.basis || ""], ["sha256", f.fp || ""]]);
+      return "<ExtendedData>" + d.filter(function (x) { return x[1]; }).map(function (x) { return '<Data name="' + x[0] + '"><value>' + xml(x[1]) + "</value></Data>"; }).join("") + "</ExtendedData>";
+    }
+    function pm(name, lat, lon, f, extra, ico) {
+      var gr = grid(lat, lon);
+      return "<Placemark><name>" + xml(name) + "</name><description>" + xml(gr + (extra ? ". " + extra : "")) + "</description>" + (ico ? "<styleUrl>#i" + ico + "</styleUrl>" : "") + ext(f, gr) +
         "<Point><coordinates>" + (+lon).toFixed(6) + "," + (+lat).toFixed(6) + ",0</coordinates></Point></Placemark>";
     }
-    h += "<Folder><name>Origin</name>" + pm("Origin: " + (pl.origin.label || "origin"), pl.origin.lat, pl.origin.lon, null, pl.origin.how) + "</Folder>";
+    function ln(name, coords, sty, extra) {
+      return "<Placemark><name>" + xml(name) + "</name>" + (extra ? "<description>" + xml(extra) + "</description>" : "") + "<styleUrl>#" + sty + "</styleUrl><LineString><tessellate>1</tessellate><coordinates>" +
+        coords.map(function (c) { return (+c[1]).toFixed(6) + "," + (+c[0]).toFixed(6) + ",0"; }).join(" ") + "</coordinates></LineString></Placemark>";
+    }
+    function fold(name, body) { return body ? "<Folder><name>" + xml(name) + "</name>" + body + "</Folder>" : ""; }
+    h += fold("Origin", pm("Origin: " + (pl.origin.label || "origin"), pl.origin.lat, pl.origin.lon, null, pl.origin.how, "origin"));
     pl.opts.forEach(function (o) {
+      var lg = legsOf(o), haz = [];
+      ((o.along && o.along.haz && o.along.haz.ranges) || []).forEach(function (rg) { rg.items.filter(function (x) { return x.p; }).forEach(function (x) { haz.push(pm(x.kind + " (km " + x.at + ")", x.p[0], x.p[1], x, x.text, "haz")); }); });
       h += "<Folder><name>" + xml((o.role ? o.role + " " + ROLE_N[o.role] + ": " : "") + o.dest.i.name) + "</name><description>" + xml(o.label + ". Status " + (o.st || o.prop.st) + (o.st ? " (set by the analyst)" : " (OSAP proposal)") + ". " + dist(o.route.m) + ", " + dur(o.route.s) + ".") + "</description>" +
-        "<Placemark><name>" + xml("Route " + (o.role || o.id)) + '</name><styleUrl>#r' + (o.role || "x") + "</styleUrl><LineString><tessellate>1</tessellate><coordinates>" + o.route.coords.map(function (c) { return (+c[1]).toFixed(6) + "," + (+c[0]).toFixed(6) + ",0"; }).join(" ") + "</coordinates></LineString></Placemark>" +
-        pm("Destination: " + o.dest.i.name, o.dest.i.lat, o.dest.i.lon, null, o.kind === "posts" ? "Not verified as an evacuation destination." : "") +
-        (o.nodes || []).map(function (n) { return pm((NODE_N[n.type] || n.type) + ": " + n.name, n.lat, n.lon, null, "Placed by the analyst."); }).join("") +
-        (o.cps || []).map(function (q) { return pm(cpNm(o, q) + " (km " + q.km + ")", q.lat, q.lon, null, grid(q.lat, q.lon) + ". " + q.why + ". " + (q.st === "proposed" ? "Proposed by OSAP, unverified." : "Checked by the analyst.")); }).join("") +
-        ((o.deps && o.deps.list) || []).map(function (d) { return pm(DEP_K[d.kind] + (d.name !== DEP_K[d.kind] ? ": " + d.name : "") + " (km " + d.km + ")", d.lat, d.lon, d, d.status && d.status.st); }).join("") +
-        ((o.air && o.air.list) || []).map(function (a) { return pm(a.cls + ": " + a.name, a.lat, a.lon, a, a.kind); }).join("") +
-        ((o.along && o.along.haz && o.along.haz.ranges) || []).map(function (rg) { return rg.items.filter(function (x) { return x.p; }).map(function (x) { return pm(x.kind + " (km " + x.at + ")", x.p[0], x.p[1], x, x.text); }).join(""); }).join("") +
-        ((o.along && o.along.sus && o.along.sus.fuel) || []).map(function (f) { return pm("Fuel: " + f.name, f.lat, f.lon, f, "km " + f.km); }).join("") +
-        ((o.along && o.along.us && o.along.us.list) || []).map(function (u) { return pm(u.name, u.lat, u.lon, u, "Not verified as an evacuation destination."); }).join("") + "</Folder>";
+        ln("Route " + (o.role || o.id), o.route.coords, "r" + (o.role || "x"), dist(o.route.m) + ", " + dur(o.route.s) + (o.route.src ? ". " + o.route.src : "")) +
+        (lg.length > 1 ? fold("Legs", lg.map(function (l, i) { return ln("Leg " + (i + 1) + ": " + (l.a.name || "") + " to " + (l.b.name || ""), l.coords || [], flies(l.mode) ? "lfly" : "lgnd", (l.mode || "") + (l.m ? ", " + dist(l.m) : "") + (l.s ? ", " + dur(l.s) : "") + (l.bad ? ". Marked unusable." : "")); }).join("")) : "") +
+        pm("Destination: " + o.dest.i.name, o.dest.i.lat, o.dest.i.lon, null, o.kind === "posts" ? "Not verified as an evacuation destination." : "", "dest") +
+        fold("Checkpoints", (o.cps || []).map(function (q) { return pm(cpNm(o, q) + (q.st === "proposed" ? "?" : "") + " (km " + q.km + ")", q.lat, q.lon, null, q.why + ". " + (q.st === "proposed" ? "Proposed by OSAP, unverified." : "Checked by the analyst."), "cp"); }).join("")) +
+        fold("Nodes (placed by you)", (o.nodes || []).map(function (n) { return pm((NODE_N[n.type] || n.type) + ": " + n.name, n.lat, n.lon, null, "Placed by the analyst.", "node"); }).join("")) +
+        fold("Crossings and dependencies", ((o.deps && o.deps.list) || []).map(function (d) { return pm(DEP_K[d.kind] + (d.name !== DEP_K[d.kind] ? ": " + d.name : "") + " (km " + d.km + ")", d.lat, d.lon, d, d.status && d.status.st, "dep"); }).join("")) +
+        fold("Air: airfields, helipads, landing zones", ((o.air && o.air.list) || []).map(function (a) { return pm(a.cls + ": " + a.name, a.lat, a.lon, a, a.kind, "air"); }).join("")) +
+        fold("Hazards along the route", haz.join("")) +
+        fold("Fuel", ((o.along && o.along.sus && o.along.sus.fuel) || []).map(function (f) { return pm("Fuel: " + f.name, f.lat, f.lon, f, "km " + f.km, "fuel"); }).join("")) +
+        fold("Posts and safe places", ((o.along && o.along.us && o.along.us.list) || []).map(function (u) { return pm(u.name, u.lat, u.lon, u, "Not verified as an evacuation destination.", "post"); }).join("")) + "</Folder>";
     });
     return h + cmKml(pl) + "</Document></kml>";
   }
@@ -1041,7 +1075,7 @@
     var k = toKml(pk), base = "osap-evac-" + fname(pk.name) + "-" + new Date(pk.made).toISOString().slice(0, 10);
     if (kmz) {
       if (!(W.OSAP_WS && W.OSAP_WS.zip)) { S.msg = "KMZ needs the Workspaces module, which is not loaded: saved as KML instead."; saveFile(base + ".kml", new Blob([k], { type: "application/vnd.google-earth.kml+xml" })); render(); return; }
-      saveFile(base + ".kmz", new Blob([W.OSAP_WS.zip([{ name: "doc.kml", data: k }])], { type: "application/vnd.google-earth.kmz" }));
+      saveFile(base + ".kmz", new Blob([W.OSAP_WS.zip([{ name: "doc.kml", data: toKml(pk, true) }].concat(kIcons()))], { type: "application/vnd.google-earth.kmz" }));
     } else saveFile(base + ".kml", new Blob([k], { type: "application/vnd.google-earth.kml+xml" }));
     S.msg = (kmz ? "KMZ" : "KML") + " saved to your downloads."; render();
   }
@@ -1758,7 +1792,7 @@
     function cs(pts, close) { var q = pts.concat(close ? [pts[0]] : []); return q.map(function (p) { return (+p[1]).toFixed(6) + "," + (+p[0]).toFixed(6) + ",0"; }).join(" "); }
     return "<Folder><name>Control measures (analyst)</name>" + list.map(function (x) {
       var g = CM[x.k].g, st = "<Style><LineStyle><color>" + KC[x.k] + "</color><width>3</width></LineStyle><PolyStyle><color>" + (x.k === "avoid" ? "402a2ac9" : "18d67e1c") + "</color></PolyStyle></Style>";
-      return "<Placemark><name>" + xml(x.name) + "</name><description>" + xml(CM[x.k].n + ". " + (x.how || "Placed by the analyst") + ".") + "</description>" + st +
+      return "<Placemark><name>" + xml(x.name) + "</name><description>" + xml((g === "pt" ? grid(x.pts[0][0], x.pts[0][1]) + ". " : "") + CM[x.k].n + ". " + (x.how || "Placed by the analyst") + ".") + "</description>" + (g === "pt" ? "<styleUrl>#i" + x.k + "</styleUrl>" : "") + st + (g === "pt" ? '<ExtendedData><Data name="grid"><value>' + xml(grid(x.pts[0][0], x.pts[0][1])) + "</value></Data></ExtendedData>" : "") +
         (g === "pt" ? "<Point><coordinates>" + cs(x.pts) + "</coordinates></Point>" : g === "line" ? "<LineString><tessellate>1</tessellate><coordinates>" + cs(x.pts) + "</coordinates></LineString>" : "<Polygon><outerBoundaryIs><LinearRing><coordinates>" + cs(x.pts, true) + "</coordinates></LinearRing></outerBoundaryIs></Polygon>") + "</Placemark>";
     }).join("") + "</Folder>";
   }

@@ -144,7 +144,7 @@ let state, pkId, P, A;
   const kmzPath = await dl.path(), { readFile: rf } = await import("node:fs/promises"), kmz = [...(await rf(kmzPath))];
   ok(/\.kmz$/.test(dl.suggestedFilename()), "KMZ downloaded: " + dl.suggestedFilename());
   const inner = await p.evaluate((b) => { const u8 = new Uint8Array(b), es = window.OSAP_WS.unzip(u8); const e = es[0]; return { names: es.map((x) => x.name), text: new TextDecoder().decode(u8.subarray(e.off, e.off + e.csize)) }; }, kmz);
-  ok(inner.names.join() === "doc.kml" && inner.text === kml, "the KMZ holds doc.kml, the same KML");
+  ok(inner.names[0] === "doc.kml" && inner.names.filter((n) => /^files\/[a-z]+\.png$/.test(n)).length === 12 && inner.text.replace(/<Icon><href>files\/[a-z]+\.png<\/href><\/Icon>/g, "") === kml, "the KMZ holds doc.kml (the same KML, with its icons) and the icon files");
   const [dl2] = await Promise.all([p.waitForEvent("download"), p.click('#epe [data-ep-kml="' + pkId + '"]')]);
   ok(/\.kml$/.test(dl2.suggestedFilename()), "KML downloaded: " + dl2.suggestedFilename());
   await p.evaluate(() => { window.__pr = { html: "", printed: 0 }; window.open = () => ({ document: { open() {}, write(h) { window.__pr.html += h; }, close() {} }, focus() {}, print() { window.__pr.printed++; } }); });
