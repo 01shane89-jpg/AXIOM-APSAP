@@ -2275,7 +2275,31 @@
   }
 
   /* ---------- the window ---------- */
+  /* Shane 19 Nov: "when I click on anything in the side pannel for evacuation it always snaps me back to the top": every
+     render replaces the scrolling box, so its place is kept across the redraw (the window's own place too) */
   function render() {
+    var el = box(), ob = el.querySelector(".epebox"), was = !!S.active, top = ob ? ob.scrollTop : 0, top2 = el.scrollTop;
+    render0();
+    var an = S.anchor;
+    if (!!S.active !== was) return;
+    /* again once the split view has put its own buttons into the new header (a mutation observer, so just after this) */
+    function keep() {
+      var nb = el.querySelector(".epebox");
+      if (nb && nb !== ob && top) nb.scrollTop = top;
+      if (top2 && el.scrollTop !== top2) el.scrollTop = top2;
+      /* and the control that was tapped stays under the finger, even when something above it grew or shrank */
+      if (nb && an && Date.now() - an.t < 1500) { var c = null; try { c = nb.querySelectorAll(an.sel)[Math.max(0, an.n)]; } catch (e2) { c = null; } if (c && c.getBoundingClientRect().height) nb.scrollTop += c.getBoundingClientRect().top - an.y; }
+    }
+    keep(); setTimeout(keep, 0);
+  }
+  /* the tapped control, by its data-ep attribute, and where it sat on screen */
+  function anchorAt(t) {
+    var bx = D.querySelector("#epe .epebox"); if (!bx || !t || !t.closest) return;
+    for (var c = t; c && c !== bx; c = c.parentElement) {
+      for (var i = 0; i < c.attributes.length; i++) { var a = c.attributes[i]; if (/^data-ep/.test(a.name)) { var sel = "[" + a.name + '="' + String(a.value).replace(/["\\]/g, "\\$&") + '"]'; S.anchor = { sel: sel, n: Array.prototype.indexOf.call(bx.querySelectorAll(sel), c), y: c.getBoundingClientRect().top, t: Date.now() }; return; } }
+    }
+  }
+  function render0() {
     if (S.cpDirty && S.plan) { S.cpDirty = false; setTimeout(save, 0); }
     var el = box(), p = S.plan, o = S.origin;
     if (S.active) { var ah = activeHtml(); if (ah) { el.innerHTML = ah; return; } }
@@ -2595,6 +2619,7 @@
   }
 
   function onClick(e) {
+    anchorAt(e.target);
     var sm = e.target.closest("summary"), dt = sm && sm.parentNode;
     if (dt && dt.classList.contains("epecirc")) S.circOpen = !dt.open;
     if (dt && dt.classList.contains("epeshow")) S.showOpen = !dt.open;
@@ -2602,7 +2627,7 @@
     var b = e.target.closest("button"); if (!b) return;
     var k = b.getAttribute("data-ep");
     if (k === "close") close();
-    else if (k === "folders") { S.showOpen = true; render(); var tr = box().querySelector("details.epeshow"); if (tr) { tr.scrollIntoView({ block: "start", behavior: "smooth" }); var sb = tr.querySelector("summary"); if (sb) sb.focus(); } }
+    else if (k === "folders") { S.showOpen = true; S.anchor = null; render(); setTimeout(function () { var tr = box().querySelector("details.epeshow"); if (tr) { tr.scrollIntoView({ block: "start", behavior: "smooth" }); var sb = tr.querySelector("summary"); if (sb) sb.focus({ preventScroll: true }); } }, 30); }
     else if (b.hasAttribute("data-ep-cmed")) cmEditTog(b.getAttribute("data-ep-cmed"));
     else if (b.hasAttribute("data-ep-fdel")) { e.preventDefault(); foldDel(b.getAttribute("data-ep-fdel")); }
     else if (b.hasAttribute("data-ep-cm")) { var ck = b.getAttribute("data-ep-cm"); if (S.cmDraw && S.cmDraw.k === ck) { cmEnd(); S.cmmsg = ""; render(); draw(); } else cmStart(ck); }
@@ -2673,6 +2698,7 @@
   }
   function onChange(e) {
     var t = e.target;
+    if (!S.anchor || Date.now() - S.anchor.t > 500) anchorAt(t);
     if (t.hasAttribute("data-ep-role")) setRole(t.getAttribute("data-ep-role"), t.value);
     else if (t.hasAttribute("data-ep-blk")) setBlk(t.getAttribute("data-ep-blk"), t.checked);
     else if (t.hasAttribute("data-ep-cmname")) { var cx = cmOf(t.getAttribute("data-ep-cmname")); if (cx) { cx.name = clean(t.value, 40) || cmLabel(cx.k); save(); render(); draw(); } }
