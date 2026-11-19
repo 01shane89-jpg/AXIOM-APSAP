@@ -4500,6 +4500,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      a sheet that opens with the item has settled first. Never while a map tool waits for a tap (the cursor is a crosshair). */
   function mapCenterOn(ll, zoom) {
     if (!ll) return;
+    /* a map tool waiting for a tap: a click that also lands on a report point (opens it) must not move the map under the tool */
+    if (map.getContainer().style.cursor === "crosshair" || /-picking\b/.test(document.documentElement.className)) return;
     requestAnimationFrame(function () {
       var mc = map.getContainer(), mr = mc.getBoundingClientRect(); if (!mr.width || !mr.height) return;
       var bot = mr.bottom, rail = document.querySelector(".rail");
