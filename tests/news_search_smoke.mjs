@@ -2,7 +2,7 @@
 // as on 2026-11-18 (EBC rows dated 11 Dec, El Nacional 3 Dec, an NHC note 19 Nov): the first search skips days after
 // tomorrow, reads tomorrow without counting it, and covers today and the two days before, so "outage" in the United States
 // finds the FAA and United stories; today holding only a few headlines (the index a few hours behind) does not shorten it;
-// "Search older days" and "Search every country" widen it; a day file after tomorrow is never asked for.
+// "Search older days" and "Search every country" widen it; World (nothing is filed under it) searches every country at once; a day file after tomorrow is never asked for.
 // Run from the repo root: node tests/news_search_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves a screenshot)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -68,6 +68,18 @@ await p.click('[data-nq="older"]'); await p.waitForTimeout(1500); R = await read
 ok(R.heads.length === 5 && /Searched 5 of 5 days/.test(R.stat), "older days add Microsoft and Texas: " + R.heads.length + " " + R.stat);
 await p.click('[data-nq="all"]'); await p.waitForTimeout(500); R = await read();
 ok(R.heads.length === 6 && R.heads.some((h) => /Orange/.test(h)) && !R.heads.some((h) => /photobook/.test(h)), "every country adds the French story, never the misdated one: " + R.heads.length);
+/* World (ww) has no headlines filed under it: a search there covers every country without a tap, and offers no "Only World"
+   (picking a country reloads the page, so the words are typed again) */
+ok(await p.evaluate(() => !!document.querySelector('#td-cc option[value="ww"]')), "Today lists World");
+await p.selectOption("#td-cc", "ww");
+await p.waitForFunction(() => window.OSAP_TODAY && window.OSAP_NEWSQ && document.querySelector("#nq-q"), null, { timeout: 60000 }); await p.waitForTimeout(1500);
+await p.fill("#nq-q", "outage"); await p.press("#nq-q", "Enter");
+await p.waitForFunction(() => /Searched \d+ of \d+ days/.test((document.querySelector(".nqobs") || {}).textContent || "") && !/reading the next day/.test(document.querySelector(".nqobs").textContent), null, { timeout: 20000 }).catch(() => {});
+R = await read();
+const toggles = await p.evaluate(() => document.querySelectorAll('[data-nq="here"],[data-nq="all"]').length);
+ok(R.heads.length === 4 && R.heads.some((h) => /Orange/.test(h)) && /from every country/.test(R.stat), "World searches every country at once (3 days: Chase, United, Orange, FAA): " + R.heads.length + " " + R.stat);
+ok(toggles === 0, "World offers no Only World / Search every country toggle: " + toggles);
+if (OUT) await p.screenshot({ path: OUT + "/news-search-world-outage.png", fullPage: false });
 ok(!errors.length, "no page errors " + JSON.stringify(errors));
 await browser.close(); server.close();
 if (fails) { console.log(fails + " failed"); process.exit(1); }
