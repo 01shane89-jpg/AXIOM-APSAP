@@ -97,7 +97,7 @@ let state;
   await p.check('#epe [data-ep-show="cp"]');
   const [dl] = await Promise.all([p.waitForEvent("download", { timeout: 15000 }), p.click('#epe [data-ep="pkmz"]')]);
   const k = (await readFile(await dl.path())).toString("latin1");
-  ok(/Saraburi bridge \(km/.test(k) && /Proposed by OSAP, unverified/.test(k) && /Checked by the analyst/.test(k), "checkpoints go into the KMZ with their status");
+  ok(/Saraburi bridge\?? \(km/.test(k) && /Proposed by OSAP, unverified/.test(k) && /Checked by the analyst/.test(k), "checkpoints go into the KMZ with their status");
   if (OUT) await p.screenshot({ path: OUT + "/epe-cps.png" });
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.slice(0, 3).join(" | ") : ""));
   state = await ctx.storageState();
