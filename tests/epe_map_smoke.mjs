@@ -98,8 +98,8 @@ let state;
   let s = await st(p);
   const P = s.plan.opts[0], Dd = [P.dest.i.lat, P.dest.i.lon], at = (f) => [START[0] + (Dd[0] - START[0]) * f, START[1] + (Dd[1] - START[1]) * f];
   await p.selectOption('#epe [data-ep-role="' + P.id + '"]', "P");
-  ok(await p.evaluate(() => /Evacuation map/.test(document.getElementById("epe").textContent) && document.querySelectorAll("#epe [data-ep-cm]").length === 6 && document.querySelectorAll("#epe [data-ep-blk]").length === 4),
-    "the plan has an Evacuation map section: 6 kinds of control measure and 4 directions");
+  ok(await p.evaluate(() => /Evacuation map/.test(document.getElementById("epe").textContent) && document.querySelectorAll("#epe [data-ep-cm]").length === 7 && document.querySelectorAll("#epe [data-ep-blk]").length === 4),
+    "the plan has an Evacuation map section: 7 kinds of control measure (your own point included) and 4 directions");
 
   /* a checkpoint by one tap */
   await p.click('#epe [data-ep-cm="cp"]');
