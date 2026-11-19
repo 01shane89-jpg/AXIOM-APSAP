@@ -453,6 +453,64 @@
     }
     return best;
   }
+  /* ---------- checkpoints each route places by itself ----------
+     Every option gets a start point, checkpoints along its line and a release point, proposed by OSAP and unverified until
+     the analyst confirms them. Spacing follows the length (3 km up to 15 km, 10 km up to 60, 20 km up to 200, else 30;
+     at most 10). Once the option's dependencies are found, each checkpoint moves to the nearest junction, bridge, tunnel,
+     rail crossing or border crossing within 3 km along the line. The analyst can rename, confirm, drag or delete each one;
+     those stay when OSAP places the rest again (after the route changes or on Place again). Kept as o.cps with the option. */
+  var CP_KIND = { junction: 1, bridge: 1, tunnel: 1, rail: 1, border: 1, ferry: 1 };
+  function cpSig(o) { var c = o.route.coords; return [Math.round(o.route.m), c.length, c.length ? c[c.length - 1].join(",") : "", (o.deps && o.deps.at) || 0].join("|"); }
+  function cpAt(c, km) {
+    var run = 0, want = km * 1000;
+    for (var i = 0; i < c.length - 1; i++) {
+      var seg = hav(c[i], c[i + 1]);
+      if (run + seg >= want) { var f = seg ? (want - run) / seg : 0; return [c[i][0] + (c[i + 1][0] - c[i][0]) * f, c[i][1] + (c[i + 1][1] - c[i][1]) * f]; }
+      run += seg;
+    }
+    return c[c.length - 1];
+  }
+  function autoCps(o) {
+    var c = o.route.coords || [], total = 0, i, out = [], mine = (o.cps || []).filter(function (x) { return x.by === "you"; });
+    if (c.length < 2) return mine;
+    for (i = 0; i < c.length - 1; i++) total += hav(c[i], c[i + 1]);
+    var km = total / 1000, step = km <= 15 ? 3 : km <= 60 ? 10 : km <= 200 ? 20 : 30, n = Math.min(10, Math.floor((km - step / 2) / step));
+    var deps = ((o.deps && o.deps.list) || []).filter(function (d) { return CP_KIND[d.kind] && isFinite(d.km); }), used = {};
+    function one(kind, at, k2, why) { return { id: rid("cp"), kind: kind, name: "", lat: r6(at[0]), lon: r6(wrap(at[1])), km: Math.round(k2 * 10) / 10, why: why, by: "osap", st: "proposed", at: Date.now() }; }
+    if (!mine.some(function (x) { return x.kind === "SP"; })) out.push(one("SP", c[0], 0, "Start of the route"));
+    for (i = 1; i <= n; i++) {
+      var want = i * step, best = null;
+      deps.forEach(function (d) { if (!used[d.id] && Math.abs(d.km - want) <= 3 && (!best || Math.abs(d.km - want) < Math.abs(best.km - want))) best = d; });
+      if (best) { used[best.id] = 1; out.push(one("CP", [best.lat, best.lon], best.km, (DEP_K[best.kind] || best.kind) + (best.name && best.name !== DEP_K[best.kind] ? ": " + best.name : ""))); }
+      else out.push(one("CP", cpAt(c, want), want, "Every " + step + " km along the line"));
+    }
+    if (!mine.some(function (x) { return x.kind === "RP"; })) out.push(one("RP", c[c.length - 1], km, "Release point at " + o.dest.i.name));
+    out = out.concat(mine).sort(function (a, b) { return a.km - b.km; });
+    return out;
+  }
+  /* the option's checkpoints, placed now when it has none yet or its line or dependencies changed since */
+  function cpsOf(o) {
+    if (!o || !o.route) return [];
+    var sig = cpSig(o);
+    if (!Array.isArray(o.cps) || o.cpSig !== sig) { o.cps = autoCps(o); o.cpSig = sig; S.cpDirty = true; }
+    return o.cps;
+  }
+  function cpNm(o, x) { var list = (o.cps || []).filter(function (y) { return y.kind === "CP"; }); return x.name || (o.role ? o.role + " " : "") + (x.kind === "CP" ? "CP" + (list.indexOf(x) + 1) : x.kind); }
+  function cpName(o, x) { cpsOf(o); return cpNm(o, x); }
+  function cpOf(o, id) { return cpsOf(o).filter(function (x) { return x.id === id; })[0]; }
+  function cpEdit(o, id, f) { var x = cpOf(o, id); if (!x) return; f(x); save(); render(); draw(); }
+  function cpHtml(o) {
+    var list = cpsOf(o), nP = list.filter(function (x) { return x.st === "proposed"; }).length;
+    return '<div class="epecps"><h4>Checkpoints <span class="obs">' + list.length + " on this route" + (nP ? ", " + nP + " proposed by OSAP and not checked" : "") + "</span></h4>" +
+      '<ol class="epecpl">' + list.map(function (x) {
+        return '<li class="' + (x.st === "proposed" ? "prop" : "ok") + '"><span class="epenk">' + E(x.kind) + "</span>" +
+          '<input type="text" maxlength="40" data-ep-cpname="' + E(x.id) + '" value="' + E(cpName(o, x)) + '" aria-label="Checkpoint name">' +
+          "<code>" + E(grid(x.lat, x.lon)) + '</code><span class="obs">km ' + E(x.km) + " · " + E(x.why) + " · " + (x.st === "proposed" ? "proposed, unverified" : "checked by you " + dual(x.ok || x.at)) + "</span>" +
+          (x.st === "proposed" ? '<button type="button" data-ep-cpok="' + E(x.id) + '">Confirm</button>' : "") +
+          '<button type="button" data-ep-cpdel="' + E(x.id) + '" aria-label="Delete ' + E(cpName(o, x)) + '">×</button></li>';
+      }).join("") + "</ol>" +
+      '<div class="epebtns"><button type="button" data-ep="cpagain">Place again</button><span class="obs">Drag a checkpoint on the map to move it. Place again keeps the ones you confirmed, moved or renamed' + (o.deps ? "." : "; find the dependencies first to put them on junctions and bridges.") + "</span></div></div>";
+  }
   function inCorr(o, p) {
     var w = corr(o).w * 1000, ol = onLine(o, p);
     return ol.d <= w || circles(o).some(function (c) { return hav([c.lat, c.lon], p) <= c.km * 1000; });
@@ -966,6 +1024,7 @@
         "<Placemark><name>" + xml("Route " + (o.role || o.id)) + '</name><styleUrl>#r' + (o.role || "x") + "</styleUrl><LineString><tessellate>1</tessellate><coordinates>" + o.route.coords.map(function (c) { return (+c[1]).toFixed(6) + "," + (+c[0]).toFixed(6) + ",0"; }).join(" ") + "</coordinates></LineString></Placemark>" +
         pm("Destination: " + o.dest.i.name, o.dest.i.lat, o.dest.i.lon, null, o.kind === "posts" ? "Not verified as an evacuation destination." : "") +
         (o.nodes || []).map(function (n) { return pm((NODE_N[n.type] || n.type) + ": " + n.name, n.lat, n.lon, null, "Placed by the analyst."); }).join("") +
+        (o.cps || []).map(function (q) { return pm(cpNm(o, q) + " (km " + q.km + ")", q.lat, q.lon, null, grid(q.lat, q.lon) + ". " + q.why + ". " + (q.st === "proposed" ? "Proposed by OSAP, unverified." : "Checked by the analyst.")); }).join("") +
         ((o.deps && o.deps.list) || []).map(function (d) { return pm(DEP_K[d.kind] + (d.name !== DEP_K[d.kind] ? ": " + d.name : "") + " (km " + d.km + ")", d.lat, d.lon, d, d.status && d.status.st); }).join("") +
         ((o.air && o.air.list) || []).map(function (a) { return pm(a.cls + ": " + a.name, a.lat, a.lon, a, a.kind); }).join("") +
         ((o.along && o.along.haz && o.along.haz.ranges) || []).map(function (rg) { return rg.items.filter(function (x) { return x.p; }).map(function (x) { return pm(x.kind + " (km " + x.at + ")", x.p[0], x.p[1], x, x.text); }).join(""); }).join("") +
@@ -1005,6 +1064,7 @@
       "<p>Origin: <b>" + E(pl.origin.label || "") + "</b> " + E(grid(pl.origin.lat, pl.origin.lon)) + " (" + E(pl.origin.how) + ")</p>" + cmPrint(pl);
     pl.opts.slice().sort(function (a, b) { return (ROLES.indexOf(a.role) + 1 || 9) - (ROLES.indexOf(b.role) + 1 || 9); }).forEach(function (o) {
       h += "<h2>" + E(o.role ? o.role + " " + ROLE_N[o.role] + ": " : "No role: ") + E(o.dest.i.name) + "</h2><p>" + E(o.label) + ". " + E(dist(o.route.m)) + ", " + E(dur(o.route.s)) + ". Status <b>" + E(o.st || o.prop.st) + "</b> " + E(o.st ? "(set by the analyst)" : "(OSAP proposal: " + o.prop.why + ")") + "</p>" +
+        ((o.cps || []).length ? "<h3>Checkpoints</h3><table><tr><th></th><th>Name</th><th>Grid</th><th>km</th><th>Where</th><th>Status</th></tr>" + o.cps.map(function (q) { return "<tr><td>" + E(q.kind) + "</td><td>" + E(cpNm(o, q)) + "</td><td class=\"m\">" + E(grid(q.lat, q.lon)) + "</td><td>" + E(q.km) + "</td><td>" + E(q.why) + "</td><td>" + (q.st === "proposed" ? "Proposed by OSAP, unverified" : "Checked by the analyst") + "</td></tr>"; }).join("") + "</table>" : "") +
         cmPrintOpt(o, pl) + "<h3>Legs</h3><table><tr><th>#</th><th>From</th><th>To</th><th>How</th><th>Distance</th><th>Time</th></tr>" + legsOf(o).map(function (l, i) { return "<tr><td>" + (i + 1) + "</td><td>" + E(l.a.name) + "</td><td>" + E(l.b.name) + "</td><td>" + E(flies(l.mode) ? LEG_M.filter(function (m) { return m[0] === l.mode; })[0][1] + " (straight line)" : "Road") + (l.bad ? " UNUSABLE" : "") + "</td><td>" + E(dist(l.m)) + "</td><td>" + E(dur(l.s)) + "</td></tr>"; }).join("") + "</table>";
       var rows = [];
       ((o.deps && o.deps.list) || []).forEach(function (d) { rows.push([d.km, DEP_K[d.kind] + (d.name !== DEP_K[d.kind] ? ": " + d.name : ""), (d.status ? d.status.st : "") + (d.detour ? d.detour.none ? "; no way round found" : d.detour.dm != null ? "; detour if lost +" + dist(Math.max(0, d.detour.dm)) : "" : ""), d]); });
@@ -1674,6 +1734,7 @@
 
   /* ---------- the window ---------- */
   function render() {
+    if (S.cpDirty && S.plan) { S.cpDirty = false; setTimeout(save, 0); }
     var el = box(), p = S.plan, o = S.origin;
     if (S.active) { var ah = activeHtml(); if (ah) { el.innerHTML = ah; return; } }
     var head = '<div class="chead"><h2>Evacuation plan <span class="epecc">' + E(p ? p.ccName : ccName()) + "</span></h2>" +
@@ -1750,7 +1811,7 @@
         (o.exp.hits.length ? '<ol class="epehits">' + o.exp.hits.slice(0, 8).map(function (h) {
           return "<li>" + E(dist(h.along)) + " along, " + E(dist(h.d)) + " off: " + (safeUrl(h.url) ? '<a href="' + E(h.url) + '" target="_blank" rel="noopener noreferrer">' + E(h.title || h.kind) + "</a>" : E(h.title || h.kind)) + ' <span class="obs">' + E(h.kind) + (h.date ? ", " + E(String(h.date).slice(0, 10)) : "") + (h.src ? ", " + E(h.src) : "") + "</span></li>";
         }).join("") + "</ol>" : "") +
-        cmOptHtml(o) + legsHtml(o) + corrHtml(o) + depsHtml(o) + alongHtml(o) +
+        cpHtml(o) + cmOptHtml(o) + legsHtml(o) + corrHtml(o) + depsHtml(o) + alongHtml(o) +
         '<div class="epebtns"><button type="button" data-ep="route">Open in Route (checkpoints, print)</button>' + toolsHtml(o) + "</div>" + toolNote(o) + "</div>" : "") +
       "</div>";
   }
@@ -1985,6 +2046,9 @@
     else if (b.hasAttribute("data-ep-tool")) runTool(b.getAttribute("data-ep-tool"));
     else if (b.hasAttribute("data-ep-found")) { var f = S.found && S.found.list[+b.getAttribute("data-ep-found")]; if (f) { setOrigin(f.lat, f.lon, f.name, "Searched place (" + f.src + ")"); S.found = null; render(); draw(); fitPlan(); } }
     else if (k === "save") saveNow();
+    else if (k === "cpagain") { var ocp = optOf(S.sel); if (ocp) { ocp.cps = (ocp.cps || []).filter(function (x) { return x.by === "you" || x.st === "checked" || x.name; }).map(function (x) { if (x.by !== "you") x.by = "you"; return x; }); ocp.cps = autoCps(ocp); ocp.cpSig = cpSig(ocp); save(); render(); draw(); } }
+    else if (b.hasAttribute("data-ep-cpok")) { var ock = optOf(S.sel); if (ock) cpEdit(ock, b.getAttribute("data-ep-cpok"), function (x) { x.st = "checked"; x.by = "you"; x.ok = Date.now(); }); }
+    else if (b.hasAttribute("data-ep-cpdel")) { var ocd = optOf(S.sel); if (ocd) { ocd.cps = cpsOf(ocd).filter(function (x) { return x.id !== b.getAttribute("data-ep-cpdel"); }); save(); render(); draw(); } }
     else if (k === "pkmz" || k === "pkml") exportPlan(k === "pkmz");
     else if (k === "showall" || k === "shownone") { SHOW.forEach(function (l) { setShown(l[0], k === "showall"); }); LAYERS.forEach(function (l) { setLay(l[0], k === "showall"); }); S.showOpen = true; render(); draw(); }
     else if (b.hasAttribute("data-ep-rm")) { S.rmAsk = b.getAttribute("data-ep-rm"); render(); }
@@ -2008,6 +2072,7 @@
     else if (t.hasAttribute("data-ep-gl")) { setLay(t.getAttribute("data-ep-gl"), t.checked); S.showOpen = true; render(); draw(); }
     else if (t.hasAttribute("data-ep-show")) { setShown(t.getAttribute("data-ep-show"), t.checked); S.showOpen = true; render(); draw(); }
     else if (t.hasAttribute("data-ep-vis")) { var ov = optOf(t.getAttribute("data-ep-vis")); if (ov) { if (t.checked) delete ov.hid; else ov.hid = true; save(); render(); draw(); } }
+    else if (t.hasAttribute("data-ep-cpname")) { var ocn = optOf(S.sel); if (ocn) cpEdit(ocn, t.getAttribute("data-ep-cpname"), function (x) { x.name = clean(t.value, 40); x.by = "you"; }); }
     else if (t.hasAttribute("data-ep-pname")) { if (S.plan) { S.plan.name = clean(t.value, 90) || S.plan.name; save(); S.svmsg = ""; render(); } }
     else if (t.hasAttribute("data-ep-spd")) setSpeed(t.getAttribute("data-ep-spd"), t.value);
     else if (t.hasAttribute("data-ep-cw")) { var oc = optOf(S.sel); if (oc) { if (t.value === "x") { corr(oc).w = WIDTHS.indexOf(corr(oc).w) < 0 ? corr(oc).w : 3; } else corr(oc).w = +t.value; save(); render(); draw(); } }
@@ -2062,6 +2127,14 @@
         .bindTooltip(E((x.role ? x.role + " · " : "") + x.dest.i.name + " · " + dist(x.route.m) + " · " + dur(x.route.s)), { sticky: true }).addTo(layer);
       if (shown("dests")) L.marker([x.dest.i.lat, x.dest.i.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.ptag([x.dest.i.kind, x.kindName, x.dest.i.name], x.role || "?", { cls: "epemk", badge: c, scale: 0.75 }) : L.divIcon({ className: "epemk", html: '<span style="background:' + c + '">' + E(x.role || "?") + "</span>", iconSize: [22, 22], iconAnchor: [11, 11] }) })
         .bindTooltip(E(x.dest.i.name + " (" + (x.dest.i.kind || x.kindName) + ")")).on("click", function () { S.sel = x.id; render(); draw(); }).addTo(layer);
+      if (shown("cp")) cpsOf(x).forEach(function (q) {
+        /* while a map tap picks something (a node, the origin, a control measure), checkpoints let the tap through */
+        var live = !S.active && !S.pickNode && !S.picking && !S.cmDraw && !S.flyPick, nm = cpName(x, q), pr = q.st === "proposed";
+        var mk = L.marker([q.lat, q.lon], { keyboard: false, draggable: live, interactive: live, autoPan: true, opacity: sel ? 1 : 0.8, icon: L.divIcon({ className: "epecpmk" + (pr ? " prop" : ""), html: '<span data-cp="' + E(q.id) + '" style="border-color:' + c + '">' + E(nm) + (pr ? "?" : "") + "</span>", iconSize: null, iconAnchor: [0, 10] }) })
+          .bindTooltip(E(nm + ", km " + q.km + " · " + grid(q.lat, q.lon) + (pr ? " · proposed by OSAP, unverified" : "") + (live ? " (drag to move)" : "")));
+        if (live) mk.on("dragend", function () { var ll = mk.getLatLng(); q.lat = r6(ll.lat); q.lon = r6(wrap(ll.lng)); q.km = Math.round(onLine(x, [q.lat, q.lon]).at / 100) / 10; q.by = "you"; q.moved = Date.now(); x.cps.sort(function (a, b) { return a.km - b.km; }); save(); render(); draw(); });
+        mk.addTo(layer);
+      });
       if (!sel) return;
       /* the corridor: a band its width each side of the line (a line this many pixels wide at this zoom), and the node circles */
       var cw = corr(x).w, mpp = 40075016.686 * Math.cos((x.route.coords[0] || [0])[0] * Math.PI / 180) / Math.pow(2, map.getZoom() + 8);
@@ -2106,6 +2179,7 @@
           .bindTooltip(E(n.name + " (" + (NODE_N[n.type] || n.type) + ", placed by you)")).addTo(layer);
       });
     });
+    if (S.cpDirty && p) { S.cpDirty = false; setTimeout(save, 0); }
     if (p) drawCm(p, layer, map, true);
     if (o && shown("origin")) (SY() ? L.marker([o.lat, o.lon], { keyboard: false, icon: W.OSAP_SYM.tag("g_start", "", { scale: 0.75 }) }) : L.circleMarker([o.lat, o.lon], { radius: 8, color: "#fff", weight: 3, fillColor: "#212529", fillOpacity: 1 })).bindTooltip(E("Origin: " + (o.label || grid(o.lat, o.lon)))).addTo(layer);
   }
@@ -2180,6 +2254,8 @@
       "#epe .epevis{display:flex;gap:4px;align-items:center;font-size:12px;white-space:nowrap}#epe button.eperm{border:1px solid var(--line,#d5dbe1);background:var(--surface,#fff);color:var(--bad,#c0392b);border-radius:4px;padding:3px 8px;min-height:32px;cursor:pointer;font-size:12px;font-weight:600}" +
       "#epe .eperma{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0;padding:6px 8px;border-radius:4px;background:var(--surface2,#f1f3f5);font-weight:600}#epe .eperma button{border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:4px 10px;min-height:32px;cursor:pointer;font-weight:600;background:var(--surface,#fff);color:var(--ink,#1d2329)}#epe .eperma button[data-ep-rmyes]{background:var(--bad,#c0392b);color:#fff;border-color:var(--bad,#c0392b)}" +
       "#epe .epelay label,#epe .epevis{display:inline-flex;gap:5px;align-items:center;min-height:30px}#epe .epelay input,#epe .epevis input{min-height:0;width:18px;height:18px;margin:0;padding:0}" +
+      "#epe .epecps{margin-top:8px;border-top:1px dashed var(--line,#d5dbe1);padding-top:6px}#epe ol.epecpl{list-style:none;margin:4px 0;padding:0}#epe ol.epecpl li{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 0;border-top:1px solid var(--line-soft,var(--line,#e3e7eb));font-size:12px}#epe ol.epecpl li.prop .epenk{background:#868e96}#epe ol.epecpl input{width:9em}#epe ol.epecpl .obs{flex-basis:100%}#epe ol.epecpl button{border:1px solid var(--line,#d5dbe1);background:var(--surface,#fff);color:var(--ink,#1d2329);border-radius:4px;min-width:32px;min-height:32px;padding:3px 8px;cursor:pointer;font-size:12px}" +
+      ".epe-picking .epecpmk,.epe-picking .epecpmk span{pointer-events:none!important}.epecpmk{background:none;border:0}.epecpmk span{display:inline-block;white-space:nowrap;background:#fff;color:#111;border:2px solid;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.5);font:700 11px/16px system-ui,sans-serif;padding:0 4px;cursor:grab}.epecpmk.prop span{border-style:dashed}" +
       "html.epe-picking #map{cursor:crosshair}" +
       "@media (max-width:700px){#epe:not([hidden]){padding:0}#epe .epebox{border-radius:0;min-height:100%}#epe .epekpi{grid-template-columns:1fr 1fr}#epe select,#epe input{font-size:16px}}";
     D.head.appendChild(s);
