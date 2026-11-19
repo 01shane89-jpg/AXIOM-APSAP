@@ -84,6 +84,10 @@
   var DEP_DETOUR = { bridge: 1, tunnel: 1, ferry: 1 }, AUTO_DETOURS = 5;
   var LAYERS = [["deps", "Dependencies"], ["air", "Air nodes"], ["borders", "Borders"], ["us", "U.S. support"], ["med", "Medical"], ["sus", "Sustainment"], ["comms", "Comms"], ["haz", "Hazards"]];
   var LAY_DEF = { deps: 1, air: 1, borders: 1, us: 1, med: 0, sus: 0, comms: 1, haz: 1 }, LAY_KEY = "osap-epe-layers";
+  /* what the plan draws on the map, each switchable (a device setting, all on at first): the options' lines and destinations,
+     the selected option's corridor band and circles, its legs and the analyst's nodes, each kind of control measure, the origin */
+  var SHOW = [["routes", "Routes"], ["dests", "Destinations"], ["band", "Corridor band and circles"], ["legs", "Legs and your nodes"], ["cp", "Checkpoints"], ["pl", "Phase lines"], ["xp", "Extraction points (GXP, AXP)"], ["corr", "Evacuation corridors"], ["avoid", "Areas to avoid"], ["origin", "Origin"]], SHOW_KEY = "osap-epe-show";
+  var CM_SHOW = { cp: "cp", pl: "pl", gxp: "xp", axp: "xp", corr: "corr", avoid: "avoid" };
   var COMMS_C = { good: "#2b8a3e", degraded: "#e67700", none: "#c92a2a", unknown: "#868e96" };
   var BASIS = { observed: "measured (coverage tiles)", mapped: "proximity (masts)", modelled: "modeled (line of sight)", reported: "reported (outage)" };
   function flies(m) { return m === "helo" || m === "fw" || m === "sea"; }
@@ -116,8 +120,9 @@
   function okPlan(p) { return p && typeof p.id === "string" && p.origin && isFinite(p.origin.lat) && isFinite(p.origin.lon) && Array.isArray(p.opts); }
   function all() { var a = lsGet(KEY, []); return Array.isArray(a) ? a.filter(okPlan) : []; }
   function keep(p) {
+    var was = p.saved; p.saved = Date.now();
     var list = all().filter(function (x) { return x.id !== p.id; }); list.unshift(p);
-    var ok = lsSet(KEY, list.slice(0, MAX)); if (ok) lsSet(CUR, p.id);
+    var ok = lsSet(KEY, list.slice(0, MAX)); if (ok) lsSet(CUR, p.id); else p.saved = was;
     /* a plan the browser would not keep is only on screen: say so where it cannot be missed, until a save works */
     S.full = !ok;
     return ok;
@@ -285,6 +290,23 @@
     save(); render(); draw();
   }
   function save() { if (S.plan && !keep(S.plan)) S.msg = "This browser would not keep the change (storage full or blocked)."; }
+  /* the Save plan button: the plan is already kept after every change; this keeps it now and says so */
+  function saveNow() {
+    var p = S.plan; if (!p) return;
+    S.svmsg = keep(p) ? "Saved on this device " + dual(p.saved, true) + ". OSAP also saves it by itself after every change." : "This browser would not keep the plan (storage full or blocked). Make a route package or export it to keep a copy.";
+    render();
+  }
+  /* remove one option from the plan (the analyst confirms first); a plan keeps at least one option */
+  function rmOpt(id) {
+    var p = S.plan, o = optOf(id); S.rmAsk = null; if (!p || !o) { render(); return; }
+    if (p.opts.length < 2) { S.svmsg = "A plan needs at least one option. To drop the whole plan, use × under Kept on this device."; render(); return; }
+    if (S.picking) pickEnd();
+    S.atok++; S.abusy = null; S.amsg = ""; S.dtok++; S.dbusy = null; S.dmsg = ""; S.showDet = null; S.ptok++; S.pbusy = null; S.pmsg = ""; S.ltok++; S.lbusy = null; S.lmsg = "";
+    p.opts = p.opts.filter(function (x) { return x.id !== id; });
+    if (S.sel === id || !optOf(S.sel)) S.sel = p.opts[0].id;
+    save(); S.svmsg = "Removed the option to " + o.dest.i.name + (o.role ? " (role " + o.role + ")" : "") + ". Route packages made earlier keep their copy.";
+    render(); draw();
+  }
 
   /* ---------- legs and nodes (phase 2) ---------- */
   /* the chain of one option: origin, the analyst's nodes in order, the destination */
@@ -710,6 +732,8 @@
   }
 
   /* ---------- along the route, by km (phase 5) ---------- */
+  function shown(k) { var v = lsGet(SHOW_KEY, null); return !(v && typeof v === "object" && v[k] === 0); }
+  function setShown(k, on) { var v = lsGet(SHOW_KEY, null); if (!v || typeof v !== "object") v = {}; v[k] = on ? 1 : 0; lsSet(SHOW_KEY, v); }
   function lay(k) { var v = lsGet(LAY_KEY, null); return v && typeof v === "object" && k in v ? !!v[k] : !!LAY_DEF[k]; }
   function setLay(k, on) { var v = lsGet(LAY_KEY, null) || {}; if (typeof v !== "object") v = {}; LAYERS.forEach(function (l) { if (!(l[0] in v)) v[l[0]] = LAY_DEF[l[0]]; }); v[k] = on ? 1 : 0; lsSet(LAY_KEY, v); }
   /* the ground stretches of an option as km ranges (flown and sailed legs need no fuel or roads) */
@@ -952,8 +976,14 @@
   }
   function fname(t) { return String(t || "plan").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "plan"; }
   function saveFile(name, blob) { var u = URL.createObjectURL(blob), a = D.createElement("a"); a.href = u; a.download = name; D.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); }
-  function exportPkg(id, kmz) {
-    var pk = pkgOf(id); if (!pk) return;
+  /* the plan as it stands (not a frozen package): the same KML a route package makes */
+  function exportPlan(kmz) {
+    var p = S.plan; if (!p) return;
+    exportPkg(null, kmz, { id: p.id, name: p.name || "Evacuation plan", plan: p, made: Date.now() });
+    S.svmsg = S.msg; render();
+  }
+  function exportPkg(id, kmz, given) {
+    var pk = given || pkgOf(id); if (!pk) return;
     var k = toKml(pk), base = "osap-evac-" + fname(pk.name) + "-" + new Date(pk.made).toISOString().slice(0, 10);
     if (kmz) {
       if (!(W.OSAP_WS && W.OSAP_WS.zip)) { S.msg = "KMZ needs the Workspaces module, which is not loaded: saved as KML instead."; saveFile(base + ".kml", new Blob([k], { type: "application/vnd.google-earth.kml+xml" })); render(); return; }
@@ -1503,8 +1533,8 @@
       (th.length ? '<div class="epebtns"><button type="button" data-ep="round"' + (S.rbusy ? " disabled" : "") + ">Route round the areas to avoid</button></div>" : "") + "</div>";
   }
   /* the plan's graphics on the live map (and in active mode from the package) */
-  function drawCm(pl, lyr, map) {
-    var list = cms(pl).filter(okCm), d = S.cmDraw;
+  function drawCm(pl, lyr, map, flt) {
+    var list = cms(pl).filter(okCm).filter(function (x) { return !flt || shown(CM_SHOW[x.k] || x.k); }), d = S.cmDraw;
     function lbl(at, t, col, cls) { L.marker(at, { keyboard: false, interactive: false, icon: L.divIcon({ className: "epecmlb" + (cls ? " " + cls : ""), html: '<span style="border-color:' + col + ";color:" + col + '">' + E(t) + "</span>", iconSize: null, iconAnchor: [0, 10] }) }).addTo(lyr); }
     list.filter(function (x) { return CM[x.k].g === "area"; }).forEach(function (x) {
       var col = CM_COL[x.k], av = x.k === "avoid";
@@ -1676,10 +1706,25 @@
     var unset = p.opts.every(function (x) { return !x.role; });
     var sug = p.opts.filter(function (x) { return x.sug; }).map(function (x) { return x.sug + ": " + x.dest.i.name; }).join(" · ");
     return '<section class="eposec"><h3>Options <span class="obs">worked out ' + E(dual(p.calc, true)) + ", " + E((MODES.filter(function (m) { return m[0] === p.mode; })[0] || MODES[0])[1].toLowerCase()) + ", incidents from the last " + E(p.days) + " days</span></h3>" +
+      saveHtml(p) + showHtml() +
       '<p class="obs epesug">Suggested order: ' + E(sug) + ' <button type="button" class="linkish" data-ep="sug">' + (unset ? "Use suggested roles" : "Reset to suggested roles") + "</button>" +
         (p.opts.some(function (x) { return x.kind === "crossings"; }) ? "" : ' · <button type="button" class="linkish" data-ep="xopt"' + (S.xbusy ? " disabled" : "") + ">Add a cross-border option</button>") + "</p>" +
       p.opts.map(cardHtml).join("") +
       ((p.notes || []).length ? '<p class="obs">' + p.notes.map(E).join(" ") + "</p>" : "") + "</section>";
+  }
+  function saveHtml(p) {
+    return '<div class="epesave"><label>Plan name <input type="text" data-ep-pname maxlength="90" value="' + E(p.name || "") + '"></label>' +
+      '<button type="button" data-ep="save">Save plan</button><button type="button" data-ep="pkmz">Export KMZ</button><button type="button" data-ep="pkml">KML</button>' +
+      '<span class="obs" role="status">' + E(S.svmsg || (p.saved ? "Saved on this device " + dual(p.saved, true) + "." : "Kept on this device.")) + "</span></div>";
+  }
+  /* every kind of map item the plan draws, switchable; the along-route layers are the same switches as in each option's check */
+  function showHtml() {
+    var on = SHOW.filter(function (l) { return shown(l[0]); }).length + LAYERS.filter(function (l) { return lay(l[0]); }).length, all0 = SHOW.length + LAYERS.length;
+    return '<details class="epeshow"' + (S.showOpen ? " open" : "") + '><summary>On the map <span class="obs">' + on + " of " + all0 + " kinds shown</span></summary>" +
+      '<div class="epelay" role="group" aria-label="Plan items on the map">' + SHOW.map(function (l) { return '<label><input type="checkbox" data-ep-show="' + l[0] + '"' + (shown(l[0]) ? " checked" : "") + "> " + E(l[1]) + "</label>"; }).join("") + "</div>" +
+      '<div class="epelay" role="group" aria-label="Along-route results on the map">' + LAYERS.map(function (l) { return '<label><input type="checkbox" data-ep-gl="' + l[0] + '"' + (lay(l[0]) ? " checked" : "") + "> " + E(l[1]) + "</label>"; }).join("") + "</div>" +
+      '<div class="epebtns"><button type="button" data-ep="showall">Show all</button><button type="button" data-ep="shownone">Hide all</button></div>' +
+      '<p class="obs">Each option also has its own Show on map switch. These switches change the screen only, not route packages or printouts.</p></details>';
   }
   function cardHtml(o) {
     var d = o.dest.i, st = stOf(o), r = o.route, arr = Date.now() + r.s * 1000, sel = o.id === S.sel;
@@ -1687,7 +1732,10 @@
     return '<div class="epecard' + (sel ? " sel" : "") + '" data-ep-opt="' + E(o.id) + '" style="--epec:' + COL[o.role || ""] + '">' +
       '<div class="epec1"><select data-ep-role="' + E(o.id) + '" aria-label="Role of this option" class="eperole' + (o.role ? " on" : "") + '"><option value="">Role</option>' +
         ROLES.map(function (k) { return '<option value="' + k + '"' + (o.role === k ? " selected" : "") + ">" + k + " " + ROLE_N[k] + "</option>"; }).join("") + "</select>" +
-        '<button type="button" class="epename" data-ep-sel="' + E(o.id) + '"><b>' + E(d.name) + '</b> <span class="obs">' + E(d.kind || o.kindName) + "</span></button></div>" +
+        '<button type="button" class="epename" data-ep-sel="' + E(o.id) + '"><b>' + E(d.name) + '</b> <span class="obs">' + E(d.kind || o.kindName) + "</span></button>" +
+        '<label class="epevis" title="Show this option on the map"><input type="checkbox" data-ep-vis="' + E(o.id) + '"' + (o.hid ? "" : " checked") + "> Show on map</label>" +
+        '<button type="button" class="eperm" data-ep-rm="' + E(o.id) + '" aria-label="Remove the option to ' + E(d.name) + '">Remove</button></div>' +
+      (S.rmAsk === o.id ? '<div class="eperma" role="alert">Remove this option from the plan? <button type="button" data-ep-rmyes="' + E(o.id) + '">Yes, remove</button><button type="button" data-ep-rmno>Cancel</button></div>' : "") +
       '<p class="obs epelab">' + E(o.label) + (o.sug ? " · suggested " + E(o.sug) : "") + " · heads " + E(heading(o).c) + "</p>" +
       '<div class="epekpi"><div><b>' + E(dist(r.m)) + "</b><span>distance</span></div><div><b>" + E(dur(r.s)) + "</b><span>moving time</span></div><div><b>" + E(dual(arr)) + "</b><span>arrive if leaving now</span></div></div>" +
       '<div class="epest"><label>Status <select data-ep-st="' + E(o.id) + '" class="st-' + st.toLowerCase() + '">' + STATUS.map(function (s) { return "<option" + (s === st ? " selected" : "") + ">" + s + "</option>"; }).join("") + "</select></label>" +
@@ -1884,6 +1932,7 @@
   function onClick(e) {
     var sm = e.target.closest("summary"), dt = sm && sm.parentNode;
     if (dt && dt.classList.contains("epecirc")) S.circOpen = !dt.open;
+    if (dt && dt.classList.contains("epeshow")) S.showOpen = !dt.open;
     var b = e.target.closest("button"); if (!b) return;
     var k = b.getAttribute("data-ep");
     if (k === "close") close();
@@ -1935,6 +1984,12 @@
     else if (k === "toolstop") { if (S.tool && S.tool.ac) S.tool.ac.abort(); }
     else if (b.hasAttribute("data-ep-tool")) runTool(b.getAttribute("data-ep-tool"));
     else if (b.hasAttribute("data-ep-found")) { var f = S.found && S.found.list[+b.getAttribute("data-ep-found")]; if (f) { setOrigin(f.lat, f.lon, f.name, "Searched place (" + f.src + ")"); S.found = null; render(); draw(); fitPlan(); } }
+    else if (k === "save") saveNow();
+    else if (k === "pkmz" || k === "pkml") exportPlan(k === "pkmz");
+    else if (k === "showall" || k === "shownone") { SHOW.forEach(function (l) { setShown(l[0], k === "showall"); }); LAYERS.forEach(function (l) { setLay(l[0], k === "showall"); }); S.showOpen = true; render(); draw(); }
+    else if (b.hasAttribute("data-ep-rm")) { S.rmAsk = b.getAttribute("data-ep-rm"); render(); }
+    else if (b.hasAttribute("data-ep-rmyes")) rmOpt(b.getAttribute("data-ep-rmyes"));
+    else if (b.hasAttribute("data-ep-rmno")) { S.rmAsk = null; render(); }
     else if (b.hasAttribute("data-ep-sel")) { if (S.picking) pickEnd(); S.atok++; S.abusy = null; S.amsg = ""; S.dtok++; S.dbusy = null; S.dmsg = ""; S.showDet = null; S.ptok++; S.pbusy = null; S.pmsg = ""; S.sel = b.getAttribute("data-ep-sel"); render(); draw(); fitOpt(optOf(S.sel)); }
     else if (b.hasAttribute("data-ep-open")) { var id = b.getAttribute("data-ep-open"), pl = all().filter(function (x) { return x.id === id; })[0]; if (pl) { S.tok++; S.busy = false; S.ltok++; S.lbusy = null; S.lmsg = ""; S.atok++; S.abusy = null; S.amsg = ""; S.dtok++; S.dbusy = null; S.dmsg = ""; S.showDet = null; S.ptok++; S.pbusy = null; S.pmsg = ""; S.plan = pl; S.origin = pl.origin; S.mode = pl.mode || "car"; S.days = pl.days || 30; S.sel = pl.opts[0] && pl.opts[0].id; S.msg = ""; lsSet(CUR, pl.id); render(); draw(); fitPlan(); } }
     else if (b.hasAttribute("data-ep-del")) { var di = b.getAttribute("data-ep-del"); lsSet(KEY, all().filter(function (x) { return x.id !== di; })); if (S.plan && S.plan.id === di) { S.plan = null; S.sel = null; S.full = false; draw(); } else if (S.full && S.plan && keep(S.plan)) S.msg = "Saved on this device now."; render(); }
@@ -1950,6 +2005,10 @@
     else if (t.hasAttribute("data-ep-lmode")) { var oq = optOf(S.sel); if (oq && !S.lbusy) setLegMode(oq, t.getAttribute("data-ep-lmode"), t.value); }
     else if (t.hasAttribute("data-ep-gps")) gps(t.checked);
     else if (t.hasAttribute("data-ep-lay")) { setLay(t.getAttribute("data-ep-lay"), t.checked); draw(); }
+    else if (t.hasAttribute("data-ep-gl")) { setLay(t.getAttribute("data-ep-gl"), t.checked); S.showOpen = true; render(); draw(); }
+    else if (t.hasAttribute("data-ep-show")) { setShown(t.getAttribute("data-ep-show"), t.checked); S.showOpen = true; render(); draw(); }
+    else if (t.hasAttribute("data-ep-vis")) { var ov = optOf(t.getAttribute("data-ep-vis")); if (ov) { if (t.checked) delete ov.hid; else ov.hid = true; save(); render(); draw(); } }
+    else if (t.hasAttribute("data-ep-pname")) { if (S.plan) { S.plan.name = clean(t.value, 90) || S.plan.name; save(); S.svmsg = ""; render(); } }
     else if (t.hasAttribute("data-ep-spd")) setSpeed(t.getAttribute("data-ep-spd"), t.value);
     else if (t.hasAttribute("data-ep-cw")) { var oc = optOf(S.sel); if (oc) { if (t.value === "x") { corr(oc).w = WIDTHS.indexOf(corr(oc).w) < 0 ? corr(oc).w : 3; } else corr(oc).w = +t.value; save(); render(); draw(); } }
     else if (t.hasAttribute("data-ep-cwx")) { var ox = optOf(S.sel), v = Math.round(+t.value * 10) / 10; if (ox && v >= 0.1 && v <= 50) { corr(ox).w = v; save(); } render(); draw(); }
@@ -1995,19 +2054,20 @@
       return;
     }
     if (p) p.opts.slice().sort(function (a, b) { return (a.id === S.sel) - (b.id === S.sel); }).forEach(function (x) {
+      if (x.hid) return;
       var sel = x.id === S.sel, c = COL[x.role || ""];
-      if (sel) L.polyline(x.route.coords, { color: "#fff", weight: 10, opacity: 0.9, interactive: false }).addTo(layer);
-      L.polyline(x.route.coords, { color: c, weight: sel ? 6 : 4, opacity: sel ? 1 : 0.75, dashArray: x.role ? null : "8 6", className: (x.legs || []).some(function (l) { return flies(l.mode); }) ? "epefly" : "" })
+      if (sel && shown("routes")) L.polyline(x.route.coords, { color: "#fff", weight: 10, opacity: 0.9, interactive: false }).addTo(layer);
+      if (shown("routes")) L.polyline(x.route.coords, { color: c, weight: sel ? 6 : 4, opacity: sel ? 1 : 0.75, dashArray: x.role ? null : "8 6", className: (x.legs || []).some(function (l) { return flies(l.mode); }) ? "epefly" : "" })
         .on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); S.sel = x.id; render(); draw(); })
         .bindTooltip(E((x.role ? x.role + " · " : "") + x.dest.i.name + " · " + dist(x.route.m) + " · " + dur(x.route.s)), { sticky: true }).addTo(layer);
-      L.marker([x.dest.i.lat, x.dest.i.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.ptag([x.dest.i.kind, x.kindName, x.dest.i.name], x.role || "?", { cls: "epemk", badge: c, scale: 0.75 }) : L.divIcon({ className: "epemk", html: '<span style="background:' + c + '">' + E(x.role || "?") + "</span>", iconSize: [22, 22], iconAnchor: [11, 11] }) })
+      if (shown("dests")) L.marker([x.dest.i.lat, x.dest.i.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.ptag([x.dest.i.kind, x.kindName, x.dest.i.name], x.role || "?", { cls: "epemk", badge: c, scale: 0.75 }) : L.divIcon({ className: "epemk", html: '<span style="background:' + c + '">' + E(x.role || "?") + "</span>", iconSize: [22, 22], iconAnchor: [11, 11] }) })
         .bindTooltip(E(x.dest.i.name + " (" + (x.dest.i.kind || x.kindName) + ")")).on("click", function () { S.sel = x.id; render(); draw(); }).addTo(layer);
       if (!sel) return;
       /* the corridor: a band its width each side of the line (a line this many pixels wide at this zoom), and the node circles */
       var cw = corr(x).w, mpp = 40075016.686 * Math.cos((x.route.coords[0] || [0])[0] * Math.PI / 180) / Math.pow(2, map.getZoom() + 8);
       S.dr = { band: Math.max(3, Math.min(4000, 2 * cw * 1000 / mpp)), circ: circles(x).length, air: ((x.air && x.air.list) || []).length };
-      if (x.route.coords.length > 1) L.polyline(x.route.coords, { color: c, weight: S.dr.band, opacity: 0.16, lineCap: "round", lineJoin: "round", interactive: false, className: "epecorrband" }).addTo(layer);
-      circles(x).forEach(function (cc0) { L.circle([cc0.lat, cc0.lon], { radius: cc0.km * 1000, color: c, weight: 1.5, opacity: 0.6, fillOpacity: 0.08, interactive: false, className: "epecirc" }).addTo(layer); });
+      if (shown("band") && x.route.coords.length > 1) L.polyline(x.route.coords, { color: c, weight: S.dr.band, opacity: 0.16, lineCap: "round", lineJoin: "round", interactive: false, className: "epecorrband" }).addTo(layer);
+      if (shown("band")) circles(x).forEach(function (cc0) { L.circle([cc0.lat, cc0.lon], { radius: cc0.km * 1000, color: c, weight: 1.5, opacity: 0.6, fillOpacity: 0.08, interactive: false, className: "epecirc" }).addTo(layer); });
       ((x.air && lay("air") && x.air.list) || []).forEach(function (a) {
         var k = CLS.indexOf(a.cls), col = ["#1864ab", "#1864ab", "#5f3dc4", "#e67700", "#2b8a3e", "#0b7285", "#0b7285"][k] || "#495057";
         (SY() ? W.OSAP_SYM.mark([a.lat, a.lon], ["i_air", "i_heli", "i_air", "g_medevac", "g_medevac", "i_port", "i_ferry"][k] || "i_air", { badge: col, scale: a.cls === "User-verified LZ" ? 0.7 : 0.55, className: "epeairmk" })
@@ -2033,21 +2093,21 @@
         if (S.dr) S.dr.along = layer.getLayers().length - n0;
       }
       /* the selected option: failed lines struck out, leg numbers, the analyst's nodes */
-      (x.legs || []).forEach(function (l, i) {
+      if (shown("legs")) (x.legs || []).forEach(function (l, i) {
         (l.failed || []).forEach(function (f) { L.polyline(f.coords, { color: "#c92a2a", weight: 3, opacity: 0.8, dashArray: "2 8", interactive: false }).addTo(layer); });
         if (x.legs.length > 1 && l.coords.length > 1) {
           var mid = along(l.coords, 1, 0.5, 0.5)[0];
           L.marker(mid, { keyboard: false, interactive: false, icon: L.divIcon({ className: "epelg", html: "<span" + (l.bad ? ' class="bad"' : "") + ">" + (i + 1) + "</span>", iconSize: [20, 20], iconAnchor: [10, 10] }) }).addTo(layer);
         }
       });
-      (x.nodes || []).forEach(function (n, i) {
+      if (shown("legs")) (x.nodes || []).forEach(function (n, i) {
         var nt = (NODE_N[n.type] ? NODE_N[n.type].charAt(0) : "N") + (i + 1);
         L.marker([n.lat, n.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.tag({ airdep: "i_air", seadep: "i_port", border: "crossing", haven: "g_poi", check: "g_check" }[n.type] || "g_waypoint", nt, { cls: "epend", scale: 0.6 }) : L.divIcon({ className: "epend", html: "<span>" + E(nt) + "</span>", iconSize: [26, 20], iconAnchor: [13, 10] }) })
           .bindTooltip(E(n.name + " (" + (NODE_N[n.type] || n.type) + ", placed by you)")).addTo(layer);
       });
     });
-    if (p) drawCm(p, layer, map);
-    if (o) (SY() ? L.marker([o.lat, o.lon], { keyboard: false, icon: W.OSAP_SYM.tag("g_start", "", { scale: 0.75 }) }) : L.circleMarker([o.lat, o.lon], { radius: 8, color: "#fff", weight: 3, fillColor: "#212529", fillOpacity: 1 })).bindTooltip(E("Origin: " + (o.label || grid(o.lat, o.lon)))).addTo(layer);
+    if (p) drawCm(p, layer, map, true);
+    if (o && shown("origin")) (SY() ? L.marker([o.lat, o.lon], { keyboard: false, icon: W.OSAP_SYM.tag("g_start", "", { scale: 0.75 }) }) : L.circleMarker([o.lat, o.lon], { radius: 8, color: "#fff", weight: 3, fillColor: "#212529", fillOpacity: 1 })).bindTooltip(E("Origin: " + (o.label || grid(o.lat, o.lon)))).addTo(layer);
   }
   function fitPlan() {
     var map = W.__asapMap; if (!map || !L) return;
@@ -2084,7 +2144,7 @@
       "#epe .epeorg code,#epe code{font:12px 'IBM Plex Mono',monospace}" +
       "#epe ul.epefound,#epe ul.epekept{list-style:none;margin:4px 0;padding:0}#epe ul.epefound li,#epe ul.epekept li{display:flex;gap:6px;align-items:center;padding:4px 0;border-top:1px solid var(--line-soft,var(--line,#e3e7eb))}#epe ul.epekept li span{flex:1}" +
       "#epe .epecard{border:1px solid var(--line,#d5dbe1);border-left:5px solid var(--epec);border-radius:6px;padding:8px 10px;margin:8px 0}#epe .epecard.sel{box-shadow:0 0 0 2px var(--epec) inset}" +
-      "#epe .epec1{display:flex;gap:8px;align-items:center}#epe .eperole{font-weight:700;width:auto}#epe .eperole.on{background:var(--epec);color:#fff;border-color:var(--epec)}" +
+      "#epe .epec1{display:flex;flex-wrap:wrap;gap:8px;align-items:center}#epe .eperole{font-weight:700;width:auto}#epe .eperole.on{background:var(--epec);color:#fff;border-color:var(--epec)}" +
       "#epe .epename{flex:1;text-align:left;background:none;border:0;padding:2px 0;color:inherit;cursor:pointer}#epe .epename b{font-size:13.5px}#epe .epelab{margin:2px 0 4px;font-size:12px}" +
       "#epe .epekpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:6px 0}#epe .epekpi div{background:var(--surface2,#f1f3f5);border-radius:4px;padding:4px 6px}#epe .epekpi b{display:block;font:600 13px/1.25 'IBM Plex Mono',monospace}#epe .epekpi span{font-size:11px;color:var(--muted,#56626f)}" +
       "#epe .epest{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px}#epe .epest select{font-weight:700}#epe .st-blocked{color:#b3261e}#epe .st-degraded{color:#a35f00}#epe .st-available{color:#1e7a3a}" +
@@ -2115,6 +2175,11 @@
       "#epe .epecmk{font:700 11px system-ui;color:#fff;background:var(--cmc);border-radius:3px;padding:2px 6px;min-width:34px;text-align:center}#epe .epecmopt{margin-top:8px}#epe ol.epecmrow{margin:2px 0;padding-left:18px;font-size:12px}" +
       ".epecmlb{background:none;border:0}.epecmlb span{display:inline-block;white-space:nowrap;background:rgba(255,255,255,.92);border:1.5px solid;border-radius:3px;font:700 11px/14px system-ui,sans-serif;padding:1px 4px;transform:translate(4px,-4px)}" +
       ".epecmmk{background:none;border:0}.epecmmk span{display:inline-block;white-space:nowrap;color:#fff;border:2px solid #fff;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.5);font:700 11px/16px system-ui,sans-serif;padding:0 4px}" +
+      "#epe .epesave{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:6px 0}#epe .epesave label{display:flex;gap:6px;align-items:center;flex:1;min-width:220px}#epe .epesave input{flex:1;min-width:0}#epe .epesave button,#epe .epeshow button{border:1px solid var(--line,#d5dbe1);background:var(--surface2,var(--surface,#fff));color:var(--ink,#1d2329);border-radius:4px;padding:5px 10px;min-height:32px;cursor:pointer;font-weight:600}" +
+      "#epe details.epeshow{border:1px solid var(--line,#d5dbe1);border-radius:6px;padding:4px 8px;margin:6px 0}#epe details.epeshow summary{cursor:pointer;font-weight:600;min-height:28px;line-height:28px}" +
+      "#epe .epevis{display:flex;gap:4px;align-items:center;font-size:12px;white-space:nowrap}#epe button.eperm{border:1px solid var(--line,#d5dbe1);background:var(--surface,#fff);color:var(--bad,#c0392b);border-radius:4px;padding:3px 8px;min-height:32px;cursor:pointer;font-size:12px;font-weight:600}" +
+      "#epe .eperma{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0;padding:6px 8px;border-radius:4px;background:var(--surface2,#f1f3f5);font-weight:600}#epe .eperma button{border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:4px 10px;min-height:32px;cursor:pointer;font-weight:600;background:var(--surface,#fff);color:var(--ink,#1d2329)}#epe .eperma button[data-ep-rmyes]{background:var(--bad,#c0392b);color:#fff;border-color:var(--bad,#c0392b)}" +
+      "#epe .epelay label,#epe .epevis{display:inline-flex;gap:5px;align-items:center;min-height:30px}#epe .epelay input,#epe .epevis input{min-height:0;width:18px;height:18px;margin:0;padding:0}" +
       "html.epe-picking #map{cursor:crosshair}" +
       "@media (max-width:700px){#epe:not([hidden]){padding:0}#epe .epebox{border-radius:0;min-height:100%}#epe .epekpi{grid-template-columns:1fr 1fr}#epe select,#epe input{font-size:16px}}";
     D.head.appendChild(s);

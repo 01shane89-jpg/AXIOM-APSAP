@@ -121,4 +121,16 @@ t("a radioactive bomb made into a nuclear one is rejected", () => {
   assert.equal(protectTerms("เตรียมใช้ 'ระเบิดกัมมันตรังสี' สังหาร"), "เตรียมใช้ 'radioactive bomb' สังหาร");
 });
 
+// 2026-11-19, Russian aircraft near Japan, Korea and Taiwan: real output from the stored index
+t("an intrusion turned into an attack, and an intercept into a rescue, are rejected", () => {
+  assert.match(mtSuspect("APEC前夕俄軍機侵擾日韓台 國防部譴責批威脅區域穩定", "Russian military aircraft attacked Japan and Korea on the eve of APEC", now, "zh"), /intrusion/);
+  assert.match(termMissing("風強浪大仍闖金門！中國海警4船編隊侵擾 海巡2小時全數驅離", "Four Chinese police boats attacked, two hours of patrols and all were driven out"), /intrusion/);
+  assert.match(termMissing("リトアニアでドローン侵入、警報発令", "NATO aircraft take off from Lithuania after drone attack"), /intrusion/);
+  assert.equal(termMissing("APEC前夕俄軍機侵擾日韓台", "Russian military aircraft harass Japan, South Korea and Taiwan on the eve of APEC"), "");
+  assert.equal(termMissing("共機侵擾後發射飛彈", "Chinese aircraft intrude, then fire missiles in an attack drill"), "", "the original names an attack word");
+  assert.match(mtSuspect("ជប៉ុន-​កូរ៉េខាងត្បូង បញ្ជូន​យន្តហោះចម្បាំង​​ស្ទាក់​បន្ទាន់ ក្រោយ​ យន្តហោះ​យោធា​​រុស្ស៊ី ២គ្រឿង រំលោភ​ចូលដែនអាកាស ជប៉ុន ​",
+    "Japan-South Korea Deploys Emergency Fighter Rescue Aircraft After Two Russian Military Planes Violate Japanese Airspace", now, "km"), /rescue/);
+  assert.equal(termMissing("សមត្ថកិច្ចកម្ពុជាស្ទាក់ចាប់លុយ១២.៨លានដុល្លារ", "Cambodia Police Seize 12.8 Million Dollars from Online Scammers"), "", "ស្ទាក់ចាប់ is also a seizure");
+});
+
 console.log(ok + " passed");

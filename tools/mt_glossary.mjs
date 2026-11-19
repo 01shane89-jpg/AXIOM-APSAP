@@ -79,6 +79,12 @@ const HEDGE = /iespējam|varētu|\bmöglich(?!keit)|mutma(?:ß|ss)lich|angeblich
 const HEDGE_EN = /possib|potential|\bmay\b|might|could|likely|alleg|suspect|suspic|report|warn|fear|risk|threat|plan|claim|\bsa(?:y|ys|id)\b|accus|probe|investigat|probabl|\?|rumou?r|expect|would|\bcan\b|cannot|can't|unable|allow|enabl|presum|purport|supposed|perhaps|maybe|whether|consider|prepar|\bif\b|in case|\bany\b|unconfirmed|believ|estimat|chance|scenario|prospect|question|\bnot\b|\bno\b|doubt|unlikely|odds/i;
 // 출격 (a sortie, aircraft scrambled): "attack" in the English needs an attack word in the Korean
 const SORTIE = /출격/;
+// 2026-11-19, Russian aircraft near Japan, Korea and Taiwan: PTS News' 俄軍機侵擾日韓台 (intruded on, harassed) came out as
+// "attacked", Kampuchea Thmey's fighters sent to intercept (យន្តហោះចម្បាំងស្ទាក់) as "Fighter Rescue Aircraft". In the stored
+// index every Chinese or Japanese intrusion headline translated with "attack" and no attack word in the original was wrong
+// (coast guard ships "harassing" Kinmen as "attacked the Golden Gate Bridge", a drone 侵入 as "drone attack").
+const INTRUDE = /侵擾|侵扰|擾台|扰台|擾日|擾我|機擾|机扰|闖入|闯入|逼近|侵犯|進入|进入|穿越|飛越|飞越|繞台|绕台|侵入/;
+const ZH_ATTACK = /攻|襲|袭|轟炸|轰炸|打擊|打击|擊落|击落|開火|开火|交火|炮擊|炮击|射擊|射击|發射|发射|入侵|侵略|戰爭|战争|爆炸|空爆|砲撃|撃墜/;
 const KO_ATTACK = /공격|습격|공습|타격|피격|테러|폭격|침공|기습|격추|포격|사격|발사|교전|공세|피습|침략|역습|반격/;
 
 const applies = (s, re, script) => { re.lastIndex = 0; return (!script || script.test(s)) && re.test(s); };
@@ -102,6 +108,8 @@ export function termMissing(orig, en) {
   orig = String(orig || ""); en = String(en || "");
   if (hasZone(orig) && !ZONE_EN(en)) return "air defense identification zone";
   for (const [re, , must, lost] of KEEP) if (applies(orig, re) && !must.test(en)) return lost;
+  if (INTRUDE.test(orig) && /\battack/i.test(en) && !ZH_ATTACK.test(orig) && !/\battack/i.test(orig)) return "attack (the original says an intrusion)";
+  if (/ស្ទាក់/.test(orig) && /\brescu/i.test(en) && !/សង្គ្រោះ/.test(orig)) return "rescue (ស្ទាក់ is an intercept)";
   if (SORTIE.test(orig) && /\battack/i.test(en) && !KO_ATTACK.test(orig) && !/\battack/i.test(orig)) return "attack (출격 is a scramble)";
   return "";
 }
