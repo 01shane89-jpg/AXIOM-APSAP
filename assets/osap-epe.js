@@ -1882,6 +1882,32 @@
     if (k === "avoid") roundAll(x.name + " added. ");
     return x;
   }
+  /* one corridor round every route (Shane 19 Nov: "i want to be able to have all the routes inside the corridor if i want"):
+     the routes with a PACE role (every route when none has one yet), skipping a route set to No corridor, wrapped in one
+     outline the widest set width beyond the outermost lines (a convex hull, so the ground between routes is inside too) */
+  function allRoutes(p) { var r = p.opts.filter(function (o) { return o.role; }); return (r.length ? r : p.opts).filter(function (o) { return !noCorr(o) && o.route && o.route.coords && o.route.coords.length > 1; }); }
+  function hullAll(list, wKm) {
+    var pts = [], k = 111320;
+    list.forEach(function (o) { thin(o.route.coords, 200).forEach(function (q) { var cl = Math.cos(q[0] * Math.PI / 180) || 1e-6; for (var a = 0; a < 16; a++) { var t = a * Math.PI / 8; pts.push([q[0] + Math.sin(t) * wKm * 1000 / k, q[1] + Math.cos(t) * wKm * 1000 / (k * cl)]); } }); });
+    if (pts.length < 3) return [];
+    var lat0 = pts[0][0], cl0 = Math.cos(lat0 * Math.PI / 180) || 1e-6;
+    var P = pts.map(function (q) { return [q[1] * cl0, q[0], q]; }).sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; });
+    function cr(o, a, b) { return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); }
+    var lo = [], up = [];
+    P.forEach(function (q) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); });
+    for (var i = P.length - 1; i >= 0; i--) { var q = P[i]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+    return lo.slice(0, -1).concat(up.slice(0, -1)).map(function (q) { return q[2]; });
+  }
+  function cmAll() {
+    var p = S.plan; if (!p) return;
+    var list = allRoutes(p);
+    if (!list.length) { S.cmmsg = "No route to wrap: every route is set to No corridor."; render(); return; }
+    var w = Math.max.apply(null, list.map(function (o) { return corr(o).w; }));
+    var ring = hullAll(list, w); if (ring.length < 3) return;
+    var x = cmAdd("corr", ring, "Corridor all routes", "Round " + (list.some(function (o) { return o.role; }) ? "the " + list.map(function (o) { return o.role; }).join(", ") + " routes" : "every route") + ", " + w + " km beyond");
+    if (x) { S.cmmsg = "Evacuation corridor " + x.name + " added: one outline round " + list.length + " route" + (list.length === 1 ? "" : "s") + ", " + areaKm2(x.pts) + " km². Drag its corners to tighten it, or delete it below."; render(); }
+  }
+
   /* the analyst's own point, named anything: at a typed grid, or at the next map tap; kept in this plan only (plan.cm, k "pt") */
   function ptAdd() {
     if (!S.plan) return;
@@ -2040,7 +2066,7 @@
         '<input id="epe-gtz" type="number" min="1" max="50" step="0.5" value="' + E(gf.sz || 3) + '" aria-label="Length on the ground in meters" title="Length on the ground, m (ICAO: at least 2.5)" style="flex:0 1 70px">' +
         '<input id="epe-gtn" maxlength="80" placeholder="Note: material, orientation, who lays it" aria-label="Note on the signal" value="' + E(gf.note || "") + '">' +
         '<input id="epe-gtg" maxlength="60" placeholder="Grid, or empty and tap the map" aria-label="Grid of the signal" value="' + E(gf.g || "") + '"><button type="submit">Add signal</button></form>' +
-      (optOf(S.sel) ? '<div class="epebtns"><button type="button" data-ep="cmband"' + (noCorr(optOf(S.sel)) ? ' disabled title="This route is set to No corridor"' : ' title="An outline of the selected option\'s corridor width each side of its line, kept as your evacuation corridor"') + ">Corridor from the selected route (" + E(noCorr(optOf(S.sel)) ? "none set" : corr(optOf(S.sel)).w + " km each side") + ")</button></div>" : "") +
+      (optOf(S.sel) ? '<div class="epebtns"><button type="button" data-ep="cmband"' + (noCorr(optOf(S.sel)) ? ' disabled title="This route is set to No corridor"' : ' title="An outline of the selected option\'s corridor width each side of its line, kept as your evacuation corridor"') + ">Corridor from the selected route (" + E(noCorr(optOf(S.sel)) ? "none set" : corr(optOf(S.sel)).w + " km each side") + ")</button>" + '<button type="button" data-ep="cmall" title="One outline round every route with a PACE role (every route when none has one), the widest set width beyond the outer lines">Corridor round all routes</button></div>' : "") +
       '<p id="epe-cmmsg" class="obs" role="status">' + E(S.cmmsg || "") + "</p>" +
       (list.length ? '<ul class="epecmls">' + list.map(function (x) {
         var g = CM[x.k].g, pt = g === "pt";
@@ -2092,6 +2118,10 @@
       var col = CM_COL[x.k], av = x.k === "avoid";
       var pg = L.polygon(x.pts, { color: col, weight: av ? 2.5 : 2, dashArray: av ? null : "10 6", fillColor: col, fillOpacity: av ? 0.18 : 0.06, className: av ? "epeavoid" : "epecorr2", interactive: true })
         .bindTooltip(E((av ? "Area to avoid: " : "Evacuation corridor: ") + x.name + (live0 ? " (tap to move its corners)" : "")), { sticky: true }).addTo(lyr);
+      /* Shane 19 Nov: "when i try to select the route it always selects the corridor": the map draws on one canvas and a tap
+         goes to the topmost shape under it, so areas go to the back: routes, lines and points win where they overlap, and
+         the area still takes a tap on open ground */
+      if (pg.bringToBack) pg.bringToBack();
       if (live0) { pg.on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); cmEditTog(x.id); }); vx(x, pg); }
       var c0 = x.pts.reduce(function (a, q) { return [a[0] + q[0] / x.pts.length, a[1] + q[1] / x.pts.length]; }, [0, 0]);
       if (lbx(x) && x.edges) x.edges.forEach(function (e2) { if (e2.mid && e2.b - e2.a >= (e2.kind === "buffer" ? 15 : 3)) lbl(e2.mid, e2.kind === "buffer" ? "set width (no feature)" : e2.name || ("unnamed " + GEO_K[e2.kind]), col, e2.kind === "buffer" ? "epebuf" : "epeedge"); });
@@ -2584,6 +2614,7 @@
     else if (b.hasAttribute("data-ep-cmdel")) cmDel(b.getAttribute("data-ep-cmdel"));
     else if (b.hasAttribute("data-ep-cmto")) toCm(b.getAttribute("data-ep-cmto"));
     else if (b.hasAttribute("data-ep-cmnode")) cmToNode(b.getAttribute("data-ep-cmnode"));
+    else if (k === "cmall") cmAll();
     else if (k === "cmband") { var obd = optOf(S.sel); if (obd && !noCorr(obd) && obd.route.coords.length > 1) cmAdd("corr", band(obd.route.coords, corr(obd).w), "Corridor " + (obd.role || obd.dest.i.name), "From the " + (obd.role ? obd.role + " " : "") + "route, " + corr(obd).w + " km each side"); }
     else if (k === "dirs") findDirs();
     else if (k === "round") { if (!S.rbusy) roundAll(""); }
@@ -2713,6 +2744,9 @@
       if (shown("routes")) L.polyline(x.route.coords, { color: c, weight: sel ? 6 : 4, opacity: sel ? 1 : 0.75, dashArray: x.role ? null : "8 6", className: (x.legs || []).some(function (l) { return flies(l.mode); }) ? "epefly" : "" })
         .on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); S.sel = x.id; render(); draw(); })
         .bindTooltip(E((x.role ? x.role + " · " : "") + x.dest.i.name + " · " + dist(x.route.m) + " · " + dur(x.route.s)), { sticky: true }).addTo(layer);
+      /* a wider, invisible strip along the line so a finger finds the route (and not the corridor under it) */
+      if (shown("routes") && x.route.coords.length > 1) L.polyline(x.route.coords, { color: c, weight: 22, opacity: 0, className: "epehit" })
+        .on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); S.sel = x.id; render(); draw(); }).addTo(layer);
       if (shown("dests") && itemOn("d:" + x.id, p)) L.marker([x.dest.i.lat, x.dest.i.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.ptag([x.dest.i.kind, x.kindName, x.dest.i.name], x.role || "?", { cls: "epemk", badge: c, scale: 0.75 }) : L.divIcon({ className: "epemk", html: '<span style="background:' + c + '">' + E(x.role || "?") + "</span>", iconSize: [22, 22], iconAnchor: [11, 11] }) })
         .bindTooltip(E(x.dest.i.name + " (" + (x.dest.i.kind || x.kindName) + ")")).on("click", function () { S.sel = x.id; render(); draw(); }).addTo(layer);
       if (shown("cp")) cpsOf(x).forEach(function (q) {

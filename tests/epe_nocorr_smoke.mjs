@@ -69,6 +69,38 @@ const drawn = async (p) => (await st(p)).drawn;
   await p.waitForTimeout(300);
   s = await st(p);
   ok(s.dr.band > 0 && !s.plan.opts.find((o) => o.id === sel).corr.none, "choosing 5 km brings the corridor back");
+  /* Shane 19 Nov: "i want to be able to have all the routes inside the corridor if i want" */
+  const c0 = (s.plan.cm || []).length;
+  await p.evaluate(() => document.querySelector('#epe [data-ep="cmall"]').click());
+  await p.waitForTimeout(300);
+  s = await st(p);
+  const allC = (s.plan.cm || [])[c0];
+  ok(allC && allC.k === "corr" && allC.name === "Corridor all routes" && (s.plan.cm || []).length === c0 + 1, "Corridor round all routes adds one corridor");
+  const inside = (pt, ring) => { let c = false; for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) { const [yi, xi] = ring[i], [yj, xj] = ring[j]; if ((yi > pt[0]) !== (yj > pt[0]) && pt[1] < (xj - xi) * (pt[0] - yi) / (yj - yi) + xi) c = !c; } return c; };
+  const outs = s.plan.opts.flatMap((o) => o.route.coords.filter((q) => !inside(q, allC.pts)).map(() => o.dest.i.name));
+  ok(s.plan.opts.length >= 2 && outs.length === 0, "every route (" + s.plan.opts.length + ") lies inside it" + (outs.length ? ": outside " + [...new Set(outs)].join(", ") : ""));
+  ok(/one outline round \d+ routes/.test(await p.evaluate(() => document.getElementById("epe-cmmsg").textContent)), "and the panel says so with its area");
+  /* a route set to No corridor is left out of it */
+  await p.selectOption("#epe [data-ep-cw]", "none");
+  await p.evaluate(() => document.querySelector('#epe [data-ep="cmall"]').click());
+  await p.waitForTimeout(300);
+  s = await st(p);
+  const c2 = s.plan.cm[s.plan.cm.length - 1], selO = s.plan.opts.find((o) => o.id === sel), others = s.plan.opts.filter((o) => o.id !== sel);
+  ok(c2 !== allC && others.every((o) => o.route.coords.every((q) => inside(q, c2.pts))) && /, 5 km beyond$/.test(c2.how) === false, "with one route set to No corridor, it wraps the others (" + c2.how + ")");
+  /* Shane 19 Nov: "when i try to select the route it always selects the corridor": a tap on a route inside a corridor selects the route */
+  const xy = await p.evaluate((id) => {
+    const m = window.__asapMap, pl = window.OSAP_EPE.state().plan;
+    /* the route point furthest from every other route (of any route but the selected one), so only that route lies under the finger */
+    let c = null, best = -1; pl.opts.filter((o) => o.id !== id).forEach((o) => { const rest = pl.opts.filter((q) => q.id !== o.id).flatMap((q) => q.route.coords); o.route.coords.forEach((q) => { const d = Math.min(...rest.map((r) => (r[0] - q[0]) ** 2 + (r[1] - q[1]) ** 2)); if (d > best) { best = d; c = q; window.__want = o.id; } }); });
+    m.setView(c, 13, { animate: false }); return new Promise((res) => setTimeout(() => { window.__tp = c; const pt = m.latLngToContainerPoint(c), r = m.getContainer().getBoundingClientRect(); res({ x: r.left + pt.x, y: r.top + pt.y, hit: (() => { const e = document.elementFromPoint(r.left + pt.x, r.top + pt.y); return e ? e.tagName + "#" + e.id + "." + (e.getAttribute("class") || "") + " in map: " + m.getContainer().contains(e) + " parent " + (e.parentElement && (e.parentElement.id || e.parentElement.className)) : ""; })(), panel: document.getElementById("epe").getBoundingClientRect().left }); }, 800));
+  }, sel);
+  if (process.env.DBG) console.log(JSON.stringify(xy), await p.evaluate(() => { const m = window.__asapMap; let n = 0; m.eachLayer((l) => { if (l instanceof L.Path && l.options.className === "epehit") n++; }); const cv = [...m.getContainer().querySelectorAll("canvas")].map((c) => { const r = c.getBoundingClientRect(); return c.parentElement.className.split(" ")[1] + " " + Math.round(r.left) + "," + Math.round(r.top) + " " + Math.round(r.width) + "x" + Math.round(r.height) + " pe=" + getComputedStyle(c).pointerEvents; }).join(" | "); let hits = []; m.eachLayer((l) => { if (l instanceof L.Path && l._containsPoint && l._map && l.options.interactive !== false) { try { if (l._containsPoint(m.latLngToLayerPoint(window.__tp))) hits.push(l.options.className || "?"); } catch (e) {} } }); const rs = []; m.eachLayer((l) => { if (l instanceof L.Canvas && l._container) rs.push(l); }); const pt = m.latLngToLayerPoint(window.__tp); const order = rs.map((r) => { const o2 = []; for (let o = r._drawLast; o; o = o.prev) { const l = o.layer; if (l && l.options && l.options.interactive !== false && l._containsPoint && l._containsPoint(pt)) o2.push(l.options.className || "?"); } return r._container.parentNode.className.split(" ")[1] + ":" + o2.join(","); }).join(" / "); return order + " || " + cv + " || hits " + hits.join(",") + " || hit lines " + n + ", msg " + document.getElementById("epe-cmmsg").textContent; }));
+  await p.waitForTimeout(300);
+  /* markers (checkpoints) can sit on the route here; this checks the route against the corridor under it */
+  await p.addStyleTag({ content: ".leaflet-marker-icon{pointer-events:none!important}" });
+  await p.mouse.click(xy.x, xy.y);
+  await p.waitForTimeout(400);
+  console.log("sel", (await st(p)).sel, "want", await p.evaluate(() => window.__want), "orig", sel, await p.evaluate(() => document.getElementById("epe-cmmsg").textContent)); ok((await st(p)).sel === (await p.evaluate(() => window.__want)) && !/Drag the round handles/.test(await p.evaluate(() => document.getElementById("epe-cmmsg").textContent)), "a tap on a route inside the corridor selects the route, not the corridor");
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }
