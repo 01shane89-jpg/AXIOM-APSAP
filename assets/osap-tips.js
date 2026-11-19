@@ -5,9 +5,13 @@
      device. "Show me" points at the tool; "Next tip" shows another; "Turn off tips" (or Settings > Show tips) stops them.
      Tips keep coming, tools never used first, then the ones seen longest ago, until the user turns them off.
    - Unobtrusive by rule: never in the first 40 s of a visit, never within 6 s of a tap or key, never over an open window, plan,
-     menu or tool card, at least 3 minutes apart (a follow-up 90 s), 3 a visit at most, gone by itself after 25 s.
+     menu or tool card, never over the phone's list sheet while it is raised (the tour offer waits for it too), at least 3 minutes apart (a follow-up 90 s), 3 a visit at most, gone by itself after 25 s.
    - Tour: the first visit after this ships offers a one-minute tour of the toolbar and Settings (Settings > Take the tour runs
      it again). Each step rings one button and says what it is for; buttons not on screen (a phone's shorter toolbar) are skipped.
+     Before each step the ring clears what would hide its button: the phone's list sheet drops to its bar, an open menu, info
+     box or details sheet closes, Today and the guide close (Kelsea's iPhone, 19 Nov: the timeline sheet was up and the ring sat
+     on a news row). A button something else still covers is treated as not on screen, so the ring never points at the wrong
+     thing. Closing the tour puts the list sheet back where it was.
    - Show me in the app: the user guide's sections call walk(id), the same ring, step by step through that feature's buttons.
    Kept in localStorage "osap-tips" on this device only: off, which tips were seen and when, which tools were used, the tour.
    Nothing is sent anywhere. Nothing here reads or changes a record, a finding or a saved item: it only points at buttons and,
@@ -56,16 +60,46 @@
     if (step.tool) {
       var names = [].concat(step.tool);
       for (i = 0; i < names.length && !el; i++) {
-        var x = toolBtn(names[i]); if (x) { scrollTo(x); if (vis(x)) el = x; }
+        var x = toolBtn(names[i]); if (x) { scrollTo(x); if (shown(x)) el = x; }
         /* a tool the page shows elsewhere at this size (Reports sits in the header on a wide screen) */
-        if (!el && ALT[names[i]]) el = Array.prototype.filter.call(D.querySelectorAll(ALT[names[i]]), vis)[0] || null;
+        if (!el && ALT[names[i]]) el = Array.prototype.filter.call(D.querySelectorAll(ALT[names[i]]), shown)[0] || null;
       }
       /* a folded toolbar: point at its open arrow instead */
-      if (!el && bar() && bar().classList.contains("folded")) { var f = bar().querySelector(".atk-fold"); if (vis(f)) { el = f; step._fold = true; } }
-    } else if (step.card) el = todayCard(step.card);
-    else if (step.sel) { var y = D.querySelector(step.sel); if (vis(y)) el = y; }
+      if (!el && bar() && bar().classList.contains("folded")) { var f = bar().querySelector(".atk-fold"); if (shown(f)) { el = f; step._fold = true; } }
+    } else if (step.card) { el = todayCard(step.card); if (el && !shown(el)) el = null; }
+    else if (step.sel) { var y = D.querySelector(step.sel); if (shown(y)) el = y; }
     return el;
   }
+  /* on screen and not under anything else: the middle of it is inside the window and the top thing there (the tips' own ring
+     and callout aside) is the target itself. A button with something over it counts as not on screen. */
+  var OWN = "#tipcall,#tipspot,#tipcatch,#tipcard";
+  function shown(el) {
+    if (!vis(el)) return false;
+    var r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+    if (x < 0 || y < 0 || x >= W.innerWidth || y >= W.innerHeight) return false;
+    var all = D.elementsFromPoint ? D.elementsFromPoint(x, y) : [D.elementFromPoint(x, y)], hit = null, i;
+    for (i = 0; i < all.length; i++) if (all[i] && !(all[i].closest && all[i].closest(OWN))) { hit = all[i]; break; }
+    return !hit || hit === el || el.contains(hit) || hit.contains(el);
+  }
+  /* what can hide a step's button, closed before the ring is drawn: the guide, Today (unless a step needs it), the phone's list
+     sheet (down to its bar), the phone's details sheet, the gear and Reports menus, a toolbar menu and the map's info box.
+     None of these holds unsaved work. Returns true when something moved, so the ring waits for the sheet to settle. */
+  function clearView(keepToday) {
+    var moved = false, ph = W.ASAP_PHONE;
+    if (W.OSAP_GUIDE && W.OSAP_GUIDE.isOpen()) { W.OSAP_GUIDE.close(); moved = true; }
+    if (!keepToday && todayOpen()) { W.OSAP_TODAY.hide(); moved = true; }
+    if (ph && ph.on && ph.on()) {
+      var pb = D.getElementById("pkg-back"); if (pb && !pb.hidden && ph.close) { ph.close(); moved = true; }
+      if (sheetUp() && ph.setSheet) { ph.setSheet("bar"); moved = true; }
+    }
+    var tp = D.getElementById("tidy-pop"), tb = D.querySelector('[data-tidy][aria-expanded="true"]');
+    if (tp && !tp.hidden && tb) { tb.click(); moved = true; }
+    var ap = D.getElementById("atk-pop"); if (ap && !ap.hidden) { ap.hidden = true; ap._for = null; moved = true; }
+    var m = W.__asapMap; if (m && m.closePopup && D.querySelector(".leaflet-popup")) { m.closePopup(); moved = true; }
+    return moved;
+  }
+  /* the phone's list sheet raised to half or full height (it covers the map and its toolbar) */
+  function sheetUp() { var de = D.documentElement; return de.classList.contains("phone") && /^(half|full)$/.test(de.getAttribute("data-sheet") || ""); }
   function scrollTo(el) {
     var l = el.closest(".atk-list"); if (!l) return;
     var r = el.getBoundingClientRect(), lr = l.getBoundingClientRect();
@@ -157,7 +191,7 @@
   };
 
   /* ---------- the ring and its callout ---------- */
-  var SPOT = null, CALL = null, steps = [], at = 0, single = false, stepEl = null;
+  var SPOT = null, CALL = null, steps = [], at = 0, single = false, stepEl = null, keepToday = false, sheetBack = null, waitT = 0;
   function css() {
     if (D.getElementById("tips-css")) return;
     var s = D.createElement("style"); s.id = "tips-css";
@@ -191,9 +225,10 @@
     steps = (list || []).slice(); single = !!opt.single; at = 0;
     if (!steps.length) return false;
     lastFocus = D.activeElement;
-    /* the steps point at the map's toolbar: Today and the guide cover it, so they close first (a Today card step keeps Today) */
-    if (W.OSAP_GUIDE && W.OSAP_GUIDE.isOpen()) W.OSAP_GUIDE.close();
-    if (!steps.some(function (s) { return s.card || /#today/.test(s.sel || ""); }) && todayOpen()) W.OSAP_TODAY.hide();
+    /* the steps point at the map's toolbar: Today, the guide and the phone's list sheet cover it, so each step clears them
+       first (draw); a walk with a Today card step keeps Today. The list sheet goes back to its height when the tour closes. */
+    keepToday = steps.some(function (s) { return s.card || /#today/.test(s.sel || ""); });
+    sheetBack = sheetUp() ? D.documentElement.getAttribute("data-sheet") : null;
     CATCH = D.createElement("div"); CATCH.id = "tipcatch"; CATCH.className = "leaflet-control";
     SPOT = D.createElement("div"); SPOT.id = "tipspot"; SPOT.setAttribute("aria-hidden", "true");
     CALL = D.createElement("div"); CALL.id = "tipcall"; CALL.className = "leaflet-control";
@@ -205,16 +240,28 @@
     draw(1);
     return true;
   }
-  /* shows step "at"; a step with nothing on screen is skipped in the direction of travel (dir) */
+  /* clears what hides the steps, waits for the sheet to settle when something moved (its height eases over 0.2 s), then shows
+     step "at" */
   function draw(dir) {
+    clearTimeout(waitT);
+    if (clearView(keepToday)) {
+      CALL.style.visibility = "hidden"; SPOT.classList.add("nohole");
+      waitT = setTimeout(function () { if (CALL) { clearView(keepToday); render(dir); } }, 260);
+      return;
+    }
+    render(dir);
+  }
+  /* shows step "at"; a step with nothing on screen is skipped in the direction of travel (dir) */
+  function render(dir) {
+    CALL.style.visibility = "";
     while (at >= 0 && at < steps.length) {
       var s = steps[at]; s._fold = false;
       stepEl = (s.tool || s.card || s.sel) ? find(s) : null;
       if (stepEl || !(s.tool || s.card || s.sel) || single) break;
       at += dir;
     }
-    if (at < 0) { at = 0; return draw(1); }
-    if (at >= steps.length) { close(); return; }
+    if (at < 0) { at = 0; return render(1); }
+    if (at >= steps.length) { close(true); return; }
     var s2 = steps[at], last = at === steps.length - 1, n = steps.length;
     var text = s2._fold ? "The toolbar is folded away. Tap the arrow here to open it, then " + s2.t.charAt(0).toLowerCase() + s2.t.slice(1) :
       (!stepEl && (s2.tool || s2.card || s2.sel)) ? s2.t + " (It is not on screen right now.)" : s2.t;
@@ -247,24 +294,29 @@
   function onCall(e) {
     var t = e.target.closest && e.target.closest("[data-tc]"); if (!t) return;
     var k = t.getAttribute("data-tc");
-    if (k === "x") close();
+    if (k === "x") close(true);
     else if (k === "next") { at++; draw(1); }
     else if (k === "back") { at--; draw(-1); }
     else if (k === "open") { var el = stepEl; close(); if (el) el.click(); }
   }
   function onKey(e) {
     if (!CALL) return;
-    if (e.key === "Escape") { e.stopImmediatePropagation(); e.preventDefault(); close(); }
+    if (e.key === "Escape") { e.stopImmediatePropagation(); e.preventDefault(); close(true); }
     else if (e.key === "Tab") { /* keep focus on the callout while it is open */
       var bs = CALL.querySelectorAll("button"); if (!bs.length) return;
       var i = Array.prototype.indexOf.call(bs, D.activeElement);
       if (i < 0 || (e.shiftKey && i === 0) || (!e.shiftKey && i === bs.length - 1)) { e.preventDefault(); bs[e.shiftKey ? bs.length - 1 : 0].focus(); }
     }
   }
-  function close() {
+  /* back: the user ended the tour (×, Done, Esc), so the list sheet goes back up if the tour lowered it; "Open it" and a new
+     tour leave it down */
+  function close(back) {
     if (!CALL) return;
+    clearTimeout(waitT);
     [CATCH, SPOT, CALL].forEach(function (x) { if (x) x.remove(); });
     CATCH = SPOT = CALL = stepEl = null; steps = [];
+    if (back === true && sheetBack && W.ASAP_PHONE && W.ASAP_PHONE.setSheet && !sheetUp()) W.ASAP_PHONE.setSheet(sheetBack);
+    sheetBack = null;
     D.removeEventListener("keydown", onKey, true); W.removeEventListener("resize", place);
     if (lastFocus && lastFocus.focus && D.contains(lastFocus)) try { lastFocus.focus({ preventScroll: true }); } catch (e) {}
   }
@@ -364,6 +416,8 @@
   var BUSY = '[id$="dlg"],.osplit,#medplan,#epe,#lz-card,#meas-card,#atk-ring,#atk-pop,#tidy-pop,#ibpv,#guidedlg,#kd-sheet,#revdlg,#rvask,#mycc-setup,#tipcall,#atk-om:not([hidden])';
   function busy() {
     if (D.visibilityState === "hidden") return true;
+    /* the phone's list raised over the map: the user is reading it, and map tips would point under it */
+    if (!todayOpen() && sheetUp()) return true;
     return Array.prototype.some.call(D.querySelectorAll(BUSY), function (el) { return vis(el); });
   }
   function on() { return !st().off; }
