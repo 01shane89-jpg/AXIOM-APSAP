@@ -62,7 +62,7 @@
   "use strict";
   var W = window, D = document, L = W.L;
   if (W.OSAP_EPE) return;
-  var KEY = "osap-epe-plans", CUR = "osap-epe-cur", MAX = 20, MAX_OPTS = 6, KEYP = "osap-epe-pkgs", MAX_PKG = 5;
+  var KEY = "osap-epe-plans", CUR = "osap-epe-cur", OPEN = "osap-epe-open", MAX = 20, MAX_OPTS = 6, KEYP = "osap-epe-pkgs", MAX_PKG = 5;
   var KINDS = [["posts", "U.S. embassy or consulate"], ["airports", "Major airport"], ["airfields", "Airfield of any size"], ["seaports", "Seaport"]];
   var ROLES = ["P", "A", "C", "E"], ROLE_N = { P: "Primary", A: "Alternate", C: "Contingency", E: "Emergency" };
   var STATUS = ["Available", "Degraded", "Blocked", "Unknown"];
@@ -123,6 +123,8 @@
     var was = p.saved; p.saved = Date.now();
     var list = all().filter(function (x) { return x.id !== p.id; }); list.unshift(p);
     var ok = lsSet(KEY, list.slice(0, MAX)); if (ok) lsSet(CUR, p.id); else p.saved = was;
+    /* a plan the browser would not keep is only on screen: say so where it cannot be missed, until a save works */
+    S.full = !ok;
     return ok;
   }
 
@@ -150,12 +152,15 @@
     style();
     if (opts.at && isFinite(opts.at[0]) && isFinite(opts.at[1])) setOrigin(opts.at[0], opts.at[1], "", opts.how || "Picked on the map");
     var el = box(); render(); el.hidden = false;
+    /* remembered for this tab, so a reload (device sync, an update, the phone dropping the tab) opens Evac again (assets/osap-atak.js) */
+    try { sessionStorage.setItem(OPEN, "1"); } catch (e) { /* private mode */ }
     if (W.OSAP_SPLIT) W.OSAP_SPLIT.apply();
     draw(); fitPlan();
     var h = el.querySelector("h2"); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); }
   }
   function close() {
     var el = D.getElementById("epe"); if (el) el.hidden = true;
+    try { sessionStorage.removeItem(OPEN); } catch (e) { /* private mode */ }
     pickEnd(); cmEnd(); S.tok++; S.busy = false; S.rtok++; S.rbusy = false;
     if (S.active) stopActive();
     if (layer) { layer.remove(); layer = null; }
@@ -1782,7 +1787,9 @@
       '<label>Incidents from the last <select data-ep-days>' + [7, 14, 30, 90].map(function (d) { return "<option" + (S.days === d ? " selected" : "") + ">" + d + "</option>"; }).join("") + "</select> days</label></div>" +
       '<div class="epebtns">' + (S.busy ? '<button type="button" data-ep="stop">Stop</button>' : '<button type="button" class="epego" data-ep="plan"' + (o ? "" : " disabled") + ">" + (p ? "Work out again" : "Work out the options") + "</button>") + "</div>" +
       '<p id="epe-msg" class="obs" role="status">' + E(S.msg) + "</p></section>";
-    el.innerHTML = '<div class="epebox">' + head + origin + (p ? optsHtml(p) + cmHtml(p) : "") + keptHtml() + pkgsHtml() +
+    var full = S.full && p ? '<div class="epefull" role="alert"><b>Not saved.</b> This browser has no room left for OSAP, so this plan is only on screen and is lost if the page reloads or closes. ' +
+      "Delete plans or route packages you no longer need (the × buttons below), and OSAP saves this one straight away.</div>" : "";
+    el.innerHTML = '<div class="epebox">' + head + full + origin + (p ? optsHtml(p) + cmHtml(p) : "") + keptHtml() + pkgsHtml() +
       '<p class="obs epefoot">Routes from the free OpenStreetMap routers (FOSSGIS OSRM and Valhalla); embassies and consulates from travel.state.gov, airports from OurAirports and OpenStreetMap, seaports from the UN/LOCODE reference list. ' +
       "The incident weighting counts what OSAP holds near each line; it is not a threat assessment. Confirm every route, destination and status with the post and on the ground. Kept on this device only.</p></div>";
   }
@@ -2045,7 +2052,7 @@
     else if (b.hasAttribute("data-ep-kml")) exportPkg(b.getAttribute("data-ep-kml"), false);
     else if (b.hasAttribute("data-ep-kmz")) exportPkg(b.getAttribute("data-ep-kmz"), true);
     else if (b.hasAttribute("data-ep-tak")) takPkg(b.getAttribute("data-ep-tak"));
-    else if (b.hasAttribute("data-ep-pdel")) delPkg(b.getAttribute("data-ep-pdel"));
+    else if (b.hasAttribute("data-ep-pdel")) { delPkg(b.getAttribute("data-ep-pdel")); if (S.full && S.plan && keep(S.plan)) { S.msg = "Saved on this device now."; render(); } }
     else if (b.hasAttribute("data-ep-pass")) { if (S.active) { var kp = +b.getAttribute("data-ep-pass"); S.active.passed = S.active.passed === kp ? kp - 1 : kp; render(); draw(); } }
     else if (k === "pick") { if (S.picking) { pickEnd(); render(); } else pickStart(); }
     else if (k === "me") myLocation();
@@ -2086,7 +2093,7 @@
     else if (b.hasAttribute("data-ep-rmno")) { S.rmAsk = null; render(); }
     else if (b.hasAttribute("data-ep-sel")) { if (S.picking) pickEnd(); S.atok++; S.abusy = null; S.amsg = ""; S.dtok++; S.dbusy = null; S.dmsg = ""; S.showDet = null; S.ptok++; S.pbusy = null; S.pmsg = ""; S.sel = b.getAttribute("data-ep-sel"); render(); draw(); fitOpt(optOf(S.sel)); }
     else if (b.hasAttribute("data-ep-open")) { var id = b.getAttribute("data-ep-open"), pl = all().filter(function (x) { return x.id === id; })[0]; if (pl) { S.tok++; S.busy = false; S.ltok++; S.lbusy = null; S.lmsg = ""; S.atok++; S.abusy = null; S.amsg = ""; S.dtok++; S.dbusy = null; S.dmsg = ""; S.showDet = null; S.ptok++; S.pbusy = null; S.pmsg = ""; S.plan = pl; S.origin = pl.origin; S.mode = pl.mode || "car"; S.days = pl.days || 30; S.sel = pl.opts[0] && pl.opts[0].id; S.msg = ""; lsSet(CUR, pl.id); render(); draw(); fitPlan(); } }
-    else if (b.hasAttribute("data-ep-del")) { var di = b.getAttribute("data-ep-del"); lsSet(KEY, all().filter(function (x) { return x.id !== di; })); if (S.plan && S.plan.id === di) { S.plan = null; S.sel = null; draw(); } render(); }
+    else if (b.hasAttribute("data-ep-del")) { var di = b.getAttribute("data-ep-del"); lsSet(KEY, all().filter(function (x) { return x.id !== di; })); if (S.plan && S.plan.id === di) { S.plan = null; S.sel = null; S.full = false; draw(); } else if (S.full && S.plan && keep(S.plan)) S.msg = "Saved on this device now."; render(); }
   }
   function onChange(e) {
     var t = e.target;
@@ -2238,6 +2245,7 @@
     s.textContent =
       "#epe:not([hidden]){position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.35);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}" +
       "#epe .epebox{background:var(--surface,#fff);color:var(--ink,#1d2329);width:min(760px,100%);border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35);padding:0 14px 14px;font-size:13px;line-height:1.4}" +
+      "#epe .epefull{margin:10px 0 0;padding:8px 10px;border:2px solid #b3261e;border-radius:6px;background:#fdecea;color:#5f1410}" +
       "#epe .chead{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface,#fff);padding:10px 0 8px;border-bottom:1px solid var(--line,#d5dbe1)}" +
       "#epe .chead h2{flex:1;min-width:max-content;font-size:15px;margin:0}#epe .epecc{font-weight:400;color:var(--muted,#56626f)}" +
       "#epe h3{font-size:13px;margin:12px 0 6px}#epe h3 .obs{font-weight:400}#epe .obs{color:var(--muted,#56626f)}#epe .epebad{color:var(--bad,#c0392b)}" +
