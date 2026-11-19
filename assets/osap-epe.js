@@ -127,7 +127,7 @@
   }
 
   /* ---------- state ---------- */
-  var S = { rtok: 0, rbusy: false, cmmsg: "", cmDraw: null, plan: null, origin: null, sel: null, busy: false, tok: 0, msg: "", found: null, picking: false, mode: "car", days: 30, ltok: 0, lbusy: null, lmsg: "", pickNode: null, atok: 0, abusy: null, amsg: "", flyPick: null, dtok: 0, dbusy: null, dmsg: "", xbusy: false, showDet: null, ptok: 0, pbusy: null, pmsg: "" };
+  var S = { gtok: 0, gbusy: false, gmsg: "", rtok: 0, rbusy: false, cmmsg: "", cmDraw: null, plan: null, origin: null, sel: null, busy: false, tok: 0, msg: "", found: null, picking: false, mode: "car", days: 30, ltok: 0, lbusy: null, lmsg: "", pickNode: null, atok: 0, abusy: null, amsg: "", flyPick: null, dtok: 0, dbusy: null, dmsg: "", xbusy: false, showDet: null, ptok: 0, pbusy: null, pmsg: "" };
   (function () { var c = lsGet(CUR, null), p = c && all().filter(function (x) { return x.id === c; })[0]; if (p) { S.plan = p; S.origin = p.origin; S.mode = p.mode || "car"; S.days = p.days || 30; S.sel = p.opts[0] && p.opts[0].id; } })();
   var layer = null;
 
@@ -1021,7 +1021,7 @@
   /* the plan as KML: a folder per option (route, legs, destination, checkpoints, nodes, crossings, air, hazards, fuel, posts),
      then the analyst's control measures and points. Every point says its MGRS grid. icons: the KMZ carries files/<key>.png */
   function toKml(pk, icons) {
-    var pl = pk.plan, h = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + xml(pk.name) + "</name>" +
+    var pl = pk.plan, gt = function (id) { return pl.geo && pl.geo.t && pl.geo.t[id] ? " Ground: " + pl.geo.t[id] : ""; }, h = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + xml(pk.name) + "</name>" +
       "<description>" + xml("OSAP evacuation plan, exported " + new Date(pk.made).toISOString() + ". Automatic draft from open data; roles, statuses and confirmed checkpoints are the analyst's, everything else is OSAP's proposal and unverified." + (pk.fp ? " SHA-256 of the plan: " + pk.fp : "")) + "</description>";
     Object.keys(KCOL).forEach(function (k) { h += '<Style id="r' + (k || "x") + '"><LineStyle><color>' + KCOL[k] + "</color><width>4</width></LineStyle></Style>"; });
     h += '<Style id="lfly"><LineStyle><color>ffab6418</color><width>2</width></LineStyle></Style><Style id="lgnd"><LineStyle><color>ff70665c</color><width>3</width></LineStyle></Style>';
@@ -1044,16 +1044,16 @@
         coords.map(function (c) { return (+c[1]).toFixed(6) + "," + (+c[0]).toFixed(6) + ",0"; }).join(" ") + "</coordinates></LineString></Placemark>";
     }
     function fold(name, body) { return body ? "<Folder><name>" + xml(name) + "</name>" + body + "</Folder>" : ""; }
-    h += fold("Origin", pm("Origin: " + (pl.origin.label || "origin"), pl.origin.lat, pl.origin.lon, null, pl.origin.how, "origin"));
+    h += fold("Origin", pm("Origin: " + (pl.origin.label || "origin"), pl.origin.lat, pl.origin.lon, null, pl.origin.how + gt("origin"), "origin"));
     pl.opts.forEach(function (o) {
       var lg = legsOf(o), haz = [];
       ((o.along && o.along.haz && o.along.haz.ranges) || []).forEach(function (rg) { rg.items.filter(function (x) { return x.p; }).forEach(function (x) { haz.push(pm(x.kind + " (km " + x.at + ")", x.p[0], x.p[1], x, x.text, "haz")); }); });
       h += "<Folder><name>" + xml((o.role ? o.role + " " + ROLE_N[o.role] + ": " : "") + o.dest.i.name) + "</name><description>" + xml(o.label + ". Status " + (o.st || o.prop.st) + (o.st ? " (set by the analyst)" : " (OSAP proposal)") + ". " + dist(o.route.m) + ", " + dur(o.route.s) + ".") + "</description>" +
-        ln("Route " + (o.role || o.id), o.route.coords, "r" + (o.role || "x"), dist(o.route.m) + ", " + dur(o.route.s) + (o.route.src ? ". " + o.route.src : "")) +
+        ln("Route " + (o.role || o.id), o.route.coords, "r" + (o.role || "x"), dist(o.route.m) + ", " + dur(o.route.s) + (o.route.src ? ". " + o.route.src : "") + "." + gt("r:" + o.id)) +
         (lg.length > 1 ? fold("Legs", lg.map(function (l, i) { return ln("Leg " + (i + 1) + ": " + (l.a.name || "") + " to " + (l.b.name || ""), l.coords || [], flies(l.mode) ? "lfly" : "lgnd", (l.mode || "") + (l.m ? ", " + dist(l.m) : "") + (l.s ? ", " + dur(l.s) : "") + (l.bad ? ". Marked unusable." : "")); }).join("")) : "") +
-        pm("Destination: " + o.dest.i.name, o.dest.i.lat, o.dest.i.lon, null, o.kind === "posts" ? "Not verified as an evacuation destination." : "", "dest") +
-        fold("Checkpoints", (o.cps || []).map(function (q) { return pm(cpNm(o, q) + (q.st === "proposed" ? "?" : "") + " (km " + q.km + ")", q.lat, q.lon, null, q.why + ". " + (q.st === "proposed" ? "Proposed by OSAP, unverified." : "Checked by the analyst."), "cp"); }).join("")) +
-        fold("Nodes (placed by you)", (o.nodes || []).map(function (n) { return pm((NODE_N[n.type] || n.type) + ": " + n.name, n.lat, n.lon, null, "Placed by the analyst.", "node"); }).join("")) +
+        pm("Destination: " + o.dest.i.name, o.dest.i.lat, o.dest.i.lon, null, (o.kind === "posts" ? "Not verified as an evacuation destination." : "") + gt("d:" + o.id), "dest") +
+        fold("Checkpoints", (o.cps || []).map(function (q) { return pm(cpNm(o, q) + (q.st === "proposed" ? "?" : "") + " (km " + q.km + ")", q.lat, q.lon, null, q.why + ". " + (q.st === "proposed" ? "Proposed by OSAP, unverified." : "Checked by the analyst.") + gt(q.id), "cp"); }).join("")) +
+        fold("Nodes (placed by you)", (o.nodes || []).map(function (n) { return pm((NODE_N[n.type] || n.type) + ": " + n.name, n.lat, n.lon, null, "Placed by the analyst." + gt("n:" + n.id), "node"); }).join("")) +
         fold("Crossings and dependencies", ((o.deps && o.deps.list) || []).map(function (d) { return pm(DEP_K[d.kind] + (d.name !== DEP_K[d.kind] ? ": " + d.name : "") + " (km " + d.km + ")", d.lat, d.lon, d, d.status && d.status.st, "dep"); }).join("")) +
         fold("Air: airfields, helipads, landing zones", ((o.air && o.air.list) || []).map(function (a) { return pm(a.cls + ": " + a.name, a.lat, a.lon, a, a.kind, "air"); }).join("")) +
         fold("Hazards along the route", haz.join("")) +
@@ -1090,7 +1090,7 @@
     var pl = pk.plan;
     var h = "<!doctype html><html><head><meta charset=\"utf-8\"><title>" + E(pk.name) + "</title><style>body{font:12px/1.4 system-ui,sans-serif;margin:16px;color:#111}h1{font-size:17px}h2{font-size:14px;margin:14px 0 4px;border-bottom:2px solid #333}h3{font-size:12.5px;margin:8px 0 2px}table{border-collapse:collapse;width:100%;margin:4px 0}td,th{border:1px solid #bbb;padding:2px 4px;text-align:left;vertical-align:top}th{background:#eee}.m{font-family:monospace;font-size:10.5px;word-break:break-all}.n{color:#555}.mapf{margin:6px 0;break-inside:avoid}.mapf svg{display:block;width:100%;height:auto;border:1px solid #999}tr.bad td{color:#b3261e;font-weight:600}@media print{h2{break-after:avoid}}</style></head><body>" +
       "<h1>" + E(pk.name) + "</h1><p class=\"n\">Evacuation route package, frozen " + E(dual(pk.made, true)) + ". Automatic draft from open data: roles and statuses are the analyst's; nothing here says a route, crossing or destination is open or safe. Plan SHA-256 <span class=\"m\">" + E(pk.fp) + "</span></p>" +
-      "<p>Origin: <b>" + E(pl.origin.label || "") + "</b> " + E(grid(pl.origin.lat, pl.origin.lon)) + " (" + E(pl.origin.how) + ")</p>" + cmPrint(pl);
+      "<p>Origin: <b>" + E(pl.origin.label || "") + "</b> " + E(grid(pl.origin.lat, pl.origin.lon)) + " (" + E(pl.origin.how) + ")</p>" + cmPrint(pl) + geoPrint(pl);
     pl.opts.slice().sort(function (a, b) { return (ROLES.indexOf(a.role) + 1 || 9) - (ROLES.indexOf(b.role) + 1 || 9); }).forEach(function (o) {
       h += "<h2>" + E(o.role ? o.role + " " + ROLE_N[o.role] + ": " : "No role: ") + E(o.dest.i.name) + "</h2><p>" + E(o.label) + ". " + E(dist(o.route.m)) + ", " + E(dur(o.route.s)) + ". Status <b>" + E(o.st || o.prop.st) + "</b> " + E(o.st ? "(set by the analyst)" : "(OSAP proposal: " + o.prop.why + ")") + "</p>" +
         ((o.cps || []).length ? "<h3>Checkpoints</h3><table><tr><th></th><th>Name</th><th>Grid</th><th>km</th><th>Where</th><th>Status</th></tr>" + o.cps.map(function (q) { return "<tr><td>" + E(q.kind) + "</td><td>" + E(cpNm(o, q)) + "</td><td class=\"m\">" + E(grid(q.lat, q.lon)) + "</td><td>" + E(q.km) + "</td><td>" + E(q.why) + "</td><td>" + (q.st === "proposed" ? "Proposed by OSAP, unverified" : "Checked by the analyst") + "</td></tr>"; }).join("") + "</table>" : "") +
@@ -1432,6 +1432,296 @@
     }
     return Lf.concat(Rt0.reverse());
   }
+  /* ---------- the ground: the plan described by what a person sees there (Shane 19 Nov: "all the aspects of the plan need to be
+     geographically explained", corridor borders and phase lines on recognizable features). One OpenStreetMap query round the
+     plan's lines for towns and villages, rivers and canals, railways, main roads, peaks and ridges; held for this session
+     only (S.geoF), never kept with the plan. The text each item gets is kept (plan.geo), with when and from what. Everything
+     here is read off the map data: it is unverified on the ground and says so. ---------- */
+  var GEO_K = { river: "river", canal: "canal", stream: "stream", rail: "railway", road: "road", ridge: "ridge" };
+  var CMP16 = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+  function cmp16(b) { return CMP16[Math.round(((b % 360) + 360) % 360 / 22.5) % 16]; }
+  function geoLinesOf(p) {
+    var ls = [];
+    p.opts.forEach(function (o) { if (o.route && o.route.coords.length > 1) ls.push(thin(o.route.coords, 50)); });
+    cms(p).filter(okCm).forEach(function (x) { ls.push(x.pts.length > 1 ? thin(x.pts, 30) : [x.pts[0], x.pts[0]]); });
+    return ls;
+  }
+  function geoQ(lines, rLine, rPlace) {
+    var parts = [];
+    lines.forEach(function (ln) {
+      var ar = function (r) { return "(around:" + r + "," + ln.map(function (q) { return q5(q[0]) + "," + q5(wrap(q[1])); }).join(",") + ")"; };
+      parts.push('node["place"~"^(city|town|village|suburb)$"]["name"]' + ar(rPlace), 'way["waterway"~"^(river|canal)$"]' + ar(rLine), 'way["railway"="rail"]' + ar(rLine),
+        'way["highway"~"^(motorway|trunk|primary|secondary|tertiary)$"]' + ar(rLine), 'node["natural"="peak"]["name"]' + ar(rPlace), 'way["natural"="ridge"]' + ar(rLine));
+    });
+    return "[out:json][timeout:90];(" + parts.join(";") + ";);out geom tags qt 4000;";
+  }
+  /* OpenStreetMap elements to features: places, lines (kind, name, geometry), peaks */
+  function geoFeats(els) {
+    var f = { places: [], lines: [], peaks: [] }, seen = {};
+    (els || []).forEach(function (e) {
+      var t = e.tags || {}, key = e.type + "/" + e.id; if (seen[key]) return; seen[key] = 1;
+      var nm = clean(t["name:en"] || t.name || "", 60), ref = clean(t.ref || "", 20);
+      if (e.type === "node" && t.place) { if (isFinite(e.lat)) f.places.push({ name: nm, kind: t.place, lat: e.lat, lon: e.lon, id: key }); return; }
+      if (e.type === "node" && t.natural === "peak") { if (isFinite(e.lat)) f.peaks.push({ name: nm, ele: t.ele || "", lat: e.lat, lon: e.lon, id: key }); return; }
+      var g = (e.geometry || []).filter(function (q) { return q && isFinite(q.lat); }).map(function (q) { return [q.lat, q.lon]; }); if (g.length < 2) return;
+      var k = t.waterway === "river" ? "river" : t.waterway === "canal" ? "canal" : t.railway === "rail" ? "rail" : t.natural === "ridge" ? "ridge" : t.highway ? "road" : "";
+      if (!k) return;
+      f.lines.push({ id: key, kind: k, cls: t.highway || "", name: nm, ref: ref, g: g, bb: bbOf(g) });
+    });
+    return f;
+  }
+  function bbOf(g) { var a = [90, 180, -90, -180]; g.forEach(function (q) { a[0] = Math.min(a[0], q[0]); a[1] = Math.min(a[1], q[1]); a[2] = Math.max(a[2], q[0]); a[3] = Math.max(a[3], q[1]); }); return a; }
+  function bbNear(bb, p, m) { var dl = m / 111320, dn = m / (111320 * (Math.cos(p[0] * Math.PI / 180) || 1e-6)); return p[0] >= bb[0] - dl && p[0] <= bb[2] + dl && p[1] >= bb[1] - dn && p[1] <= bb[3] + dn; }
+  function fName(l) { return l.name && l.ref ? l.ref + " (" + l.name + ")" : l.name || l.ref || ""; }
+  function fLabel(l) { var n = fName(l); return n ? n : "an unnamed " + GEO_K[l.kind]; }
+  /* the nearest point of a line g to p: { d (m), q (the point), i (segment) } */
+  function nearOn(p, g) {
+    var best = { d: Infinity, q: null, i: 0 }, cl = Math.cos(p[0] * Math.PI / 180), k = 111320;
+    for (var i = 0; i < g.length - 1; i++) {
+      var ax = wrap(g[i][1] - p[1]) * cl * k, ay = (g[i][0] - p[0]) * k, bx = wrap(g[i + 1][1] - p[1]) * cl * k, by = (g[i + 1][0] - p[0]) * k;
+      var dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy, f = l2 ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / l2)) : 0;
+      var x = ax + f * dx, y = ay + f * dy, d = Math.sqrt(x * x + y * y);
+      if (d < best.d) best = { d: d, q: [g[i][0] + (g[i + 1][0] - g[i][0]) * f, g[i][1] + wrap(g[i + 1][1] - g[i][1]) * f], i: i };
+    }
+    return best;
+  }
+  /* where segment a-b crosses segment c-d (local flat), as the share along a-b, or -1 */
+  function segX(a, b, c, d) {
+    var cl = Math.cos(a[0] * Math.PI / 180), P = function (q) { return [wrap(q[1] - a[1]) * cl, q[0] - a[0]]; };
+    var B = P(b), C = P(c), D = P(d), r = B, s = [D[0] - C[0], D[1] - C[1]], den = r[0] * s[1] - r[1] * s[0];
+    if (!den) return -1;
+    var t = (C[0] * s[1] - C[1] * s[0]) / den, u = (C[0] * r[1] - C[1] * r[0]) / den;
+    return t >= 0 && t <= 1 && u >= 0 && u <= 1 ? t : -1;
+  }
+  /* every place a line c crosses a feature: [{ m (metres along c), q, f (the feature), ang (degrees between them) }] */
+  function crossings(c, feats, kinds) {
+    var out = [], run = [0];
+    for (var i = 1; i < c.length; i++) run.push(run[i - 1] + hav(c[i - 1], c[i]));
+    var cb = bbOf(c);
+    feats.lines.forEach(function (l) {
+      if (kinds && kinds.indexOf(l.kind) < 0) return;
+      if (l.bb[0] > cb[2] || l.bb[2] < cb[0] || l.bb[1] > cb[3] || l.bb[3] < cb[1]) return;
+      for (var j = 0; j < l.g.length - 1; j++) {
+        var sb = [Math.min(l.g[j][0], l.g[j + 1][0]), Math.min(l.g[j][1], l.g[j + 1][1]), Math.max(l.g[j][0], l.g[j + 1][0]), Math.max(l.g[j][1], l.g[j + 1][1])];
+        for (var i = 0; i < c.length - 1; i++) {
+          if (Math.max(c[i][0], c[i + 1][0]) < sb[0] || Math.min(c[i][0], c[i + 1][0]) > sb[2] || Math.max(c[i][1], c[i + 1][1]) < sb[1] || Math.min(c[i][1], c[i + 1][1]) > sb[3]) continue;
+          var t = segX(c[i], c[i + 1], l.g[j], l.g[j + 1]); if (t < 0) continue;
+          var a1 = brg(c[i], c[i + 1]), a2 = brg(l.g[j], l.g[j + 1]), da = Math.abs(((a1 - a2) % 180 + 180) % 180); da = Math.min(da, 180 - da);
+          out.push({ m: run[i] + t * (run[i + 1] - run[i]), q: [c[i][0] + (c[i + 1][0] - c[i][0]) * t, c[i][1] + wrap(c[i + 1][1] - c[i][1]) * t], f: l, ang: Math.round(da), j: j });
+        }
+      }
+    });
+    /* one crossing per feature within 300 m (a river drawn as two banks, a dual road) */
+    out.sort(function (a, b) { return a.m - b.m; });
+    return out.filter(function (x, i) { return !out.slice(0, i).some(function (y) { return Math.abs(y.m - x.m) < 300 && (y.f.id === x.f.id || (fName(y.f) && fName(y.f) === fName(x.f))); }); });
+  }
+  /* the nearest town or village to a point, with distance and the direction from it */
+  function placeRef(p, feats) {
+    var best = null;
+    feats.places.forEach(function (pl) { var d = hav([pl.lat, pl.lon], p); if (!best || d < best.d) best = { pl: pl, d: d }; });
+    if (!best) return "";
+    return best.d < 400 ? "in " + best.pl.name : (best.d >= 1000 ? (Math.round(best.d / 100) / 10) + " km " : Math.round(best.d / 10) * 10 + " m ") + cmp16(brg([best.pl.lat, best.pl.lon], p)) + " of " + best.pl.name + " (" + best.pl.kind + ")";
+  }
+  /* what is beside a point: the nearest road, and water or railway when close */
+  function besideRef(p, feats) {
+    var out = [];
+    [["road", 250], ["river", 600], ["canal", 400], ["rail", 400]].forEach(function (kr) {
+      var b = null;
+      feats.lines.forEach(function (l) { if (l.kind !== kr[0] || !bbNear(l.bb, p, kr[1])) return; var n = nearOn(p, l.g); if (n.d <= kr[1] && (!b || n.d < b.d)) b = { d: n.d, l: l }; });
+      if (b) out.push((b.d < 30 ? "on " : Math.round(b.d / 10) * 10 + " m from ") + (kr[0] === "road" ? "the road " : "the " + GEO_K[kr[0]] + " ") + fLabel(b.l));
+    });
+    return out.join(", ");
+  }
+  /* the roads a line follows, longest first: [{ name, m, from, to }] (metres along) */
+  function roadsAlong(c, feats) {
+    var pts = along(c, Math.min(800, Math.max(2, Math.round(lineM(c) / 200))), 0, 1), step = lineM(c) / Math.max(1, pts.length - 1), by = {};
+    var roads = feats.lines.filter(function (l) { return l.kind === "road"; });
+    pts.forEach(function (q, i) {
+      var b = null;
+      roads.forEach(function (l) { if (!bbNear(l.bb, q, 40)) return; var n = nearOn(q, l.g); if (n.d <= 40 && (!b || n.d < b.d)) b = { d: n.d, l: l }; });
+      var nm = b && fName(b.l); if (!nm) return;
+      var r = by[nm] || (by[nm] = { name: nm, m: 0, from: i * step, to: i * step }); r.m += step; r.to = i * step;
+    });
+    return Object.keys(by).map(function (k) { return by[k]; }).filter(function (r) { return r.m >= 1000; }).sort(function (a, b) { return b.m - a.m; });
+  }
+  function km1(m) { return Math.round(m / 100) / 10; }
+  function gridShort(q) { return grid(q[0], q[1]); }
+  var GEO_NOTE = "Read off OpenStreetMap; unverified on the ground.";
+  function geoRoute(o, p, F) {
+    var c = o.route.coords, a = c[0], b = c[c.length - 1], L0 = lineM(c), bb = brg(a, b);
+    var rd = roadsAlong(c, F).slice(0, 4), xs = crossings(c, F, ["river", "canal", "rail"]);
+    var towns = F.places.map(function (pl) { var ol = onLine(o, [pl.lat, pl.lon]); return { pl: pl, d: ol.d, at: ol.at }; }).filter(function (t) { return t.d <= 2500 && (t.pl.kind !== "suburb"); }).sort(function (x, y) { return x.at - y.at; });
+    var s = "From " + gridShort(a) + " (" + (placeRef(a, F) || "origin") + ") to " + o.dest.i.name + " at " + gridShort(b) + ": " + dist(L0) + ", heading " + Math.round(bb) + "° (" + cmp16(bb) + ") overall.";
+    if (rd.length) s += " Follows " + rd.map(function (r) { return r.name + " for " + dist(r.m) + " (km " + km1(r.from) + " to " + km1(r.to) + ")"; }).join(", then ") + ".";
+    else s += " No main road OSAP holds runs along it for more than 1 km.";
+    if (towns.length) s += " Passes " + towns.slice(0, 10).map(function (t) { return t.pl.name + " (km " + km1(t.at) + (t.d > 600 ? ", " + dist(t.d) + " off the line" : "") + ")"; }).join(", ") + (towns.length > 10 ? " and " + (towns.length - 10) + " more" : "") + ".";
+    if (xs.length) s += " Crosses " + xs.slice(0, 12).map(function (x) { return "the " + GEO_K[x.f.kind] + " " + (fName(x.f) || "(unnamed)") + " at km " + km1(x.m); }).join(", ") + (xs.length > 12 ? " and " + (xs.length - 12) + " more" : "") + ".";
+    return s;
+  }
+  function geoPoint(q, F) {
+    var pr = placeRef(q, F), bs = besideRef(q, F);
+    return gridShort(q) + (pr ? ", " + pr : "") + (bs ? "; " + bs : "") + ".";
+  }
+  function geoPl(x, p, F) {
+    var a = x.pts[0], b = x.pts[x.pts.length - 1], hits = [];
+    p.opts.forEach(function (o) { crossings(x.pts, { lines: [{ id: "r", kind: "route", name: "", ref: "", g: o.route.coords, bb: bbOf(o.route.coords) }] }, null).forEach(function (h) { hits.push((o.role || o.dest.i.name) + " at km " + km1(onLine(o, h.q).at)); }); });
+    var s = (x.land && x.land.name ? "On the " + GEO_K[x.land.kind] + " " + x.land.name + ". " : x.land && x.land.none ? "Straight line: no named river, canal, railway or main road crosses the route near here. " : "") +
+      "Runs " + dist(lineM(x.pts)) + " from " + gridShort(a) + " (" + (placeRef(a, F) || "") + ") to " + gridShort(b) + " (" + (placeRef(b, F) || "") + "), bearing " + Math.round(brg(a, b)) + "° (" + cmp16(brg(a, b)) + ").";
+    s += hits.length ? " Crosses " + hits.join(", ") + "." : " Crosses no option's route.";
+    return s;
+  }
+  function geoArea(x, p, F) {
+    var inside = F.places.filter(function (pl) { return inPoly([pl.lat, pl.lon], x.pts); }).map(function (pl) { return pl.name; });
+    var c0 = x.pts.reduce(function (s0, q) { return [s0[0] + q[0] / x.pts.length, s0[1] + q[1] / x.pts.length]; }, [0, 0]);
+    var lenM = 0; for (var i = 0; i < x.pts.length; i++) for (var j = i + 1; j < x.pts.length; j++) lenM = Math.max(lenM, hav(x.pts[i], x.pts[j]));
+    var s = areaKm2(x.pts) + " km², " + dist(lenM) + " end to end" + (lenM ? ", about " + dist(areaKm2(x.pts) * 1e6 / lenM) + " wide on average" : "") + ", centred " + gridShort(c0) + " (" + (placeRef(c0, F) || "") + ").";
+    if (x.edges && x.edges.length) s += " Borders: " + x.edges.map(function (e) { return (e.side === "L" ? "left" : "right") + " side km " + e.a + " to " + e.b + " " + (e.kind === "buffer" ? "is a set distance (no feature fits)" : "follows the " + GEO_K[e.kind] + " " + e.name); }).join("; ") + ".";
+    if (inside.length) s += " Takes in " + inside.slice(0, 12).join(", ") + (inside.length > 12 ? " and " + (inside.length - 12) + " more" : "") + ".";
+    var xr = crossings(x.pts.concat([x.pts[0]]), F, ["river", "canal", "rail"]).map(function (h) { return fName(h.f); }).filter(Boolean);
+    if (xr.length) s += " Its edge is crossed by " + xr.filter(function (n, i) { return xr.indexOf(n) === i; }).slice(0, 8).join(", ") + ".";
+    return s;
+  }
+  function inPoly(p, r) {
+    var c = false;
+    for (var i = 0, j = r.length - 1; i < r.length; j = i++) if (((r[i][0] > p[0]) !== (r[j][0] > p[0])) && (p[1] < (r[j][1] - r[i][1]) * (p[0] - r[i][0]) / ((r[j][0] - r[i][0]) || 1e-12) + r[i][1])) c = !c;
+    return c;
+  }
+  /* the whole plan's text: { id: text } for the origin, each option (route, destination, checkpoints, nodes) and each control measure */
+  function geoAll(p, F) {
+    var t = { origin: geoPoint([p.origin.lat, p.origin.lon], F) };
+    p.opts.forEach(function (o) {
+      t["r:" + o.id] = geoRoute(o, p, F);
+      t["d:" + o.id] = geoPoint([o.dest.i.lat, o.dest.i.lon], F);
+      (o.cps || []).forEach(function (q) { t[q.id] = "km " + q.km + " of the route; " + geoPoint([q.lat, q.lon], F); });
+      (o.nodes || []).forEach(function (n) { t["n:" + n.id] = geoPoint([n.lat, n.lon], F); });
+    });
+    cms(p).filter(okCm).forEach(function (x) { var g = CM[x.k].g; t[x.id] = g === "pt" ? geoPoint(x.pts[0], F) : g === "line" ? geoPl(x, p, F) : geoArea(x, p, F); });
+    return t;
+  }
+  function geoFetch(p, why) {
+    var tok = ++S.gtok, W0 = Math.max.apply(null, p.opts.map(function (o) { return corr(o).w; }).concat([2]));
+    S.gbusy = true; S.gmsg = "Reading the ground round the plan from OpenStreetMap (towns, rivers, canals, railways, main roads, ridges)…"; render();
+    return engine().then(function (Rt) { return Rt.overpass(geoQ(geoLinesOf(p), Math.round(Math.min(8000, W0 * 1500)), 4000), 90000, null); }).then(function (j) {
+      if (tok !== S.gtok) return null;
+      S.geoF = geoFeats(j.elements); S.geoF.plan = p.id; S.geoF.at = Date.now(); S.gbusy = false;
+      return S.geoF;
+    }, function (e) { if (tok !== S.gtok) return null; S.gbusy = false; S.gmsg = "OpenStreetMap did not answer (" + e.message + "). Nothing was changed; try again."; render(); return null; });
+  }
+  function geoHave(p) { return S.geoF && S.geoF.plan === p.id ? Promise.resolve(S.geoF) : geoFetch(p); }
+  function geoDescribe() {
+    var p = S.plan; if (!p) return;
+    geoHave(p).then(function (F) {
+      if (!F) return;
+      p.geo = { at: Date.now(), src: "OpenStreetMap contributors (ODbL), read " + new Date(F.at).toISOString().slice(0, 16) + "Z", t: geoAll(p, F) };
+      S.gmsg = "Described " + Object.keys(p.geo.t).length + " items from " + F.places.length + " places and " + F.lines.length + " lines. " + GEO_NOTE; save(); render();
+    });
+  }
+  /* a phase line on a landmark: the named river, canal, railway or main road that crosses the selected route nearest where the
+     line does (within 5 km along), cut to the line's length each side; none: the line stays straight and says so */
+  var LAND_PRI = { river: 0, canal: 1, rail: 2, road: 3 };
+  function landCands(o, F) { var on = {}; roadsAlong(o.route.coords, F).forEach(function (r) { on[r.name] = 1; }); return crossings(o.route.coords, F, ["river", "canal", "rail", "road"]).filter(function (h) { return fName(h.f) && !on[fName(h.f)] && h.ang >= 35 && (h.f.kind !== "road" || /^(motorway|trunk|primary|secondary)$/.test(h.f.cls)); }); }
+  function cutAround(g, j, q, half) {
+    var out = [q], run = 0, i;
+    for (i = j; i >= 0 && run < half; i--) { run += hav(out[0], g[i]); out.unshift(g[i]); }
+    run = 0;
+    for (i = j + 1; i < g.length && run < half; i++) { run += hav(out[out.length - 1], g[i]); out.push(g[i]); }
+    return thin(out, 60).map(function (z) { return [r6(z[0]), r6(wrap(z[1]))]; });
+  }
+  function plSnap(x, o, F) {
+    var hits = crossings(x.pts, { lines: [{ id: "r", kind: "route", name: "", ref: "", g: o.route.coords, bb: bbOf(o.route.coords) }] }, null);
+    var atM = hits.length ? onLine(o, hits[0].q).at : onLine(o, x.pts[Math.floor(x.pts.length / 2)]).at;
+    var c = landCands(o, F).filter(function (h) { return Math.abs(h.m - atM) <= 5000; }).sort(function (a, b) { return (LAND_PRI[a.f.kind] - LAND_PRI[b.f.kind]) || Math.abs(a.m - atM) - Math.abs(b.m - atM); })[0];
+    if (!c) { x.land = { none: 1, at: Date.now() }; return false; }
+    x.pts = cutAround(c.f.g, c.j, c.q, Math.max(1500, lineM(x.pts) / 2));
+    x.land = { name: fName(c.f), kind: c.f.kind, km: km1(c.m), src: "https://www.openstreetmap.org/" + c.f.id, at: Date.now() };
+    return true;
+  }
+  /* phase lines for the selected route on the landmarks that cross it, spaced along it, up to 6 */
+  function plAuto(o, F) {
+    var L0 = lineM(o.route.coords), gap = Math.max(5000, L0 / 8), picked = [], has = {};
+    cms(S.plan).forEach(function (y) { if (y.k === "pl" && y.land && y.land.name) has[y.land.name] = 1; });
+    landCands(o, F).filter(function (h) { return !has[fName(h.f)] && h.m > Math.min(3000, L0 / 10) && h.m < L0 - Math.min(3000, L0 / 10); })
+      .sort(function (a, b) { return (LAND_PRI[a.f.kind] - LAND_PRI[b.f.kind]) || a.m - b.m; })
+      .forEach(function (h) { if (picked.length < 6 && !picked.some(function (y) { return Math.abs(y.m - h.m) < gap || y.f.id === h.f.id; })) picked.push(h); });
+    picked.sort(function (a, b) { return a.m - b.m; });
+    return picked.map(function (h) {
+      var x = cmAdd("pl", cutAround(h.f.g, h.j, h.q, Math.max(1500, corr(o).w * 1000)), "", "On a landmark, from OpenStreetMap");
+      if (x) { x.land = { name: fName(h.f), kind: h.f.kind, km: km1(h.m), src: "https://www.openstreetmap.org/" + h.f.id, at: Date.now() }; }
+      return x;
+    }).filter(Boolean);
+  }
+  /* a corridor whose sides follow features: every step along the route, each side takes the nearest road, river, canal or
+     railway that runs roughly the same way (within 35°) between 300 m and 1.5 x the corridor width out; where none does, the
+     side is the set width and that stretch is marked as such */
+  function corrLand(o, F) {
+    var c = o.route.coords, L0 = lineM(c), n = Math.max(8, Math.min(120, Math.round(L0 / 1500))), pts = along(c, n, 0, 1), w = corr(o).w * 1000, k = 111320;
+    var own = {}; roadsAlong(c, F).forEach(function (r) { own[r.name] = 1; });
+    var lin = F.lines.filter(function (l) { return l.kind !== "ridge" && !own[fName(l)]; }), sides = { L: [], R: [] };
+    pts.forEach(function (q, i) {
+      var a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)], cl = Math.cos(q[0] * Math.PI / 180) || 1e-6;
+      var dx = wrap(b[1] - a[1]) * cl * k, dy = (b[0] - a[0]) * k, len = Math.sqrt(dx * dx + dy * dy) || 1, nx = -dy / len, ny = dx / len, tb = brg(a, b);
+      ["L", "R"].forEach(function (sd) {
+        var sg = sd === "L" ? 1 : -1, far = [q[0] + sg * ny * w * 1.5 / k, q[1] + sg * nx * w * 1.5 / (k * cl)], best = null;
+        lin.forEach(function (l) {
+          if (!bbNear(l.bb, q, w * 1.5)) return;
+          for (var j = 0; j < l.g.length - 1; j++) {
+            var t = segX(q, far, l.g[j], l.g[j + 1]); if (t < 0) continue;
+            var dm = t * w * 1.5; if (dm < 300) continue;
+            var da = Math.abs(((tb - brg(l.g[j], l.g[j + 1])) % 180 + 180) % 180); da = Math.min(da, 180 - da); if (da > 35) continue;
+            if (!best || dm < best.dm) best = { dm: dm, l: l, q: [q[0] + (far[0] - q[0]) * t, q[1] + wrap(far[1] - q[1]) * t] };
+          }
+        });
+        sides[sd].push(best ? { q: best.q, name: fName(best.l), kind: best.l.kind, km: km1(i / (n - 1) * L0) } : { q: [q[0] + sg * ny * w / k, q[1] + sg * nx * w / (k * cl)], kind: "buffer", km: km1(i / (n - 1) * L0) });
+      });
+    });
+    /* runs of the same feature (or of set width) along each side, a lone sample folded into the run round it */
+    var edges = [];
+    ["L", "R"].forEach(function (sd) {
+      var s = sides[sd];
+      for (var i = 1; i < s.length - 1; i++) if (s[i - 1].kind === s[i + 1].kind && s[i - 1].name === s[i + 1].name && (s[i].kind !== s[i - 1].kind || s[i].name !== s[i - 1].name)) s[i] = { q: s[i].q, kind: s[i - 1].kind, name: s[i - 1].name, km: s[i].km, lone: 1 };
+      s.forEach(function (e, i) {
+        var last = edges[edges.length - 1];
+        if (last && last.side === sd && last.kind === e.kind && (last.name || "") === (e.name || "")) { last.b = e.km; last.n++; last.mid = s[Math.round((last.i0 + i) / 2)].q; }
+        else edges.push({ side: sd, kind: e.kind, name: e.name || "", a: e.km, b: e.km, n: 1, i0: i, mid: e.q });
+      });
+    });
+    var ring = sides.L.map(function (e) { return [r6(e.q[0]), r6(wrap(e.q[1]))]; }).concat(sides.R.slice().reverse().map(function (e) { return [r6(e.q[0]), r6(wrap(e.q[1]))]; }));
+    return { ring: ring, edges: edges.map(function (e) { return { side: e.side, kind: e.kind, name: e.name, a: e.a, b: e.b, mid: [r6(e.mid[0]), r6(wrap(e.mid[1]))] }; }) };
+  }
+  function geoAct(k) {
+    var p = S.plan, o = optOf(S.sel); if (!p) return;
+    if (k === "gdesc") { geoDescribe(); return; }
+    if (!o) { S.gmsg = "Select an option first: the landmarks are read along its route."; render(); return; }
+    geoHave(p).then(function (F) {
+      if (!F) return;
+      if (k === "gpl") {
+        var made = plAuto(o, F);
+        S.gmsg = made.length ? made.length + " phase line" + (made.length === 1 ? "" : "s") + " on landmarks: " + made.map(function (x) { return x.name + " = " + x.land.name; }).join(", ") + ". " + GEO_NOTE : "No named river, canal, railway or main road crosses this route away from its ends. Draw phase lines by hand.";
+      } else if (k === "gcorr") {
+        var r = corrLand(o, F), x = cmAdd("corr", r.ring, "Corridor on landmarks " + (o.role || o.dest.i.name), "Sides on landmarks, from OpenStreetMap");
+        if (x) { x.edges = r.edges; x.land = { at: Date.now(), opt: o.id }; }
+        var named = r.edges.filter(function (e) { return e.kind !== "buffer"; }), buf = r.edges.filter(function (e) { return e.kind === "buffer"; });
+        S.gmsg = "Corridor on landmarks: " + named.length + " stretch" + (named.length === 1 ? "" : "es") + " follow a road, river, canal or railway; " + buf.length + " stretch" + (buf.length === 1 ? "" : "es") + " are the set width of " + corr(o).w + " km where nothing fits. " + GEO_NOTE;
+      } else if (k.indexOf("gsnap:") === 0) {
+        var px = cmOf(k.slice(6));
+        if (px) { var okS = plSnap(px, o, F); S.gmsg = okS ? px.name + " = " + px.land.name + " (" + GEO_K[px.land.kind] + ", km " + px.land.km + "). " + GEO_NOTE : px.name + ": no named river, canal, railway or main road crosses the route within 5 km of it, so it stays a straight line (marked)."; }
+      }
+      if (p.geo) p.geo.t = geoAll(p, F);
+      cmRefresh(); save(); render(); draw();
+    });
+  }
+  function geoHtml(p) {
+    var g = p.geo, sel = optOf(S.sel), busy = S.gbusy;
+    function row(id, name) { return g && g.t && g.t[id] ? "<li><b>" + E(name) + "</b> " + E(g.t[id]) + "</li>" : ""; }
+    var items = g ? row("origin", "Origin:") + p.opts.map(function (o) { return row("r:" + o.id, "Route " + (o.role || "") + " to " + o.dest.i.name + ":") + row("d:" + o.id, o.dest.i.name + ":") + (o.cps || []).map(function (q) { return row(q.id, cpNm(o, q) + ":"); }).join("") + (o.nodes || []).map(function (n) { return row("n:" + n.id, n.name + ":"); }).join(""); }).join("") +
+      cms(p).filter(okCm).map(function (x) { return row(x.id, x.name + (x.land && x.land.name ? " = " + x.land.name : "") + " (" + CM[x.k].n.toLowerCase() + "):"); }).join("") : "";
+    return '<section class="eposec epegeo"><h3>The ground <span class="obs">each part of the plan described by the towns, roads, rivers and railways round it</span></h3>' +
+      '<div class="epebtns"><button type="button" data-ep="gdesc"' + (busy ? " disabled" : "") + ">" + (g ? "Describe again" : "Describe the ground") + "</button>" +
+      '<button type="button" data-ep="gpl"' + (busy || !sel ? " disabled" : "") + ' title="Phase lines on the named rivers, canals, railways and main roads that cross the selected route">Phase lines on landmarks</button>' +
+      '<button type="button" data-ep="gcorr"' + (busy || !sel ? " disabled" : "") + ' title="A corridor whose sides follow roads, rivers, canals or railways along the selected route; the set width where none fits">Corridor on landmarks</button></div>' +
+      '<p class="obs" role="status">' + E(S.gmsg || (g ? "Described " + dual(g.at, true) + " from " + g.src + ". " + GEO_NOTE : "Reads OpenStreetMap once round the plan. " + GEO_NOTE)) + "</p>" +
+      (items ? '<ul class="epegeol">' + items + "</ul>" : "") + "</section>";
+  }
   function cmLabel(k) {
     var mine = cms().filter(function (x) { return x.k === k; });
     if (k === "pl") { var used = mine.map(function (x) { return x.name; }), nm = PL_NAMES.filter(function (x) { return used.indexOf("PL " + x) < 0; })[0]; return "PL " + (nm || mine.length + 1); }
@@ -1651,6 +1941,7 @@
         var g = CM[x.k].g, pt = g === "pt";
         return '<li data-ep-cmi="' + E(x.id) + '"><span class="epecmk" style="--cmc:' + CM_COL[x.k] + '">' + E(CM[x.k].ab) + '</span><input data-ep-cmname="' + E(x.id) + '" value="' + E(x.name) + '" maxlength="40" aria-label="Name of ' + E(CM[x.k].n.toLowerCase()) + '">' +
           '<i class="obs">' + E(CM[x.k].n) + (x.k === "gtas" ? " " + gtSym(x) + " · " + gtDesc(x).replace(/ ICAO Annex 12 ground-to-air code\.$/, "") : "") + " · " + (pt ? E(grid(x.pts[0][0], x.pts[0][1])) : E(x.pts.length) + " points" + (g === "area" ? ", " + E(areaKm2(x.pts)) + " km²" : ", " + E(dist(lineM(x.pts))))) + "</i>" +
+          (x.k === "pl" ? '<button type="button" data-ep-gsnap="' + E(x.id) + '"' + (optOf(S.sel) && !S.gbusy ? "" : " disabled") + ' title="Put it on the named river, canal, railway or main road that crosses the selected route nearest it">' + (x.land && x.land.name ? "On " + E(x.land.name) : "On a landmark") + "</button>" : "") +
           (!pt ? '<button type="button" data-ep-cmed="' + E(x.id) + '"' + (S.cmEdit === x.id ? ' aria-pressed="true">Done' : ">Move points") + "</button>" : "") +
           (pt ? '<button type="button" data-ep-cmto="' + E(x.id) + '"' + (busy ? " disabled" : "") + ">Route to it</button>" + (optOf(S.sel) ? '<button type="button" data-ep-cmnode="' + E(x.id) + '" title="Put it on the selected option as a node, so the route runs through it">On selected route</button>' : "") : "") +
           '<button type="button" data-ep-cmdel="' + E(x.id) + '" aria-label="Delete ' + E(x.name) + '">×</button></li>';
@@ -1698,13 +1989,14 @@
         .bindTooltip(E((av ? "Area to avoid: " : "Evacuation corridor: ") + x.name + (live0 ? " (tap to move its corners)" : "")), { sticky: true }).addTo(lyr);
       if (live0) { pg.on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); cmEditTog(x.id); }); vx(x, pg); }
       var c0 = x.pts.reduce(function (a, q) { return [a[0] + q[0] / x.pts.length, a[1] + q[1] / x.pts.length]; }, [0, 0]);
+      if (lbx(x) && x.edges) x.edges.forEach(function (e2) { if (e2.mid && e2.b - e2.a >= (e2.kind === "buffer" ? 15 : 3)) lbl(e2.mid, e2.kind === "buffer" ? "set width (no feature)" : e2.name || ("unnamed " + GEO_K[e2.kind]), col, e2.kind === "buffer" ? "epebuf" : "epeedge"); });
       if (lbx(x)) lbl(c0, (av ? "AVOID " : "EVAC CORRIDOR ") + x.name.replace(/^(Avoid|Corridor)\s*/i, "").toUpperCase(), col);
     });
     list.filter(function (x) { return x.k === "pl"; }).forEach(function (x) {
       L.polyline(x.pts, { color: "#fff", weight: 6, opacity: 0.85, interactive: false }).addTo(lyr);
       var pln = L.polyline(x.pts, { color: CM_COL.pl, weight: 3, opacity: 1, className: "epepl" }).bindTooltip(E("Phase line " + x.name + (live0 ? " (tap to move its points)" : "")), { sticky: true }).addTo(lyr);
       if (live0) { pln.on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); cmEditTog(x.id); }); vx(x, pln); }
-      if (lbx(x)) { lbl(x.pts[0], x.name.toUpperCase(), CM_COL.pl); lbl(x.pts[x.pts.length - 1], x.name.toUpperCase(), CM_COL.pl); }
+      if (lbx(x)) { var pln2 = x.name.toUpperCase() + (x.land && x.land.name ? " = " + x.land.name : x.land && x.land.none ? " (straight)" : ""); lbl(x.pts[0], pln2, CM_COL.pl); lbl(x.pts[x.pts.length - 1], pln2, CM_COL.pl); }
     });
     list.filter(function (x) { return CM[x.k].g === "pt"; }).forEach(function (x) {
       var col = CM_COL[x.k], live = !S.active && pl === S.plan;
@@ -1813,6 +2105,19 @@
     }).join("") + "</table>";
     return h;
   }
+  /* the ground, in the printout: every described item, in plan order */
+  function geoPrint(pl) {
+    var g = pl.geo; if (!g || !g.t) return "";
+    var rows = [["Origin", g.t.origin]];
+    pl.opts.forEach(function (o) {
+      rows.push(["Route " + (o.role ? o.role + " " : "") + "to " + o.dest.i.name, g.t["r:" + o.id]], [o.dest.i.name, g.t["d:" + o.id]]);
+      (o.cps || []).forEach(function (q) { rows.push([(o.role || o.dest.i.name) + " " + cpNm(o, q), g.t[q.id]]); });
+      (o.nodes || []).forEach(function (n) { rows.push([n.name, g.t["n:" + n.id]]); });
+    });
+    cms(pl).filter(okCm).forEach(function (x) { rows.push([x.name + (x.land && x.land.name ? " = " + x.land.name : "") + " (" + CM[x.k].n.toLowerCase() + ")", g.t[x.id]]); });
+    return "<h2>The ground</h2><p class=\"n\">Each part of the plan described by the towns, roads, rivers and railways round it. " + E(GEO_NOTE) + " Source: " + E(g.src) + ", described " + E(dual(g.at, true)) + ".</p><table><tr><th>Item</th><th>Where it is and what it follows</th></tr>" +
+      rows.filter(function (r) { return r[1]; }).map(function (r) { return "<tr><td><b>" + E(r[0]) + "</b></td><td>" + E(r[1]) + "</td></tr>"; }).join("") + "</table>";
+  }
   function cmPrintOpt(o, pl) {
     var rows = cmAlong(o, pl), h = "";
     if (o.role) h += '<figure class="mapf">' + svgMap(pl, { only: o.id, Ht: 380 }) + "</figure>";
@@ -1829,7 +2134,7 @@
     function fname2(fk) { var f = foldOf(pl, fk); return f ? f.name : (SHOW.filter(function (l) { return l[0] === fk; })[0] || [0, fk])[1]; }
     return "<Folder><name>Control measures (analyst)</name>" + order.map(function (fk) { return "<Folder><name>" + xml(fname2(fk)) + "</name>" + by[fk].map(function (x) {
       var g = CM[x.k].g, st = "<Style><LineStyle><color>" + KC[x.k] + "</color><width>3</width></LineStyle><PolyStyle><color>" + (x.k === "avoid" ? "402a2ac9" : "18d67e1c") + "</color></PolyStyle></Style>";
-      return "<Placemark><name>" + xml(x.name) + "</name><description>" + xml((g === "pt" ? grid(x.pts[0][0], x.pts[0][1]) + ". " : "") + CM[x.k].n + ". " + (x.k === "gtas" ? gtDesc(x) + " " : "") + (x.how || "Placed by the analyst") + ".") + "</description>" + (g === "pt" ? "<styleUrl>#i" + x.k + "</styleUrl>" : "") + st + (g === "pt" ? '<ExtendedData><Data name="grid"><value>' + xml(grid(x.pts[0][0], x.pts[0][1])) + "</value></Data></ExtendedData>" : "") +
+      return "<Placemark><name>" + xml(x.name + (x.land && x.land.name ? " = " + x.land.name : "")) + "</name><description>" + xml((g === "pt" ? grid(x.pts[0][0], x.pts[0][1]) + ". " : "") + CM[x.k].n + ". " + (x.k === "gtas" ? gtDesc(x) + " " : "") + (x.how || "Placed by the analyst") + "." + (pl.geo && pl.geo.t && pl.geo.t[x.id] ? " Ground: " + pl.geo.t[x.id] : "")) + "</description>" + (g === "pt" ? "<styleUrl>#i" + x.k + "</styleUrl>" : "") + st + (g === "pt" ? '<ExtendedData><Data name="grid"><value>' + xml(grid(x.pts[0][0], x.pts[0][1])) + "</value></Data></ExtendedData>" : "") +
         (g === "pt" ? "<Point><coordinates>" + cs(x.pts) + "</coordinates></Point>" : g === "line" ? "<LineString><tessellate>1</tessellate><coordinates>" + cs(x.pts) + "</coordinates></LineString>" : "<Polygon><outerBoundaryIs><LinearRing><coordinates>" + cs(x.pts, true) + "</coordinates></LinearRing></outerBoundaryIs></Polygon>") + "</Placemark>";
     }).join("") + "</Folder>"; }).join("") + "</Folder>";
   }
@@ -1853,7 +2158,7 @@
       '<label>Incidents from the last <select data-ep-days>' + [7, 14, 30, 90].map(function (d) { return "<option" + (S.days === d ? " selected" : "") + ">" + d + "</option>"; }).join("") + "</select> days</label></div>" +
       '<div class="epebtns">' + (S.busy ? '<button type="button" data-ep="stop">Stop</button>' : '<button type="button" class="epego" data-ep="plan"' + (o ? "" : " disabled") + ">" + (p ? "Work out again" : "Work out the options") + "</button>") + "</div>" +
       '<p id="epe-msg" class="obs" role="status">' + E(S.msg) + "</p></section>";
-    el.innerHTML = '<div class="epebox">' + head + origin + (p ? optsHtml(p) + cmHtml(p) : "") + keptHtml() + pkgsHtml() +
+    el.innerHTML = '<div class="epebox">' + head + origin + (p ? optsHtml(p) + cmHtml(p) + geoHtml(p) : "") + keptHtml() + pkgsHtml() +
       '<p class="obs epefoot">Routes from the free OpenStreetMap routers (FOSSGIS OSRM and Valhalla); embassies and consulates from travel.state.gov, airports from OurAirports and OpenStreetMap, seaports from the UN/LOCODE reference list. ' +
       "The incident weighting counts what OSAP holds near each line; it is not a threat assessment. Confirm every route, destination and status with the post and on the ground. Kept on this device only.</p></div>";
   }
@@ -2158,6 +2463,8 @@
     else if (b.hasAttribute("data-ep-fdel")) { e.preventDefault(); foldDel(b.getAttribute("data-ep-fdel")); }
     else if (b.hasAttribute("data-ep-cm")) { var ck = b.getAttribute("data-ep-cm"); if (S.cmDraw && S.cmDraw.k === ck) { cmEnd(); S.cmmsg = ""; render(); draw(); } else cmStart(ck); }
     else if (k === "cmfin") cmFinish();
+    else if (k === "gdesc" || k === "gpl" || k === "gcorr") geoAct(k);
+    else if (b.hasAttribute("data-ep-gsnap")) geoAct("gsnap:" + b.getAttribute("data-ep-gsnap"));
     else if (k === "cmundo") { if (S.cmDraw) { S.cmDraw.pts.pop(); render(); draw(); } }
     else if (k === "cmcan") { cmEnd(); S.cmmsg = "Canceled."; render(); draw(); }
     else if (b.hasAttribute("data-ep-cmdel")) cmDel(b.getAttribute("data-ep-cmdel"));
@@ -2431,6 +2738,8 @@
       "#epe .epetree,#epe .epetree ul{list-style:none;margin:0;padding:0}#epe .epetree ul{padding-left:22px}#epe .epef{border-top:1px solid var(--line,#e3e7eb)}#epe .epef.off>.epefh,#epe .epef.off>details>.epefh{opacity:.6}" +
       "#epe .epefh{display:flex;align-items:center;gap:6px;padding:4px 0;cursor:pointer;min-height:32px}#epe .epefh .obs{flex:1}#epe .epeflbl,#epe .epeilbl{font-size:12px;white-space:nowrap}#epe .epetree li li{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:30px}#epe .epeit{flex:1;min-width:0}#epe .epefdel{min-width:32px}#epe .epetree input[type=checkbox]{width:18px;height:18px}" +
       ".epecpmk span.nolbl{width:10px;height:10px;padding:0;border-radius:50%}" +
+      ".epecmlb.epeedge span,.epecmlb.epebuf span{font-size:10px!important;font-weight:600!important;font-style:italic;opacity:.9}.epecmlb.epebuf span{border-style:dashed!important}" +
+      "#epe .epegeol{margin:6px 0 0;padding-left:18px}#epe .epegeol li{margin:3px 0}" +
       ".epe-picking .epecpmk,.epe-picking .epecpmk *,.epe-picking .epecmmk,.epe-picking .epecmmk *,.epe-picking .epegtas,.epe-picking .epegtas *,.epe-picking .epend{pointer-events:none!important}.epecpmk{background:none;border:0}.epecpmk span{display:inline-block;white-space:nowrap;background:#fff;color:#111;border:2px solid;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.5);font:700 11px/16px system-ui,sans-serif;padding:0 4px;cursor:grab}.epecpmk.prop span{border-style:dashed}" +
       "html.epe-picking #map{cursor:crosshair}" +
       "@media (max-width:700px){#epe:not([hidden]){padding:0}#epe .epebox{border-radius:0;min-height:100%}#epe .epekpi{grid-template-columns:1fr 1fr}#epe select,#epe input{font-size:16px}}";
