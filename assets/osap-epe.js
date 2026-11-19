@@ -182,7 +182,17 @@
   }
   /* Esc (or the browser's own exit) leaves the browser's full screen: leave ours with it */
   ["fullscreenchange", "webkitfullscreenchange"].forEach(function (ev) { D.addEventListener(ev, function () { if (!(D.fullscreenElement || D.webkitFullscreenElement) && D.documentElement.classList.contains(FS_CLS) && D.documentElement.getAttribute("data-epe-fsapi") === "1") mapFs(false); D.documentElement.setAttribute("data-epe-fsapi", (D.fullscreenElement || D.webkitFullscreenElement) ? "1" : "0"); }); });
+  /* the planner opens as the full-height side panel beside the map; a tap on Full in its bar makes it cover the whole screen
+     (Shane 19 Nov, "Both"), and Map, Half or closing it puts it back */
+  D.addEventListener("click", function (e) {
+    var b = e.target && e.target.closest && e.target.closest("#epe .osheet-h [data-osheet-go]"); if (!b) return;
+    var g = b.getAttribute("data-osheet-go");
+    if (g === "full") D.documentElement.classList.add("epe-fullwin");
+    else if (g !== "next") D.documentElement.classList.remove("epe-fullwin");
+    var map = W.__asapMap; if (map && map.invalidateSize) setTimeout(function () { map.invalidateSize(); }, 300);
+  }, true);
   function close() {
+    D.documentElement.classList.remove("epe-fullwin");
     mapFs(false);
     var el = D.getElementById("epe"); if (el) el.hidden = true;
     try { sessionStorage.removeItem(OPEN); } catch (e) { /* private mode */ }
@@ -3004,8 +3014,8 @@
       "html.epe-mapfs.epe-mapfs #map,html.phone.epe-mapfs.epe-mapfs #map{position:fixed!important;left:0!important;top:0!important;right:0!important;bottom:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;z-index:3900!important;margin:0!important;border:0!important}" +
       "#epe-fsx{position:fixed;top:max(10px,env(safe-area-inset-top));right:10px;z-index:4100;min-height:36px;padding:0 12px;border-radius:999px;border:0;background:#111;color:#fff;font:600 13px system-ui,sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.4);cursor:pointer}#epe-fsx[hidden]{display:none}" +
       /* Full: the planner over the whole screen, edge to edge (Shane 19 Nov, "Both") */
-      "@media (min-width:701px){html:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=full]:not([hidden]){left:0!important;right:0!important;top:0!important;bottom:0!important;width:100vw!important;max-width:none!important;height:100vh!important;transform:none!important;z-index:4050!important}" +
-      "html:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=full]:not([hidden])>*{box-shadow:none!important}#epe.osheet-on[data-osheet=full] .epebox{width:100%!important;max-width:none!important}}" +
+      "@media (min-width:701px){html.epe-fullwin:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=full]:not([hidden]){left:0!important;right:0!important;top:0!important;bottom:0!important;width:100vw!important;max-width:none!important;height:100vh!important;transform:none!important;z-index:4050!important}" +
+      "html.epe-fullwin:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=full]:not([hidden])>*{box-shadow:none!important}html.epe-fullwin #epe.osheet-on[data-osheet=full] .epebox{width:100%!important;max-width:none!important}}" +
       "#epe .epequick{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0;padding:6px 8px;border:1px solid var(--line,#d5dbe1);border-radius:6px}#epe .epequick label{display:inline-flex;gap:6px;align-items:center;min-height:32px;font-weight:600}#epe .epequick input{width:18px;height:18px;margin:0}" +
       "#epe .epefull{margin:10px 0 0;padding:8px 10px;border:2px solid #b3261e;border-radius:6px;background:#fdecea;color:#5f1410}" +
       "#epe .chead{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface,#fff);padding:10px 0 8px;border-bottom:1px solid var(--line,#d5dbe1)}" +
