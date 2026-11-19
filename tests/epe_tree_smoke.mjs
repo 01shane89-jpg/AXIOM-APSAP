@@ -50,7 +50,12 @@ let state;
   if (!s.plan) { await p.click('#epe .epekept [data-ep-open="' + OLD.id + '"]'); s = await st(p); }
   const ids = await p.evaluate(() => { const E = window.OSAP_EPE; return [E.addCm("pl", [[14.55, 100.6], [14.55, 100.9]], "PL BLUE").id, E.addCm("pt", [[14.7, 100.8]], "Rally Bravo").id, E.addCm("pt", [[14.72, 100.7]], "Water point").id, E.addCm("gtas", [[14.75, 100.75]], "Signal 1").id]; });
   await p.waitForTimeout(200);
-  await p.click("#epe details.epeshow summary");
+  /* Shane 19 Nov: "i dont see an option to turn off the lables...or to put things into folders": both sit at the top of the panel */
+  ok(await p.evaluate(() => { const q = document.querySelector("#epe .epequick"), o = document.querySelector("#epe .eposec"); return !!q && !!q.querySelector("[data-ep-lblall]") && !!(q.compareDocumentPosition(o) & 4) && q.getBoundingClientRect().top < 300; }), "a Labels switch and a Folders button sit at the top of the panel, above Origin");
+  ok(await p.evaluate(() => !document.querySelector("#epe details.epeshow").open), "the folder tree starts folded");
+  await p.click('#epe .epequick [data-ep="folders"]');
+  await p.waitForTimeout(600);
+  ok(await p.evaluate(() => { const d = document.querySelector("#epe details.epeshow"), r = d.getBoundingClientRect(); return d.open && r.top >= 0 && r.top < innerHeight; }), "Folders opens the tree and scrolls it into view");
   ok(await p.evaluate(() => document.querySelectorAll("#epe .epetree > li.epef").length) === 12, "On the map is a tree of 12 folders");
   ok(await p.evaluate(() => !!document.querySelector("#epe [data-ep-lblall]") && !!document.querySelector('#epe [data-ep-flbl="cp"]') && !!document.querySelector('#epe [data-ep-show="cp"]')), "with a master Labels switch, and a show and a label switch on each folder");
   /* a folder opens to its items */
