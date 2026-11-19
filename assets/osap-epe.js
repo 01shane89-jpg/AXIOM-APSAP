@@ -138,7 +138,7 @@
       D.body.appendChild(el);
       el.addEventListener("click", onClick); el.addEventListener("change", onChange);
       el.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (S.cmDraw) { cmEnd(); S.cmmsg = "Canceled."; render(); draw(); } else if (S.picking) pickEnd(); else close(); } });
-      el.addEventListener("submit", function (e) { e.preventDefault(); if (e.target.id === "epe-find") find(D.getElementById("epe-q").value); else if (e.target.id === "epe-ptf") ptAdd(); else if (e.target.id === "epe-gtf") gtAdd(); });
+      el.addEventListener("submit", function (e) { e.preventDefault(); if (e.target.id === "epe-find") find(D.getElementById("epe-q").value); else if (e.target.id === "epe-ptf") ptAdd(); else if (e.target.id === "epe-gtf") gtAdd(); else if (e.target.id === "epe-fnew") foldNew(); });
       if (W.OSAP_SPLIT) W.OSAP_SPLIT.add(el, ".chead");
     }
     return el;
@@ -1673,7 +1673,8 @@
   }
   /* the plan's graphics on the live map (and in active mode from the package) */
   function drawCm(pl, lyr, map, flt) {
-    var list = cms(pl).filter(okCm).filter(function (x) { return !flt || shown(CM_SHOW[x.k] || x.k); }), d = S.cmDraw;
+    var list = cms(pl).filter(okCm).filter(function (x) { return !flt || (foldShown(cmFold(x, pl), pl) && itemOn(x.id, pl)); }), d = S.cmDraw;
+    function lbx(x) { return !flt || lblOn(cmFold(x, pl), x.id, pl); }
     var live0 = !S.active && pl === S.plan && !S.cmDraw;
     /* the corners of the line or area being edited, as handles the analyst drags (mouse or finger); the shape follows */
     function vx(x, shp) {
@@ -1697,17 +1698,17 @@
         .bindTooltip(E((av ? "Area to avoid: " : "Evacuation corridor: ") + x.name + (live0 ? " (tap to move its corners)" : "")), { sticky: true }).addTo(lyr);
       if (live0) { pg.on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); cmEditTog(x.id); }); vx(x, pg); }
       var c0 = x.pts.reduce(function (a, q) { return [a[0] + q[0] / x.pts.length, a[1] + q[1] / x.pts.length]; }, [0, 0]);
-      lbl(c0, (av ? "AVOID " : "EVAC CORRIDOR ") + x.name.replace(/^(Avoid|Corridor)\s*/i, "").toUpperCase(), col);
+      if (lbx(x)) lbl(c0, (av ? "AVOID " : "EVAC CORRIDOR ") + x.name.replace(/^(Avoid|Corridor)\s*/i, "").toUpperCase(), col);
     });
     list.filter(function (x) { return x.k === "pl"; }).forEach(function (x) {
       L.polyline(x.pts, { color: "#fff", weight: 6, opacity: 0.85, interactive: false }).addTo(lyr);
       var pln = L.polyline(x.pts, { color: CM_COL.pl, weight: 3, opacity: 1, className: "epepl" }).bindTooltip(E("Phase line " + x.name + (live0 ? " (tap to move its points)" : "")), { sticky: true }).addTo(lyr);
       if (live0) { pln.on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); cmEditTog(x.id); }); vx(x, pln); }
-      lbl(x.pts[0], x.name.toUpperCase(), CM_COL.pl); lbl(x.pts[x.pts.length - 1], x.name.toUpperCase(), CM_COL.pl);
+      if (lbx(x)) { lbl(x.pts[0], x.name.toUpperCase(), CM_COL.pl); lbl(x.pts[x.pts.length - 1], x.name.toUpperCase(), CM_COL.pl); }
     });
     list.filter(function (x) { return CM[x.k].g === "pt"; }).forEach(function (x) {
       var col = CM_COL[x.k], live = !S.active && pl === S.plan;
-      var mk = L.marker(x.pts[0], { keyboard: false, draggable: live, icon: x.k === "gtas" ? L.divIcon({ className: "epegtas", html: '<b style="' + (x.sig === "ARR" ? "transform:rotate(" + (+x.brg || 0) + "deg)" : "") + '">' + E(gtSym(x)) + "</b><span>" + E(x.name) + "</span>", iconSize: null, iconAnchor: [17, 17] }) : SY() ? W.OSAP_SYM.tag(CM_SYM[x.k], x.name, { cls: "epecmmk", badge: col, scale: 0.7 }) : L.divIcon({ className: "epecmmk", html: '<span style="background:' + col + '">' + E(x.name) + "</span>", iconSize: null, iconAnchor: [14, 10] }) })
+      var mk = L.marker(x.pts[0], { keyboard: false, draggable: live, icon: x.k === "gtas" ? L.divIcon({ className: "epegtas", html: '<b style="' + (x.sig === "ARR" ? "transform:rotate(" + (+x.brg || 0) + "deg)" : "") + '">' + E(gtSym(x)) + "</b>" + (lbx(x) ? "<span>" + E(x.name) + "</span>" : ""), iconSize: null, iconAnchor: [17, 17] }) : SY() ? W.OSAP_SYM.tag(CM_SYM[x.k], lbx(x) ? x.name : "", { cls: "epecmmk", badge: col, scale: 0.7 }) : L.divIcon({ className: "epecmmk", html: '<span style="background:' + col + '">' + (lbx(x) ? E(x.name) : "&nbsp;") + "</span>", iconSize: null, iconAnchor: [14, 10] }) })
         .bindTooltip(E(CM[x.k].n + ": " + x.name + (x.k === "gtas" ? ". " + gtDesc(x) : "") + (live ? " (drag to move)" : "")));
       if (live) mk.on("dragend", function () { var ll = mk.getLatLng(); x.pts = [[r6(ll.lat), r6(wrap(ll.lng))]]; x.moved = Date.now(); cmRefresh(); save(); render(); draw(); });
       mk.addTo(lyr);
@@ -1822,11 +1823,15 @@
     var list = cms(pl).filter(okCm); if (!list.length) return "";
     var KC = { gtas: "ff0c59e8", pt: "ffe84870", cp: "ff292521", gxp: "ff3e8a2b", axp: "ffab6418", pl: "ff111111", corr: "ffd67e1c", avoid: "ff2a2ac9" };
     function cs(pts, close) { var q = pts.concat(close ? [pts[0]] : []); return q.map(function (p) { return (+p[1]).toFixed(6) + "," + (+p[0]).toFixed(6) + ",0"; }).join(" "); }
-    return "<Folder><name>Control measures (analyst)</name>" + list.map(function (x) {
+    /* one sub-folder per folder of the plan's tree: the kind's own, or the analyst's (cm item .fold) */
+    var order = [], by = {};
+    list.forEach(function (x) { var fk = cmFold(x, pl); if (!by[fk]) { by[fk] = []; order.push(fk); } by[fk].push(x); });
+    function fname2(fk) { var f = foldOf(pl, fk); return f ? f.name : (SHOW.filter(function (l) { return l[0] === fk; })[0] || [0, fk])[1]; }
+    return "<Folder><name>Control measures (analyst)</name>" + order.map(function (fk) { return "<Folder><name>" + xml(fname2(fk)) + "</name>" + by[fk].map(function (x) {
       var g = CM[x.k].g, st = "<Style><LineStyle><color>" + KC[x.k] + "</color><width>3</width></LineStyle><PolyStyle><color>" + (x.k === "avoid" ? "402a2ac9" : "18d67e1c") + "</color></PolyStyle></Style>";
       return "<Placemark><name>" + xml(x.name) + "</name><description>" + xml((g === "pt" ? grid(x.pts[0][0], x.pts[0][1]) + ". " : "") + CM[x.k].n + ". " + (x.k === "gtas" ? gtDesc(x) + " " : "") + (x.how || "Placed by the analyst") + ".") + "</description>" + (g === "pt" ? "<styleUrl>#i" + x.k + "</styleUrl>" : "") + st + (g === "pt" ? '<ExtendedData><Data name="grid"><value>' + xml(grid(x.pts[0][0], x.pts[0][1])) + "</value></Data></ExtendedData>" : "") +
         (g === "pt" ? "<Point><coordinates>" + cs(x.pts) + "</coordinates></Point>" : g === "line" ? "<LineString><tessellate>1</tessellate><coordinates>" + cs(x.pts) + "</coordinates></LineString>" : "<Polygon><outerBoundaryIs><LinearRing><coordinates>" + cs(x.pts, true) + "</coordinates></LinearRing></outerBoundaryIs></Polygon>") + "</Placemark>";
-    }).join("") + "</Folder>";
+    }).join("") + "</Folder>"; }).join("") + "</Folder>";
   }
 
   /* ---------- the window ---------- */
@@ -1874,13 +1879,69 @@
       '<span class="obs" role="status">' + E(S.svmsg || (p.saved ? "Saved on this device " + dual(p.saved, true) + "." : "Kept on this device.")) + "</span></div>";
   }
   /* every kind of map item the plan draws, switchable; the along-route layers are the same switches as in each option's check */
-  function showHtml() {
-    var on = SHOW.filter(function (l) { return shown(l[0]); }).length + LAYERS.filter(function (l) { return lay(l[0]); }).length, all0 = SHOW.length + LAYERS.length;
-    return '<details class="epeshow"' + (S.showOpen ? " open" : "") + '><summary>On the map <span class="obs">' + on + " of " + all0 + " kinds shown</span></summary>" +
-      '<div class="epelay" role="group" aria-label="Plan items on the map">' + SHOW.map(function (l) { return '<label><input type="checkbox" data-ep-show="' + l[0] + '"' + (shown(l[0]) ? " checked" : "") + "> " + E(l[1]) + "</label>"; }).join("") + "</div>" +
-      '<div class="epelay" role="group" aria-label="Along-route results on the map">' + LAYERS.map(function (l) { return '<label><input type="checkbox" data-ep-gl="' + l[0] + '"' + (lay(l[0]) ? " checked" : "") + "> " + E(l[1]) + "</label>"; }).join("") + "</div>" +
-      '<div class="epebtns"><button type="button" data-ep="showall">Show all</button><button type="button" data-ep="shownone">Hide all</button></div>' +
-      '<p class="obs">Each option also has its own Show on map switch. These switches change the screen only, not route packages or printouts.</p></details>';
+  function showHtml() { return S.plan ? treeHtml(S.plan) : ""; }
+  /* ---------- the plan's items as a folder tree (Shane 19 Nov: "organized by folder ... turn them on or off by groups or
+     individually", "turn the labels on or off too"). Folder show switches are this device's (osap-epe-show, as before);
+     an item's own switch and label switch, folder label switches and the analyst's own folders are kept with the plan
+     (plan.hide, plan.nolbl, plan.flbl, plan.folders, cm item .fold). The master Labels switch is this device's. Screen only:
+     route packages, KMZ and printouts carry everything. ---------- */
+  var LBL_KEY = "osap-epe-lbl", MAX_FOLD = 12;
+  function lblAll() { return lsGet(LBL_KEY, 1) !== 0; }
+  function pmap(p, k) { return (p && p[k] && typeof p[k] === "object") ? p[k] : {}; }
+  function itemOn(id, p) { return !pmap(p || S.plan, "hide")[id]; }
+  function lblOn(fk, id, p) { p = p || S.plan; return lblAll() && pmap(p, "flbl")[fk] !== 0 && !pmap(p, "nolbl")[id]; }
+  function folds(p) { return (p && Array.isArray(p.folders)) ? p.folders : []; }
+  function foldOf(p, fk) { return folds(p).filter(function (f) { return "f:" + f.id === fk; })[0]; }
+  function cmFold(x, p) { return x.fold && foldOf(p, "f:" + x.fold) ? "f:" + x.fold : CM_SHOW[x.k] || x.k; }
+  function foldShown(fk, p) { if (fk.indexOf("f:") === 0) { var f = foldOf(p, fk); return f ? !f.hid : true; } return shown(fk); }
+  function setMap(p, k, id, on) { if (!p) return; var m = pmap(p, k); if (on) m[id] = 1; else delete m[id]; p[k] = m; }
+  /* each folder's items: [id, name, kind of switch] */
+  function itemsOf(fk, p) {
+    var out = [];
+    if (fk === "routes") p.opts.forEach(function (o) { out.push({ id: o.id, name: (o.role ? o.role + " " : "") + o.dest.i.name, opt: true }); });
+    else if (fk === "dests") p.opts.forEach(function (o) { out.push({ id: "d:" + o.id, name: o.dest.i.name }); });
+    else if (fk === "cp") p.opts.forEach(function (o) { (o.cps || []).forEach(function (q) { out.push({ id: q.id, name: (o.role || o.dest.i.name) + " " + cpNm(o, q) + (q.st === "proposed" ? "?" : ""), lbl: true }); }); });
+    else if (fk === "legs") p.opts.forEach(function (o) { (o.nodes || []).forEach(function (n) { out.push({ id: "n:" + n.id, name: n.name, lbl: true }); }); });
+    cms(p).filter(okCm).forEach(function (x) { if (cmFold(x, p) === fk) out.push({ id: x.id, name: x.name, lbl: true, cm: x }); });
+    return out;
+  }
+  function treeHtml(p) {
+    var groups = SHOW.map(function (l) { return { k: l[0], n: l[1] }; }).concat(folds(p).map(function (f) { return { k: "f:" + f.id, n: f.name, f: f }; }));
+    var on = groups.filter(function (g) { return foldShown(g.k, p); }).length;
+    var fopen = S.fOpen || {};
+    var opts = folds(p);
+    return '<details class="epeshow"' + (S.showOpen ? " open" : "") + '><summary>On the map <span class="obs">' + on + " of " + groups.length + " folders shown</span></summary>" +
+      '<div class="epetreetop"><label class="epelblall"><input type="checkbox" data-ep-lblall' + (lblAll() ? " checked" : "") + "> Labels</label>" +
+      '<button type="button" data-ep="showall">Show all</button><button type="button" data-ep="shownone">Hide all</button>' +
+      '<form id="epe-fnew" class="epefnew" autocomplete="off"><input id="epe-fname" maxlength="40" placeholder="New folder name" aria-label="New folder name"><button type="submit"' + (opts.length >= MAX_FOLD ? " disabled" : "") + ">New folder</button></form></div>" +
+      '<ul class="epetree" role="tree" aria-label="Plan items">' + groups.map(function (g) {
+        var items = itemsOf(g.k, p), shownG = foldShown(g.k, p), lb = pmap(p, "flbl")[g.k] !== 0;
+        var sw = g.f ? '<input type="checkbox" data-ep-fshow="' + E(g.f.id) + '"' + (shownG ? " checked" : "") + ' aria-label="Show the folder ' + E(g.n) + '">' : '<input type="checkbox" data-ep-show="' + g.k + '"' + (shownG ? " checked" : "") + ' aria-label="Show ' + E(g.n) + '">';
+        var head = sw + " <b>" + E(g.n) + '</b> <span class="obs">' + (items.length ? items.length : g.f ? "empty" : "") + "</span>" +
+          (g.k === "band" || g.k === "origin" || g.k === "routes" || g.k === "dests" ? "" : '<label class="epeflbl"><input type="checkbox" data-ep-flbl="' + E(g.k) + '"' + (lb ? " checked" : "") + "> Labels</label>") +
+          (g.f ? '<button type="button" class="epefdel" data-ep-fdel="' + E(g.f.id) + '" aria-label="Delete the folder ' + E(g.n) + ' (its items go back to their own folders)">×</button>' : "");
+        if (!items.length) return '<li class="epef' + (shownG ? "" : " off") + '" role="treeitem"><div class="epefh">' + head + "</div></li>";
+        return '<li class="epef' + (shownG ? "" : " off") + '" role="treeitem"><details data-ep-fopen="' + E(g.k) + '"' + (fopen[g.k] ? " open" : "") + '><summary class="epefh">' + head + '</summary><ul role="group">' + items.map(function (it) {
+          var vis = it.opt ? '<input type="checkbox" data-ep-vis="' + E(it.id) + '"' + (optOf(it.id) && optOf(it.id).hid ? "" : " checked") + ">" : '<input type="checkbox" data-ep-ion="' + E(it.id) + '"' + (itemOn(it.id, p) ? " checked" : "") + ">";
+          return '<li role="treeitem"><label class="epeit">' + vis + " " + E(it.name) + "</label>" +
+            (it.lbl ? '<label class="epeilbl" title="Show this item\'s label"><input type="checkbox" data-ep-ilbl="' + E(it.id) + '"' + (pmap(p, "nolbl")[it.id] ? "" : " checked") + "> Label</label>" : "") +
+            (it.cm && opts.length ? '<select data-ep-fmv="' + E(it.id) + '" aria-label="Move ' + E(it.name) + ' to a folder"><option value="">' + E((SHOW.filter(function (l) { return l[0] === (CM_SHOW[it.cm.k] || it.cm.k); })[0] || [0, CM[it.cm.k].n])[1]) + "</option>" +
+              opts.map(function (f) { return '<option value="' + E(f.id) + '"' + (it.cm.fold === f.id ? " selected" : "") + ">" + E(f.name) + "</option>"; }).join("") + "</select>" : "") + "</li>";
+        }).join("") + "</ul></details></li>";
+      }).join("") + "</ul>" +
+      '<p class="obs">Along the routes:</p><div class="epelay" role="group" aria-label="Along-route results on the map">' + LAYERS.map(function (l) { return '<label><input type="checkbox" data-ep-gl="' + l[0] + '"' + (lay(l[0]) ? " checked" : "") + "> " + E(l[1]) + "</label>"; }).join("") + "</div>" +
+      '<p class="obs">A folder\'s box shows or hides all of it; each item has its own box and Label. Your own folders take control measures, points and signals (Move to). These switches change the screen only: route packages, KMZ and printouts carry everything.</p></details>';
+  }
+  function foldNew() {
+    var p = S.plan, nm = clean((D.getElementById("epe-fname") || {}).value, 40); if (!p) return;
+    if (!nm) { S.cmmsg = "Name the new folder first."; render(); return; }
+    if (folds(p).length >= MAX_FOLD) return;
+    p.folders = folds(p).concat([{ id: rid("f"), name: nm, at: Date.now() }]); S.showOpen = true; save(); render();
+  }
+  function foldDel(id) {
+    var p = S.plan; if (!p) return;
+    p.folders = folds(p).filter(function (f) { return f.id !== id; });
+    cms(p).forEach(function (x) { if (x.fold === id) delete x.fold; }); save(); render(); draw();
   }
   function cardHtml(o) {
     var d = o.dest.i, st = stOf(o), r = o.route, arr = Date.now() + r.s * 1000, sel = o.id === S.sel;
@@ -2089,10 +2150,12 @@
     var sm = e.target.closest("summary"), dt = sm && sm.parentNode;
     if (dt && dt.classList.contains("epecirc")) S.circOpen = !dt.open;
     if (dt && dt.classList.contains("epeshow")) S.showOpen = !dt.open;
+    if (dt && dt.hasAttribute("data-ep-fopen") && !e.target.closest("input,label,button,select")) { S.fOpen = S.fOpen || {}; S.fOpen[dt.getAttribute("data-ep-fopen")] = !dt.open; }
     var b = e.target.closest("button"); if (!b) return;
     var k = b.getAttribute("data-ep");
     if (k === "close") close();
     else if (b.hasAttribute("data-ep-cmed")) cmEditTog(b.getAttribute("data-ep-cmed"));
+    else if (b.hasAttribute("data-ep-fdel")) { e.preventDefault(); foldDel(b.getAttribute("data-ep-fdel")); }
     else if (b.hasAttribute("data-ep-cm")) { var ck = b.getAttribute("data-ep-cm"); if (S.cmDraw && S.cmDraw.k === ck) { cmEnd(); S.cmmsg = ""; render(); draw(); } else cmStart(ck); }
     else if (k === "cmfin") cmFinish();
     else if (k === "cmundo") { if (S.cmDraw) { S.cmDraw.pts.pop(); render(); draw(); } }
@@ -2146,7 +2209,8 @@
     else if (b.hasAttribute("data-ep-cpok")) { var ock = optOf(S.sel); if (ock) cpEdit(ock, b.getAttribute("data-ep-cpok"), function (x) { x.st = "checked"; x.by = "you"; x.ok = Date.now(); }); }
     else if (b.hasAttribute("data-ep-cpdel")) { var ocd = optOf(S.sel); if (ocd) { ocd.cps = cpsOf(ocd).filter(function (x) { return x.id !== b.getAttribute("data-ep-cpdel"); }); save(); render(); draw(); } }
     else if (k === "pkmz" || k === "pkml") exportPlan(k === "pkmz");
-    else if (k === "showall" || k === "shownone") { SHOW.forEach(function (l) { setShown(l[0], k === "showall"); }); LAYERS.forEach(function (l) { setLay(l[0], k === "showall"); }); S.showOpen = true; render(); draw(); }
+    else if (k === "showall" || k === "shownone") { SHOW.forEach(function (l) { setShown(l[0], k === "showall"); }); LAYERS.forEach(function (l) { setLay(l[0], k === "showall"); });
+      if (S.plan) { folds(S.plan).forEach(function (f) { f.hid = k !== "showall"; }); if (k === "showall") { S.plan.hide = {}; S.plan.opts.forEach(function (o) { o.hid = false; }); } save(); } S.showOpen = true; render(); draw(); }
     else if (b.hasAttribute("data-ep-rm")) { S.rmAsk = b.getAttribute("data-ep-rm"); render(); }
     else if (b.hasAttribute("data-ep-rmyes")) rmOpt(b.getAttribute("data-ep-rmyes"));
     else if (b.hasAttribute("data-ep-rmno")) { S.rmAsk = null; render(); }
@@ -2167,6 +2231,12 @@
     else if (t.hasAttribute("data-ep-lay")) { setLay(t.getAttribute("data-ep-lay"), t.checked); draw(); }
     else if (t.hasAttribute("data-ep-gl")) { setLay(t.getAttribute("data-ep-gl"), t.checked); S.showOpen = true; render(); draw(); }
     else if (t.hasAttribute("data-ep-show")) { setShown(t.getAttribute("data-ep-show"), t.checked); S.showOpen = true; render(); draw(); }
+    else if (t.hasAttribute("data-ep-lblall")) { lsSet(LBL_KEY, t.checked ? 1 : 0); S.showOpen = true; render(); draw(); }
+    else if (t.hasAttribute("data-ep-flbl")) { if (S.plan) { var fm = pmap(S.plan, "flbl"); if (t.checked) delete fm[t.getAttribute("data-ep-flbl")]; else fm[t.getAttribute("data-ep-flbl")] = 0; S.plan.flbl = fm; save(); } S.showOpen = true; render(); draw(); }
+    else if (t.hasAttribute("data-ep-ion")) { setMap(S.plan, "hide", t.getAttribute("data-ep-ion"), !t.checked); save(); S.showOpen = true; render(); draw(); }
+    else if (t.hasAttribute("data-ep-ilbl")) { setMap(S.plan, "nolbl", t.getAttribute("data-ep-ilbl"), !t.checked); save(); S.showOpen = true; render(); draw(); }
+    else if (t.hasAttribute("data-ep-fshow")) { var ff = foldOf(S.plan, "f:" + t.getAttribute("data-ep-fshow")); if (ff) { ff.hid = !t.checked; save(); } S.showOpen = true; render(); draw(); }
+    else if (t.hasAttribute("data-ep-fmv")) { var mx = cmOf(t.getAttribute("data-ep-fmv")); if (mx) { if (t.value) mx.fold = t.value; else delete mx.fold; save(); } S.showOpen = true; render(); draw(); }
     else if (t.hasAttribute("data-ep-vis")) { var ov = optOf(t.getAttribute("data-ep-vis")); if (ov) { if (t.checked) delete ov.hid; else ov.hid = true; save(); render(); draw(); } }
     else if (t.hasAttribute("data-ep-cpname")) { var ocn = optOf(S.sel); if (ocn) cpEdit(ocn, t.getAttribute("data-ep-cpname"), function (x) { x.name = clean(t.value, 40); x.by = "you"; }); }
     else if (t.hasAttribute("data-ep-pname")) { if (S.plan) { S.plan.name = clean(t.value, 90) || S.plan.name; save(); S.svmsg = ""; render(); } }
@@ -2221,12 +2291,14 @@
       if (shown("routes")) L.polyline(x.route.coords, { color: c, weight: sel ? 6 : 4, opacity: sel ? 1 : 0.75, dashArray: x.role ? null : "8 6", className: (x.legs || []).some(function (l) { return flies(l.mode); }) ? "epefly" : "" })
         .on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); S.sel = x.id; render(); draw(); })
         .bindTooltip(E((x.role ? x.role + " · " : "") + x.dest.i.name + " · " + dist(x.route.m) + " · " + dur(x.route.s)), { sticky: true }).addTo(layer);
-      if (shown("dests")) L.marker([x.dest.i.lat, x.dest.i.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.ptag([x.dest.i.kind, x.kindName, x.dest.i.name], x.role || "?", { cls: "epemk", badge: c, scale: 0.75 }) : L.divIcon({ className: "epemk", html: '<span style="background:' + c + '">' + E(x.role || "?") + "</span>", iconSize: [22, 22], iconAnchor: [11, 11] }) })
+      if (shown("dests") && itemOn("d:" + x.id, p)) L.marker([x.dest.i.lat, x.dest.i.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.ptag([x.dest.i.kind, x.kindName, x.dest.i.name], x.role || "?", { cls: "epemk", badge: c, scale: 0.75 }) : L.divIcon({ className: "epemk", html: '<span style="background:' + c + '">' + E(x.role || "?") + "</span>", iconSize: [22, 22], iconAnchor: [11, 11] }) })
         .bindTooltip(E(x.dest.i.name + " (" + (x.dest.i.kind || x.kindName) + ")")).on("click", function () { S.sel = x.id; render(); draw(); }).addTo(layer);
       if (shown("cp")) cpsOf(x).forEach(function (q) {
+        if (!itemOn(q.id, p)) return;
+        var lbq = lblOn("cp", q.id, p);
         /* while a map tap picks something (a node, the origin, a control measure), checkpoints let the tap through */
         var live = !S.active && !S.pickNode && !S.picking && !S.cmDraw && !S.flyPick, nm = cpName(x, q), pr = q.st === "proposed";
-        var mk = L.marker([q.lat, q.lon], { keyboard: false, draggable: live, interactive: live, autoPan: true, opacity: sel ? 1 : 0.8, icon: L.divIcon({ className: "epecpmk" + (pr ? " prop" : ""), html: '<span data-cp="' + E(q.id) + '" style="border-color:' + c + '">' + E(nm) + (pr ? "?" : "") + "</span>", iconSize: null, iconAnchor: [0, 10] }) })
+        var mk = L.marker([q.lat, q.lon], { keyboard: false, draggable: live, interactive: live, autoPan: true, opacity: sel ? 1 : 0.8, icon: L.divIcon({ className: "epecpmk" + (pr ? " prop" : ""), html: '<span data-cp="' + E(q.id) + '" class="' + (lbq ? "" : "nolbl") + '" style="border-color:' + c + '">' + (lbq ? E(nm) + (pr ? "?" : "") : "") + "</span>", iconSize: null, iconAnchor: [0, 10] }) })
           .bindTooltip(E(nm + ", km " + q.km + " · " + grid(q.lat, q.lon) + (pr ? " · proposed by OSAP, unverified" : "") + (live ? " (drag to move)" : "")));
         if (live) mk.on("dragend", function () { var ll = mk.getLatLng(); q.lat = r6(ll.lat); q.lon = r6(wrap(ll.lng)); q.km = Math.round(onLine(x, [q.lat, q.lon]).at / 100) / 10; q.by = "you"; q.moved = Date.now(); x.cps.sort(function (a, b) { return a.km - b.km; }); save(); render(); draw(); });
         mk.addTo(layer);
@@ -2270,7 +2342,8 @@
         }
       });
       if (shown("legs")) (x.nodes || []).forEach(function (n, i) {
-        var nt = (NODE_N[n.type] ? NODE_N[n.type].charAt(0) : "N") + (i + 1);
+        if (!itemOn("n:" + n.id, p)) return;
+        var nt = lblOn("legs", "n:" + n.id, p) ? (NODE_N[n.type] ? NODE_N[n.type].charAt(0) : "N") + (i + 1) : "";
         var nlive = !S.active && !S.lbusy, nmk = L.marker([n.lat, n.lon], { keyboard: false, draggable: nlive, autoPan: true, icon: SY() ? W.OSAP_SYM.tag({ airdep: "i_air", seadep: "i_port", border: "crossing", haven: "g_poi", check: "g_check" }[n.type] || "g_waypoint", nt, { cls: "epend", scale: 0.6 }) : L.divIcon({ className: "epend", html: "<span>" + E(nt) + "</span>", iconSize: [26, 20], iconAnchor: [13, 10] }) })
           .bindTooltip(E(n.name + " (" + (NODE_N[n.type] || n.type) + ", placed by you" + (nlive ? "; drag to move, the legs either side are worked out again" : "") + ")")).addTo(layer);
         /* dragged: the node takes its new place and the legs that meet it are worked out again */
@@ -2354,6 +2427,10 @@
       "#epe .epecps{margin-top:8px;border-top:1px dashed var(--line,#d5dbe1);padding-top:6px}#epe ol.epecpl{list-style:none;margin:4px 0;padding:0}#epe ol.epecpl li{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 0;border-top:1px solid var(--line-soft,var(--line,#e3e7eb));font-size:12px}#epe ol.epecpl li.prop .epenk{background:#868e96}#epe ol.epecpl input{width:9em}#epe ol.epecpl .obs{flex-basis:100%}#epe ol.epecpl button{border:1px solid var(--line,#d5dbe1);background:var(--surface,#fff);color:var(--ink,#1d2329);border-radius:4px;min-width:32px;min-height:32px;padding:3px 8px;cursor:pointer;font-size:12px}" +
       ".epevx{background:none;border:0}.epevx span{display:block;width:14px;height:14px;margin:6px;border-radius:50%;background:#fff;border:2px solid #1c7ed6;box-shadow:0 1px 3px rgba(0,0,0,.5);cursor:move}.epe-picking .epevx{pointer-events:none}" +
       ".epegtas{background:none;border:0}.epegtas b{display:block;width:30px;height:30px;line-height:30px;text-align:center;background:#e8590c;color:#fff;font:900 20px/30px system-ui,sans-serif;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5);cursor:grab}.epegtas span{position:absolute;left:36px;top:6px;white-space:nowrap;background:#fff;color:#111;font:700 11px/16px system-ui,sans-serif;padding:0 4px;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.4)}" +
+      "#epe .epetree label,#epe .epetreetop label{display:inline-flex!important;flex-direction:row!important;align-items:center;gap:5px;margin:0}#epe .epetree input[type=checkbox],#epe .epetreetop input[type=checkbox]{margin:0;flex:none}#epe .epetreetop{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}#epe .epefnew{display:flex;gap:6px;flex:1 1 220px}#epe .epefnew input{flex:1;min-width:0}" +
+      "#epe .epetree,#epe .epetree ul{list-style:none;margin:0;padding:0}#epe .epetree ul{padding-left:22px}#epe .epef{border-top:1px solid var(--line,#e3e7eb)}#epe .epef.off>.epefh,#epe .epef.off>details>.epefh{opacity:.6}" +
+      "#epe .epefh{display:flex;align-items:center;gap:6px;padding:4px 0;cursor:pointer;min-height:32px}#epe .epefh .obs{flex:1}#epe .epeflbl,#epe .epeilbl{font-size:12px;white-space:nowrap}#epe .epetree li li{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:30px}#epe .epeit{flex:1;min-width:0}#epe .epefdel{min-width:32px}#epe .epetree input[type=checkbox]{width:18px;height:18px}" +
+      ".epecpmk span.nolbl{width:10px;height:10px;padding:0;border-radius:50%}" +
       ".epe-picking .epecpmk,.epe-picking .epecpmk *,.epe-picking .epecmmk,.epe-picking .epecmmk *,.epe-picking .epegtas,.epe-picking .epegtas *,.epe-picking .epend{pointer-events:none!important}.epecpmk{background:none;border:0}.epecpmk span{display:inline-block;white-space:nowrap;background:#fff;color:#111;border:2px solid;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.5);font:700 11px/16px system-ui,sans-serif;padding:0 4px;cursor:grab}.epecpmk.prop span{border-style:dashed}" +
       "html.epe-picking #map{cursor:crosshair}" +
       "@media (max-width:700px){#epe:not([hidden]){padding:0}#epe .epebox{border-radius:0;min-height:100%}#epe .epekpi{grid-template-columns:1fr 1fr}#epe select,#epe input{font-size:16px}}";
