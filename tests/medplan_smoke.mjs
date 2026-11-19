@@ -513,13 +513,13 @@ async function openPlan(p) {
     return { dock: el.classList.contains("dock"), left: Math.round(r.left), w: Math.round(r.width), vw: innerWidth, map: !!(hit && hit.closest(".leaflet-container")), btn: el.querySelector('[data-mp="dock"]').textContent, modal: el.getAttribute("aria-modal"), kept: localStorage.getItem("osap.split") };
   });
   ok(dk.dock && dk.left > dk.vw / 2 - 2 && dk.map && dk.btn === "Full window" && dk.modal === "false" && dk.kept === "1", "desktop: Side panel moves the plan right and leaves the map usable " + JSON.stringify(dk));
-  /* the side panel is a sheet: Map folds it to its bar at the top with the plan status, so the whole map shows; Half and Full pull it back */
+  /* the side panel is a sheet: Map folds it to a bar in the top middle of the map with the plan status, so the whole map shows; Half and Full pull it back */
   await p.click('#medplan .osheet-h [data-osheet-go="min"]'); await p.waitForTimeout(250);
   const fold = await p.evaluate(() => {
     const el = document.getElementById("medplan"), h = el.querySelector(".osheet-h"), r = h.getBoundingClientRect(), bx = el.querySelector(".mpbox"), mr = window.__asapMap.getContainer().getBoundingClientRect(), hit = document.elementFromPoint(Math.round(mr.right - 30), Math.round(mr.top + mr.height * 0.7));
-    return { stop: el.getAttribute("data-osheet"), hTop: Math.round(r.top), hH: Math.round(r.height), left: Math.round(r.left), vw: innerWidth, box: getComputedStyle(bx).display, map: !!(hit && hit.closest(".leaflet-container")), t: h.textContent, pad: window.OSAP_SPLIT.clear().br[0] };
+    return { stop: el.getAttribute("data-osheet"), hTop: Math.round(r.top), hH: Math.round(r.height), left: Math.round(r.left), mid: Math.round((r.left + r.right) / 2 - (mr.left + mr.right) / 2), vw: innerWidth, box: getComputedStyle(bx).display, map: !!(hit && hit.closest(".leaflet-container")), t: h.textContent, pad: window.OSAP_SPLIT.clear().br[0] };
   });
-  ok(fold.stop === "min" && fold.box === "none" && fold.hH < 80 && fold.left > fold.vw / 2 - 2 && fold.map && fold.pad === 0 && /Medical plan/.test(fold.t) && /(GREEN|AMBER|RED)|Building/.test(fold.t), "desktop: Map folds the side panel to its bar with the plan status, the map under it usable " + JSON.stringify(fold));
+  ok(fold.stop === "min" && fold.box === "none" && fold.hH < 80 && Math.abs(fold.mid) < 4 && fold.map && fold.pad === 0 && /Medical plan/.test(fold.t) && /(GREEN|AMBER|RED)|Building/.test(fold.t), "desktop: Map folds the side panel to its bar with the plan status, the map under it usable " + JSON.stringify(fold));
   await p.click('#medplan .osheet-h [data-osheet-go="half"]'); await p.waitForTimeout(250);
   const half = await p.evaluate(() => { const r = document.querySelector("#medplan").getBoundingClientRect(), m = window.__asapMap.getContainer().getBoundingClientRect(); return { h: Math.round(r.height), mh: Math.round(innerHeight - m.top), box: getComputedStyle(document.querySelector("#medplan .mpbox")).display }; });
   ok(half.box !== "none" && Math.abs(half.h - half.mh / 2) < 30, "desktop: Half shows the plan over the top half " + JSON.stringify(half));
