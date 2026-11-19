@@ -188,6 +188,7 @@ tests/epe_tree_smoke.mjs
 tests/epe_geo_smoke.mjs
 tests/epe_conop_smoke.mjs
 tests/epe_nocorr_smoke.mjs
+tests/epe_fullscreen_smoke.mjs
 tests/epe_scroll_smoke.mjs
 tests/route_api_smoke.mjs
 tests/route_preview_smoke.mjs

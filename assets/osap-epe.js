@@ -158,7 +158,32 @@
     draw(); fitPlan();
     var h = el.querySelector("h2"); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); }
   }
+  /* Shane 19 Nov: "i want full screen to be legit full screen" (he chose both): Map full screen puts the map over the whole
+     screen, over OSAP's header, lists and toolbars, and asks the browser for full screen so its own bars go too (an iPhone's
+     Safari has no full screen for a page: there the map still fills the page). This panel folds to its small bar on top; Exit
+     full screen, Esc or closing the planner brings everything back. */
+  var FS_CLS = "epe-mapfs";
+  function mapFs(on) {
+    var root = D.documentElement, was = root.classList.contains(FS_CLS);
+    if (!!on === was) return;
+    root.classList.toggle(FS_CLS, !!on);
+    var bx = D.getElementById("epe-fsx");
+    if (on) {
+      if (!bx) { bx = D.createElement("button"); bx.type = "button"; bx.id = "epe-fsx"; bx.textContent = "Exit full screen"; bx.addEventListener("click", function () { mapFs(false); }); D.body.appendChild(bx); }
+      bx.hidden = false;
+      var el = D.getElementById("epe"); if (el && W.OSAP_SPLIT && W.OSAP_SPLIT.stop) W.OSAP_SPLIT.stop(el, "min");
+      try { var rq = root.requestFullscreen || root.webkitRequestFullscreen; if (rq) { var pr = rq.call(root); if (pr && pr.catch) pr.catch(function () { /* refused: the map still fills the page */ }); } } catch (e) { /* not allowed here */ }
+    } else {
+      if (bx) bx.hidden = true;
+      try { var fe = D.fullscreenElement || D.webkitFullscreenElement, ex = D.exitFullscreen || D.webkitExitFullscreen; if (fe && ex) { var p2 = ex.call(D); if (p2 && p2.catch) p2.catch(function () {}); } } catch (e) { /* already out */ }
+    }
+    var map = W.__asapMap; if (map && map.invalidateSize) { map.invalidateSize(); setTimeout(function () { map.invalidateSize(); }, 250); }
+    if (W.OSAP_SPLIT && W.OSAP_SPLIT.top) W.OSAP_SPLIT.top();
+  }
+  /* Esc (or the browser's own exit) leaves the browser's full screen: leave ours with it */
+  ["fullscreenchange", "webkitfullscreenchange"].forEach(function (ev) { D.addEventListener(ev, function () { if (!(D.fullscreenElement || D.webkitFullscreenElement) && D.documentElement.classList.contains(FS_CLS) && D.documentElement.getAttribute("data-epe-fsapi") === "1") mapFs(false); D.documentElement.setAttribute("data-epe-fsapi", (D.fullscreenElement || D.webkitFullscreenElement) ? "1" : "0"); }); });
   function close() {
+    mapFs(false);
     var el = D.getElementById("epe"); if (el) el.hidden = true;
     try { sessionStorage.removeItem(OPEN); } catch (e) { /* private mode */ }
     pickEnd(); cmEnd(); S.tok++; S.busy = false; S.rtok++; S.rbusy = false;
@@ -2388,7 +2413,8 @@
     /* Shane 19 Nov: "i dont see an option to turn off the lables...or to put things into folders": the tree sat folded far down
        the panel, so the Labels switch and a Folders button now sit at the top whenever a plan is open */
     var quick = p ? '<div class="epequick"><label class="epelblall"><input type="checkbox" data-ep-lblall' + (lblAll() ? " checked" : "") + '> Labels on the map</label>' +
-      '<button type="button" data-ep="folders">Folders and show switches</button></div>' : "";
+      '<button type="button" data-ep="folders">Folders and show switches</button>' +
+      '<button type="button" data-ep="mapfs" title="The map over the whole screen, with nothing else on it; this panel folds to a small bar">Map full screen</button></div>' : "";
     el.innerHTML = '<div class="epebox">' + head + quick + full + origin + (p ? optsHtml(p) + cmHtml(p) + geoHtml(p) : "") + keptHtml() + pkgsHtml() +
       '<p class="obs epefoot">Routes from the free OpenStreetMap routers (FOSSGIS OSRM and Valhalla); embassies and consulates from travel.state.gov, airports from OurAirports and OpenStreetMap, seaports from the UN/LOCODE reference list. ' +
       "The incident weighting counts what OSAP holds near each line; it is not a threat assessment. Confirm every route, destination and status with the post and on the ground. Kept on this device only.</p></div>";
@@ -2693,6 +2719,7 @@
     var b = e.target.closest("button"); if (!b) return;
     var k = b.getAttribute("data-ep");
     if (k === "close") close();
+    else if (k === "mapfs") mapFs(!D.documentElement.classList.contains(FS_CLS));
     else if (k === "folders") { S.showOpen = true; S.anchor = null; render(); setTimeout(function () { var tr = box().querySelector("details.epeshow"); if (tr) { tr.scrollIntoView({ block: "start", behavior: "smooth" }); var sb = tr.querySelector("summary"); if (sb) sb.focus({ preventScroll: true }); } }, 30); }
     else if (b.hasAttribute("data-ep-cmed")) cmEditTog(b.getAttribute("data-ep-cmed"));
     else if (b.hasAttribute("data-ep-fdel")) { e.preventDefault(); foldDel(b.getAttribute("data-ep-fdel")); }
@@ -2926,6 +2953,11 @@
     s.textContent =
       "#epe:not([hidden]){position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.35);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}" +
       "#epe .epebox{background:var(--surface,#fff);color:var(--ink,#1d2329);width:min(760px,100%);border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35);padding:0 14px 14px;font-size:13px;line-height:1.4}" +
+      "html.epe-mapfs.epe-mapfs #map,html.phone.epe-mapfs.epe-mapfs #map{position:fixed!important;left:0!important;top:0!important;right:0!important;bottom:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;z-index:3900!important;margin:0!important;border:0!important}" +
+      "#epe-fsx{position:fixed;top:max(10px,env(safe-area-inset-top));right:10px;z-index:4100;min-height:36px;padding:0 12px;border-radius:999px;border:0;background:#111;color:#fff;font:600 13px system-ui,sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.4);cursor:pointer}#epe-fsx[hidden]{display:none}" +
+      /* Full: the planner over the whole screen, edge to edge (Shane 19 Nov, "Both") */
+      "@media (min-width:701px){html:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=full]:not([hidden]){left:0!important;right:0!important;top:0!important;bottom:0!important;width:100vw!important;max-width:none!important;height:100vh!important;transform:none!important;z-index:4050!important}" +
+      "html:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=full]:not([hidden])>*{box-shadow:none!important}#epe.osheet-on[data-osheet=full] .epebox{width:100%!important;max-width:none!important}}" +
       "#epe .epequick{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0;padding:6px 8px;border:1px solid var(--line,#d5dbe1);border-radius:6px}#epe .epequick label{display:inline-flex;gap:6px;align-items:center;min-height:32px;font-weight:600}#epe .epequick input{width:18px;height:18px;margin:0}" +
       "#epe .epefull{margin:10px 0 0;padding:8px 10px;border:2px solid #b3261e;border-radius:6px;background:#fdecea;color:#5f1410}" +
       "#epe .chead{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface,#fff);padding:10px 0 8px;border-bottom:1px solid var(--line,#d5dbe1)}" +
