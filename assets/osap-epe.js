@@ -1454,6 +1454,7 @@
     var x = cmAdd("pt", [[q.lat, q.lon]], nm, "Typed grid"); S.ptName = "";
     var map = W.__asapMap; if (x && map) map.panTo(x.pts[0]);
   }
+  function cmEditTog(id) { S.cmEdit = S.cmEdit === id ? null : id; var x = cmOf(id); S.cmmsg = S.cmEdit && x ? "Drag the round handles to move " + x.name + "'s points. Tap it again, or Done, when finished." : ""; render(); draw(); }
   function cmDel(id) {
     var p = S.plan; if (!p) return;
     var x = cmOf(id); p.cm = cms().filter(function (y) { return y.id !== id; }); cmRefresh(); save();
@@ -1584,6 +1585,7 @@
         var g = CM[x.k].g, pt = g === "pt";
         return '<li data-ep-cmi="' + E(x.id) + '"><span class="epecmk" style="--cmc:' + CM_COL[x.k] + '">' + E(CM[x.k].ab) + '</span><input data-ep-cmname="' + E(x.id) + '" value="' + E(x.name) + '" maxlength="40" aria-label="Name of ' + E(CM[x.k].n.toLowerCase()) + '">' +
           '<i class="obs">' + E(CM[x.k].n) + " · " + (pt ? E(grid(x.pts[0][0], x.pts[0][1])) : E(x.pts.length) + " points" + (g === "area" ? ", " + E(areaKm2(x.pts)) + " km²" : ", " + E(dist(lineM(x.pts))))) + "</i>" +
+          (!pt ? '<button type="button" data-ep-cmed="' + E(x.id) + '"' + (S.cmEdit === x.id ? ' aria-pressed="true">Done' : ">Move points") + "</button>" : "") +
           (pt ? '<button type="button" data-ep-cmto="' + E(x.id) + '"' + (busy ? " disabled" : "") + ">Route to it</button>" + (optOf(S.sel) ? '<button type="button" data-ep-cmnode="' + E(x.id) + '" title="Put it on the selected option as a node, so the route runs through it">On selected route</button>' : "") : "") +
           '<button type="button" data-ep-cmdel="' + E(x.id) + '" aria-label="Delete ' + E(x.name) + '">×</button></li>';
       }).join("") + "</ul>" : '<p class="obs">None yet. Points can be dragged on the map to move them.</p>') +
@@ -1606,17 +1608,35 @@
   /* the plan's graphics on the live map (and in active mode from the package) */
   function drawCm(pl, lyr, map, flt) {
     var list = cms(pl).filter(okCm).filter(function (x) { return !flt || shown(CM_SHOW[x.k] || x.k); }), d = S.cmDraw;
+    var live0 = !S.active && pl === S.plan && !S.cmDraw;
+    /* the corners of the line or area being edited, as handles the analyst drags (mouse or finger); the shape follows */
+    function vx(x, shp) {
+      if (S.cmEdit !== x.id) return;
+      x.pts.forEach(function (q, i) {
+        var h = L.marker(q, { keyboard: false, draggable: true, autoPan: true, zIndexOffset: 1000, icon: L.divIcon({ className: "epevx", html: '<span data-vx="' + i + '"></span>', iconSize: [26, 26], iconAnchor: [13, 13] }) })
+          .bindTooltip(E(x.name + ", point " + (i + 1) + " of " + x.pts.length + ": drag to move"));
+        h.on("drag", function () { var ll = h.getLatLng(), a = x.pts.slice(); a[i] = [ll.lat, ll.lng]; shp.setLatLngs(a); });
+        h.on("dragend", function () {
+          var ll = h.getLatLng(); x.pts[i] = [r6(ll.lat), r6(wrap(ll.lng))]; x.moved = Date.now(); cmRefresh(); save();
+          S.cmmsg = x.name + ": point " + (i + 1) + " moved to " + grid(x.pts[i][0], x.pts[i][1]) + ".";
+          render(); draw(); if (x.k === "avoid") roundAll(S.cmmsg + " ");
+        });
+        h.addTo(lyr);
+      });
+    }
     function lbl(at, t, col, cls) { L.marker(at, { keyboard: false, interactive: false, icon: L.divIcon({ className: "epecmlb" + (cls ? " " + cls : ""), html: '<span style="border-color:' + col + ";color:" + col + '">' + E(t) + "</span>", iconSize: null, iconAnchor: [0, 10] }) }).addTo(lyr); }
     list.filter(function (x) { return CM[x.k].g === "area"; }).forEach(function (x) {
       var col = CM_COL[x.k], av = x.k === "avoid";
-      L.polygon(x.pts, { color: col, weight: av ? 2.5 : 2, dashArray: av ? null : "10 6", fillColor: col, fillOpacity: av ? 0.18 : 0.06, className: av ? "epeavoid" : "epecorr2", interactive: true })
-        .bindTooltip(E((av ? "Area to avoid: " : "Evacuation corridor: ") + x.name), { sticky: true }).addTo(lyr);
+      var pg = L.polygon(x.pts, { color: col, weight: av ? 2.5 : 2, dashArray: av ? null : "10 6", fillColor: col, fillOpacity: av ? 0.18 : 0.06, className: av ? "epeavoid" : "epecorr2", interactive: true })
+        .bindTooltip(E((av ? "Area to avoid: " : "Evacuation corridor: ") + x.name + (live0 ? " (tap to move its corners)" : "")), { sticky: true }).addTo(lyr);
+      if (live0) { pg.on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); cmEditTog(x.id); }); vx(x, pg); }
       var c0 = x.pts.reduce(function (a, q) { return [a[0] + q[0] / x.pts.length, a[1] + q[1] / x.pts.length]; }, [0, 0]);
       lbl(c0, (av ? "AVOID " : "EVAC CORRIDOR ") + x.name.replace(/^(Avoid|Corridor)\s*/i, "").toUpperCase(), col);
     });
     list.filter(function (x) { return x.k === "pl"; }).forEach(function (x) {
       L.polyline(x.pts, { color: "#fff", weight: 6, opacity: 0.85, interactive: false }).addTo(lyr);
-      L.polyline(x.pts, { color: CM_COL.pl, weight: 3, opacity: 1, className: "epepl" }).bindTooltip(E("Phase line " + x.name), { sticky: true }).addTo(lyr);
+      var pln = L.polyline(x.pts, { color: CM_COL.pl, weight: 3, opacity: 1, className: "epepl" }).bindTooltip(E("Phase line " + x.name + (live0 ? " (tap to move its points)" : "")), { sticky: true }).addTo(lyr);
+      if (live0) { pln.on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); cmEditTog(x.id); }); vx(x, pln); }
       lbl(x.pts[0], x.name.toUpperCase(), CM_COL.pl); lbl(x.pts[x.pts.length - 1], x.name.toUpperCase(), CM_COL.pl);
     });
     list.filter(function (x) { return CM[x.k].g === "pt"; }).forEach(function (x) {
@@ -2006,6 +2026,7 @@
     var b = e.target.closest("button"); if (!b) return;
     var k = b.getAttribute("data-ep");
     if (k === "close") close();
+    else if (b.hasAttribute("data-ep-cmed")) cmEditTog(b.getAttribute("data-ep-cmed"));
     else if (b.hasAttribute("data-ep-cm")) { var ck = b.getAttribute("data-ep-cm"); if (S.cmDraw && S.cmDraw.k === ck) { cmEnd(); S.cmmsg = ""; render(); draw(); } else cmStart(ck); }
     else if (k === "cmfin") cmFinish();
     else if (k === "cmundo") { if (S.cmDraw) { S.cmDraw.pts.pop(); render(); draw(); } }
@@ -2184,8 +2205,10 @@
       });
       if (shown("legs")) (x.nodes || []).forEach(function (n, i) {
         var nt = (NODE_N[n.type] ? NODE_N[n.type].charAt(0) : "N") + (i + 1);
-        L.marker([n.lat, n.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.tag({ airdep: "i_air", seadep: "i_port", border: "crossing", haven: "g_poi", check: "g_check" }[n.type] || "g_waypoint", nt, { cls: "epend", scale: 0.6 }) : L.divIcon({ className: "epend", html: "<span>" + E(nt) + "</span>", iconSize: [26, 20], iconAnchor: [13, 10] }) })
-          .bindTooltip(E(n.name + " (" + (NODE_N[n.type] || n.type) + ", placed by you)")).addTo(layer);
+        var nlive = !S.active && !S.lbusy, nmk = L.marker([n.lat, n.lon], { keyboard: false, draggable: nlive, autoPan: true, icon: SY() ? W.OSAP_SYM.tag({ airdep: "i_air", seadep: "i_port", border: "crossing", haven: "g_poi", check: "g_check" }[n.type] || "g_waypoint", nt, { cls: "epend", scale: 0.6 }) : L.divIcon({ className: "epend", html: "<span>" + E(nt) + "</span>", iconSize: [26, 20], iconAnchor: [13, 10] }) })
+          .bindTooltip(E(n.name + " (" + (NODE_N[n.type] || n.type) + ", placed by you" + (nlive ? "; drag to move, the legs either side are worked out again" : "") + ")")).addTo(layer);
+        /* dragged: the node takes its new place and the legs that meet it are worked out again */
+        if (nlive) nmk.on("dragend", function () { var ll = nmk.getLatLng(); n.lat = r6(ll.lat); n.lon = r6(wrap(ll.lng)); n.moved = Date.now(); save(); rechain(x, n.name + " moved to " + grid(n.lat, n.lon) + "."); });
       });
     });
     if (S.cpDirty && p) { S.cpDirty = false; setTimeout(save, 0); }
@@ -2263,6 +2286,7 @@
       "#epe .eperma{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0;padding:6px 8px;border-radius:4px;background:var(--surface2,#f1f3f5);font-weight:600}#epe .eperma button{border:1px solid var(--line,#d5dbe1);border-radius:4px;padding:4px 10px;min-height:32px;cursor:pointer;font-weight:600;background:var(--surface,#fff);color:var(--ink,#1d2329)}#epe .eperma button[data-ep-rmyes]{background:var(--bad,#c0392b);color:#fff;border-color:var(--bad,#c0392b)}" +
       "#epe .epelay label,#epe .epevis{display:inline-flex;gap:5px;align-items:center;min-height:30px}#epe .epelay input,#epe .epevis input{min-height:0;width:18px;height:18px;margin:0;padding:0}" +
       "#epe .epecps{margin-top:8px;border-top:1px dashed var(--line,#d5dbe1);padding-top:6px}#epe ol.epecpl{list-style:none;margin:4px 0;padding:0}#epe ol.epecpl li{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 0;border-top:1px solid var(--line-soft,var(--line,#e3e7eb));font-size:12px}#epe ol.epecpl li.prop .epenk{background:#868e96}#epe ol.epecpl input{width:9em}#epe ol.epecpl .obs{flex-basis:100%}#epe ol.epecpl button{border:1px solid var(--line,#d5dbe1);background:var(--surface,#fff);color:var(--ink,#1d2329);border-radius:4px;min-width:32px;min-height:32px;padding:3px 8px;cursor:pointer;font-size:12px}" +
+      ".epevx{background:none;border:0}.epevx span{display:block;width:14px;height:14px;margin:6px;border-radius:50%;background:#fff;border:2px solid #1c7ed6;box-shadow:0 1px 3px rgba(0,0,0,.5);cursor:move}.epe-picking .epevx{pointer-events:none}" +
       ".epe-picking .epecpmk,.epe-picking .epecpmk span{pointer-events:none!important}.epecpmk{background:none;border:0}.epecpmk span{display:inline-block;white-space:nowrap;background:#fff;color:#111;border:2px solid;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.5);font:700 11px/16px system-ui,sans-serif;padding:0 4px;cursor:grab}.epecpmk.prop span{border-style:dashed}" +
       "html.epe-picking #map{cursor:crosshair}" +
       "@media (max-width:700px){#epe:not([hidden]){padding:0}#epe .epebox{border-radius:0;min-height:100%}#epe .epekpi{grid-template-columns:1fr 1fr}#epe select,#epe input{font-size:16px}}";
