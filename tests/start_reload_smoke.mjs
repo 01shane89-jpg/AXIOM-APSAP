@@ -144,6 +144,25 @@ async function newRelease(what, holdMs) {
 }
 await newRelease("new release", 0);
 await newRelease("new release found while the page loads", 6000);
+// 4. the race behind "the cover is up when the old page goes": once the cover is back up for a page that replaces this one
+//    (OSAP_BOOT.show(), just before location.reload()), Today's done() or a released hold arriving in that gap must not lift it.
+{
+  netlify = false;
+  const ctx = await browser.newContext({ serviceWorkers: "block", ...devices["Pixel 7"] });
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  const p = await ctx.newPage();
+  await p.goto(base);
+  await p.waitForFunction(() => { const b = document.getElementById("osap-boot"); return b && (b.hidden || b.classList.contains("gone")); }, null, { timeout: 30000 });
+  const up = await p.evaluate(async () => {
+    const b = document.getElementById("osap-boot"), isUp = () => !b.hidden && !b.classList.contains("gone");
+    const release = window.OSAP_BOOT.hold();
+    window.OSAP_BOOT.show(); window.OSAP_BOOT.done(); release();
+    await new Promise((r) => setTimeout(r, 600));
+    return isUp();
+  });
+  ok(up === true, "leaving: done() and a released hold after show() leave the cover up");
+  await ctx.close();
+}
 await browser.close(); server.close();
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);

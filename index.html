@@ -41,13 +41,16 @@
   /* a hold keeps the cover up while the start may still decide to load the page again (a sign-in that ran out while OSAP was
      closed, assets/osap-tier.js), so Today never shows, takes a tap on Map and is then replaced by a fresh Today
      (Shane 2026-10-31: "repeats the home page after I click maps"); done() waits for the last hold, the timer still caps it */
-  var holds = 0, want = false;
-  function done() { want = true; if (!holds) lift(); }
+  /* once show() has put the cover back up for a page that replaces this one, nothing on this page lifts it again (only the
+     20 s cap): a release's reload could start just before Today called done(), which lifted the cover while the old page was
+     still going (tests/start_reload_smoke.mjs, "the cover is up when the old page goes") */
+  var holds = 0, want = false, leaving = false;
+  function done() { want = true; if (!holds && !leaving) lift(); }
   window.OSAP_BOOT = {
     done: done,
-    hold: function () { var on = true; holds++; return function () { if (!on) return; on = false; holds = Math.max(0, holds - 1); if (!holds && want) lift(); }; },
+    hold: function () { var on = true; holds++; return function () { if (!on) return; on = false; holds = Math.max(0, holds - 1); if (!holds && want && !leaving) lift(); }; },
     /* shown again the moment another country (or a fresh copy of this one) is asked for, until the new page replaces this one */
-    show: function (cc, what, name) { el.hidden = false; el.classList.remove("gone"); label(); want = false; clearTimeout(timer); timer = setTimeout(lift, 20000); }
+    show: function (cc, what, name) { el.hidden = false; el.classList.remove("gone"); label(); want = false; leaving = true; clearTimeout(timer); timer = setTimeout(function () { leaving = false; lift(); }, 20000); }
   };
   /* never leave the page covered if something fails while it builds */
   timer = setTimeout(lift, 15000);
