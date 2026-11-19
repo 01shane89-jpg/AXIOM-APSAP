@@ -86,8 +86,8 @@
   var LAY_DEF = { deps: 1, air: 1, borders: 1, us: 1, med: 0, sus: 0, comms: 1, haz: 1 }, LAY_KEY = "osap-epe-layers";
   /* what the plan draws on the map, each switchable (a device setting, all on at first): the options' lines and destinations,
      the selected option's corridor band and circles, its legs and the analyst's nodes, each kind of control measure, the origin */
-  var SHOW = [["routes", "Routes"], ["dests", "Destinations"], ["band", "Corridor band and circles"], ["legs", "Legs and your nodes"], ["cp", "Checkpoints"], ["pl", "Phase lines"], ["xp", "Extraction points (GXP, AXP)"], ["mypt", "Your points"], ["corr", "Evacuation corridors"], ["avoid", "Areas to avoid"], ["origin", "Origin"]], SHOW_KEY = "osap-epe-show";
-  var CM_SHOW = { pt: "mypt", cp: "cp", pl: "pl", gxp: "xp", axp: "xp", corr: "corr", avoid: "avoid" };
+  var SHOW = [["routes", "Routes"], ["dests", "Destinations"], ["band", "Corridor band and circles"], ["legs", "Legs and your nodes"], ["cp", "Checkpoints"], ["pl", "Phase lines"], ["xp", "Extraction points (GXP, AXP)"], ["mypt", "Your points"], ["gtas", "Ground-to-air signals"], ["corr", "Evacuation corridors"], ["avoid", "Areas to avoid"], ["origin", "Origin"]], SHOW_KEY = "osap-epe-show";
+  var CM_SHOW = { gtas: "gtas", pt: "mypt", cp: "cp", pl: "pl", gxp: "xp", axp: "xp", corr: "corr", avoid: "avoid" };
   var COMMS_C = { good: "#2b8a3e", degraded: "#e67700", none: "#c92a2a", unknown: "#868e96" };
   var BASIS = { observed: "measured (coverage tiles)", mapped: "proximity (masts)", modelled: "modeled (line of sight)", reported: "reported (outage)" };
   function flies(m) { return m === "helo" || m === "fw" || m === "sea"; }
@@ -138,7 +138,7 @@
       D.body.appendChild(el);
       el.addEventListener("click", onClick); el.addEventListener("change", onChange);
       el.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (S.cmDraw) { cmEnd(); S.cmmsg = "Canceled."; render(); draw(); } else if (S.picking) pickEnd(); else close(); } });
-      el.addEventListener("submit", function (e) { e.preventDefault(); if (e.target.id === "epe-find") find(D.getElementById("epe-q").value); else if (e.target.id === "epe-ptf") ptAdd(); });
+      el.addEventListener("submit", function (e) { e.preventDefault(); if (e.target.id === "epe-find") find(D.getElementById("epe-q").value); else if (e.target.id === "epe-ptf") ptAdd(); else if (e.target.id === "epe-gtf") gtAdd(); });
       if (W.OSAP_SPLIT) W.OSAP_SPLIT.add(el, ".chead");
     }
     return el;
@@ -1006,7 +1006,7 @@
      and fingerprint */
   /* the icons a KMZ carries (files/<key>.png, drawn here), so Google Earth and ATAK show them with no connection */
   var KICO = { origin: ["#212529", "O"], dest: ["#5c6670", "D"], cp: ["#212529", "CP"], node: ["#343a40", "N"], dep: ["#e67700", "B"], air: ["#1864ab", "H"],
-    haz: ["#c92a2a", "!"], fuel: ["#2b8a3e", "F"], post: ["#5f3dc4", "E"], pt: ["#7048e8", "PT"], gxp: ["#2b8a3e", "GXP"], axp: ["#1864ab", "AXP"] };
+    haz: ["#c92a2a", "!"], fuel: ["#2b8a3e", "F"], post: ["#5f3dc4", "E"], pt: ["#7048e8", "PT"], gtas: ["#e8590c", "GS"], gxp: ["#2b8a3e", "GXP"], axp: ["#1864ab", "AXP"] };
   function kIcons() {
     return Object.keys(KICO).map(function (k) {
       var c = D.createElement("canvas"), s = 64; c.width = c.height = s;
@@ -1327,12 +1327,22 @@
      can't go south"): options heading that way are proposed Blocked, and "Find a way out in each open direction" routes to the
      nearest destination OSAP holds, or the analyst's own extraction point, in every open direction that has no option yet.
      Kept with the plan on this device only (plan.cm, plan.blk). */
-  var CM_T = [["cp", "Checkpoint", "CP", "pt"], ["gxp", "Ground extraction point", "GXP", "pt"], ["axp", "Air extraction point (HLZ)", "AXP", "pt"], ["pt", "Your point", "PT", "pt"],
+  var CM_T = [["cp", "Checkpoint", "CP", "pt"], ["gxp", "Ground extraction point", "GXP", "pt"], ["axp", "Air extraction point (HLZ)", "AXP", "pt"], ["pt", "Your point", "PT", "pt"], ["gtas", "Ground-to-air signal", "GTAS", "pt"],
     ["pl", "Phase line", "PL", "line"], ["corr", "Evacuation corridor", "CORRIDOR", "area"], ["avoid", "Area to avoid", "AVOID", "area"]];
   var CM = {}; CM_T.forEach(function (t) { CM[t[0]] = { n: t[1], ab: t[2], g: t[3] }; });
-  var CM_COL = { pt: "#7048e8", cp: "#212529", gxp: "#2b8a3e", axp: "#1864ab", pl: "#111111", corr: "#1c7ed6", avoid: "#c92a2a" };
+  var CM_COL = { gtas: "#e8590c", pt: "#7048e8", cp: "#212529", gxp: "#2b8a3e", axp: "#1864ab", pl: "#111111", corr: "#1c7ed6", avoid: "#c92a2a" };
   var CM_SYM = { pt: "g_poi", cp: "g_check", gxp: "g_waypoint", axp: "g_medevac" };
   var PL_NAMES = ["RED", "WHITE", "BLUE", "GOLD", "GREEN", "BLACK", "SILVER", "ORANGE", "BROWN", "GRAY"];
+  /* ground-to-air signals: the survivor-to-air visual code of ICAO Annex 12 (Search and Rescue), Appendix, public and unclassified.
+     Laid on the ground in contrast with it (panels, cloth, rocks, trenches); ICAO advises each symbol at least 2.5 m (8 ft) long */
+  var GTAS = [["V", "Require assistance"], ["X", "Require medical assistance"], ["N", "No or negative"], ["Y", "Yes or affirmative"], ["ARR", "Proceeding in this direction"], ["C", "Your own letter or code"]];
+  var GTAS_N = {}; GTAS.forEach(function (g) { GTAS_N[g[0]] = g[1]; });
+  function gtSym(x) { return x.sig === "C" ? (x.txt || "?") : x.sig === "ARR" ? "↑" : x.sig || "V"; }
+  function gtDesc(x) {
+    return "Signal " + (x.sig === "ARR" ? "arrow" : gtSym(x)) + ": " + (x.sig === "C" ? "your own code" + (x.txt ? " " + x.txt : "") : GTAS_N[x.sig] || "") +
+      (x.sig === "ARR" && isFinite(x.brg) ? ", pointing " + x.brg + "° (" + ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(x.brg / 45) % 8] + ")" : "") + ". Laid out " + (x.sz || 3) + " m long" + ((x.sz || 3) < 2.5 ? " (ICAO advises at least 2.5 m)" : "") +
+      (x.note ? ". " + x.note : "") + ". ICAO Annex 12 ground-to-air code.";
+  }
   var MAX_CM = 40, MAX_V = 60, MAX_POLY = 10;
   var DIRS = [["N", "North"], ["E", "East"], ["S", "South"], ["W", "West"]], DIR_N = { N: "North", E: "East", S: "South", W: "West" };
   var C8 = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
@@ -1426,7 +1436,7 @@
     var mine = cms().filter(function (x) { return x.k === k; });
     if (k === "pl") { var used = mine.map(function (x) { return x.name; }), nm = PL_NAMES.filter(function (x) { return used.indexOf("PL " + x) < 0; })[0]; return "PL " + (nm || mine.length + 1); }
     var n = 0; mine.forEach(function (x) { var m = /(\d+)$/.exec(x.name || ""); if (m) n = Math.max(n, +m[1]); });
-    return k === "pt" ? "Point " + (Math.max(n, mine.length) + 1) : k === "corr" ? "Corridor " + (Math.max(n, mine.length) + 1) : k === "avoid" ? "Avoid " + (Math.max(n, mine.length) + 1) : CM[k].ab + " " + (Math.max(n, mine.length) + 1);
+    return k === "gtas" ? "Signal " + (Math.max(n, mine.length) + 1) : k === "pt" ? "Point " + (Math.max(n, mine.length) + 1) : k === "corr" ? "Corridor " + (Math.max(n, mine.length) + 1) : k === "avoid" ? "Avoid " + (Math.max(n, mine.length) + 1) : CM[k].ab + " " + (Math.max(n, mine.length) + 1);
   }
   /* the proposal again for every option (a control measure or a blocked direction changed) */
   function cmRefresh() { if (!S.plan) return; S.plan.opts.forEach(function (o) { o.prop = propose(o); }); }
@@ -1470,8 +1480,9 @@
     var p = S.plan; if (!p) return null;
     cmEnd();
     var x = { id: rid("cm"), k: k, name: clean(name, 40) || cmLabel(k), pts: pts.map(function (q) { return [r6(+q[0]), r6(wrap(+q[1]))]; }), by: Date.now(), how: clean(how, 60) || "Placed by you" };
+    if (k === "gtas") { var gp = S.gtPend || { sig: "V", sz: 3 }; x.sig = gp.sig; x.txt = gp.txt || ""; x.brg = gp.brg; x.sz = gp.sz || 3; x.note = gp.note || ""; S.gtPend = null; S.gtForm = null; }
     cms().push(x); cmRefresh(); save();
-    S.cmmsg = k === "pt" ? x.name + " added to this plan. Drag it on the map to move it; rename it in the list below." : CM[k].n + " " + x.name + " added."; if (k === "pt") S.ptName = "";
+    S.cmmsg = k === "gtas" ? x.name + " added: " + gtDesc(x) : k === "pt" ? x.name + " added to this plan. Drag it on the map to move it; rename it in the list below." : CM[k].n + " " + x.name + " added."; if (k === "pt") S.ptName = "";
     render(); draw();
     if (k === "avoid") roundAll(x.name + " added. ");
     return x;
@@ -1489,6 +1500,20 @@
     var map = W.__asapMap; if (x && map) map.panTo(x.pts[0]);
   }
   function cmEditTog(id) { S.cmEdit = S.cmEdit === id ? null : id; var x = cmOf(id); S.cmmsg = S.cmEdit && x ? "Drag the round handles to move " + x.name + "'s points. Tap it again, or Done, when finished." : ""; render(); draw(); }
+  /* a ground-to-air signal: the ICAO code, its length and arrow direction, a note; at a typed grid or the next map tap */
+  function gtAdd() {
+    if (!S.plan) return;
+    function v(id) { return (D.getElementById(id) || {}).value || ""; }
+    var sig = GTAS_N[v("epe-gts")] ? v("epe-gts") : "V", txt = clean(v("epe-gtt"), 6).toUpperCase(), brg = v("epe-gtb") === "" ? null : ((Math.round(+v("epe-gtb")) % 360) + 360) % 360, sz = Math.max(1, Math.min(50, +v("epe-gtz") || 3)), note = clean(v("epe-gtn"), 80), gq = clean(v("epe-gtg"), 60);
+    S.gtForm = { sig: sig, txt: txt, brg: brg, sz: sz, note: note, g: gq };
+    if (sig === "C" && !txt) { S.cmmsg = "Type your own letter or code for a custom signal."; render(); return; }
+    if (sig === "ARR" && (brg == null || !isFinite(brg))) { S.cmmsg = "Give the arrow's direction in degrees (0 north, 90 east)."; render(); return; }
+    S.gtPend = { sig: sig, txt: sig === "C" ? txt : "", brg: sig === "ARR" ? brg : null, sz: sz, note: note };
+    if (!gq) { cmStart("gtas"); if (S.cmDraw) S.cmmsg = "Tap the map where the signal is laid out. Esc cancels."; render(); return; }
+    var g = G(), q = g && g.parse ? g.parse(gq) : null;
+    if (!q || !isFinite(q.lat) || !isFinite(q.lon)) { S.cmmsg = "That grid was not understood. Type MGRS (47P PS 82546 38049) or lat, lon (14.81, 100.69)."; render(); return; }
+    cmAdd("gtas", [[q.lat, q.lon]], "", "Typed grid");
+  }
   function cmDel(id) {
     var p = S.plan; if (!p) return;
     var x = cmOf(id); p.cm = cms().filter(function (y) { return y.id !== id; }); cmRefresh(); save();
@@ -1600,7 +1625,7 @@
     }, function (e) { if (tok !== S.rtok) return; S.rbusy = false; S.cmmsg = "No way out found: " + e.message + "."; render(); });
   }
   function cmHtml(p) {
-    var list = cms(p).filter(okCm), d = S.cmDraw, busy = S.rbusy;
+    var list = cms(p).filter(okCm), d = S.cmDraw, busy = S.rbusy, gf;
     var dirs = DIRS.map(function (x) {
       var n = p.opts.filter(function (o) { return heading(o, p).s === x[0]; });
       return '<label class="epedir' + (blk(p)[x[0]] ? " off" : "") + '"><input type="checkbox" data-ep-blk="' + x[0] + '"' + (blk(p)[x[0]] ? " checked" : "") + "> " + E(x[1]) + " blocked <span class=\"obs\">(" + n.length + " option" + (n.length === 1 ? "" : "s") + ")</span></label>";
@@ -1613,12 +1638,19 @@
         d ? '<div class="epebtns"><button type="button" data-ep="cmcan">Cancel</button></div>' : "") +
       '<form id="epe-ptf" class="epefind epeptf" autocomplete="off"><input id="epe-ptn" maxlength="40" placeholder="Name it anything (e.g. Rally point Bravo)" aria-label="Name of your point" value="' + E(S.ptName || "") + '">' +
         '<input id="epe-ptg" maxlength="60" placeholder="Grid (MGRS or lat, lon), or leave empty and tap the map" aria-label="Grid of your point"><button type="submit">Add point</button></form>' +
+      (function () { gf = S.gtForm || { sz: 3 }; return ""; })() +
+      '<form id="epe-gtf" class="epefind epeptf" autocomplete="off"><select id="epe-gts" aria-label="Ground-to-air signal">' + GTAS.map(function (g) { return '<option value="' + g[0] + '"' + (gf.sig === g[0] ? " selected" : "") + ">" + E((g[0] === "ARR" ? "Arrow" : g[0] === "C" ? "Custom" : g[0]) + ": " + g[1]) + "</option>"; }).join("") + "</select>" +
+        '<input id="epe-gtt" maxlength="6" placeholder="Custom code" aria-label="Your own letter or code" style="flex:0 1 110px" value="' + E(gf.txt || "") + '">' +
+        '<input id="epe-gtb" type="number" min="0" max="359" placeholder="Arrow °" aria-label="Arrow direction in degrees" style="flex:0 1 90px" value="' + E(gf.brg == null ? "" : gf.brg) + '">' +
+        '<input id="epe-gtz" type="number" min="1" max="50" step="0.5" value="' + E(gf.sz || 3) + '" aria-label="Length on the ground in meters" title="Length on the ground, m (ICAO: at least 2.5)" style="flex:0 1 70px">' +
+        '<input id="epe-gtn" maxlength="80" placeholder="Note: material, orientation, who lays it" aria-label="Note on the signal" value="' + E(gf.note || "") + '">' +
+        '<input id="epe-gtg" maxlength="60" placeholder="Grid, or empty and tap the map" aria-label="Grid of the signal" value="' + E(gf.g || "") + '"><button type="submit">Add signal</button></form>' +
       (optOf(S.sel) ? '<div class="epebtns"><button type="button" data-ep="cmband" title="An outline of the selected option\'s corridor width each side of its line, kept as your evacuation corridor">Corridor from the selected route (' + E(corr(optOf(S.sel)).w) + " km each side)</button></div>" : "") +
       '<p id="epe-cmmsg" class="obs" role="status">' + E(S.cmmsg || "") + "</p>" +
       (list.length ? '<ul class="epecmls">' + list.map(function (x) {
         var g = CM[x.k].g, pt = g === "pt";
         return '<li data-ep-cmi="' + E(x.id) + '"><span class="epecmk" style="--cmc:' + CM_COL[x.k] + '">' + E(CM[x.k].ab) + '</span><input data-ep-cmname="' + E(x.id) + '" value="' + E(x.name) + '" maxlength="40" aria-label="Name of ' + E(CM[x.k].n.toLowerCase()) + '">' +
-          '<i class="obs">' + E(CM[x.k].n) + " · " + (pt ? E(grid(x.pts[0][0], x.pts[0][1])) : E(x.pts.length) + " points" + (g === "area" ? ", " + E(areaKm2(x.pts)) + " km²" : ", " + E(dist(lineM(x.pts))))) + "</i>" +
+          '<i class="obs">' + E(CM[x.k].n) + (x.k === "gtas" ? " " + gtSym(x) + " · " + gtDesc(x).replace(/ ICAO Annex 12 ground-to-air code\.$/, "") : "") + " · " + (pt ? E(grid(x.pts[0][0], x.pts[0][1])) : E(x.pts.length) + " points" + (g === "area" ? ", " + E(areaKm2(x.pts)) + " km²" : ", " + E(dist(lineM(x.pts))))) + "</i>" +
           (!pt ? '<button type="button" data-ep-cmed="' + E(x.id) + '"' + (S.cmEdit === x.id ? ' aria-pressed="true">Done' : ">Move points") + "</button>" : "") +
           (pt ? '<button type="button" data-ep-cmto="' + E(x.id) + '"' + (busy ? " disabled" : "") + ">Route to it</button>" + (optOf(S.sel) ? '<button type="button" data-ep-cmnode="' + E(x.id) + '" title="Put it on the selected option as a node, so the route runs through it">On selected route</button>' : "") : "") +
           '<button type="button" data-ep-cmdel="' + E(x.id) + '" aria-label="Delete ' + E(x.name) + '">×</button></li>';
@@ -1675,8 +1707,8 @@
     });
     list.filter(function (x) { return CM[x.k].g === "pt"; }).forEach(function (x) {
       var col = CM_COL[x.k], live = !S.active && pl === S.plan;
-      var mk = L.marker(x.pts[0], { keyboard: false, draggable: live, icon: SY() ? W.OSAP_SYM.tag(CM_SYM[x.k], x.name, { cls: "epecmmk", badge: col, scale: 0.7 }) : L.divIcon({ className: "epecmmk", html: '<span style="background:' + col + '">' + E(x.name) + "</span>", iconSize: null, iconAnchor: [14, 10] }) })
-        .bindTooltip(E(CM[x.k].n + ": " + x.name + (live ? " (drag to move)" : "")));
+      var mk = L.marker(x.pts[0], { keyboard: false, draggable: live, icon: x.k === "gtas" ? L.divIcon({ className: "epegtas", html: '<b style="' + (x.sig === "ARR" ? "transform:rotate(" + (+x.brg || 0) + "deg)" : "") + '">' + E(gtSym(x)) + "</b><span>" + E(x.name) + "</span>", iconSize: null, iconAnchor: [17, 17] }) : SY() ? W.OSAP_SYM.tag(CM_SYM[x.k], x.name, { cls: "epecmmk", badge: col, scale: 0.7 }) : L.divIcon({ className: "epecmmk", html: '<span style="background:' + col + '">' + E(x.name) + "</span>", iconSize: null, iconAnchor: [14, 10] }) })
+        .bindTooltip(E(CM[x.k].n + ": " + x.name + (x.k === "gtas" ? ". " + gtDesc(x) : "") + (live ? " (drag to move)" : "")));
       if (live) mk.on("dragend", function () { var ll = mk.getLatLng(); x.pts = [[r6(ll.lat), r6(wrap(ll.lng))]]; x.moved = Date.now(); cmRefresh(); save(); render(); draw(); });
       mk.addTo(lyr);
     });
@@ -1776,7 +1808,7 @@
       "<p>Blocked directions (analyst): <b>" + E(bl.length ? bl.join(", ") : "none marked") + "</b>. Headings: " + pl.opts.map(function (o) { var hd = heading(o, pl); return E((o.role || "–") + " " + o.dest.i.name + " " + hd.c + " " + hd.b + "°"); }).join("; ") + ".</p>";
     if (list.length) h += "<h3>Control measures</h3><table><tr><th>Name</th><th>Kind</th><th>Where</th><th>Placed</th></tr>" + list.map(function (x) {
       var g2 = CM[x.k].g;
-      return "<tr><td><b>" + E(x.name) + "</b></td><td>" + E(CM[x.k].n) + "</td><td>" + (g2 === "pt" ? E(grid(x.pts[0][0], x.pts[0][1])) : E(x.pts.length) + " points from " + E(grid(x.pts[0][0], x.pts[0][1])) + (g2 === "area" ? ", " + E(areaKm2(x.pts)) + " km²" : ", " + E(dist(lineM(x.pts))))) + "</td><td>" + E(x.how || "Placed by the analyst") + ", " + E(new Date(x.by).toISOString().slice(0, 16)) + "Z</td></tr>";
+      return "<tr><td><b>" + E(x.name) + "</b></td><td>" + E(CM[x.k].n) + (x.k === "gtas" ? "<br>" + E(gtDesc(x)) : "") + "</td><td>" + (g2 === "pt" ? E(grid(x.pts[0][0], x.pts[0][1])) : E(x.pts.length) + " points from " + E(grid(x.pts[0][0], x.pts[0][1])) + (g2 === "area" ? ", " + E(areaKm2(x.pts)) + " km²" : ", " + E(dist(lineM(x.pts))))) + "</td><td>" + E(x.how || "Placed by the analyst") + ", " + E(new Date(x.by).toISOString().slice(0, 16)) + "Z</td></tr>";
     }).join("") + "</table>";
     return h;
   }
@@ -1788,11 +1820,11 @@
   }
   function cmKml(pl) {
     var list = cms(pl).filter(okCm); if (!list.length) return "";
-    var KC = { pt: "ffe84870", cp: "ff292521", gxp: "ff3e8a2b", axp: "ffab6418", pl: "ff111111", corr: "ffd67e1c", avoid: "ff2a2ac9" };
+    var KC = { gtas: "ff0c59e8", pt: "ffe84870", cp: "ff292521", gxp: "ff3e8a2b", axp: "ffab6418", pl: "ff111111", corr: "ffd67e1c", avoid: "ff2a2ac9" };
     function cs(pts, close) { var q = pts.concat(close ? [pts[0]] : []); return q.map(function (p) { return (+p[1]).toFixed(6) + "," + (+p[0]).toFixed(6) + ",0"; }).join(" "); }
     return "<Folder><name>Control measures (analyst)</name>" + list.map(function (x) {
       var g = CM[x.k].g, st = "<Style><LineStyle><color>" + KC[x.k] + "</color><width>3</width></LineStyle><PolyStyle><color>" + (x.k === "avoid" ? "402a2ac9" : "18d67e1c") + "</color></PolyStyle></Style>";
-      return "<Placemark><name>" + xml(x.name) + "</name><description>" + xml((g === "pt" ? grid(x.pts[0][0], x.pts[0][1]) + ". " : "") + CM[x.k].n + ". " + (x.how || "Placed by the analyst") + ".") + "</description>" + (g === "pt" ? "<styleUrl>#i" + x.k + "</styleUrl>" : "") + st + (g === "pt" ? '<ExtendedData><Data name="grid"><value>' + xml(grid(x.pts[0][0], x.pts[0][1])) + "</value></Data></ExtendedData>" : "") +
+      return "<Placemark><name>" + xml(x.name) + "</name><description>" + xml((g === "pt" ? grid(x.pts[0][0], x.pts[0][1]) + ". " : "") + CM[x.k].n + ". " + (x.k === "gtas" ? gtDesc(x) + " " : "") + (x.how || "Placed by the analyst") + ".") + "</description>" + (g === "pt" ? "<styleUrl>#i" + x.k + "</styleUrl>" : "") + st + (g === "pt" ? '<ExtendedData><Data name="grid"><value>' + xml(grid(x.pts[0][0], x.pts[0][1])) + "</value></Data></ExtendedData>" : "") +
         (g === "pt" ? "<Point><coordinates>" + cs(x.pts) + "</coordinates></Point>" : g === "line" ? "<LineString><tessellate>1</tessellate><coordinates>" + cs(x.pts) + "</coordinates></LineString>" : "<Polygon><outerBoundaryIs><LinearRing><coordinates>" + cs(x.pts, true) + "</coordinates></LinearRing></outerBoundaryIs></Polygon>") + "</Placemark>";
     }).join("") + "</Folder>";
   }
@@ -2321,7 +2353,8 @@
       "#epe .epelay label,#epe .epevis{display:inline-flex;gap:5px;align-items:center;min-height:30px}#epe .epelay input,#epe .epevis input{min-height:0;width:18px;height:18px;margin:0;padding:0}" +
       "#epe .epecps{margin-top:8px;border-top:1px dashed var(--line,#d5dbe1);padding-top:6px}#epe ol.epecpl{list-style:none;margin:4px 0;padding:0}#epe ol.epecpl li{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 0;border-top:1px solid var(--line-soft,var(--line,#e3e7eb));font-size:12px}#epe ol.epecpl li.prop .epenk{background:#868e96}#epe ol.epecpl input{width:9em}#epe ol.epecpl .obs{flex-basis:100%}#epe ol.epecpl button{border:1px solid var(--line,#d5dbe1);background:var(--surface,#fff);color:var(--ink,#1d2329);border-radius:4px;min-width:32px;min-height:32px;padding:3px 8px;cursor:pointer;font-size:12px}" +
       ".epevx{background:none;border:0}.epevx span{display:block;width:14px;height:14px;margin:6px;border-radius:50%;background:#fff;border:2px solid #1c7ed6;box-shadow:0 1px 3px rgba(0,0,0,.5);cursor:move}.epe-picking .epevx{pointer-events:none}" +
-      ".epe-picking .epecpmk,.epe-picking .epecpmk span{pointer-events:none!important}.epecpmk{background:none;border:0}.epecpmk span{display:inline-block;white-space:nowrap;background:#fff;color:#111;border:2px solid;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.5);font:700 11px/16px system-ui,sans-serif;padding:0 4px;cursor:grab}.epecpmk.prop span{border-style:dashed}" +
+      ".epegtas{background:none;border:0}.epegtas b{display:block;width:30px;height:30px;line-height:30px;text-align:center;background:#e8590c;color:#fff;font:900 20px/30px system-ui,sans-serif;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5);cursor:grab}.epegtas span{position:absolute;left:36px;top:6px;white-space:nowrap;background:#fff;color:#111;font:700 11px/16px system-ui,sans-serif;padding:0 4px;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.4)}" +
+      ".epe-picking .epecpmk,.epe-picking .epecpmk *,.epe-picking .epecmmk,.epe-picking .epecmmk *,.epe-picking .epegtas,.epe-picking .epegtas *,.epe-picking .epend{pointer-events:none!important}.epecpmk{background:none;border:0}.epecpmk span{display:inline-block;white-space:nowrap;background:#fff;color:#111;border:2px solid;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.5);font:700 11px/16px system-ui,sans-serif;padding:0 4px;cursor:grab}.epecpmk.prop span{border-style:dashed}" +
       "html.epe-picking #map{cursor:crosshair}" +
       "@media (max-width:700px){#epe:not([hidden]){padding:0}#epe .epebox{border-radius:0;min-height:100%}#epe .epekpi{grid-template-columns:1fr 1fr}#epe select,#epe input{font-size:16px}}";
     D.head.appendChild(s);

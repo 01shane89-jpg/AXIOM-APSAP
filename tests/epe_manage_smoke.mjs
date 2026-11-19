@@ -96,7 +96,7 @@ let state;
   const all0 = await drawn(p);
   ok(all0 > 10, "the plan draws its items (" + all0 + " layers)");
   await p.click("#epe details.epeshow summary");
-  ok(await p.evaluate(() => document.querySelectorAll("#epe [data-ep-show]").length) === 11 && await p.evaluate(() => document.querySelectorAll("#epe [data-ep-gl]").length) === 8, "On the map lists 11 plan items and the 8 along-route layers");
+  ok(await p.evaluate(() => document.querySelectorAll("#epe [data-ep-show]").length) === 12 && await p.evaluate(() => document.querySelectorAll("#epe [data-ep-gl]").length) === 8, "On the map lists 12 plan items and the 8 along-route layers");
   ok(await p.evaluate(() => [...document.querySelectorAll("#epe [data-ep-show]")].every((x) => x.checked)), "all plan items on at first");
   const steps = [["routes", "Routes"], ["dests", "Destinations"], ["cp", "Checkpoints"], ["pl", "Phase lines"], ["origin", "Origin"]];
   let last = all0;

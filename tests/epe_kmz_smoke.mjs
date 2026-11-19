@@ -61,7 +61,7 @@ function unzip(buf) {
   const z = unzip(await readFile(await dl.path())), names = Object.keys(z);
   ok(names[0] === "doc.kml", "the KMZ opens with doc.kml first (" + names.length + " files)");
   const pngs = names.filter((n) => /^files\/[a-z]+\.png$/.test(n));
-  ok(pngs.length === 12 && pngs.every((n) => z[n][0] === 0x89 && z[n].slice(1, 4).toString() === "PNG"), "and carries its 12 icons as PNG files");
+  ok(pngs.length === 13 && pngs.every((n) => z[n][0] === 0x89 && z[n].slice(1, 4).toString() === "PNG"), "and carries its 13 icons as PNG files");
   const kml = z["doc.kml"].toString("utf8");
   const chk = await p.evaluate((k) => {
     const d = new DOMParser().parseFromString(k, "application/xml");
@@ -77,7 +77,7 @@ function unzip(buf) {
   }, kml);
   ok(!chk.bad, "doc.kml is well-formed XML" + (chk.bad ? ": " + chk.bad : ""));
   ok(chk.missing && chk.missing.length === 0, "every styleUrl names a style in the file" + (chk.missing && chk.missing.length ? ": " + chk.missing.slice(0, 5) : ""));
-  ok(chk.hrefs && chk.hrefs.length === 12 && chk.hrefs.every((h) => names.includes(h)), "every icon the styles name is inside the KMZ");
+  ok(chk.hrefs && chk.hrefs.length === 13 && chk.hrefs.every((h) => names.includes(h)), "every icon the styles name is inside the KMZ");
   ok(chk.pts > 20 && chk.noGrid.length === 0 && chk.gridData === chk.pts, "all " + chk.pts + " points say their MGRS grid, in the text and as data" + (chk.noGrid && chk.noGrid.length ? ": " + chk.noGrid.slice(0, 3) : ""));
   ok(["Origin", "Checkpoints", "Control measures (analyst)"].every((f) => chk.folders.includes(f)) && chk.folders.filter((f) => f === "Checkpoints").length === 5, "folders: origin, an option folder each with its checkpoints, and the analyst's control measures");
   ok(/Rally point Bravo/.test(kml) && /#ipt/.test(kml) && /PL BLUE/.test(kml) && chk.polys === 1, "your point (with its icon), the phase line and the area to avoid are in it");

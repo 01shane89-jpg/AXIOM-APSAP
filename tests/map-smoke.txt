@@ -182,6 +182,7 @@ tests/epe_cp_smoke.mjs
 tests/epe_mypt_smoke.mjs
 tests/epe_drag_smoke.mjs
 tests/epe_kmz_smoke.mjs
+tests/epe_gtas_smoke.mjs
 tests/route_api_smoke.mjs
 tests/route_preview_smoke.mjs
 # Route > Navigate: turn banner, lanes, voice, re-route, arrival, phone Go button (assets/osap-nav.js)
