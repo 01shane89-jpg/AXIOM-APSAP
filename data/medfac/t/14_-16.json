@@ -20,7 +20,6 @@
 ["n9021712803",15.53124,-15.06057,"sn",{"amenity":"hospital","healthcare":"hospital"}],
 ["n9283130714",15.39705,-15.11419,"sn",{"name":"District Sanitaire de Linguère","amenity":"hospital","healthcare":"hospital"}],
 ["w1561716318",14.8475,-15.90637,"sn",{"name":"Poste de santé Serigne Bassirou","amenity":"clinic","healthcare":"clinic"}],
-["w362222045",14.8632,-15.87556,"sn",{"name":"Grande Mosquée de Touba","name:en":"Great Mosque of Touba","amenity":"hospital","healthcare":"hospital","wikidata":"Q3114987"}],
 ["w383513345",14.85827,-15.90884,"sn",{"name":"Centre Hospitalier National Mathlaboul Fawzaini de Touba","amenity":"hospital","healthcare":"X-Ray,Dialysis,Operating,Theater,Laboratory,Imaging Equipment,Intensive Care Unit,Emergency Department","emergency":"yes","operator":"MATAR LO","operator:type":"public"}],
 ["w408647760",15.40069,-15.11203,"sn",{"name":"Hôpital Magatte Lo","amenity":"hospital","healthcare":"hospital"}],
 ["w409415280",15.2789,-14.67436,"sn",{"amenity":"hospital","healthcare":"hospital"}],

@@ -98,7 +98,7 @@
 ["w127841628",58.40974,15.56099,"se",{"name":"Vårdcentralen Ryd","amenity":"clinic","healthcare":"clinic","operator":"Region Östergötland","phone":"+46 10 105 96 60","website":"http://www.lio.se/vc/ryd","addr:housenumber":"40 A","addr:street":"Alsättersgatan","addr:city":"Linköping","addr:postcode":"584 32","opening_hours":"Mo-Fr 08:00-17:00"}],
 ["w138313166",58.3774,15.68065,"se",{"name":"Vårdcentralen Ekholmen","amenity":"clinic","healthcare":"clinic","operator":"Region Östergötland","website":"https://www.1177.se/Ostergotland/hitta-vard/kontaktkort/Vardcentralen-Ekholmen-Linkoping/","addr:housenumber":"7","addr:street":"Ekholmsvägen","addr:city":"Linköping","addr:postcode":"589 29","opening_hours":"Mo-Fr 07:30-17:00"}],
 ["w1391888381",59.87415,15.00308,"se",{"name":"Kopparbergs vårdcentral","amenity":"clinic","healthcare":"clinic","addr:housenumber":"17","addr:street":"Bergmästaregatan","addr:city":"Kopparberg","addr:postcode":"714 31"}],
-["w1463689551",59.30072,15.24832,"se",{"aeroway":"helipad"}],
+["w1463689551",59.30071,15.24822,"se",{"aeroway":"helipad"}],
 ["w162837811",58.54426,15.02733,"se",{"name":"Lasarettet i Motala","amenity":"hospital","healthcare":"hospital","emergency":"yes","website":"https://www.regionostergotland.se/Halsa-och-vard/Vara-sjukhus/Lasarettet-i-Motala/","wikidata":"Q76448896"}],
 ["w180588339",59.2806,15.2173,"se",{"name":"Olaus Petri Vårdcentral","amenity":"clinic","healthcare":"clinic","emergency":"no","addr:street":"Ribbingsgatan"}],
 ["w189602676",58.52917,15.05127,"se",{"name":"Brinkens Vårdcentral","amenity":"clinic","emergency":"no"}],

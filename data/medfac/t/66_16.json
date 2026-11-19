@@ -6,7 +6,7 @@
 ["n13508639022",66.57422,16.34958,"se",{"name":"Arctic Air","aeroway":"helipad"}],
 ["n13623207088",66.27438,16.68747,"se",{"name":"Fjällflygarna","website":"https://fjallflygarna.se/","aeroway":"helipad"}],
 ["w1486067996",66.27433,16.68754,"se",{"name":"Fjällflygarna AB","website":"https://fjallflygarna.se/","aeroway":"heliport"}],
-["w298334517",66.04994,17.89171,"se",{"name":"Arjeplogs hälsocentral","name:en":"Arjeplog Health Centre","amenity":"clinic"}],
+["w298334517",66.04994,17.89171,"se",{"name":"Arjeplogs hälsocentral","name:en":"Arjeplog Health Centre","amenity":"clinic","addr:housenumber":"3","addr:street":"Doktor Wallqvists väg","addr:city":"Arjeplog"}],
 ["w325213332",66.94194,17.73758,"se",{"aeroway":"helipad"}],
 ["w325213335",66.94207,17.73819,"se",{"aeroway":"helipad"}],
 ["w325213337",66.94218,17.73869,"se",{"aeroway":"helipad"}],

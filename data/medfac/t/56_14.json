@@ -87,7 +87,7 @@
 ["n8497793961",57.69012,14.14981,"se",{"name":"Läkarhuset Torsvik","amenity":"clinic","operator":"Läkarhuset i Jönjöping AB"}],
 ["n8930350098",56.21292,15.27797,"se",{"name":"STAC Scandinavian Top Athletic Center","amenity":"clinic","website":"https://www.stac.nu/"}],
 ["n9081052337",57.18252,14.05052,"se",{"name":"Ungdomsmottagningen Värnamo","amenity":"clinic"}],
-["n9139734565",57.17244,14.0289,"se",{"name":"Närakuten","amenity":"clinic","healthcare":"clinic","addr:street":"Doktorsgatan","addr:city":"Värnamo","addr:postcode":"33185","opening_hours":"Mo-Fr 17:00-22:00; Sa, Su 10:00-22:00"}],
+["n9139734565",57.17244,14.0289,"se",{"name":"Närakuten","amenity":"clinic","healthcare":"clinic","addr:street":"Doktorsgatan","addr:city":"Värnamo","addr:postcode":"33185","opening_hours":"Mo-Fr 17:00-22:00; Sa,Su 10:00-22:00"}],
 ["n971856932",56.74379,15.91133,"se",{"name":"Nybro hälsocentral","amenity":"clinic","healthcare":"clinic","operator":"Region Kalmar län","operator:type":"public","addr:housenumber":"6","addr:street":"Tunnelgatan","addr:city":"Nybro","addr:postcode":"382 30"}],
 ["n9828464387",57.18605,14.04042,"se",{"name":"Apladalens vårdcentral","amenity":"clinic","healthcare":"clinic","operator":"Prima Vård","operator:type":"private","addr:housenumber":"10","addr:street":"Pilgatan","addr:city":"Värnamo","addr:postcode":"33137","opening_hours":"Mo-Th 07:00-19:00; Fr 07:00-17:00"}],
 ["r10918866",56.92858,14.7287,"se",{"name":"Växjö Småland Airport","aeroway":"aerodrome","icao":"ESMX","iata":"VXO","wikidata":"Q1155940"}],

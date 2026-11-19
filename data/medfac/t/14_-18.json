@@ -179,6 +179,7 @@
 ["w265765522",14.48264,-16.40409,"sn",{"amenity":"clinic"}],
 ["w265765523",14.48248,-16.40416,"sn",{"amenity":"clinic"}],
 ["w265765524",14.48259,-16.40421,"sn",{"amenity":"clinic"}],
+["w293115922",14.65326,-17.43399,"sn",{"name":"Clinique du CAP Manuel","amenity":"clinic","healthcare":"yes","healthcare:speciality":"general;pulmonology;cardiology;orthopaedics;surgery;gastroenterology;neurology","operator":"Fadouael ARGOUBI","operator:type":"private","contact:phone":"2.21339E11","addr:full":"Avenue Pasteur à Coté de l'Institut Pasteur Dakar"}],
 ["w316471185",15.61653,-16.23643,"sn",{"name":"Centre hospitalier régional Amadou Sakhir Mbaye Louga","amenity":"hospital","healthcare":"Ultrasound,X-Ray,Dialysis,Operating,Theater,Laboratory,Imaging Equipment,Intensive Care Unit,Emergency Department","emergency":"yes","operator":"MSAS","operator:type":"public","addr:full":"Keur serigne bara"}],
 ["w321817547",14.67067,-17.07346,"sn",{"name":"Aéroport International Blaise-Diagne","name:en":"Blaise Diagne International Airport","aeroway":"aerodrome","icao":"GOBD","iata":"DSS","aerodrome:type":"international","wikidata":"Q597308"}],
 ["w321948584",14.73865,-17.46559,"sn",{"name":"SAMU Municipal","amenity":"hospital","healthcare":"hospital"}],

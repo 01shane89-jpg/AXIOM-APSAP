@@ -19,7 +19,6 @@
 ["n9989554731",16.39598,-14.32599,"sn",{"name":"cabinet de sante seydina mouhamed (psl) de la vallée du fleuve","amenity":"clinic","healthcare":"doctor, clinic","emergency":"yes","beds":"5","operator":"Dr Mamadou Fall","operator:type":"private","contact:phone":"776597564","addr:full":"Aéré Lao/Pété","opening_hours":"24/7"}],
 ["n9989554743",16.49022,-14.43476,"sn",{"amenity":"clinic","healthcare":"clinic;doctor","operator":"Docteur Sall","operator:type":"private","opening_hours":"unknown","osap:withheld":"1"}],
 ["w1094348933",17.53087,-14.70996,"mr",{"aeroway":"helipad"}],
-["w1124489952",16.6256,-15.04395,"sn",{"name":"poste de sante doué","healthcare":"clinic","beds":"11","operator":"Ministère de la santé et de l'action sociale","operator:type":"public","contact:phone":"786081802","addr:full":"Saint Louis","opening_hours":"24/7"}],
 ["w1339778867",16.38876,-14.07158,"sn",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1449390331",16.63612,-14.19084,"mr",{"name":"Aéroport d'Abaye مطار أباي","name:en":"Abbaye Airport","aeroway":"aerodrome","icao":"GQNE","iata":"BGH","wikidata":"Q4663917"}],
 ["w199964381",16.44027,-15.75338,"sn",{"name":"Rosso","aeroway":"aerodrome"}],
