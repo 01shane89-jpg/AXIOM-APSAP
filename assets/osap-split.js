@@ -215,6 +215,15 @@
        at the top middle of the map, covering nothing at the side, so the toolbar stays at the edge */
     "html:not(.pn-win-float) .osheet.osheet.osheet-on[data-osheet=min]:not([hidden]){left:var(--osplit-mc,50vw)!important;right:auto!important;width:auto!important;max-width:calc(100vw - 240px)!important;transform:translateX(-50%)!important;top:calc(var(--osplit-top,0px) + 8px)!important}" +
     "html:not(.pn-win-float) .osheet.osheet-on[data-osheet=min]:not([hidden])>.osheet-h{border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.35)!important;padding-left:12px!important}" +
+    /* the evacuation planner (Shane 19 Nov: "this is in the way", the bar over the top of the map covered his labels): Map
+       folds it further, to a small pill at the bottom middle of the map, its name and a close only; a tap on the name brings
+       the panel back (Half) */
+    "html:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=min]:not([hidden]){left:var(--osplit-mc,50vw)!important;max-width:min(320px,calc(100vw - 240px))!important;top:auto!important;bottom:26px!important}" +
+    "html:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=min]:not([hidden])>.osheet-h{border-radius:999px!important;padding:0 4px 0 12px!important;gap:2px;border:0!important}" +
+    "html:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=min]:not([hidden])>.osheet-h .osh-b,html:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=min]:not([hidden])>.osheet-h .osh-s{display:none!important}" +
+    "html:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=min]:not([hidden])>.osheet-h .osh-t{padding:4px 0!important;font-size:12px!important}" +
+    "html:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=min]:not([hidden])>.osheet-h .osh-t b::before{content:\"\\25B4  \"}" +
+    "html:not(.pn-win-float) #epe.osheet.osheet-on[data-osheet=min]:not([hidden])>.osheet-h .osh-x{min-height:28px!important;min-width:28px}" +
     "html:not(.pn-win-float) .osheet.osheet.osheet-on[data-osheet=half]:not([hidden]){bottom:auto!important;height:calc((100vh - var(--osplit-top,0px)) / 2)!important}" +
     ".osheet.osheet-on:not([hidden])>.osheet-h{box-shadow:-4px 0 18px rgba(0,0,0,.3)}}" +
     /* phone: a bottom sheet with a grip */
