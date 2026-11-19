@@ -196,7 +196,7 @@
     {"cc":"jm","outlet":"Jamaica Observer","url":"https://www.jamaicaobserver.com/feed/","lang":"en"},
     {"cc":"jo","outlet":"Bing News search","url":"https://www.bing.com/news/search?q=%22Jordan%22&format=rss","lang":"en","search":true,"nc":true},
     {"cc":"jp","outlet":"The Japan Times","url":"https://www.japantimes.co.jp/feed/","lang":"en"},
-    {"cc":"jp","outlet":"NHK News","url":"https://www3.nhk.or.jp/rss/news/cat0.xml","lang":"ja"},
+    {"cc":"jp","outlet":"NHK News","url":"https://news.web.nhk/n-data/conf/na/rss/cat0.xml","lang":"ja"},
     {"cc":"ke","outlet":"Nation","url":"https://nation.africa/kenya/rss.xml","lang":"en"},
     {"cc":"ke","outlet":"The Standard","url":"https://www.standardmedia.co.ke/rss/headlines.php","lang":"en"},
     {"cc":"ke","outlet":"Capital FM","url":"https://www.capitalfm.co.ke/news/feed/","lang":"en"},
