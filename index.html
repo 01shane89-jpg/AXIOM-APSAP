@@ -8647,7 +8647,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var m = osapMark([v.loc.lat, v.loc.lon], null, L.extend({ pane: "tlpane" }, evStyle(v)), v.m.map(function (x) { return recWords(x); }).join(" "));
     m.__evStyle = evStyle(v);
     m.bindTooltip(esc((v.xcc.length ? "Cross-border " + [CC].concat(v.xcc).map(flagOf).join(" ") + " · " : "") + v.m.length + " reports, grouped automatically: " + v.head.title), { direction: "top" });
-    m.on("click", function () { evOpen(v, "tl-pkg"); });
+    /* a tap on the event pin opens the event and, like a report point, brings the pin to the middle of the map (center_click_smoke,
+       19 Nov: today's data grouped the clicked reports into an event, whose pin opened the event but left the map where it was) */
+    m.on("click", function () { evOpen(v, "tl-pkg"); if (window.OSAP_CENTER_ON) window.OSAP_CENTER_ON(m.getLatLng()); });
     tlLayer.addLayer(m);
     tlLayer.addLayer(L.marker([v.loc.lat, v.loc.lon], { pane: "evlbl", interactive: false, keyboard: false,
       icon: L.divIcon({ className: "evnum", html: String(v.m.length), iconSize: [18, 18], iconAnchor: [9, 9] }) }));
