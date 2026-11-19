@@ -1093,7 +1093,7 @@
   /* the package as a page to print or save as PDF */
   function printHtml(pk) {
     var pl = pk.plan;
-    var h = "<!doctype html><html><head><meta charset=\"utf-8\"><title>" + E(pk.name) + "</title><style>body{font:12px/1.4 system-ui,sans-serif;margin:16px;color:#111}h1{font-size:17px}h2{font-size:14px;margin:14px 0 4px;border-bottom:2px solid #333}h3{font-size:12.5px;margin:8px 0 2px}table{border-collapse:collapse;width:100%;margin:4px 0}td,th{border:1px solid #bbb;padding:2px 4px;text-align:left;vertical-align:top}th{background:#eee}.m{font-family:monospace;font-size:10.5px;word-break:break-all}.n{color:#555}.mapf{margin:6px 0;break-inside:avoid}.mapf svg{display:block;width:100%;height:auto;border:1px solid #999}tr.bad td{color:#b3261e;font-weight:600}@media print{h2{break-after:avoid}}</style></head><body>" +
+    var h = "<!doctype html><html><head><meta charset=\"utf-8\"><title>" + E(pk.name) + "</title><style>" + MAPCSS + "body{font:12px/1.4 system-ui,sans-serif;margin:16px;color:#111}h1{font-size:17px}h2{font-size:14px;margin:14px 0 4px;border-bottom:2px solid #333}h3{font-size:12.5px;margin:8px 0 2px}table{border-collapse:collapse;width:100%;margin:4px 0}td,th{border:1px solid #bbb;padding:2px 4px;text-align:left;vertical-align:top}th{background:#eee}.m{font-family:monospace;font-size:10.5px;word-break:break-all}.n{color:#555}.mapf{margin:6px 0;break-inside:avoid}.mapf svg{display:block;width:100%;height:auto;border:1px solid #999}tr.bad td{color:#b3261e;font-weight:600}@media print{h2{break-after:avoid}}</style></head><body>" +
       "<h1>" + E(pk.name) + "</h1><p class=\"n\">Evacuation route package, frozen " + E(dual(pk.made, true)) + ". Automatic draft from open data: roles and statuses are the analyst's; nothing here says a route, crossing or destination is open or safe. Plan SHA-256 <span class=\"m\">" + E(pk.fp) + "</span></p>" +
       "<p>Origin: <b>" + E(pl.origin.label || "") + "</b> " + E(grid(pl.origin.lat, pl.origin.lon)) + " (" + E(pl.origin.how) + ")</p>" + cmPrint(pl) + geoPrint(pl);
     pl.opts.slice().sort(function (a, b) { return (ROLES.indexOf(a.role) + 1 || 9) - (ROLES.indexOf(b.role) + 1 || 9); }).forEach(function (o) {
@@ -1139,7 +1139,7 @@
     function tbl(head, rows) { return rows.length ? "<table><tr>" + head.map(function (x) { return "<th>" + E(x) + "</th>"; }).join("") + "</tr>" + rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>" : ""; }
     function li(a) { return a.length ? "<ul>" + a.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>" : ""; }
     var kindOf = function (k) { return list.filter(function (x) { return x.k === k; }); };
-    var h = "<!doctype html><html><head><meta charset=\"utf-8\"><title>CONOP " + E(nm) + "</title><style>body{font:12px/1.45 system-ui,Arial,sans-serif;margin:18px;color:#111}h1{font-size:17px;margin:0 0 4px}" +
+    var h = "<!doctype html><html><head><meta charset=\"utf-8\"><title>CONOP " + E(nm) + "</title><style>" + MAPCSS + "body{font:12px/1.45 system-ui,Arial,sans-serif;margin:18px;color:#111}h1{font-size:17px;margin:0 0 4px}" +
       "h2{font-size:14px;margin:16px 0 4px;border-bottom:2px solid #333}h3{font-size:12.5px;margin:10px 0 2px}table{border-collapse:collapse;width:100%;margin:4px 0}th,td{border:1px solid #999;padding:3px 5px;text-align:left;vertical-align:top}" +
       "th{background:#eee}.n{color:#444;font-size:11px}.bl{color:#8a1c1c;font-weight:600}.m{font-family:ui-monospace,Consolas,monospace}.dr{border:2px solid #8a1c1c;padding:6px 8px;margin:8px 0;color:#5f1410}figure{margin:6px 0}svg{max-width:100%;height:auto}</style></head><body>" +
       "<h1>CONCEPT OF OPERATIONS (CONOP): " + E(nm) + "</h1>" +
@@ -2122,8 +2122,12 @@
   /* svgMap(plan, { only: option id, Wd, Ht }): the options' lines (or one), the origin, destinations, nodes and every control
      measure; scale bar, north arrow and the basemap's attribution. With no connection the squares stay grey and the plan is
      still drawn. */
+  /* the legend and numbered key under a printed map */
+  var MAPCSS = ".maplg{display:flex;flex-wrap:wrap;gap:4px 14px;margin:4px 0 0;font-size:11px;color:#222}.maplg span{display:inline-flex;align-items:center;gap:5px}" +
+    ".maplg i{display:inline-block;width:22px;height:4px;border-radius:2px}.maplg i.pt{width:11px;height:11px;border-radius:50%;border:2px solid}.maplg i.line{height:3px;background:#111}.maplg i.area{height:10px;border:2px dashed;border-radius:2px}" +
+    ".mapkey{font-size:11px;margin:4px 0 0}.mapkey span{margin-right:12px;white-space:nowrap}";
   function svgMap(pl, f) {
-    f = f || {}; var Wd = f.Wd || 720, Ht = f.Ht || 480, pad = 28, T = printTiles();
+    f = f || {}; var Wd = f.Wd || 960, Ht = f.Ht || 640, pad = 56, T = printTiles();
     var opts = pl.opts.filter(function (o) { return !f.only || o.id === f.only; }), list = cms(pl).filter(okCm), pts = [[pl.origin.lat, pl.origin.lon]];
     if (f.frame) pts = pts.concat(f.frame);
     else {
@@ -2141,6 +2145,43 @@
     function xy(q) { var w = wpx(q, z); return [Math.round((w[0] - c0[0]) * 10) / 10, Math.round((w[1] - c0[1]) * 10) / 10]; }
     function pl2(c) { return c.map(function (q) { var v = xy(q); return v[0] + "," + v[1]; }).join(" "); }
     function tx(at, t, col, o) { o = o || {}; return '<text x="' + at[0] + '" y="' + at[1] + '" fill="' + col + '" font-size="' + (o.fs || 11) + '" font-weight="700" text-anchor="' + (o.anchor || "start") + '" stroke="#fff" stroke-width="3" paint-order="stroke">' + E(t) + "</text>"; }
+    /* labels go on after every line and marker, each in the first free spot round its marker (right, left, above, below, the
+       corners), never over another label or marker; one with no room becomes a numbered tag listed under the map
+       (Shane 19 Nov: "this map from the conop it terrible") */
+    var occ = [], labels = [], key = [], used = {}, skipped = 0;
+    function hit(bx) { return bx[0] < 3 || bx[1] < 3 || bx[2] > Wd - 3 || bx[3] > Ht - 3 || occ.some(function (o) { return bx[0] < o[2] && bx[2] > o[0] && bx[1] < o[3] && bx[3] > o[1]; }); }
+    function mark(v, r) { occ.push([v[0] - r, v[1] - r, v[0] + r, v[1] + r]); }
+    function lab(v, r, t, col, o) { o = o || {}; labels.push({ v: v, r: r, t: t, col: col, fs: o.fs || 11, alt: o.alt || [], p: o.p || 5 }); }
+    function placeAll() {
+      var out = "";
+      labels.sort(function (x, y) { return x.p - y.p; }).forEach(function (L0) {
+        var fs = L0.fs, w = L0.t.length * fs * 0.6 + 6, h = fs + 4, done = false;
+        [L0.v].concat(L0.alt).forEach(function (v) {
+          if (done) return;
+          var r = L0.r, C = [[r + 3, -h / 2], [-r - 3 - w, -h / 2], [-w / 2, -r - 2 - h], [-w / 2, r + 2], [r + 1, -r - h], [r + 1, r - 1], [-r - 1 - w, -r - h], [-r - 1 - w, r - 1], [r + 14, -h / 2], [-r - 14 - w, -h / 2]];
+          /* further out, on a thin leader line, before giving up on the name */
+          [28, 46].forEach(function (d) { for (var a2 = 0; a2 < 16; a2++) { var t = a2 * Math.PI / 8, cx = Math.cos(t) * (r + d), cy = Math.sin(t) * (r + d); C.push([cx >= 0 ? cx : cx - w, cy - h / 2, 1]); } });
+          for (var i = 0; i < C.length; i++) {
+            var bx = [v[0] + C[i][0], v[1] + C[i][1], v[0] + C[i][0] + w, v[1] + C[i][1] + h];
+            if (!hit(bx)) {
+              occ.push(bx);
+              if (C[i][2]) { var ex = C[i][0] >= 0 ? bx[0] : bx[2], ey = bx[1] + h / 2; out += '<line x1="' + v[0] + '" y1="' + v[1] + '" x2="' + Math.round(ex) + '" y2="' + Math.round(ey) + '" stroke="' + L0.col + '" stroke-width="1" stroke-opacity=".8"/>'; }
+              out += tx([Math.round(bx[0] + 3), Math.round(bx[3] - 4)], L0.t, L0.col, { fs: fs }); done = true; return;
+            }
+          }
+        });
+        if (done) return;
+        var v0 = L0.v, r0 = L0.r, nb = null;
+        [[r0 - 1, -r0 - 13], [-r0 - 13, -r0 - 13], [r0 - 1, r0 - 1], [-r0 - 13, r0 - 1], [r0 + 2, -7], [-r0 - 16, -7], [-7, -r0 - 16], [-7, r0 + 2]].some(function (d) { var t2 = [v0[0] + d[0], v0[1] + d[1], v0[0] + d[0] + 14, v0[1] + d[1] + 14]; if (!hit(t2)) { nb = t2; return true; } });
+        /* no room even for a number (a crowd of measures at this scale): left unlabelled here; the close-up map, the route maps
+           and the tables name it */
+        if (!nb) { skipped++; return; }
+        var k = used[L0.t] || (used[L0.t] = key.push([L0.t, L0.col]));
+        occ.push(nb);
+        out += '<circle cx="' + (nb[0] + 7) + '" cy="' + (nb[1] + 7) + '" r="7.5" fill="#fff" stroke="' + L0.col + '" stroke-width="1.5"/><text x="' + (nb[0] + 7) + '" y="' + (nb[1] + 10.5) + '" font-size="9.5" font-weight="700" text-anchor="middle" fill="' + L0.col + '">' + k + "</text>";
+      });
+      return out;
+    }
     var g = '<svg class="epemap" viewBox="0 0 ' + Wd + " " + Ht + '" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><rect width="' + Wd + '" height="' + Ht + '" fill="#e9ecef"/>';
     if (T.url) {
       var n = Math.pow(2, z);
@@ -2149,11 +2190,23 @@
         g += '<image href="' + E(T.url.replace("{z}", z).replace("{y}", tY).replace("{x}", ((tX % n) + n) % n)) + '" x="' + (tX * 256 - c0[0]).toFixed(1) + '" y="' + (tY * 256 - c0[1]).toFixed(1) + '" width="256.5" height="256.5" preserveAspectRatio="none"/>';
       }
     }
+    /* a lat/lon grid with its values at the edges, so a grid can be read off the printed map */
+    (function () {
+      var n2 = 256 * Math.pow(2, z);
+      function ll(px, py) { var X = px + c0[0], Y = py + c0[1]; return [Math.atan(Math.sinh(Math.PI * (1 - 2 * Y / n2))) * 180 / Math.PI, X / n2 * 360 - 180]; }
+      var nw = ll(0, 0), se = ll(Wd, Ht), span = Math.max(se[1] - nw[1], nw[0] - se[0]);
+      var st = [0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.25, 0.5, 1, 2, 5, 10].filter(function (d) { return span / d <= 7; })[0] || 10, dp = st < 0.01 ? 3 : st < 0.1 ? 2 : st < 1 ? 1 : 0;
+      for (var lo = Math.ceil(nw[1] / st) * st; lo < se[1]; lo += st) { var x1 = xy([nw[0], lo])[0]; g += '<line x1="' + x1 + '" y1="0" x2="' + x1 + '" y2="' + Ht + '" stroke="#fff" stroke-opacity=".55" stroke-width="1"/><text x="' + (x1 + 3) + '" y="12" font-size="9" fill="#111" stroke="#fff" stroke-width="2.5" paint-order="stroke">' + lo.toFixed(dp) + "°E</text>"; occ.push([x1, 0, x1 + 44, 14]); }
+      for (var la = Math.ceil(se[0] / st) * st; la < nw[0]; la += st) { var y1 = xy([la, nw[1]])[1]; g += '<line x1="0" y1="' + y1 + '" x2="' + Wd + '" y2="' + y1 + '" stroke="#fff" stroke-opacity=".55" stroke-width="1"/><text x="3" y="' + (y1 - 3) + '" font-size="9" fill="#111" stroke="#fff" stroke-width="2.5" paint-order="stroke">' + la.toFixed(dp) + "°N</text>"; occ.push([0, y1 - 13, 44, y1]); }
+    })();
+    /* the corners the north arrow and scale bar take */
+    occ.push([Wd - 40, 0, Wd, 56], [0, Ht - 40, Wd / 4 + 90, Ht]);
     list.filter(function (x) { return CM[x.k].g === "area"; }).forEach(function (x) {
       var col = CM_COL[x.k], av = x.k === "avoid", c1 = x.pts.reduce(function (s, q) { return [s[0] + q[0] / x.pts.length, s[1] + q[1] / x.pts.length]; }, [0, 0]);
       g += (av ? '<defs><pattern id="h' + E(x.id) + '" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="' + col + '" stroke-width="2" opacity=".55"/></pattern></defs>' : "") +
         '<polygon points="' + pl2(x.pts) + '" fill="' + (av ? "url(#h" + E(x.id) + ")" : col) + '" fill-opacity="' + (av ? 1 : 0.08) + '" stroke="' + col + '" stroke-width="' + (av ? 2.5 : 2) + '"' + (av ? "" : ' stroke-dasharray="10 6"') + "/>" +
-        tx(xy(c1), (av ? "AVOID " : "EVAC CORRIDOR ") + x.name.replace(/^(Avoid|Corridor)\s*/i, "").toUpperCase(), col, { anchor: "middle" });
+        "";
+      lab(xy(c1), 0, (av ? "AVOID " : "EVAC CORRIDOR ") + x.name.replace(/^(Avoid|Corridor)\s*/i, "").toUpperCase(), col, { fs: 10, p: 6, alt: [xy(x.pts[0]), xy(x.pts[Math.floor(x.pts.length / 2)])] });
     });
     opts.slice().sort(function (p1, p2) { return (p2.role ? ROLES.indexOf(p2.role) : 9) - (p1.role ? ROLES.indexOf(p1.role) : 9); }).forEach(function (o) {
       var col = COL[o.role || ""];
@@ -2166,25 +2219,38 @@
       (o.nodes || []).forEach(function (nd, i) { var v = xy([nd.lat, nd.lon]); g += '<rect x="' + (v[0] - 11) + '" y="' + (v[1] - 8) + '" width="22" height="16" fill="#343a40" stroke="#fff" stroke-width="1.5"/>' + '<text x="' + v[0] + '" y="' + (v[1] + 4) + '" fill="#fff" font-size="10" font-weight="700" text-anchor="middle">' + E((NODE_N[nd.type] || "N").charAt(0) + (i + 1)) + "</text>"; });
       var dv = xy([o.dest.i.lat, o.dest.i.lon]);
       g += '<circle cx="' + dv[0] + '" cy="' + dv[1] + '" r="10" fill="' + col + '" stroke="#fff" stroke-width="2"/><text x="' + dv[0] + '" y="' + (dv[1] + 4) + '" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">' + E(o.role || "?") + "</text>" +
-        tx([dv[0] + 13, dv[1] + 4], o.dest.i.name, col, { fs: 10.5 });
+        "";
+      mark(dv, 11); lab(dv, 11, o.dest.i.name, col, { fs: 10.5, p: 2 });
     });
     list.filter(function (x) { return x.k === "pl"; }).forEach(function (x) {
       var pp = pl2(x.pts), e0 = xy(x.pts[0]), e1 = xy(x.pts[x.pts.length - 1]);
-      g += '<polyline points="' + pp + '" fill="none" stroke="#fff" stroke-width="6" opacity=".85"/><polyline points="' + pp + '" fill="none" stroke="#111" stroke-width="2.5"/>' + tx([e0[0] + 4, e0[1] - 5], x.name.toUpperCase(), "#111") + tx([e1[0] + 4, e1[1] - 5], x.name.toUpperCase(), "#111");
+      g += '<polyline points="' + pp + '" fill="none" stroke="#fff" stroke-width="6" opacity=".85"/><polyline points="' + pp + '" fill="none" stroke="#111" stroke-width="2.5"/>' + "";
+      lab(e1, 2, x.name.toUpperCase(), "#111", { fs: 10.5, p: 3, alt: [e0] });
     });
     list.filter(function (x) { return CM[x.k].g === "pt"; }).forEach(function (x) {
       var v = xy(x.pts[0]), col = CM_COL[x.k], sym = W.OSAP_SYM && W.OSAP_SYM.uri ? W.OSAP_SYM.uri(CM_SYM[x.k]) : "";
-      g += sym ? '<circle cx="' + v[0] + '" cy="' + v[1] + '" r="13" fill="#fff" stroke="' + col + '" stroke-width="2"/><image href="' + E(sym) + '" x="' + (v[0] - 11) + '" y="' + (v[1] - 11) + '" width="22" height="22"/>' : '<circle cx="' + v[0] + '" cy="' + v[1] + '" r="7" fill="' + col + '" stroke="#fff" stroke-width="2"/>';
-      g += tx([v[0] + 15, v[1] + 4], x.name, col);
+      g += sym ? '<circle cx="' + v[0] + '" cy="' + v[1] + '" r="9" fill="#fff" stroke="' + col + '" stroke-width="1.8"/><image href="' + E(sym) + '" x="' + (v[0] - 7.5) + '" y="' + (v[1] - 7.5) + '" width="15" height="15"/>' : '<circle cx="' + v[0] + '" cy="' + v[1] + '" r="6" fill="' + col + '" stroke="#fff" stroke-width="2"/>';
+      mark(v, sym ? 9 : 6); lab(v, sym ? 9 : 6, x.name, col, { fs: 10, p: 4 });
     });
     var ov = xy([pl.origin.lat, pl.origin.lon]);
-    g += '<circle cx="' + ov[0] + '" cy="' + ov[1] + '" r="8" fill="#111" stroke="#fff" stroke-width="3"/>' + tx([ov[0] + 11, ov[1] - 8], "ORIGIN " + (pl.origin.label || ""), "#111");
+    g += '<circle cx="' + ov[0] + '" cy="' + ov[1] + '" r="8" fill="#111" stroke="#fff" stroke-width="3"/>';
+    mark(ov, 9); lab(ov, 9, "ORIGIN", "#111", { fs: 11.5, p: 0 });
+    g += placeAll();
     /* north arrow, scale bar, attribution */
     var mpp = 156543.03392 * Math.cos(pl.origin.lat * Math.PI / 180) / Math.pow(2, z), nice = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000], L1 = nice.filter(function (m) { return m / mpp <= Wd / 5; }).pop() || 50, px = L1 / mpp;
     g += '<rect x="' + (Wd - 34) + '" y="6" width="28" height="44" rx="3" fill="#fff" fill-opacity=".88"/><path d="M' + (Wd - 26) + " 44 L" + (Wd - 20) + " 24 L" + (Wd - 14) + ' 44 Z" fill="#111"/><text x="' + (Wd - 24) + '" y="20" font-size="12" font-weight="700">N</text>' +
       '<rect x="8" y="' + (Ht - 34) + '" width="' + (px + 72).toFixed(1) + '" height="24" rx="3" fill="#fff" fill-opacity=".88"/><path d="M14 ' + (Ht - 16) + " h" + px.toFixed(1) + " M14 " + (Ht - 21) + " v10 M" + (14 + px).toFixed(1) + " " + (Ht - 21) + ' v10" stroke="#111" stroke-width="2" fill="none"/><text x="' + (20 + px).toFixed(1) + '" y="' + (Ht - 13) + '" font-size="11">' + (L1 >= 1000 ? L1 / 1000 + " km" : L1 + " m") + "</text>" +
       (T.attr ? '<text x="' + (Wd - 6) + '" y="' + (Ht - 6) + '" text-anchor="end" font-size="8.5" fill="#fff" stroke="#000" stroke-width="2" paint-order="stroke">' + E(T.attr) + "</text>" : "");
-    return g + "</svg>";
+    /* legend of what is on this map, and the numbered tags that had no room for their name */
+    var lg = [], kinds = {};
+    list.forEach(function (x) { kinds[x.k] = 1; });
+    opts.forEach(function (o) { kinds["r" + (o.role || "")] = 1; });
+    ROLES.concat([""]).forEach(function (r) { if (kinds["r" + r]) lg.push('<span><i style="background:' + COL[r] + (r ? "" : ";background:repeating-linear-gradient(90deg," + COL[""] + " 0 6px,transparent 6px 10px)") + '"></i>' + E(r ? r + " " + ROLE_N[r] : "Route, no role") + "</span>"); });
+    CM_T.forEach(function (t) { if (kinds[t[0]]) lg.push('<span><i class="' + (t[3] === "pt" ? "pt" : t[3]) + '" style="border-color:' + CM_COL[t[0]] + ";" + (t[3] === "pt" ? "background:#fff" : t[3] === "line" ? "background:" + CM_COL[t[0]] : "background:" + CM_COL[t[0]] + "22") + '"></i>' + E(t[1]) + "</span>"); });
+    lg.push('<span><i class="pt" style="background:#111;border-color:#111"></i>Origin</span>');
+    var kh = key.length || skipped ? '<p class="mapkey">' + (key.length ? "<b>Numbered on the map:</b> " + key.map(function (k2, i) { return '<span><b style="color:' + k2[1] + '">' + (i + 1) + "</b> " + E(k2[0]) + "</span>"; }).join("") : "") +
+      (skipped ? " " + skipped + " more too close together to label at this scale: see the close-up and the tables." : "") + "</p>" : "";
+    return g + "</svg>" + '<p class="maplg">' + lg.join("") + "</p>" + kh;
   }
   /* the printed key and table of the control measures */
   function cmPrint(pl) {
