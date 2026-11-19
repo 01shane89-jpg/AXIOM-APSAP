@@ -177,6 +177,7 @@ tests/epe_along_smoke.mjs
 tests/epe_pkg_smoke.mjs
 # Evac > Evacuation map: checkpoints, phase lines, extraction points, corridor, areas to avoid, directions, printed map
 tests/epe_map_smoke.mjs
+tests/epe_manage_smoke.mjs
 tests/route_api_smoke.mjs
 tests/route_preview_smoke.mjs
 # Route > Navigate: turn banner, lanes, voice, re-route, arrival, phone Go button (assets/osap-nav.js)
