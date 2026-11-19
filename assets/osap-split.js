@@ -211,6 +211,10 @@
     ".osheet-h button:focus-visible{outline:2px solid var(--accent,#2a6fdb);outline-offset:-2px}" +
     /* large screen: Map folds the panel to its handle at the top, Half is the top half of the map's height */
     "@media (min-width:701px){.osheet.osheet.osheet-on[data-osheet=min]:not([hidden]){bottom:auto!important;height:auto!important}" +
+    /* Map: the whole map is in view (Shane 19 Nov: "full screen view isnt actually full screen"): the panel folds to a small bar
+       at the top middle of the map, covering nothing at the side, so the toolbar stays at the edge */
+    "html:not(.pn-win-float) .osheet.osheet.osheet-on[data-osheet=min]:not([hidden]){left:var(--osplit-mc,50vw)!important;right:auto!important;width:auto!important;max-width:calc(100vw - 240px)!important;transform:translateX(-50%)!important;top:calc(var(--osplit-top,0px) + 8px)!important}" +
+    "html:not(.pn-win-float) .osheet.osheet-on[data-osheet=min]:not([hidden])>.osheet-h{border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.35)!important;padding-left:12px!important}" +
     "html:not(.pn-win-float) .osheet.osheet.osheet-on[data-osheet=half]:not([hidden]){bottom:auto!important;height:calc((100vh - var(--osplit-top,0px)) / 2)!important}" +
     ".osheet.osheet-on:not([hidden])>.osheet-h{box-shadow:-4px 0 18px rgba(0,0,0,.3)}}" +
     /* phone: a bottom sheet with a grip */
@@ -229,11 +233,15 @@
   function top() {
     var m = W.__asapMap, root = D.documentElement, mr = m && m.getContainer().getBoundingClientRect(), t = mr && !phone() ? Math.max(0, Math.round(mr.top)) : 0;
     root.style.setProperty("--osplit-top", t + "px");
+    /* the map's left edge and middle: Full starts at the map's left, the folded Map bar sits over the map's middle */
+    if (mr && !phone()) { root.style.setProperty("--osplit-ml", Math.max(0, Math.round(mr.left)) + "px"); root.style.setProperty("--osplit-mc", Math.round(mr.left + mr.width / 2) + "px"); }
     var cov = 0, lcov = 0;
     if (mr && !phone()) Array.prototype.forEach.call(D.querySelectorAll(".osplit:not([hidden]), #medplan.dock:not([hidden])"), function (w) {
       var r = (w.classList.contains("osheet-on") ? w : w.firstElementChild || w).getBoundingClientRect(); if (!r.width || r.left >= mr.right || r.right <= mr.left) return;
       /* moved by the user (assets/osap-panels.js): a floating window moves nothing; one docked on the left moves the zoom buttons */
       if (W.OSAP_PANELS && W.OSAP_PANELS.mode("win") === "float") return;
+      /* folded to its bar (Map): the bar sits in the top middle and covers no side of the map */
+      if (w.classList.contains("osheet-on") && w.getAttribute("data-osheet") === "min") return;
       if (r.left + r.width / 2 < mr.left + mr.width / 2) { lcov = Math.max(lcov, Math.round(Math.min(r.right, mr.right) - mr.left)); return; }
       cov = Math.max(cov, Math.round(mr.right - Math.max(r.left, mr.left)));
     });
