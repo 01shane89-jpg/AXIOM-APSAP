@@ -86,8 +86,8 @@
   var LAY_DEF = { deps: 1, air: 1, borders: 1, us: 1, med: 0, sus: 0, comms: 1, haz: 1 }, LAY_KEY = "osap-epe-layers";
   /* what the plan draws on the map, each switchable (a device setting, all on at first): the options' lines and destinations,
      the selected option's corridor band and circles, its legs and the analyst's nodes, each kind of control measure, the origin */
-  var SHOW = [["routes", "Routes"], ["dests", "Destinations"], ["band", "Corridor band and circles"], ["legs", "Legs and your nodes"], ["cp", "Checkpoints"], ["pl", "Phase lines"], ["xp", "Extraction points (GXP, AXP)"], ["corr", "Evacuation corridors"], ["avoid", "Areas to avoid"], ["origin", "Origin"]], SHOW_KEY = "osap-epe-show";
-  var CM_SHOW = { cp: "cp", pl: "pl", gxp: "xp", axp: "xp", corr: "corr", avoid: "avoid" };
+  var SHOW = [["routes", "Routes"], ["dests", "Destinations"], ["band", "Corridor band and circles"], ["legs", "Legs and your nodes"], ["cp", "Checkpoints"], ["pl", "Phase lines"], ["xp", "Extraction points (GXP, AXP)"], ["mypt", "Your points"], ["corr", "Evacuation corridors"], ["avoid", "Areas to avoid"], ["origin", "Origin"]], SHOW_KEY = "osap-epe-show";
+  var CM_SHOW = { pt: "mypt", cp: "cp", pl: "pl", gxp: "xp", axp: "xp", corr: "corr", avoid: "avoid" };
   var COMMS_C = { good: "#2b8a3e", degraded: "#e67700", none: "#c92a2a", unknown: "#868e96" };
   var BASIS = { observed: "measured (coverage tiles)", mapped: "proximity (masts)", modelled: "modeled (line of sight)", reported: "reported (outage)" };
   function flies(m) { return m === "helo" || m === "fw" || m === "sea"; }
@@ -140,7 +140,7 @@
       D.body.appendChild(el);
       el.addEventListener("click", onClick); el.addEventListener("change", onChange);
       el.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (S.cmDraw) { cmEnd(); S.cmmsg = "Canceled."; render(); draw(); } else if (S.picking) pickEnd(); else close(); } });
-      el.addEventListener("submit", function (e) { e.preventDefault(); if (e.target.id === "epe-find") find(D.getElementById("epe-q").value); });
+      el.addEventListener("submit", function (e) { e.preventDefault(); if (e.target.id === "epe-find") find(D.getElementById("epe-q").value); else if (e.target.id === "epe-ptf") ptAdd(); });
       if (W.OSAP_SPLIT) W.OSAP_SPLIT.add(el, ".chead");
     }
     return el;
@@ -1298,11 +1298,11 @@
      can't go south"): options heading that way are proposed Blocked, and "Find a way out in each open direction" routes to the
      nearest destination OSAP holds, or the analyst's own extraction point, in every open direction that has no option yet.
      Kept with the plan on this device only (plan.cm, plan.blk). */
-  var CM_T = [["cp", "Checkpoint", "CP", "pt"], ["gxp", "Ground extraction point", "GXP", "pt"], ["axp", "Air extraction point (HLZ)", "AXP", "pt"],
+  var CM_T = [["cp", "Checkpoint", "CP", "pt"], ["gxp", "Ground extraction point", "GXP", "pt"], ["axp", "Air extraction point (HLZ)", "AXP", "pt"], ["pt", "Your point", "PT", "pt"],
     ["pl", "Phase line", "PL", "line"], ["corr", "Evacuation corridor", "CORRIDOR", "area"], ["avoid", "Area to avoid", "AVOID", "area"]];
   var CM = {}; CM_T.forEach(function (t) { CM[t[0]] = { n: t[1], ab: t[2], g: t[3] }; });
-  var CM_COL = { cp: "#212529", gxp: "#2b8a3e", axp: "#1864ab", pl: "#111111", corr: "#1c7ed6", avoid: "#c92a2a" };
-  var CM_SYM = { cp: "g_check", gxp: "g_waypoint", axp: "g_medevac" };
+  var CM_COL = { pt: "#7048e8", cp: "#212529", gxp: "#2b8a3e", axp: "#1864ab", pl: "#111111", corr: "#1c7ed6", avoid: "#c92a2a" };
+  var CM_SYM = { pt: "g_poi", cp: "g_check", gxp: "g_waypoint", axp: "g_medevac" };
   var PL_NAMES = ["RED", "WHITE", "BLUE", "GOLD", "GREEN", "BLACK", "SILVER", "ORANGE", "BROWN", "GRAY"];
   var MAX_CM = 40, MAX_V = 60, MAX_POLY = 10;
   var DIRS = [["N", "North"], ["E", "East"], ["S", "South"], ["W", "West"]], DIR_N = { N: "North", E: "East", S: "South", W: "West" };
@@ -1397,7 +1397,7 @@
     var mine = cms().filter(function (x) { return x.k === k; });
     if (k === "pl") { var used = mine.map(function (x) { return x.name; }), nm = PL_NAMES.filter(function (x) { return used.indexOf("PL " + x) < 0; })[0]; return "PL " + (nm || mine.length + 1); }
     var n = 0; mine.forEach(function (x) { var m = /(\d+)$/.exec(x.name || ""); if (m) n = Math.max(n, +m[1]); });
-    return k === "corr" ? "Corridor " + (Math.max(n, mine.length) + 1) : k === "avoid" ? "Avoid " + (Math.max(n, mine.length) + 1) : CM[k].ab + " " + (Math.max(n, mine.length) + 1);
+    return k === "pt" ? "Point " + (Math.max(n, mine.length) + 1) : k === "corr" ? "Corridor " + (Math.max(n, mine.length) + 1) : k === "avoid" ? "Avoid " + (Math.max(n, mine.length) + 1) : CM[k].ab + " " + (Math.max(n, mine.length) + 1);
   }
   /* the proposal again for every option (a control measure or a blocked direction changed) */
   function cmRefresh() { if (!S.plan) return; S.plan.opts.forEach(function (o) { o.prop = propose(o); }); }
@@ -1406,8 +1406,10 @@
     if (S.picking) pickEnd();
     cmEnd();
     if (cms().length >= MAX_CM) { S.cmmsg = "At most " + MAX_CM + " control measures in one plan. Delete one first."; render(); return; }
+    if (k !== "pt") S.ptName = "";
     if (k === "avoid" && avoids().length >= MAX_POLY) { S.cmmsg = "At most " + MAX_POLY + " areas to avoid in one plan."; render(); return; }
-    S.cmDraw = { k: k, pts: [] };
+    if (k === "pt" && D.getElementById("epe-ptn")) S.ptName = clean(D.getElementById("epe-ptn").value, 40);
+    S.cmDraw = { k: k, pts: [], name: k === "pt" ? clean(S.ptName, 40) : "" };
     map.on("click", onCmTap); D.addEventListener("keydown", cmKey); map.getContainer().style.cursor = "crosshair"; D.documentElement.classList.add("epe-picking");
     S.cmmsg = CM[k].g === "pt" ? "Tap the map where the " + CM[k].n.toLowerCase() + " is. Esc cancels." : "Tap the map for each corner of the " + CM[k].n.toLowerCase() + ", then press Finish. Esc cancels.";
     render(); draw();
@@ -1415,7 +1417,7 @@
   function onCmTap(e) {
     var d = S.cmDraw; if (!d || !e || !e.latlng) return;
     var q = [r6(e.latlng.lat), r6(wrap(e.latlng.lng))];
-    if (CM[d.k].g === "pt") { cmAdd(d.k, [q]); return; }
+    if (CM[d.k].g === "pt") { cmAdd(d.k, [q], d.name); return; }
     if (d.pts.length < MAX_V) d.pts.push(q);
     var need = CM[d.k].g === "line" ? 2 : 3;
     S.cmmsg = d.pts.length + " point" + (d.pts.length === 1 ? "" : "s") + (d.pts.length < need ? ": " + (need - d.pts.length) + " more before Finish." : ". Tap more or press Finish.");
@@ -1440,10 +1442,22 @@
     cmEnd();
     var x = { id: rid("cm"), k: k, name: clean(name, 40) || cmLabel(k), pts: pts.map(function (q) { return [r6(+q[0]), r6(wrap(+q[1]))]; }), by: Date.now(), how: clean(how, 60) || "Placed by you" };
     cms().push(x); cmRefresh(); save();
-    S.cmmsg = CM[k].n + " " + x.name + " added.";
+    S.cmmsg = k === "pt" ? x.name + " added to this plan. Drag it on the map to move it; rename it in the list below." : CM[k].n + " " + x.name + " added."; if (k === "pt") S.ptName = "";
     render(); draw();
     if (k === "avoid") roundAll(x.name + " added. ");
     return x;
+  }
+  /* the analyst's own point, named anything: at a typed grid, or at the next map tap; kept in this plan only (plan.cm, k "pt") */
+  function ptAdd() {
+    if (!S.plan) return;
+    var nm = clean((D.getElementById("epe-ptn") || {}).value, 40), gq = clean((D.getElementById("epe-ptg") || {}).value, 60);
+    S.ptName = nm;
+    if (!gq) { cmStart("pt"); if (S.cmDraw) S.cmmsg = "Tap the map where " + (nm || "your point") + " is. Esc cancels."; render(); return; }
+    var g = G(), q = g && g.parse ? g.parse(gq) : null;
+    if (!q || !isFinite(q.lat) || !isFinite(q.lon)) { S.cmmsg = "That grid was not understood. Type MGRS (47P PS 82546 38049) or lat, lon (14.81, 100.69)."; render(); return; }
+    if (cms().length >= MAX_CM) { S.cmmsg = "At most " + MAX_CM + " control measures in one plan. Delete one first."; render(); return; }
+    var x = cmAdd("pt", [[q.lat, q.lon]], nm, "Typed grid"); S.ptName = "";
+    var map = W.__asapMap; if (x && map) map.panTo(x.pts[0]);
   }
   function cmDel(id) {
     var p = S.plan; if (!p) return;
@@ -1567,6 +1581,8 @@
       '<div class="epebtns epecmadd"><span class="obs">Add on the map:</span>' + CM_T.map(function (t) { return '<button type="button" data-ep-cm="' + t[0] + '"' + (d && d.k === t[0] ? ' aria-pressed="true"' : "") + ">" + E(t[1]) + "</button>"; }).join("") + "</div>" +
       (d && CM[d.k].g !== "pt" ? '<div class="epebtns"><button type="button" class="epego" data-ep="cmfin">Finish ' + E(CM[d.k].n.toLowerCase()) + '</button><button type="button" data-ep="cmundo"' + (d.pts.length ? "" : " disabled") + '>Undo point</button><button type="button" data-ep="cmcan">Cancel</button></div>' :
         d ? '<div class="epebtns"><button type="button" data-ep="cmcan">Cancel</button></div>' : "") +
+      '<form id="epe-ptf" class="epefind epeptf" autocomplete="off"><input id="epe-ptn" maxlength="40" placeholder="Name it anything (e.g. Rally point Bravo)" aria-label="Name of your point" value="' + E(S.ptName || "") + '">' +
+        '<input id="epe-ptg" maxlength="60" placeholder="Grid (MGRS or lat, lon), or leave empty and tap the map" aria-label="Grid of your point"><button type="submit">Add point</button></form>' +
       (optOf(S.sel) ? '<div class="epebtns"><button type="button" data-ep="cmband" title="An outline of the selected option\'s corridor width each side of its line, kept as your evacuation corridor">Corridor from the selected route (' + E(corr(optOf(S.sel)).w) + " km each side)</button></div>" : "") +
       '<p id="epe-cmmsg" class="obs" role="status">' + E(S.cmmsg || "") + "</p>" +
       (list.length ? '<ul class="epecmls">' + list.map(function (x) {
@@ -1723,7 +1739,7 @@
   }
   function cmKml(pl) {
     var list = cms(pl).filter(okCm); if (!list.length) return "";
-    var KC = { cp: "ff292521", gxp: "ff3e8a2b", axp: "ffab6418", pl: "ff111111", corr: "ffd67e1c", avoid: "ff2a2ac9" };
+    var KC = { pt: "ffe84870", cp: "ff292521", gxp: "ff3e8a2b", axp: "ffab6418", pl: "ff111111", corr: "ffd67e1c", avoid: "ff2a2ac9" };
     function cs(pts, close) { var q = pts.concat(close ? [pts[0]] : []); return q.map(function (p) { return (+p[1]).toFixed(6) + "," + (+p[0]).toFixed(6) + ",0"; }).join(" "); }
     return "<Folder><name>Control measures (analyst)</name>" + list.map(function (x) {
       var g = CM[x.k].g, st = "<Style><LineStyle><color>" + KC[x.k] + "</color><width>3</width></LineStyle><PolyStyle><color>" + (x.k === "avoid" ? "402a2ac9" : "18d67e1c") + "</color></PolyStyle></Style>";
@@ -2214,7 +2230,7 @@
       "#epe .epebtns button,#epe .epefind button,#epe .epekept button,#epe .epefound button{border:1px solid var(--line,#d5dbe1);background:var(--surface2,var(--surface,#fff));color:var(--ink,#1d2329);border-radius:4px;padding:5px 10px;min-height:32px;cursor:pointer;font-weight:600}" +
       "#epe button[aria-pressed=true]{background:var(--accent,#1c5d99);color:var(--on-accent,#fff);border-color:var(--accent,#1c5d99)}#epe button.epego{background:var(--accent,#1c5d99);color:var(--on-accent,#fff);border-color:var(--accent,#1c5d99)}#epe button[disabled]{opacity:.45;cursor:default}" +
       "#epe select,#epe input{border:1px solid var(--line,#d5dbe1);border-radius:4px;background:var(--surface,#fff);color:var(--ink,#1d2329);padding:4px 6px;min-height:32px;max-width:100%}" +
-      "#epe .epefind{display:flex;gap:6px;margin:6px 0}#epe .epefind input{flex:1;min-width:0}#epe .eperow{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0}" +
+      "#epe .epefind{display:flex;gap:6px;margin:6px 0}#epe .epeptf{flex-wrap:wrap}#epe .epeptf input{flex:1 1 180px}#epe .epefind input{flex:1;min-width:0}#epe .eperow{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0}" +
       "#epe .epeorg code,#epe code{font:12px 'IBM Plex Mono',monospace}" +
       "#epe ul.epefound,#epe ul.epekept{list-style:none;margin:4px 0;padding:0}#epe ul.epefound li,#epe ul.epekept li{display:flex;gap:6px;align-items:center;padding:4px 0;border-top:1px solid var(--line-soft,var(--line,#e3e7eb))}#epe ul.epekept li span{flex:1}" +
       "#epe .epecard{border:1px solid var(--line,#d5dbe1);border-left:5px solid var(--epec);border-radius:6px;padding:8px 10px;margin:8px 0}#epe .epecard.sel{box-shadow:0 0 0 2px var(--epec) inset}" +
