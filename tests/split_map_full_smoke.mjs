@@ -1,6 +1,6 @@
 // Headless check of the docked window's Map / Half / Full stops on a large screen (assets/osap-split.js; Shane 19 Nov 2026:
-// "full screen view isnt actually full screen"), with the evacuation planner as the window: Map folds it to a small bar in
-// the top middle of the map, so nothing covers the side and the toolbar stays at the right edge; Full covers the whole window;
+// "full screen view isnt actually full screen"), with the evacuation planner as the window: Map folds it to a small pill at
+// the bottom middle of the map, so nothing covers the side and the toolbar stays at the right edge; Full covers the whole window;
 // Half stays the top half on the right. Routers and other hosts are blocked.
 // Run from the repo root: node tests/split_map_full_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
 import { createServer } from "node:http";
@@ -48,9 +48,13 @@ g = await geo();
 if (OUT) await p.screenshot({ path: OUT + "/split-map.png" });
 ok(g.stop === "min", "Map is chosen");
 ok(g.w.h < 70 && g.w.w < 520, "Map folds the panel to a small bar (" + Math.round(g.w.w) + " x " + Math.round(g.w.h) + ")");
-ok(Math.abs((g.w.l + g.w.r) / 2 - (g.m.l + g.m.r) / 2) < 4 && g.w.t >= g.m.t, "in the top middle of the map");
+ok(Math.abs((g.w.l + g.w.r) / 2 - (g.m.l + g.m.r) / 2) < 4 && g.w.b <= 640 && g.w.t > 640 - 90, "at the bottom middle of the map, out of the way of the labels (Shane 19 Nov: \"this is in the way\")");
+ok(g.w.w <= 320 && g.w.h <= 40, "a small pill (" + Math.round(g.w.w) + " x " + Math.round(g.w.h) + ")");
 ok(g.cov === "0px" && !g.cover, "covering no side of the map, so the toolbar stays at the edge (--osplit-r " + g.cov + ")");
-ok(await p.evaluate(() => [...document.querySelectorAll("#epe .osheet-h .osh-b button")].map((b) => b.textContent).join() === "Map,Half,Full" && !!document.querySelector("#epe .osheet-h .osh-x")), "and the bar keeps Map, Half, Full and close");
+ok(await p.evaluate(() => getComputedStyle(document.querySelector("#epe .osheet-h .osh-b")).display === "none" && !!document.querySelector("#epe .osheet-h .osh-x").offsetWidth && /Evacuation/.test(document.querySelector("#epe .osheet-h .osh-t").textContent)), "the pill holds the name and close only");
+await p.click("#epe .osheet-h .osh-t"); await p.waitForTimeout(350);
+g = await geo();
+ok(g.stop === "half", "a tap on the name brings the panel back (" + g.stop + ")");
 
 await press("Full");
 g = await geo();
