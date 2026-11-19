@@ -37,13 +37,15 @@
   function ask(g) {
     if (asked[g]) return; asked[g] = 1;
     var now = Date.now(), u = GIBS + "1.0.0/" + GAS[g].id + "/default/GoogleMapsCompatible_Level6/all/" + isoDay(now - 30 * DAY) + "--" + isoDay(now + DAY) + ".xml";
-    fetch(u).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (x) { var d = domainEnd(x); if (d) { newest[g] = d; if (!st.day) draw(); } })
-      .catch(function () {}).then(panel);
+    fetch(u).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (x) { var d = domainEnd(x); if (d) newest[g] = d; })
+      .catch(function () {}).then(function () { asked[g] = 2; if (!st.day && g === st.gas) draw(); else panel(); });
   }
   function draw() {
     if (!map) return;
     if (layer) { map.removeLayer(layer); layer = null; }
-    if (st.on) {
+    /* while GIBS is still asked for its newest published day, nothing is drawn: a guessed day can be one not published yet
+       (blank tiles, and asked for for nothing); the guess is used only when GIBS does not answer */
+    if (st.on && !(asked[st.gas] === 1 && !st.day && !newest[st.gas])) {
       var g = GAS[st.gas], d = shownDay();
       layer = L.tileLayer(GIBS + g.id + "/default/" + d + "/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png", {
         pane: "plumepane", maxNativeZoom: 6, maxZoom: 20, opacity: 0.75, crossOrigin: true,
@@ -55,6 +57,7 @@
   }
   function status() {
     if (!st.on) return "Off. Switch on to show.";
+    if (asked[st.gas] === 1 && !st.day && !newest[st.gas]) return "Finding the newest published day from NASA GIBS…";
     var d = shownDay(), g = GAS[st.gas];
     return "<b>" + esc(g.name) + "</b>, UTC day " + esc(d) + (st.cmp ? " (30 days before " + esc(cur()) + ")" : newest[st.gas] && cur() === newest[st.gas] ? " (newest published)" : "") +
       ". One pass a day, about 13:30 local time; blank areas are cloud or no valid reading. Sharp up to region zoom (about 2.4 km a pixel).";
