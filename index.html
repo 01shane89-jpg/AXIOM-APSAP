@@ -7571,8 +7571,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (!body || !body.textContent.trim()) return;
     /* a small question box (data-keep-pop), such as "Open Laos" after a double tap, stays a pop-up with its working button */
     /* an item opened from the map (a layer was clicked, not a tool's own note) goes to the middle of the map. The user's own
-       saved points and drawings (atakpane) and pop-ups that are a menu or a form stay put: their buttons must not move under a tap */
-    var src = e.popup._source, D0 = document.documentElement, own = src && src.options && src.options.pane === "atakpane";
+       saved points and drawings (atakpane), the route's own waypoints (routewppane: "Delete waypoint" moved under the tap and
+       the tap closed the pop-up instead, tests/route_wpdel_smoke.mjs) and pop-ups that are a menu or a form stay put: their buttons must not move under a tap */
+    var src = e.popup._source, D0 = document.documentElement, own = src && src.options && (src.options.pane === "atakpane" || src.options.pane === "routewppane");
     /* only a pop-up the user opened by tapping the map: one a tool opens itself (a list row, a test) is placed by that tool */
     if (Date.now() - mapTapAt < 800 && ((src && src.getLatLng) || /\bqpop\b/.test(e.popup.options.className || "")) && !own && !body.querySelector(".atk-pb, input, select, textarea") &&
       map.getContainer().style.cursor !== "crosshair" && !/-picking\b/.test(D0.className) && !e.popup.options.noCenter) mapCenterOn(e.popup.getLatLng());
