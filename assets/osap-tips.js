@@ -5,16 +5,25 @@
      device. "Show me" points at the tool; "Next tip" shows another; "Turn off tips" (or Settings > Show tips) stops them.
      Tips keep coming, tools never used first, then the ones seen longest ago, until the user turns them off.
    - Unobtrusive by rule: never in the first 40 s of a visit, never within 6 s of a tap or key, never over an open window, plan,
-     menu or tool card, at least 3 minutes apart (a follow-up 90 s), 3 a visit at most, gone by itself after 25 s.
+     menu or tool card, never over the phone's list sheet while it is raised (the tour offer waits for it too), at least 3 minutes apart (a follow-up 90 s), 3 a visit at most, gone by itself after 25 s.
    - Tour: the first visit after this ships offers a one-minute tour of the toolbar and Settings (Settings > Take the tour runs
      it again). Each step rings one button and says what it is for; buttons not on screen (a phone's shorter toolbar) are skipped.
+     Before each step the ring clears what would hide its button: the phone's list sheet drops to its bar, an open menu, info
+     box or details sheet closes, Today and the guide close (Kelsea's iPhone, 19 Nov: the timeline sheet was up and the ring sat
+     on a news row). A button something else still covers is treated as not on screen, so the ring never points at the wrong
+     thing. Closing the tour puts the list sheet back where it was.
    - Show me in the app: the user guide's sections call walk(id), the same ring, step by step through that feature's buttons.
-   Kept in localStorage "osap-tips" on this device only: off, which tips were seen and when, which tools were used, the tour.
+   - Progress (Shane 19 Nov: "a way for the user to see what they have or have not toured yet"): each tour step the user is
+     shown is ticked off, and so is each guide section's "Show me in the app". The guide's "Tips and the tour" section lists the
+     12 steps with a tick or not, with Resume (from the first step not seen) and Start again; Settings' Take the tour resumes.
+   Kept in localStorage "osap-tips" on this device only: off, which tips were seen and when, which tools were used, the tour
+   steps and walkthroughs seen.
    Nothing is sent anywhere. Nothing here reads or changes a record, a finding or a saved item: it only points at buttons and,
    when the user presses "Open it", presses the button for them.
    Automated browsers (navigator.webdriver) get no tips or tour offer by themselves, so the other headless checks open as
    before; tests set window.OSAP_TIPS_TEST first.
-   window.OSAP_TIPS { on(), set(bool), show(id?), next(), tour(), walk(id), hasWalk(id), spot(steps), close(), tips(), check() } */
+   window.OSAP_TIPS { on(), set(bool), show(id?), next(), tour(from?), walk(id), hasWalk(id), spot(steps), close(), tips(), check(),
+     progress(), onProgress(fn) } */
 (function () {
   "use strict";
   var W = window, D = document;
@@ -56,16 +65,46 @@
     if (step.tool) {
       var names = [].concat(step.tool);
       for (i = 0; i < names.length && !el; i++) {
-        var x = toolBtn(names[i]); if (x) { scrollTo(x); if (vis(x)) el = x; }
+        var x = toolBtn(names[i]); if (x) { scrollTo(x); if (shown(x)) el = x; }
         /* a tool the page shows elsewhere at this size (Reports sits in the header on a wide screen) */
-        if (!el && ALT[names[i]]) el = Array.prototype.filter.call(D.querySelectorAll(ALT[names[i]]), vis)[0] || null;
+        if (!el && ALT[names[i]]) el = Array.prototype.filter.call(D.querySelectorAll(ALT[names[i]]), shown)[0] || null;
       }
       /* a folded toolbar: point at its open arrow instead */
-      if (!el && bar() && bar().classList.contains("folded")) { var f = bar().querySelector(".atk-fold"); if (vis(f)) { el = f; step._fold = true; } }
-    } else if (step.card) el = todayCard(step.card);
-    else if (step.sel) { var y = D.querySelector(step.sel); if (vis(y)) el = y; }
+      if (!el && bar() && bar().classList.contains("folded")) { var f = bar().querySelector(".atk-fold"); if (shown(f)) { el = f; step._fold = true; } }
+    } else if (step.card) { el = todayCard(step.card); if (el && !shown(el)) el = null; }
+    else if (step.sel) { var y = D.querySelector(step.sel); if (shown(y)) el = y; }
     return el;
   }
+  /* on screen and not under anything else: the middle of it is inside the window and the top thing there (the tips' own ring
+     and callout aside) is the target itself. A button with something over it counts as not on screen. */
+  var OWN = "#tipcall,#tipspot,#tipcatch,#tipcard";
+  function shown(el) {
+    if (!vis(el)) return false;
+    var r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+    if (x < 0 || y < 0 || x >= W.innerWidth || y >= W.innerHeight) return false;
+    var all = D.elementsFromPoint ? D.elementsFromPoint(x, y) : [D.elementFromPoint(x, y)], hit = null, i;
+    for (i = 0; i < all.length; i++) if (all[i] && !(all[i].closest && all[i].closest(OWN))) { hit = all[i]; break; }
+    return !hit || hit === el || el.contains(hit) || hit.contains(el);
+  }
+  /* what can hide a step's button, closed before the ring is drawn: the guide, Today (unless a step needs it), the phone's list
+     sheet (down to its bar), the phone's details sheet, the gear and Reports menus, a toolbar menu and the map's info box.
+     None of these holds unsaved work. Returns true when something moved, so the ring waits for the sheet to settle. */
+  function clearView(keepToday) {
+    var moved = false, ph = W.ASAP_PHONE;
+    if (W.OSAP_GUIDE && W.OSAP_GUIDE.isOpen()) { W.OSAP_GUIDE.close(); moved = true; }
+    if (!keepToday && todayOpen()) { W.OSAP_TODAY.hide(); moved = true; }
+    if (ph && ph.on && ph.on()) {
+      var pb = D.getElementById("pkg-back"); if (pb && !pb.hidden && ph.close) { ph.close(); moved = true; }
+      if (sheetUp() && ph.setSheet) { ph.setSheet("bar"); moved = true; }
+    }
+    var tp = D.getElementById("tidy-pop"), tb = D.querySelector('[data-tidy][aria-expanded="true"]');
+    if (tp && !tp.hidden && tb) { tb.click(); moved = true; }
+    var ap = D.getElementById("atk-pop"); if (ap && !ap.hidden) { ap.hidden = true; ap._for = null; moved = true; }
+    var m = W.__asapMap; if (m && m.closePopup && D.querySelector(".leaflet-popup")) { m.closePopup(); moved = true; }
+    return moved;
+  }
+  /* the phone's list sheet raised to half or full height (it covers the map and its toolbar) */
+  function sheetUp() { var de = D.documentElement; return de.classList.contains("phone") && /^(half|full)$/.test(de.getAttribute("data-sheet") || ""); }
   function scrollTo(el) {
     var l = el.closest(".atk-list"); if (!l) return;
     var r = el.getBoundingClientRect(), lr = l.getBoundingClientRect();
@@ -118,18 +157,18 @@
 
   /* ---------- walkthroughs: the tour and one per guide section ---------- */
   var TOUR = [
-    { tool: "Today", t: b("Today") + " is the start screen: the daily summary, weather, warnings and top stories for the country you pick." },
-    { tool: "Search", t: b("Search") + " finds places, grids, tools, settings and the news." },
-    { tool: "Data sets", t: b("Data sets") + " are the reporting topics. Tick one to put it on the map." },
-    { tool: "Weather", t: b("Weather") + " is radar, wind, warnings and forecasts." },
-    { tool: "Overlays", t: b("Overlays") + " are map layers that are not reports: infrastructure, borders, aircraft, ships." },
-    { tool: ["Area", "Measure"], t: b("Measure") + ", " + b("Route") + " and " + b("Area") + " work on the map: distances, drives and areas of interest." },
-    { tool: "Plans", t: b("Plans") + " holds the planning tools: medical, evacuation, landing zones, comms, terrain and weather brief." },
-    { tool: ["Point", "Watch"], t: b("Point") + " saves a spot; " + b("Watch") + " tells you about new reports in an area." },
-    { tool: "My work", t: b("My work") + " keeps everything you saved, and exports it." },
-    { tool: "Reports", t: b("Reports") + " makes briefs and reports to print or save as PDF." },
-    { sel: "#tidy-set", t: "Settings: offline maps, the " + b("User guide") + ", this tour again, and the " + b("Show tips") + " switch." },
-    { t: "Long-press the map (right-click on a computer) for actions at any spot. That is the tour: tips will suggest a tool now and then until you turn them off in Settings." }
+    { id: "today", name: "Today", tool: "Today", t: b("Today") + " is the start screen: the daily summary, weather, warnings and top stories for the country you pick." },
+    { id: "search", name: "Search", tool: "Search", t: b("Search") + " finds places, grids, tools, settings and the news." },
+    { id: "datasets", name: "Data sets", tool: "Data sets", t: b("Data sets") + " are the reporting topics. Tick one to put it on the map." },
+    { id: "weather", name: "Weather", tool: "Weather", t: b("Weather") + " is radar, wind, warnings and forecasts." },
+    { id: "overlays", name: "Overlays", tool: "Overlays", t: b("Overlays") + " are map layers that are not reports: infrastructure, borders, aircraft, ships." },
+    { id: "maptools", name: "Measure, Route and Area", tool: ["Area", "Measure"], t: b("Measure") + ", " + b("Route") + " and " + b("Area") + " work on the map: distances, drives and areas of interest." },
+    { id: "plans", name: "Plans", tool: "Plans", t: b("Plans") + " holds the planning tools: medical, evacuation, landing zones, comms, terrain and weather brief." },
+    { id: "pointwatch", name: "Point and Watch", tool: ["Point", "Watch"], t: b("Point") + " saves a spot; " + b("Watch") + " tells you about new reports in an area." },
+    { id: "mywork", name: "My work", tool: "My work", t: b("My work") + " keeps everything you saved, and exports it." },
+    { id: "reports", name: "Reports", tool: "Reports", t: b("Reports") + " makes briefs and reports to print or save as PDF." },
+    { id: "settings", name: "Settings", sel: "#tidy-set", t: "Settings: offline maps, the " + b("User guide") + ", this tour again, and the " + b("Show tips") + " switch." },
+    { id: "ring", name: "Long-press the map", t: "Long-press the map (right-click on a computer) for actions at any spot. That is the tour: tips will suggest a tool now and then until you turn them off in Settings." }
   ];
   function planStep(name) { return { tool: [name, "Plans"], t: "Open " + b("Plans") + " and pick " + b(name) + ", or use its own button where the toolbar has one." }; }
   var WALKS = {
@@ -157,7 +196,7 @@
   };
 
   /* ---------- the ring and its callout ---------- */
-  var SPOT = null, CALL = null, steps = [], at = 0, single = false, stepEl = null;
+  var SPOT = null, CALL = null, steps = [], at = 0, single = false, stepEl = null, keepToday = false, sheetBack = null, waitT = 0, kind = "";
   function css() {
     if (D.getElementById("tips-css")) return;
     var s = D.createElement("style"); s.id = "tips-css";
@@ -188,12 +227,13 @@
   var CATCH = null, lastFocus = null;
   function spot(list, opt) {
     close(); css(); opt = opt || {};
-    steps = (list || []).slice(); single = !!opt.single; at = 0;
+    steps = (list || []).slice(); single = !!opt.single; kind = opt.kind || ""; at = Math.max(0, Math.min(steps.length - 1, opt.at || 0));
     if (!steps.length) return false;
     lastFocus = D.activeElement;
-    /* the steps point at the map's toolbar: Today and the guide cover it, so they close first (a Today card step keeps Today) */
-    if (W.OSAP_GUIDE && W.OSAP_GUIDE.isOpen()) W.OSAP_GUIDE.close();
-    if (!steps.some(function (s) { return s.card || /#today/.test(s.sel || ""); }) && todayOpen()) W.OSAP_TODAY.hide();
+    /* the steps point at the map's toolbar: Today, the guide and the phone's list sheet cover it, so each step clears them
+       first (draw); a walk with a Today card step keeps Today. The list sheet goes back to its height when the tour closes. */
+    keepToday = steps.some(function (s) { return s.card || /#today/.test(s.sel || ""); });
+    sheetBack = sheetUp() ? D.documentElement.getAttribute("data-sheet") : null;
     CATCH = D.createElement("div"); CATCH.id = "tipcatch"; CATCH.className = "leaflet-control";
     SPOT = D.createElement("div"); SPOT.id = "tipspot"; SPOT.setAttribute("aria-hidden", "true");
     CALL = D.createElement("div"); CALL.id = "tipcall"; CALL.className = "leaflet-control";
@@ -205,17 +245,30 @@
     draw(1);
     return true;
   }
-  /* shows step "at"; a step with nothing on screen is skipped in the direction of travel (dir) */
+  /* clears what hides the steps, waits for the sheet to settle when something moved (its height eases over 0.2 s), then shows
+     step "at" */
   function draw(dir) {
+    clearTimeout(waitT);
+    if (clearView(keepToday)) {
+      CALL.style.visibility = "hidden"; SPOT.classList.add("nohole");
+      waitT = setTimeout(function () { if (CALL) { clearView(keepToday); render(dir); } }, 260);
+      return;
+    }
+    render(dir);
+  }
+  /* shows step "at"; a step with nothing on screen is skipped in the direction of travel (dir) */
+  function render(dir) {
+    CALL.style.visibility = "";
     while (at >= 0 && at < steps.length) {
       var s = steps[at]; s._fold = false;
       stepEl = (s.tool || s.card || s.sel) ? find(s) : null;
       if (stepEl || !(s.tool || s.card || s.sel) || single) break;
       at += dir;
     }
-    if (at < 0) { at = 0; return draw(1); }
-    if (at >= steps.length) { close(); return; }
+    if (at < 0) { at = 0; return render(1); }
+    if (at >= steps.length) { close(true); return; }
     var s2 = steps[at], last = at === steps.length - 1, n = steps.length;
+    seenStep(s2, last);
     var text = s2._fold ? "The toolbar is folded away. Tap the arrow here to open it, then " + s2.t.charAt(0).toLowerCase() + s2.t.slice(1) :
       (!stepEl && (s2.tool || s2.card || s2.sel)) ? s2.t + " (It is not on screen right now.)" : s2.t;
     var openable = single && stepEl && s2.tool && !s2._fold;
@@ -244,27 +297,49 @@
     CALL.style.left = Math.round(Math.max(8, Math.min(vw - cw - 8, x))) + "px";
     CALL.style.top = Math.round(Math.max(8, Math.min(vh - ch - 8, y))) + "px";
   }
+  /* ticks off the step shown: a tour step by its id (and the tour as finished on its last step), a walkthrough by its section */
+  var progFns = [];
+  function seenStep(s, last) {
+    if (kind !== "tour" && kind.indexOf("walk:") !== 0) return;
+    var now = Date.now();
+    upd(function (v) {
+      if (kind === "tour") { v.tourSeen = v.tourSeen || {}; if (s.id) v.tourSeen[s.id] = now; v.tourAt = s.id || ""; if (last) v.tourDone = now; }
+      else { v.walked = v.walked || {}; v.walked[kind.slice(5)] = now; }
+    });
+    progFns.forEach(function (f) { try { f(); } catch (e) {} });
+  }
+  /* what the user has toured: every tour step with when it was seen (0: not yet), the step to resume from, walkthroughs seen */
+  function progress() {
+    var v = st(), seen = v.tourSeen || {}, list = TOUR.map(function (s, i) { return { id: s.id, n: i + 1, name: s.name, seen: seen[s.id] || 0 }; });
+    var next = list.filter(function (x) { return !x.seen; })[0] || null;
+    return { steps: list, seen: list.filter(function (x) { return x.seen; }).length, total: list.length, next: next ? next.n : 0, done: v.tourDone || 0, walked: v.walked || {} };
+  }
   function onCall(e) {
     var t = e.target.closest && e.target.closest("[data-tc]"); if (!t) return;
     var k = t.getAttribute("data-tc");
-    if (k === "x") close();
+    if (k === "x") close(true);
     else if (k === "next") { at++; draw(1); }
     else if (k === "back") { at--; draw(-1); }
     else if (k === "open") { var el = stepEl; close(); if (el) el.click(); }
   }
   function onKey(e) {
     if (!CALL) return;
-    if (e.key === "Escape") { e.stopImmediatePropagation(); e.preventDefault(); close(); }
+    if (e.key === "Escape") { e.stopImmediatePropagation(); e.preventDefault(); close(true); }
     else if (e.key === "Tab") { /* keep focus on the callout while it is open */
       var bs = CALL.querySelectorAll("button"); if (!bs.length) return;
       var i = Array.prototype.indexOf.call(bs, D.activeElement);
       if (i < 0 || (e.shiftKey && i === 0) || (!e.shiftKey && i === bs.length - 1)) { e.preventDefault(); bs[e.shiftKey ? bs.length - 1 : 0].focus(); }
     }
   }
-  function close() {
+  /* back: the user ended the tour (×, Done, Esc), so the list sheet goes back up if the tour lowered it; "Open it" and a new
+     tour leave it down */
+  function close(back) {
     if (!CALL) return;
+    clearTimeout(waitT);
     [CATCH, SPOT, CALL].forEach(function (x) { if (x) x.remove(); });
     CATCH = SPOT = CALL = stepEl = null; steps = [];
+    if (back === true && sheetBack && W.ASAP_PHONE && W.ASAP_PHONE.setSheet && !sheetUp()) W.ASAP_PHONE.setSheet(sheetBack);
+    sheetBack = null;
     D.removeEventListener("keydown", onKey, true); W.removeEventListener("resize", place);
     if (lastFocus && lastFocus.focus && D.contains(lastFocus)) try { lastFocus.focus({ preventScroll: true }); } catch (e) {}
   }
@@ -364,6 +439,8 @@
   var BUSY = '[id$="dlg"],.osplit,#medplan,#epe,#lz-card,#meas-card,#atk-ring,#atk-pop,#tidy-pop,#ibpv,#guidedlg,#kd-sheet,#revdlg,#rvask,#mycc-setup,#tipcall,#atk-om:not([hidden])';
   function busy() {
     if (D.visibilityState === "hidden") return true;
+    /* the phone's list raised over the map: the user is reading it, and map tips would point under it */
+    if (!todayOpen() && sheetUp()) return true;
     return Array.prototype.some.call(D.querySelectorAll(BUSY), function (el) { return vis(el); });
   }
   function on() { return !st().off; }
@@ -401,8 +478,16 @@
     D.body.appendChild(CARD); placeCard();
     clearTimeout(cardTimer); cardTimer = setTimeout(cardOff, 45e3);
   }
-  function tour() { cardOff(); upd(function (v) { v.tourOffered = v.tourOffered || Date.now(); v.tour = Date.now(); }); return spot(TOUR, { title: "Tour of OSAP" }); }
-  function walk(id) { var w = WALKS[id]; if (!w) return false; cardOff(); return spot(w, { title: "Show me in the app", single: w.length === 1 }); }
+  /* from: a step number (1 to 12) to start at, "resume" for the first step not seen yet (the start once all are seen), or
+     nothing for the start */
+  function tour(from) {
+    cardOff(); upd(function (v) { v.tourOffered = v.tourOffered || Date.now(); v.tour = Date.now(); });
+    var i = 0;
+    if (from === "resume") { var p = progress(); i = p.next ? p.next - 1 : 0; }
+    else if (typeof from === "number" && from >= 1) i = Math.min(TOUR.length, Math.floor(from)) - 1;
+    return spot(TOUR, { title: "Tour of OSAP", kind: "tour", at: i });
+  }
+  function walk(id) { var w = WALKS[id]; if (!w) return false; cardOff(); return spot(w, { title: "Show me in the app", single: w.length === 1, kind: "walk:" + id }); }
 
   /* the tools the user presses: recorded (time only, this device) so tips favor tools not used yet, and follow-ups queue */
   D.addEventListener("click", function (e) {
@@ -425,6 +510,8 @@
     tips: function () { return TIPS.map(function (t) { return { id: t.id, ctx: t.ctx, after: t.after || "", tool: [].concat(t.tool || []), card: t.card || "", sel: t.sel || "", guide: t.guide || "", text: t.t.replace(/<[^>]+>/g, "") }; }); },
     walks: function () { return Object.keys(WALKS); },
     tourSteps: function () { return TOUR.length; },
+    progress: progress,
+    onProgress: function (fn) { if (typeof fn === "function") progFns.push(fn); },
     /* tests: run the check now, without the waits at the start of a visit and after the last tap */
     check: function () { tick(true); }
   };

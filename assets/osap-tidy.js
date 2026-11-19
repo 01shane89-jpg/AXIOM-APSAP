@@ -148,7 +148,7 @@
     if (W.OSAP_GUIDE) h += '<button type="button" role="menuitem" data-tp="@guide">User guide</button>';
     /* tips that suggest a tool now and then, and the tour of the toolbar (assets/osap-tips.js) */
     if (W.OSAP_TIPS) h += '<label class="tpchk"><input type="checkbox" data-tset="tips"' + (W.OSAP_TIPS.on() ? " checked" : "") + '> Show tips<span>Suggests a tool now and then</span></label>' +
-      '<button type="button" role="menuitem" data-tp="@tour">Take the tour</button>';
+      tourItem();
     /* areas hidden from everyone but the owner, unlocked with Face ID (assets/osap-lock.js) */
     if (W.OSAP_LOCK) h += '<button type="button" role="menuitem" data-tp="@lock">Hidden areas</button>';
     /* the paywall's plans and sign-in, only on the Netlify site (assets/osap-tier.js) */
@@ -165,6 +165,13 @@
     box.innerHTML = h;
     if (theme) box.querySelector(".tptheme").appendChild(theme);
     return box;
+  }
+  /* Take the tour, with how far the user got: it resumes at the first step not seen (the guide's "Your tour" lists them all) */
+  function tourItem() {
+    var P = W.OSAP_TIPS.progress ? W.OSAP_TIPS.progress() : null, sub = "";
+    if (P && P.seen && P.next) sub = "<span>Seen " + P.seen + " of " + P.total + ". Resumes at " + P.steps[P.next - 1].name.replace(/[&<>"]/g, "") + "</span>";
+    else if (P && P.seen) sub = "<span>All " + P.total + " steps seen. Starts again</span>";
+    return '<button type="button" role="menuitem" data-tp="@tour">Take the tour' + sub + "</button>";
   }
   var popFor = null;
   function popClose() {
@@ -234,7 +241,7 @@
     else if (sel === "@mycc") { if (W.OSAP_MYCC) W.OSAP_MYCC.openSetup(); }
     else if (sel === "@install") { if (W.OSAP_INSTALL) W.OSAP_INSTALL.open(); }
     else if (sel === "@guide") { if (W.OSAP_GUIDE) W.OSAP_GUIDE.open(); }
-    else if (sel === "@tour") { if (W.OSAP_TIPS) W.OSAP_TIPS.tour(); }
+    else if (sel === "@tour") { if (W.OSAP_TIPS) W.OSAP_TIPS.tour("resume"); }
     else if (sel === "@lock") { if (W.OSAP_LOCK) W.OSAP_LOCK.open(); }
     else if (sel === "@plan") { if (W.OSAP_TIER) W.OSAP_TIER.open(); }
     else if (sel === "@reviews") { if (W.OSAP_REVIEWS) W.OSAP_REVIEWS.open(); }

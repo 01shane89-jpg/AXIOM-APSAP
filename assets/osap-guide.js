@@ -375,7 +375,9 @@
         b("Show me") + " rings the tool on screen and " + b("Open it") + " opens it. " + b("Next tip") + " shows another, " + b("More in the guide") + " opens this guide at the right place.",
         "Tips never cover an open window, plan or menu, never come while you are tapping or typing, and come a few times a visit at most. They keep coming until you turn them off: press " + b("Turn off tips") + " on a tip, or untick " + b("Show tips") + " in Settings.",
         b("Take the tour") + " in Settings rings each toolbar button in turn and says what it is for. Most sections of this guide have " + b("Show me in the app") + ", which does the same for that feature.",
-        "What you have seen and used is kept on this device only, never sent anywhere."]) },
+        "What you have seen and used is kept on this device only, never sent anywhere.",
+        b("Your tour") + ", below, ticks off each tour step you have seen. " + b("Resume") + " picks up at the first step you have not seen, and you can tap any step to start there. A " + b("Show me in the app") + " button you have used shows a tick."]) +
+      '<div class="gtour" data-gtour></div>' },
 
     { id: "reading", t: "Reading what you see", h:
       "<h3>Reports are claims</h3>" +
@@ -422,16 +424,17 @@
       '<p class="gnone" hidden>Nothing in the guide matches that.</p>' +
       S.map(function (s) {
         /* "Show me in the app": the tips' ring walks through this feature's buttons (assets/osap-tips.js) */
-        var walk = W.OSAP_TIPS && W.OSAP_TIPS.hasWalk(s.id) ? '<button type="button" class="gshow" data-gwalk="' + s.id + '">Show me in the app</button>' : "";
+        var walk = W.OSAP_TIPS && W.OSAP_TIPS.hasWalk(s.id) ? '<button type="button" class="gshow" data-gwalk="' + s.id + '"><span class="gtxt">Show me in the app</span></button>' : "";
         return '<section class="gsec" data-gsec="' + s.id + '"><h2>' + esc(s.t) + "</h2>" + walk + s.h + '<a href="#" class="gtop" data-gto="top">Back to contents</a></section>'; }).join("") +
       "</div>";
     D.body.appendChild(box);
     /* a picture that has not been saved yet is left out rather than shown broken */
     Array.prototype.forEach.call(box.querySelectorAll(".gfig img"), function (im) { im.addEventListener("error", function () { var f = im.closest("figure"); if (f) f.hidden = true; }); });
     box.addEventListener("click", function (e) {
-      var t = e.target.closest && e.target.closest("[data-g],[data-gto],[data-gwalk]"); if (!t) return;
+      var t = e.target.closest && e.target.closest("[data-g],[data-gto],[data-gwalk],[data-gtgo]"); if (!t) return;
       e.preventDefault();
       if (t.hasAttribute("data-gwalk")) { if (W.OSAP_TIPS) W.OSAP_TIPS.walk(t.getAttribute("data-gwalk")); return; }
+      if (t.hasAttribute("data-gtgo")) { var gv = t.getAttribute("data-gtgo"); if (W.OSAP_TIPS) W.OSAP_TIPS.tour(gv === "resume" ? "resume" : +gv); return; }
       var g = t.getAttribute("data-g"), to = t.getAttribute("data-gto");
       if (g === "close") close();
       else if (g === "print") print();
@@ -442,6 +445,30 @@
     var find = box.querySelector(".gfind");
     find.addEventListener("input", function () { filter(find.value); });
     style();
+  }
+  /* "Your tour": each tour step ticked or not, Resume and Start again; and a tick on each Show me in the app already used.
+     Read from the tips' progress (this device only) each time the guide opens. */
+  function progress() {
+    var T = W.OSAP_TIPS && W.OSAP_TIPS.progress ? W.OSAP_TIPS.progress() : null, el = box && box.querySelector("[data-gtour]");
+    if (!T || !el) return;
+    var resume = T.next ? T.steps[T.next - 1] : null, h = "<h3>Your tour</h3>";
+    h += '<p class="gtsum" role="status">' + (T.seen === 0 ? "You have not taken the tour yet. It has " + T.total + " steps." :
+      T.seen === T.total ? "You have seen all " + T.total + " steps of the tour." : "You have seen " + T.seen + " of " + T.total + " steps. The ones without a tick are still to see.") + "</p>";
+    h += '<div class="gtbtns">' + (T.seen === 0 ? '<button type="button" class="gshow gtgo1" data-gtgo="1">Take the tour</button>' :
+      resume ? '<button type="button" class="gshow gtgo1" data-gtgo="resume">Resume at step ' + resume.n + ": " + esc(resume.name) + "</button>" +
+        '<button type="button" class="gshow" data-gtgo="1">Start again</button>' : '<button type="button" class="gshow gtgo1" data-gtgo="1">Take it again</button>') + "</div>";
+    h += '<ol class="gtlist" aria-label="Tour steps">' + T.steps.map(function (x) {
+      return '<li class="' + (x.seen ? "seen" : "") + '"><button type="button" data-gtgo="' + x.n + '"><span class="gtk" aria-hidden="true">' + (x.seen ? "&#10003;" : "") + "</span>" +
+        '<span class="gtn">' + x.n + ".</span> " + esc(x.name) + '<span class="gts">' + (x.seen ? "Seen" : "Not seen") + "</span></button></li>";
+    }).join("") + "</ol>";
+    var walks = box.querySelectorAll("[data-gwalk]"), nw = 0;
+    Array.prototype.forEach.call(walks, function (b) {
+      var done = !!T.walked[b.getAttribute("data-gwalk")]; if (done) nw++;
+      b.classList.toggle("gseen", done);
+      b.setAttribute("aria-label", "Show me in the app" + (done ? " (seen)" : ""));
+    });
+    h += '<p class="gtsum">' + b("Show me in the app") + ": used in " + nw + " of " + walks.length + " sections.</p>";
+    el.innerHTML = h;
   }
   function go(id) {
     var body = box.querySelector(".gbody");
@@ -463,6 +490,7 @@
     if (!box) build();
     lastFocus = D.activeElement;
     box.hidden = false; D.documentElement.classList.add("guide-open");
+    progress();
     var x = box.querySelector(".gx"); if (x) x.focus({ preventScroll: true });
     if (id) go(id); else box.querySelector(".gbody").scrollTop = 0;
   }
@@ -504,11 +532,22 @@
       "#guidedlg .gnone{color:var(--muted,#56626F)}" +
       "#guidedlg .gshow{display:inline-flex;align-items:center;min-height:40px;margin:0 0 4px;padding:0 14px;border:1px solid var(--accent,#1D5A86);border-radius:999px;background:none;color:var(--accent,#1D5A86);font:inherit;font-size:14px;font-weight:600;cursor:pointer}" +
       "@media (pointer:coarse){#guidedlg .gshow{min-height:44px}}" +
+      "#guidedlg .gshow.gseen .gtxt::after{content:'\\2713';margin-left:8px}" +
+      "#guidedlg .gtour{margin-top:10px;padding:10px 12px;border:1px solid var(--line,#C9D1DA);border-radius:10px;background:var(--surface2,#E7EBF0)}" +
+      "#guidedlg .gtour h3{margin:0 0 4px}#guidedlg .gtsum{margin:4px 0 8px;font-size:14px}" +
+      "#guidedlg .gtbtns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}#guidedlg .gtgo1{background:var(--accent,#1D5A86);color:var(--on-accent,#fff)}" +
+      "#guidedlg .gtlist{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:4px}" +
+      "#guidedlg .gtlist li{margin:0}#guidedlg .gtlist button{display:flex;align-items:center;gap:6px;width:100%;min-height:44px;padding:4px 10px;font:inherit;font-size:14px;text-align:left;" +
+      "border:1px solid var(--line,#C9D1DA);border-radius:8px;background:var(--surface,#fff);color:var(--ink,#1A2129);cursor:pointer}" +
+      "#guidedlg .gtk{flex:none;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:2px solid var(--muted,#56626F);font-size:12px;font-weight:700;box-sizing:border-box}" +
+      "#guidedlg .gtlist li.seen .gtk{background:var(--accent,#1D5A86);border-color:var(--accent,#1D5A86);color:var(--on-accent,#fff)}" +
+      "#guidedlg .gtn{color:var(--muted,#56626F);font-variant-numeric:tabular-nums}" +
+      "#guidedlg .gts{margin-left:auto;padding-left:6px;white-space:nowrap;font-size:12px;color:var(--muted,#56626F)}" +
       /* print: only the guide, all of it, in ink on paper */
       "@media print{html.guide-open body>*:not(#guidedlg){display:none!important}" +
       "html.guide-open #guidedlg{position:static;display:block;background:#fff;color:#000}" +
       "html.guide-open #guidedlg .gbody{overflow:visible;padding:0;font-size:11pt}" +
-      "html.guide-open #guidedlg .gbtn,html.guide-open #guidedlg .gx,html.guide-open #guidedlg .gfind,html.guide-open #guidedlg .gtop,html.guide-open #guidedlg .gshow{display:none}" +
+      "html.guide-open #guidedlg .gbtn,html.guide-open #guidedlg .gx,html.guide-open #guidedlg .gfind,html.guide-open #guidedlg .gtop,html.guide-open #guidedlg .gshow,html.guide-open #guidedlg .gtour{display:none}" +
       "html.guide-open #guidedlg .gtoc a{background:none;padding:0 6px;min-height:0}" +
       "html.guide-open #guidedlg .gsec{break-inside:auto}html.guide-open #guidedlg .gsec>h2{break-after:avoid}" +
       "html.guide-open #guidedlg .gfig{break-inside:avoid;float:right;width:56mm;margin:0 0 3mm 5mm}html.guide-open #guidedlg .gfig img{max-width:100%;max-height:105mm;width:auto}" +
