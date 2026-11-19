@@ -3,6 +3,9 @@
 // rings it and Open it presses it; Next tip shows another; a tool just used queues its follow-up; tips never show over an open
 // window; Turn off tips stops them and Settings turns them back on; every tip names a real toolbar button and a real guide
 // section; the guide's Show me in the app opens the ring; the card and the ring fit a phone. Desktop and phone.
+// Covered targets (Kelsea's iPhone, 19 Nov: the timeline sheet was up and step 2 ringed a news row): with the phone's list sheet
+// raised, a menu open or an info box open, every step's ring sits on its own button with nothing over it; Esc puts the sheet
+// back; no tip or tour offer shows while the sheet is raised.
 // Run from the repo root: node tests/tips_smoke.mjs   (needs the playwright package and Chromium)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -33,6 +36,32 @@ async function page(vp, phone) {
   return { p, ctx, errs };
 }
 const card = (p) => p.evaluate(() => { const c = document.getElementById("tipcard"); return c ? c.getAttribute("data-tip") : null; });
+/* each tour step: the ring, the text and whether the button the ring is round is the top thing on screen there */
+async function walkTour(p, tap) {
+  const out = [];
+  for (let i = 0; i < 20; i++) {
+    await p.waitForFunction(() => { const c = document.getElementById("tipcall"); return !c || c.style.visibility !== "hidden"; }, null, { timeout: 5000 });
+    await p.waitForTimeout(300); // the ring eases to its button over 0.18 s
+    const s = await p.evaluate(() => {
+      const c = document.getElementById("tipcall"); if (!c) return null;
+      const sp = document.getElementById("tipspot"), r = sp.getBoundingClientRect(), hole = !sp.classList.contains("nohole");
+      let top = null, target = null;
+      if (hole) {
+        const x = r.left + r.width / 2, y = r.top + r.height / 2;
+        const t = document.elementsFromPoint(x, y).find((e) => !e.closest("#tipcall,#tipspot,#tipcatch,#tipcard"));
+        const b = t && t.closest("button,[role=button],a,select");
+        top = b ? (b.getAttribute("aria-label") || b.id || b.textContent.trim().slice(0, 20)) : (t ? t.tagName + "#" + t.id + "." + String(t.className).slice(0, 20) : null);
+        target = !!(b && (b.closest("#atk-tools") || b.closest("header") || /^tidy-/.test(b.id)));
+      }
+      return { n: (c.querySelector(".tipn") || {}).textContent, text: c.querySelector("p").textContent, hole, top, target, sheet: document.documentElement.getAttribute("data-sheet") };
+    });
+    if (!s) break;
+    out.push(s);
+    const nx = p.locator('#tipcall [data-tc="next"]');
+    if (await nx.count()) { if (tap) await nx.tap(); else await nx.click(); } else break;
+  }
+  return out;
+}
 const inside = (a, b, pad = 6) => a && b && a.left <= b.left + pad && a.top <= b.top + pad && a.right >= b.right - pad && a.bottom >= b.bottom - pad;
 
 /* ---------- desktop ---------- */
@@ -174,6 +203,15 @@ const inside = (a, b, pad = 6) => a && b && a.left <= b.left + pad && a.top <= b
   await p.click('#tidy-pop [data-tp="@tour"]');
   ok(await p.evaluate(() => !!document.getElementById("tipcall")), "Settings, Take the tour starts the tour");
   await p.keyboard.press("Escape");
+  // a menu left open over the toolbar closes before the ring is drawn; every ring sits on its own button
+  await p.evaluate(() => document.getElementById("tidy-set").click());
+  ok(await p.evaluate(() => !document.getElementById("tidy-pop").hidden), "the Settings menu is open");
+  await p.evaluate(() => window.OSAP_TIPS.tour());
+  const dm = await walkTour(p);
+  ok(await p.evaluate(() => document.getElementById("tidy-pop").hidden), "the tour closes the open menu");
+  ok(dm.length === 12, "the desktop tour shows all 12 steps", dm.map((s) => s.n));
+  ok(dm.slice(0, -1).every((s) => s.hole && s.target), "desktop: every ring is on its own button, nothing over it", dm.map((s) => s.n + " " + s.top));
+  await p.keyboard.press("Escape");
   ok(errs.length === 0, "no page errors (desktop)", errs);
   await ctx.close();
 }
@@ -196,6 +234,34 @@ const inside = (a, b, pad = 6) => a && b && a.left <= b.left + pad && a.top <= b
   ok(n >= 6, "the tour runs on a phone", n);
   ok(off.length === 0, "every callout fits the phone screen", off);
   await p.keyboard.press("Escape");
+
+  // the list sheet raised over the map (as on Kelsea's iPhone): no tip or offer over it
+  await p.evaluate(() => { localStorage.removeItem("osap-tips"); window.ASAP_PHONE.setSheet("full"); });
+  await p.waitForTimeout(400);
+  await p.evaluate(() => window.OSAP_TIPS.check());
+  ok(await card(p) === null, "no tip or tour offer while the phone's list sheet is raised");
+  // the tour drops the sheet to its bar, and every ring sits on its own button
+  await p.evaluate(() => window.OSAP_TIPS.tour());
+  const ph = await walkTour(p, true);
+  ok(ph.length === 12, "the phone tour shows all 12 steps with the list raised", ph.map((s) => s.n));
+  ok(ph.every((s) => s.sheet === "bar"), "the sheet is down for every step", ph.map((s) => s.sheet));
+  ok(/Search/.test(ph[1].text) && ph[1].top === "Search", "step 2 rings the Search button, not a news row", ph[1]);
+  ok(ph.slice(0, -1).every((s) => s.hole && s.target), "phone: every ring is on its own button, nothing over it", ph.map((s) => s.n + " " + s.top));
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(300);
+  ok(await p.evaluate(() => document.documentElement.getAttribute("data-sheet")) === "full", "closing the tour puts the list sheet back");
+  // half height, and a single Show me: the same
+  await p.evaluate(() => window.ASAP_PHONE.setSheet("half"));
+  await p.waitForTimeout(400);
+  await p.evaluate(() => window.OSAP_TIPS.walk("watch"));
+  const w1 = await walkTour(p, true);
+  ok(w1.length === 1 && w1[0].hole && w1[0].top === "Watch" && w1[0].sheet === "bar", "Show me with the list at half height rings Watch", w1);
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(300);
+  await p.evaluate(() => { window.ASAP_PHONE.setSheet("bar"); localStorage.removeItem("osap-tips"); });
+  await p.waitForTimeout(300);
+  await p.evaluate(() => window.OSAP_TIPS.check());
+  ok(await card(p) === "tour", "with the list down the tour is offered");
   ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), "no sideways scroll");
   ok(errs.length === 0, "no page errors (phone)", errs);
   await ctx.close();
