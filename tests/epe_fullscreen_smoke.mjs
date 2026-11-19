@@ -47,10 +47,14 @@ for (const vp of [{ width: 1280, height: 800, tag: "laptop" }, { width: 390, hei
   const a = await rect(p, "#map");
   ok(!(await p.evaluate(() => document.documentElement.classList.contains("epe-mapfs"))) && !(await p.isVisible("#epe-fsx")) && Math.abs(a.w - before.w) < 2 && Math.abs(a.t - before.t) < 2, vp.tag + ": Exit brings the layout back");
   if (vp.width > 700) {
-    await p.evaluate(() => window.OSAP_SPLIT && window.OSAP_SPLIT.stop(document.getElementById("epe"), "full")); await p.waitForTimeout(500);
+    await p.evaluate(() => window.OSAP_SPLIT.stop(document.getElementById("epe"), "full")); await p.waitForTimeout(400);
+    const e0 = await rect(p, "#epe");
+    ok(e0 && e0.w < vp.width * 0.7, vp.tag + ": the planner opens as the side panel, the map still in view (" + Math.round(e0.w) + " wide)");
+    await p.click('#epe .osheet-h .osh-b button:text-is("Full")'); await p.waitForTimeout(500);
     const e = await rect(p, "#epe");
     ok(e && Math.abs(e.l) < 1 && Math.abs(e.t) < 1 && Math.abs(e.w - vp.width) < 2 && Math.abs(e.h - vp.height) < 2, vp.tag + ": Full covers the whole window (" + JSON.stringify(e) + ")");
   }
+  if (vp.width > 700) { await p.click('#epe .osheet-h .osh-b button:text-is("Half")'); await p.waitForTimeout(400); const e2 = await rect(p, "#epe"); ok(e2 && e2.w < vp.width * 0.7, vp.tag + ": Half puts it back beside the map"); }
   /* closing the planner leaves map full screen too */
   await p.evaluate(() => document.querySelector('#epe [data-ep="mapfs"]') && document.querySelector('#epe [data-ep="mapfs"]').click()); await p.waitForTimeout(200);
   await p.evaluate(() => window.OSAP_EPE.close && window.OSAP_EPE.close()); await p.waitForTimeout(200);
