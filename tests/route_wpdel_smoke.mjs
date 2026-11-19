@@ -45,8 +45,14 @@ for (const vp of [{ width: 1400, height: 900, tag: "desktop" }, { width: 390, he
   ok((await p.evaluate(() => window.OSAP_ROUTETAB.state().wps.length)) === 3, vp.tag + ": three waypoints planned");
   const n0 = asked.length;
   /* open B's popup (the middle marker) the way a tap does */
+  const cA = await p.evaluate(() => { const c = __asapMap.getCenter(); return [c.lat, c.lng]; });
   await p.evaluate(() => { const b = [...document.querySelectorAll(".rtv")].find((x) => x.textContent === "B"); b.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
   await p.waitForSelector(".leaflet-popup [data-wpdel]", { timeout: 5000 });
+  /* the user's own waypoint stays put, so "Delete waypoint" is not moving when it is tapped (centering it moved the button away
+     and the tap then landed on the map, which closed the pop-up and kept the waypoint, on slow runners) */
+  await p.waitForTimeout(700);
+  const cB = await p.evaluate(() => { const c = __asapMap.getCenter(); return [c.lat, c.lng]; });
+  ok(Math.abs(cB[0] - cA[0]) < 1e-4 && Math.abs(cB[1] - cA[1]) < 1e-4, vp.tag + ": the map stays put when the waypoint pop-up opens");
   const pop = await p.evaluate(() => ({ h: document.querySelector(".leaflet-popup h3").textContent, b: document.querySelector(".leaflet-popup [data-wpdel]").textContent }));
   ok(/Delete waypoint/.test(pop.b), vp.tag + ": waypoint popup (" + pop.h + ") offers " + pop.b);
   if (OUT) await p.screenshot({ path: OUT + "/wpdel-" + vp.tag + ".png" });
