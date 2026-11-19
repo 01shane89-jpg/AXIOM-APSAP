@@ -1123,6 +1123,100 @@
       .then(function () { setTimeout(function () { W.OSAP_PDF.print({ title: "Evacuation route package: " + pk.name, root: w.document.body, win: w }); }, 300); });
   }
 
+  /* ---------- the plan as a CONOP (Shane 19 Nov: "i want to be able to export this info as a CONOP") ----------
+     The standard five paragraphs (situation, mission, execution, sustainment, command and signal) filled from the plan as it
+     stands: routes by PACE role, phases from the primary route's checkpoints and phase lines, the analyst's control measures,
+     ground-to-air signals, fuel and air options, and the ground. OSAP fills only what the plan holds; intent, timings, triggers,
+     who and how many stay as [bracketed] blanks for the planner. A draft, never an approved order. PDF (print) or Word. */
+  function conopHtml(pl, word) {
+    var nm = pl.name || "Evacuation plan", og = pl.origin, now = Date.now(), g = pl.geo && pl.geo.t ? pl.geo.t : {};
+    var opts = pl.opts.slice().sort(function (a, b) { return (ROLES.indexOf(a.role) + 1 || 9) - (ROLES.indexOf(b.role) + 1 || 9); });
+    var P = opts.filter(function (o) { return o.role === "P"; })[0] || opts[0];
+    var list = cms(pl).filter(okCm), b = blk(pl);
+    function blank(t) { return '<span class="bl">[' + E(t) + "]</span>"; }
+    function rn(o) { return (o.role ? o.role + " (" + ROLE_N[o.role] + ") route" : "Route") + " to " + o.dest.i.name; }
+    var ogl = og.label && og.label.replace(/\s+/g, "") !== grid(og.lat, og.lon).replace(/\s+/g, "") ? og.label : "";
+    function tbl(head, rows) { return rows.length ? "<table><tr>" + head.map(function (x) { return "<th>" + E(x) + "</th>"; }).join("") + "</tr>" + rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>" : ""; }
+    function li(a) { return a.length ? "<ul>" + a.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>" : ""; }
+    var kindOf = function (k) { return list.filter(function (x) { return x.k === k; }); };
+    var h = "<!doctype html><html><head><meta charset=\"utf-8\"><title>CONOP " + E(nm) + "</title><style>body{font:12px/1.45 system-ui,Arial,sans-serif;margin:18px;color:#111}h1{font-size:17px;margin:0 0 4px}" +
+      "h2{font-size:14px;margin:16px 0 4px;border-bottom:2px solid #333}h3{font-size:12.5px;margin:10px 0 2px}table{border-collapse:collapse;width:100%;margin:4px 0}th,td{border:1px solid #999;padding:3px 5px;text-align:left;vertical-align:top}" +
+      "th{background:#eee}.n{color:#444;font-size:11px}.bl{color:#8a1c1c;font-weight:600}.m{font-family:ui-monospace,Consolas,monospace}.dr{border:2px solid #8a1c1c;padding:6px 8px;margin:8px 0;color:#5f1410}figure{margin:6px 0}svg{max-width:100%;height:auto}</style></head><body>" +
+      "<h1>CONCEPT OF OPERATIONS (CONOP): " + E(nm) + "</h1>" +
+      "<p class=\"n\">Prepared " + E(dual(now, true)) + ". Plan worked out " + E(dual(pl.calc, true)) + ". Country: " + E(pl.ccName || "") + ".</p>" +
+      "<p class=\"dr\"><b>DRAFT.</b> Filled by OSAP from this evacuation plan and open data; not approved. Items in " + blank("brackets") + " are for the planner. Route statuses are proposals unless marked set by the analyst. Nothing here says a route, crossing or destination is open or safe: confirm with the post and on the ground.</p>";
+    /* 1. Situation */
+    var inc = opts.map(function (o) { return E(rn(o)) + ": " + (o.exp ? E(o.exp.n) + " report" + (o.exp.n === 1 ? "" : "s") + " OSAP holds near the line in the last " + E(pl.days) + " days" : "incidents not counted"); });
+    var posts = []; opts.forEach(function (o) { ((o.along && o.along.us && o.along.us.list) || []).forEach(function (u) { if (posts.indexOf(u.name) < 0) posts.push(u.name); }); });
+    h += "<h2>1. SITUATION</h2><h3>a. Area of operations</h3><p>Origin: <b>" + E(ogl) + "</b> <span class=\"m\">" + E(grid(og.lat, og.lon)) + "</span> (" + E(og.how) + ")." + (g.origin ? " " + E(g.origin) : "") + "</p>" +
+      "<h3>b. Threat</h3>" + li(inc) + "<p>" + blank("Planner's threat assessment") + "</p><p class=\"n\">Report counts are what OSAP holds near each line; they are not a threat assessment.</p>" +
+      "<h3>c. Friendly forces and support</h3>" + (posts.length ? "<p>Posts and safe places along the routes (not verified as evacuation destinations): " + E(posts.slice(0, 12).join("; ")) + ".</p>" : "") + "<p>" + blank("Supporting units, agencies and the post's evacuation contacts") + "</p>" +
+      "<h3>d. Assumptions and constraints</h3><p>Blocked directions (analyst): <b>" + E(DIRS.filter(function (d) { return b[d[0]]; }).map(function (d) { return d[1]; }).join(", ") || "none marked") + "</b>." +
+      (kindOf("avoid").length ? " Areas to avoid: " + E(kindOf("avoid").map(function (x) { return x.name; }).join(", ")) + "." : "") + "</p><p>" + blank("Assumptions") + "</p>";
+    /* 2. Mission */
+    h += "<h2>2. MISSION</h2><p>" + blank("Who") + " evacuates " + blank("number") + " personnel from " + E(ogl ? ogl + " (" + grid(og.lat, og.lon) + ")" : grid(og.lat, og.lon)) + " to <b>" + E(P ? P.dest.i.name : "") + "</b>" + (P ? "" : blank("destination")) +
+      (P ? " by the " + E(P.role ? ROLE_N[P.role].toLowerCase() + " " : "") + "route (" + E(dist(P.route.m)) + ", about " + E(dur(P.route.s)) + ")" : "") + " not later than " + blank("date-time group") + " in order to " + blank("purpose") + ".</p>";
+    /* 3. Execution */
+    h += "<h2>3. EXECUTION</h2><h3>a. Commander's intent</h3><p>Purpose: " + blank("purpose") + "<br>Key tasks: " + blank("key tasks") + "<br>End state: " + blank("all personnel accounted for at the destination") + "</p>";
+    h += "<h3>b. Concept of operations</h3>";
+    if (P) {
+      var along = cmAlong(P, pl).filter(function (r) { return r.near && isFinite(r.km) && r.cm.k !== "avoid" && r.cm.k !== "corr"; });
+      var cps = (P.cps || []).map(function (q) { return { km: q.km, t: cpNm(P, q) + (q.st === "proposed" ? " (proposed)" : ""), g: grid(q.lat, q.lon) }; });
+      var steps = cps.concat(along.map(function (r) { return { km: r.km, t: r.cm.name + (r.cm.land && r.cm.land.name ? " = " + r.cm.land.name : "") + " (" + CM[r.cm.k].n.toLowerCase() + ")", g: CM[r.cm.k].g === "pt" ? grid(r.cm.pts[0][0], r.cm.pts[0][1]) : r.txt }; })).sort(function (x, y) { return x.km - y.km; });
+      var rally = kindOf("pt").concat(kindOf("gxp")).map(function (x) { return E(x.name) + " <span class=\"m\">" + E(grid(x.pts[0][0], x.pts[0][1])) + "</span>"; });
+      var axp = kindOf("axp").map(function (x) { return E(x.name) + " <span class=\"m\">" + E(grid(x.pts[0][0], x.pts[0][1])) + "</span>"; });
+      h += "<p><b>Phase I, Preparation.</b> Personnel assemble at the origin, " + E(ogl || grid(og.lat, og.lon)) + ". " + (rally.length ? "Rally points and ground extraction points: " + rally.join("; ") + ". " : "") + blank("accountability, load plan, start time") + "</p>" +
+        (P.role !== "P" ? '<p class="dr">No route has the P (primary) role yet, so this CONOP follows OSAP\'s first option. Set roles in OSAP (Use suggested roles) and export again.</p>' : "") +
+        "<p><b>Phase II, Movement.</b> Move by the " + E(rn(P)) + " (" + E(P.label) + ", " + E(dist(P.route.m)) + ", about " + E(dur(P.route.s)) + ")." + (g["r:" + P.id] ? " " + E(g["r:" + P.id]) : "") + " Report at each checkpoint and phase line.</p>" +
+        tbl(["km", "Checkpoint or control measure", "Where"], steps.map(function (s) { return [E(s.km), E(s.t), '<span class="m">' + E(s.g) + "</span>"]; })) +
+        "<p><b>Phase III, Arrival.</b> Arrive at " + E(P.dest.i.name) + (g["d:" + P.id] ? ". " + E(g["d:" + P.id]) : "") + "." + (axp.length ? " Air extraction points: " + axp.join("; ") + "." : "") + " " + blank("reception and handover") + "</p>" +
+        "<p><b>Phase IV, Handover and recovery.</b> " + blank("onward movement, accountability report") + "</p>";
+    } else h += "<p>" + blank("No route options in this plan") + "</p>";
+    h += "<h3>c. Routes (PACE)</h3>" + tbl(["Role", "Destination", "Route", "Distance", "Time", "Heading", "Status"], opts.map(function (o) { var hd = heading(o, pl); return [E(o.role ? o.role + " " + ROLE_N[o.role] : "None"), E(o.dest.i.name), E(o.label), E(dist(o.route.m)), E(dur(o.route.s)), E(hd.c + " " + hd.b + "°"), "<b>" + E(stOf(o)) + "</b> " + E(o.st ? "(set by the analyst)" : "(OSAP proposal)")]; })) +
+      "<p>Triggers to change route: " + blank("conditions that move the party from P to A, C or E") + "</p>";
+    var legRows = []; opts.forEach(function (o) { var ls = legsOf(o); if (ls.length > 1) ls.forEach(function (l, i) { legRows.push([E(o.role || "–"), E(i + 1), E(l.a.name), E(l.b.name), E(flies(l.mode) ? (LEG_M.filter(function (m) { return m[0] === l.mode; })[0] || [0, l.mode])[1] : "By road"), E(dist(l.m || 0)), E(dur(l.s))]); }); });
+    if (legRows.length) h += "<h3>d. Legs</h3>" + tbl(["Route", "#", "From", "To", "How", "Distance", "Time"], legRows);
+    var pls = kindOf("pl"), corrs = kindOf("corr");
+    h += "<h3>" + (legRows.length ? "e" : "d") + ". Control measures</h3>" +
+      (pls.length ? "<p><b>Phase lines</b></p>" + tbl(["Phase line", "On the ground", "Crossed on the routes"], pls.map(function (x) { return [E(x.name), E(x.land && x.land.name ? x.land.name + (x.land.kind ? " (" + x.land.kind + ")" : "") : g[x.id] || "drawn by hand"), E(opts.map(function (o) { var xs = plCross(o.route.coords || [], x.pts); return xs.length ? (o.role || o.dest.i.name) + " km " + xs.join(", ") : ""; }).filter(Boolean).join("; ") || "not crossed")]; })) : "") +
+      (corrs.length ? "<p><b>Evacuation corridor</b></p>" + li(corrs.map(function (x) { return "<b>" + E(x.name) + "</b>, " + E(areaKm2(x.pts)) + " km². " + E(g[x.id] || x.how || ""); })) : "") +
+      tbl(["Name", "Kind", "Where"], list.filter(function (x) { return x.k !== "pl" && x.k !== "corr"; }).map(function (x) { var g2 = CM[x.k].g; return ["<b>" + E(x.name) + "</b>", E(CM[x.k].n), '<span class="m">' + E(g2 === "pt" ? grid(x.pts[0][0], x.pts[0][1]) : x.pts.length + " points, " + areaKm2(x.pts) + " km²") + "</span>"]; }));
+    var cpRows = []; opts.forEach(function (o) { (o.cps || []).forEach(function (q) { cpRows.push([E(o.role ? o.role + " " + o.dest.i.name : o.dest.i.name), E(cpNm(o, q)), '<span class="m">' + E(grid(q.lat, q.lon)) + "</span>", E(q.km), E(q.why || ""), E(q.st === "proposed" ? "Proposed by OSAP" : "Checked by the analyst")]); }); });
+    if (cpRows.length) h += "<p><b>Checkpoints on every route</b></p>" + tbl(["Route", "CP", "Grid", "km", "Where", "Status"], cpRows);
+    h += "<h3>" + (legRows.length ? "f" : "e") + ". Coordinating instructions</h3>" + li([
+      "Timings: " + blank("start time, no-later-than times at each phase line"),
+      "Reports: at each checkpoint and phase line, and on any change of route",
+      "Lost contact or separated: " + blank("rally point and wait time"),
+      "Areas to avoid: " + E(kindOf("avoid").map(function (x) { return x.name; }).join(", ") || "none marked")]);
+    /* 4. Sustainment */
+    var sus = [];
+    opts.forEach(function (o) {
+      var s = o.along && o.along.sus, air = (o.air && o.air.list) || [];
+      if (s) sus.push(E(rn(o)) + ": " + E(s.fuel.length) + " fuel stop" + (s.fuel.length === 1 ? "" : "s") + " mapped" + (s.gap ? ", longest stretch without fuel " + E(s.gap.len) + " km (km " + E(s.gap.from) + " to " + E(s.gap.to) + ")" : "") + ".");
+      if (air.length) sus.push(E(rn(o)) + ": air options " + E(air.slice(0, 5).map(function (a) { return a.cls + " " + a.name + " (km " + a.km + ")"; }).join("; ")) + ".");
+    });
+    h += "<h2>4. SUSTAINMENT</h2>" + (sus.length ? li(sus) : "<p class=\"n\">Run Check along the route in OSAP to list fuel and air options.</p>") + "<p>Medical and casualty evacuation: " + blank("plan") + "<br>Water, food, vehicles and fuel: " + blank("plan") + "</p>";
+    /* 5. Command and signal */
+    var gt = kindOf("gtas");
+    h += "<h2>5. COMMAND AND SIGNAL</h2><h3>a. Command</h3><p>" + blank("party leader, alternate, location") + "</p><h3>b. Signal</h3><p>Communications (PACE): " + blank("primary, alternate, contingency, emergency means") + "</p>" +
+      (gt.length ? "<p><b>Ground-to-air signals</b> (ICAO Annex 12 survivor code, each symbol at least 2.5 m long, in contrast with the ground)</p>" + tbl(["Name", "Signal", "Where"], gt.map(function (x) { return ["<b>" + E(x.name) + "</b>", E(gtDesc(x)), '<span class="m">' + E(grid(x.pts[0][0], x.pts[0][1])) + "</span>"]; })) : "") +
+      "<p>Brevity codes and recognition signals: " + blank("plan") + "</p>";
+    /* annexes: the map and the ground */
+    var mp = cmPrint(pl), gp = geoPrint(pl);
+    if (word) mp = mp.replace(/<figure[\s\S]*?<\/figure>/g, "<p class=\"n\">Maps are in the PDF and the KMZ.</p>");
+    h += mp.replace("<h2>Evacuation map</h2>", "<h2>ANNEX A. Evacuation map</h2>") + (gp ? gp.replace("<h2>The ground</h2>", "<h2>ANNEX B. The ground</h2>") : "");
+    return h + '<p class="n">Sources: OpenStreetMap contributors (ODbL), FOSSGIS OSRM and Valhalla, travel.state.gov, OurAirports, UN/LOCODE, and the reports OSAP holds. Built by OSAP; the planner owns every judgment in this order.</p></body></html>';
+  }
+  function conop(word) {
+    var p = S.plan; if (!p) return;
+    var base = "osap-conop-" + fname(p.name || "evacuation-plan") + "-" + new Date().toISOString().slice(0, 10);
+    if (word) { saveFile(base + ".doc", new Blob(["﻿" + conopHtml(p, true)], { type: "application/msword" })); S.svmsg = "CONOP saved to your downloads as a Word file."; render(); return; }
+    var w = W.open("", "_blank");
+    if (!w) { S.svmsg = "The CONOP page was blocked by the browser. Allow pop-ups for this site and try again, or use CONOP Word."; render(); return; }
+    w.document.open(); w.document.write(conopHtml(p, false)); w.document.close();
+    setTimeout(function () { if (W.OSAP_PDF) W.OSAP_PDF.print({ title: "CONOP: " + (p.name || "Evacuation plan"), root: w.document.body, win: w }); else w.print(); }, 1500);
+  }
+
   /* active mode: the P route only and one card that counts down */
   function chainKm(o) { return chain(o).map(function (n) { var ol = onLine(o, [n.lat, n.lon]); return { name: n.name || NODE_N[n.type] || "", type: n.type, lat: n.lat, lon: n.lon, km: n.type === "origin" ? 0 : n.type === "dest" ? Math.round(o.route.m / 100) / 10 : Math.round(ol.at / 100) / 10 }; }); }
   function startActive(id) {
@@ -2191,7 +2285,7 @@
   }
   function saveHtml(p) {
     return '<div class="epesave"><label>Plan name <input type="text" data-ep-pname maxlength="90" value="' + E(p.name || "") + '"></label>' +
-      '<button type="button" data-ep="save">Save plan</button><button type="button" data-ep="pkmz">Export KMZ</button><button type="button" data-ep="pkml">KML</button>' +
+      '<button type="button" data-ep="save">Save plan</button><button type="button" data-ep="pkmz">Export KMZ</button><button type="button" data-ep="pkml">KML</button><button type="button" data-ep="conop">CONOP (PDF)</button><button type="button" data-ep="conopw">CONOP (Word)</button>' +
       '<span class="obs" role="status">' + E(S.svmsg || (p.saved ? "Saved on this device " + dual(p.saved, true) + "." : "Kept on this device.")) + "</span></div>";
   }
   /* every kind of map item the plan draws, switchable; the along-route layers are the same switches as in each option's check */
@@ -2528,6 +2622,7 @@
     else if (b.hasAttribute("data-ep-cpok")) { var ock = optOf(S.sel); if (ock) cpEdit(ock, b.getAttribute("data-ep-cpok"), function (x) { x.st = "checked"; x.by = "you"; x.ok = Date.now(); }); }
     else if (b.hasAttribute("data-ep-cpdel")) { var ocd = optOf(S.sel); if (ocd) { ocd.cps = cpsOf(ocd).filter(function (x) { return x.id !== b.getAttribute("data-ep-cpdel"); }); save(); render(); draw(); } }
     else if (k === "pkmz" || k === "pkml") exportPlan(k === "pkmz");
+    else if (k === "conop" || k === "conopw") conop(k === "conopw");
     else if (k === "showall" || k === "shownone") { SHOW.forEach(function (l) { setShown(l[0], k === "showall"); }); LAYERS.forEach(function (l) { setLay(l[0], k === "showall"); });
       if (S.plan) { folds(S.plan).forEach(function (f) { f.hid = k !== "showall"; }); if (k === "showall") { S.plan.hide = {}; S.plan.opts.forEach(function (o) { o.hid = false; }); } save(); } S.showOpen = true; render(); draw(); }
     else if (b.hasAttribute("data-ep-rm")) { S.rmAsk = b.getAttribute("data-ep-rm"); render(); }
@@ -2763,7 +2858,7 @@
   W.OSAP_EPE = { open: open, close: close, state: function () { return { plan: S.plan, origin: S.origin, busy: S.busy, msg: S.msg, sel: S.sel, drawn: layer ? layer.getLayers().length : 0, lbusy: S.lbusy, lmsg: S.lmsg, dr: S.dr }; },
     /* tests and other modules: place a node on an option as a map tap would */
     addNode: function (optId, type, lat, lon) { var o = optOf(optId); if (o && NODE_N[type]) addNode(o, type, lat, lon); },
-    abusy: function () { return S.abusy || S.pbusy || S.kbusy; }, active: function () { return S.active; }, pkgs: pkgs, kml: function (id) { var pk = pkgOf(id); return pk ? toKml(pk) : ""; }, printHtml: function (id) { var pk = pkgOf(id); return pk ? printHtml(pk) : ""; }, dbusy: function () { return S.dbusy || S.xbusy; }, amsg: function () { return S.amsg; },
+    abusy: function () { return S.abusy || S.pbusy || S.kbusy; }, active: function () { return S.active; }, pkgs: pkgs, kml: function (id) { var pk = pkgOf(id); return pk ? toKml(pk) : ""; }, printHtml: function (id) { var pk = pkgOf(id); return pk ? printHtml(pk) : ""; }, conopHtml: function (w) { return S.plan ? conopHtml(S.plan, !!w) : ""; }, dbusy: function () { return S.dbusy || S.xbusy; }, amsg: function () { return S.amsg; },
     flyOut: function (optId, airId, lat, lon) { var o = optOf(optId); if (o) flyOut(o, airId, [lat, lon]); },
     /* tests: add a control measure as the analyst's taps would (k: cp gxp axp pl corr avoid; pts [[lat, lon]]), read one
        option's measures along it, and whether the direction or area work is running */
