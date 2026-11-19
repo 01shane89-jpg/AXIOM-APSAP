@@ -275,3 +275,4 @@ tests/daily_cites_smoke.mjs
 tests/empty_map_hint_smoke.mjs
 # daily summary: an AI line calling a report confirmed or verified when no cited headline says so is hidden; all-overclaim drafts show the rules top lines
 tests/daily_confirm_smoke.mjs
+tests/split_map_full_smoke.mjs
