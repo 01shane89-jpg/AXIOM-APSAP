@@ -4500,6 +4500,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
      a sheet that opens with the item has settled first. Never while a map tool waits for a tap (the cursor is a crosshair). */
   function mapCenterOn(ll, zoom) {
     if (!ll) return;
+    /* the rule above, kept here too: a report point tapped while a tool waits for its tap (crosshair, or a picking mode) left the
+       map where it was only by luck, through the pop-up path; the report's own path moved it (center_click_smoke, 19 Nov) */
+    if (map.getContainer().style.cursor === "crosshair" || /-picking\b/.test(document.documentElement.className)) return;
     requestAnimationFrame(function () {
       var mc = map.getContainer(), mr = mc.getBoundingClientRect(); if (!mr.width || !mr.height) return;
       var bot = mr.bottom, rail = document.querySelector(".rail");
