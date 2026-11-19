@@ -1,18 +1,29 @@
 // Headless check that every "What to watch" line in Today's daily summary (assets/osap-daily.js) opens what it rests on.
 // Checks on Thailand: every line is a button; a flashpoint line unfolds the reports that mention it (each linking to its
 // original) and folds again; the travel advisory opens the State Department page; a conflict line closes Today and opens
-// its conflict tab; a country brief line closes Today and opens the country brief; the list fits a phone screen; and the
+// its conflict tab; a country brief line (only while the brief is 30 days old or less) closes Today and opens the country brief; the list fits a phone screen; and the
 // page throws nothing. A flashpoint line written before lines carried their reports finds them in data/live/aiwatch.js.
 // The flashpoint checks depend on the live daily summary: on a day with no Flashpoint line for Thailand they are skipped, not failed.
 // External hosts are blocked. Run from the repo root: node tests/watch_links_smoke.mjs   (needs playwright and Chromium)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
+import vm from "node:vm";
 import { chromium } from "playwright";
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
 const root = process.cwd();
 const server = createServer(async (req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "") || "index.html";
+  if (path === "data/live/daily/th.js") { // country brief lines are shown only while the brief is <= 30 days old (briefFresh):
+    // date the newest day's brief lines to its own window so the brief link can be checked whatever the data's age, and add a
+    // 2-month-old one that must stay hidden
+    const sb = { window: {} }; vm.runInNewContext(await readFile(join(root, path), "utf8"), sb);
+    const D = sb.window.OSAP_DAILY.th, d0 = D.days[0], day = String(d0.window.to).slice(0, 10), old = new Date(Date.parse(day) - 60 * 864e5).toISOString().slice(0, 10);
+    d0.watch = (d0.watch || []).filter((w) => w.from !== "brief").concat([{ from: "brief", text: "Whether the border checkpoints reopen.", refs: [], asof: day },
+      { from: "brief", text: "STALE BRIEF CHECK", refs: [], asof: old }]);
+    res.writeHead(200, { "Content-Type": "text/javascript" });
+    return res.end("window.OSAP_DAILY=window.OSAP_DAILY||{};window.OSAP_DAILY.th=" + JSON.stringify(D) + ";");
+  }
   try { const body = await readFile(join(root, path)); res.writeHead(200, { "Content-Type": TYPES[extname(path)] || "application/octet-stream" }); res.end(body); }
   catch { res.writeHead(404); res.end(); }
 }).listen(0, "127.0.0.1");
@@ -40,6 +51,7 @@ const btnOf = (p, re) => p.evaluateHandle((src) => [...document.querySelectorAll
 {
   const { p, ctx, errors } = await open({ viewport: { width: 1400, height: 900 } });
   const L = await p.evaluate(watch);
+  ok(!L.some((x) => /STALE BRIEF CHECK/.test(x.text)) && L.some((x) => /^Country brief/.test(x.from)), "a 2-month-old country brief line is left out, a current one is shown");
   ok(L.length > 0 && L.every((x) => x.btn), `every What to watch line is tappable (${L.filter((x) => x.btn).length}/${L.length})`);
 
   const fp = await btnOf(p, "^Flashpoint");
