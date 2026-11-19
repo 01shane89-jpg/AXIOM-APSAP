@@ -13,12 +13,17 @@
      on a news row). A button something else still covers is treated as not on screen, so the ring never points at the wrong
      thing. Closing the tour puts the list sheet back where it was.
    - Show me in the app: the user guide's sections call walk(id), the same ring, step by step through that feature's buttons.
-   Kept in localStorage "osap-tips" on this device only: off, which tips were seen and when, which tools were used, the tour.
+   - Progress (Shane 19 Nov: "a way for the user to see what they have or have not toured yet"): each tour step the user is
+     shown is ticked off, and so is each guide section's "Show me in the app". The guide's "Tips and the tour" section lists the
+     12 steps with a tick or not, with Resume (from the first step not seen) and Start again; Settings' Take the tour resumes.
+   Kept in localStorage "osap-tips" on this device only: off, which tips were seen and when, which tools were used, the tour
+   steps and walkthroughs seen.
    Nothing is sent anywhere. Nothing here reads or changes a record, a finding or a saved item: it only points at buttons and,
    when the user presses "Open it", presses the button for them.
    Automated browsers (navigator.webdriver) get no tips or tour offer by themselves, so the other headless checks open as
    before; tests set window.OSAP_TIPS_TEST first.
-   window.OSAP_TIPS { on(), set(bool), show(id?), next(), tour(), walk(id), hasWalk(id), spot(steps), close(), tips(), check() } */
+   window.OSAP_TIPS { on(), set(bool), show(id?), next(), tour(from?), walk(id), hasWalk(id), spot(steps), close(), tips(), check(),
+     progress(), onProgress(fn) } */
 (function () {
   "use strict";
   var W = window, D = document;
@@ -152,18 +157,18 @@
 
   /* ---------- walkthroughs: the tour and one per guide section ---------- */
   var TOUR = [
-    { tool: "Today", t: b("Today") + " is the start screen: the daily summary, weather, warnings and top stories for the country you pick." },
-    { tool: "Search", t: b("Search") + " finds places, grids, tools, settings and the news." },
-    { tool: "Data sets", t: b("Data sets") + " are the reporting topics. Tick one to put it on the map." },
-    { tool: "Weather", t: b("Weather") + " is radar, wind, warnings and forecasts." },
-    { tool: "Overlays", t: b("Overlays") + " are map layers that are not reports: infrastructure, borders, aircraft, ships." },
-    { tool: ["Area", "Measure"], t: b("Measure") + ", " + b("Route") + " and " + b("Area") + " work on the map: distances, drives and areas of interest." },
-    { tool: "Plans", t: b("Plans") + " holds the planning tools: medical, evacuation, landing zones, comms, terrain and weather brief." },
-    { tool: ["Point", "Watch"], t: b("Point") + " saves a spot; " + b("Watch") + " tells you about new reports in an area." },
-    { tool: "My work", t: b("My work") + " keeps everything you saved, and exports it." },
-    { tool: "Reports", t: b("Reports") + " makes briefs and reports to print or save as PDF." },
-    { sel: "#tidy-set", t: "Settings: offline maps, the " + b("User guide") + ", this tour again, and the " + b("Show tips") + " switch." },
-    { t: "Long-press the map (right-click on a computer) for actions at any spot. That is the tour: tips will suggest a tool now and then until you turn them off in Settings." }
+    { id: "today", name: "Today", tool: "Today", t: b("Today") + " is the start screen: the daily summary, weather, warnings and top stories for the country you pick." },
+    { id: "search", name: "Search", tool: "Search", t: b("Search") + " finds places, grids, tools, settings and the news." },
+    { id: "datasets", name: "Data sets", tool: "Data sets", t: b("Data sets") + " are the reporting topics. Tick one to put it on the map." },
+    { id: "weather", name: "Weather", tool: "Weather", t: b("Weather") + " is radar, wind, warnings and forecasts." },
+    { id: "overlays", name: "Overlays", tool: "Overlays", t: b("Overlays") + " are map layers that are not reports: infrastructure, borders, aircraft, ships." },
+    { id: "maptools", name: "Measure, Route and Area", tool: ["Area", "Measure"], t: b("Measure") + ", " + b("Route") + " and " + b("Area") + " work on the map: distances, drives and areas of interest." },
+    { id: "plans", name: "Plans", tool: "Plans", t: b("Plans") + " holds the planning tools: medical, evacuation, landing zones, comms, terrain and weather brief." },
+    { id: "pointwatch", name: "Point and Watch", tool: ["Point", "Watch"], t: b("Point") + " saves a spot; " + b("Watch") + " tells you about new reports in an area." },
+    { id: "mywork", name: "My work", tool: "My work", t: b("My work") + " keeps everything you saved, and exports it." },
+    { id: "reports", name: "Reports", tool: "Reports", t: b("Reports") + " makes briefs and reports to print or save as PDF." },
+    { id: "settings", name: "Settings", sel: "#tidy-set", t: "Settings: offline maps, the " + b("User guide") + ", this tour again, and the " + b("Show tips") + " switch." },
+    { id: "ring", name: "Long-press the map", t: "Long-press the map (right-click on a computer) for actions at any spot. That is the tour: tips will suggest a tool now and then until you turn them off in Settings." }
   ];
   function planStep(name) { return { tool: [name, "Plans"], t: "Open " + b("Plans") + " and pick " + b(name) + ", or use its own button where the toolbar has one." }; }
   var WALKS = {
@@ -191,7 +196,7 @@
   };
 
   /* ---------- the ring and its callout ---------- */
-  var SPOT = null, CALL = null, steps = [], at = 0, single = false, stepEl = null, keepToday = false, sheetBack = null, waitT = 0;
+  var SPOT = null, CALL = null, steps = [], at = 0, single = false, stepEl = null, keepToday = false, sheetBack = null, waitT = 0, kind = "";
   function css() {
     if (D.getElementById("tips-css")) return;
     var s = D.createElement("style"); s.id = "tips-css";
@@ -222,7 +227,7 @@
   var CATCH = null, lastFocus = null;
   function spot(list, opt) {
     close(); css(); opt = opt || {};
-    steps = (list || []).slice(); single = !!opt.single; at = 0;
+    steps = (list || []).slice(); single = !!opt.single; kind = opt.kind || ""; at = Math.max(0, Math.min(steps.length - 1, opt.at || 0));
     if (!steps.length) return false;
     lastFocus = D.activeElement;
     /* the steps point at the map's toolbar: Today, the guide and the phone's list sheet cover it, so each step clears them
@@ -263,6 +268,7 @@
     if (at < 0) { at = 0; return render(1); }
     if (at >= steps.length) { close(true); return; }
     var s2 = steps[at], last = at === steps.length - 1, n = steps.length;
+    seenStep(s2, last);
     var text = s2._fold ? "The toolbar is folded away. Tap the arrow here to open it, then " + s2.t.charAt(0).toLowerCase() + s2.t.slice(1) :
       (!stepEl && (s2.tool || s2.card || s2.sel)) ? s2.t + " (It is not on screen right now.)" : s2.t;
     var openable = single && stepEl && s2.tool && !s2._fold;
@@ -290,6 +296,23 @@
     } else { SPOT.classList.add("nohole"); x = vw / 2 - cw / 2; y = vh / 2 - ch / 2; }
     CALL.style.left = Math.round(Math.max(8, Math.min(vw - cw - 8, x))) + "px";
     CALL.style.top = Math.round(Math.max(8, Math.min(vh - ch - 8, y))) + "px";
+  }
+  /* ticks off the step shown: a tour step by its id (and the tour as finished on its last step), a walkthrough by its section */
+  var progFns = [];
+  function seenStep(s, last) {
+    if (kind !== "tour" && kind.indexOf("walk:") !== 0) return;
+    var now = Date.now();
+    upd(function (v) {
+      if (kind === "tour") { v.tourSeen = v.tourSeen || {}; if (s.id) v.tourSeen[s.id] = now; v.tourAt = s.id || ""; if (last) v.tourDone = now; }
+      else { v.walked = v.walked || {}; v.walked[kind.slice(5)] = now; }
+    });
+    progFns.forEach(function (f) { try { f(); } catch (e) {} });
+  }
+  /* what the user has toured: every tour step with when it was seen (0: not yet), the step to resume from, walkthroughs seen */
+  function progress() {
+    var v = st(), seen = v.tourSeen || {}, list = TOUR.map(function (s, i) { return { id: s.id, n: i + 1, name: s.name, seen: seen[s.id] || 0 }; });
+    var next = list.filter(function (x) { return !x.seen; })[0] || null;
+    return { steps: list, seen: list.filter(function (x) { return x.seen; }).length, total: list.length, next: next ? next.n : 0, done: v.tourDone || 0, walked: v.walked || {} };
   }
   function onCall(e) {
     var t = e.target.closest && e.target.closest("[data-tc]"); if (!t) return;
@@ -455,8 +478,16 @@
     D.body.appendChild(CARD); placeCard();
     clearTimeout(cardTimer); cardTimer = setTimeout(cardOff, 45e3);
   }
-  function tour() { cardOff(); upd(function (v) { v.tourOffered = v.tourOffered || Date.now(); v.tour = Date.now(); }); return spot(TOUR, { title: "Tour of OSAP" }); }
-  function walk(id) { var w = WALKS[id]; if (!w) return false; cardOff(); return spot(w, { title: "Show me in the app", single: w.length === 1 }); }
+  /* from: a step number (1 to 12) to start at, "resume" for the first step not seen yet (the start once all are seen), or
+     nothing for the start */
+  function tour(from) {
+    cardOff(); upd(function (v) { v.tourOffered = v.tourOffered || Date.now(); v.tour = Date.now(); });
+    var i = 0;
+    if (from === "resume") { var p = progress(); i = p.next ? p.next - 1 : 0; }
+    else if (typeof from === "number" && from >= 1) i = Math.min(TOUR.length, Math.floor(from)) - 1;
+    return spot(TOUR, { title: "Tour of OSAP", kind: "tour", at: i });
+  }
+  function walk(id) { var w = WALKS[id]; if (!w) return false; cardOff(); return spot(w, { title: "Show me in the app", single: w.length === 1, kind: "walk:" + id }); }
 
   /* the tools the user presses: recorded (time only, this device) so tips favor tools not used yet, and follow-ups queue */
   D.addEventListener("click", function (e) {
@@ -479,6 +510,8 @@
     tips: function () { return TIPS.map(function (t) { return { id: t.id, ctx: t.ctx, after: t.after || "", tool: [].concat(t.tool || []), card: t.card || "", sel: t.sel || "", guide: t.guide || "", text: t.t.replace(/<[^>]+>/g, "") }; }); },
     walks: function () { return Object.keys(WALKS); },
     tourSteps: function () { return TOUR.length; },
+    progress: progress,
+    onProgress: function (fn) { if (typeof fn === "function") progFns.push(fn); },
     /* tests: run the check now, without the waits at the start of a visit and after the last tap */
     check: function () { tick(true); }
   };
