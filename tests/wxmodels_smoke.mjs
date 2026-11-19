@@ -2,7 +2,8 @@
 // Open-Meteo is answered with made-up but well-formed data, so the check runs with no network. Checks: the Weather
 // panel lists the global models with Best match first; the model layers ask Open-Meteo for the chosen model (none for Best match,
 // models=<id> otherwise) and say which model they show; a model that leaves a variable empty is named as a gap, not drawn as dry;
-// the rain forecast layer colours wet cells only; the wind flow canvas animates (frames advance) and stops when switched off;
+// the rain forecast layer colours wet cells only and, like temperature, is one smooth blended picture with values under the legend
+// bar; a storm with uncertainty radii gets a cone, forecast dots and a time label every 24 h, plus an intensity key; the wind flow canvas animates (frames advance) and stops when switched off;
 // the time slider and Play step the forecast hour; the rain radar layer shows the national networks; "reduce motion" draws
 // the wind once and leaves it still; a phone's panel does not overflow; and the page throws nothing.
 // Run from the repo root: node tests/wxmodels_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -74,6 +75,15 @@ const fsr = (p) => p.evaluate(() => window.OSAP_WX._test.flowState());
   ok(/Best match/.test(await gridNote(p)), "the grid note names the model");
   const cells = await p.evaluate(() => window.OSAP_WX._test.cells("rain"));
   ok(cells.wet > 0 && cells.wet < cells.all, "rain forecast colours wet cells only (" + cells.wet + " of " + cells.all + ")");
+  const fld = await p.evaluate(() => window.OSAP_WX._test.field("rain"));
+  ok(fld.overlays === 1 && fld.painted > 500 && fld.colours > 8, "rain forecast is one smooth blended picture, not squares (" + fld.painted + " px, " + fld.colours + " shades)");
+  ok(await p.evaluate(() => document.querySelectorAll(".wxlegend .wxrlt span").length >= 5), "the legend's rain scale shows values under the bar");
+  await tick(p, "temp");
+  await p.waitForFunction(() => window.OSAP_WX._test.field("temp").painted > 0, null, { timeout: 10000 });
+  const tf = await p.evaluate(() => window.OSAP_WX._test.field("temp"));
+  ok(tf.colours > 20, "temperature is a smooth colour blend (" + tf.colours + " shades)");
+  await tick(p, "temp", false);
+  ok(await p.evaluate(() => window.OSAP_WX._test.field("temp").painted === 0), "switching temperature off removes its picture");
   await p.waitForTimeout(800);
   const f1 = await fsr(p); await p.waitForTimeout(700); const f2 = await fsr(p);
   ok(f1.on && f1.field && f1.parts > 500 && f2.frames > f1.frames + 5, "wind flow animates (" + f1.parts + " streaks, " + (f2.frames - f1.frames) + " frames in 0.7 s)");
@@ -109,6 +119,16 @@ const fsr = (p) => p.evaluate(() => window.OSAP_WX._test.flowState());
   await p.waitForFunction(() => /National radar networks/.test((document.getElementById("wxn-radar") || {}).textContent || ""), null, { timeout: 15000 });
   ok(!(await p.$("#wx-rloop")), "rain radar: no RainViewer loop button (RainViewer removed 7 Nov 2026; more radar checks in tests/radar_backup_smoke.mjs)");
   await tick(p, "radar", false);
+
+  /* storm track: a made-up storm with an uncertainty radius gets a cone, forecast dots and a time label every 24 h */
+  await p.evaluate(() => { window.ASAP_STORMS = { storms: [{ name: "Testa", products: [{ agency: "JMA", agencyName: "JMA", url: "https://example.org/", now: { lat: 12, lon: 101, wind_kt: 70 },
+    past: [{ lat: 10, lon: 103 }, { lat: 11, lon: 102 }],
+    fc: [{ h: 12, t: "2026-11-20T00:00Z", lat: 13, lon: 100.5, wind_kt: 65, r_km: 60 }, { h: 24, t: "2026-11-20T12:00Z", lat: 14, lon: 100, wind_kt: 50, r_km: 110 }, { h: 48, t: "2026-11-21T12:00Z", lat: 16, lon: 99, wind_kt: 30, r_km: 200 }] }] }] }; });
+  await tick(p, "tc");
+  await p.waitForTimeout(500);
+  const st = await p.evaluate(() => ({ labels: [...document.querySelectorAll(".sttime")].map((e) => e.textContent), cone: (() => { let n = 0; window.__asapMap.eachLayer((l) => { if (l.options && l.options.pane === "wxvec" && l.options.fillRule === "nonzero" && l.getLatLngs) n++; }); return n; })(), key: document.querySelectorAll(".wxlegend .stkey span").length }));
+  ok(st.labels.length === 2 && /^1200Z .* · 50 kt$/.test(st.labels[0]) && st.cone >= 1 && st.key === 7, "storm track: cone, forecast dots labelled every 24 h (" + st.labels.join(" | ") + "), intensity key in the legend");
+  await tick(p, "tc", false);
 
   await tick(p, "flow", false);
   const f3 = await fsr(p); await p.waitForTimeout(500); const f4 = await fsr(p);

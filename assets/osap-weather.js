@@ -1958,11 +1958,20 @@
   }
   /* legend swatches: [colour, label] */
   var LEG = {
-    temp: { ramp: ["#6e40aa", "#3b5bd6", "#1ea6d6", "#2fcf9a", "#9bd44b", "#f2c230", "#f6862b", "#d93a2b", "#8e1a2a"], lo: "−20°C / −4°F", hi: "40°C / 104°F" },
-    rain: { ramp: ["#88ddee", "#0099cc", "#0077aa", "#005588", "#ffee00", "#ffaa00", "#ff4400", "#c10000", "#ffaaff"], lo: "0.1 mm/h", hi: "50 mm/h or more" },
+    temp: { ramp: ["#6e40aa", "#3b5bd6", "#1ea6d6", "#2fcf9a", "#9bd44b", "#f2c230", "#f6862b", "#d93a2b", "#8e1a2a"], lo: "−20°C / −4°F", hi: "40°C / 104°F",
+      ticks: ["−20°C", "−5", "10", "25", "40°C"] },
+    rain: { ramp: ["#88ddee", "#0099cc", "#0077aa", "#005588", "#ffee00", "#ffaa00", "#ff4400", "#c10000", "#ffaaff"], lo: "0.1 mm/h", hi: "50 mm/h or more",
+      ticks: ["0.1", "1", "4", "16", "50 mm/h"] },
     flow: { ramp: ["#1d4f91", "#1a7fa0", "#1f9e6e", "#7aa51f", "#d1a10f", "#e8701a", "#d33a1f", "#9b1c5a"], lo: "calm", hi: "64 kt or more" },
     aq: { cats: [["#00e400", "0–50 good"], ["#ffff00", "51–100 moderate"], ["#ff7e00", "101–150 sensitive"], ["#ff0000", "151–200 unhealthy"], ["#8f3f97", "201–300 very"], ["#7e0023", "301+ hazardous"]] }
   };
+  /* colour ramps as numbers, blended smoothly between their stops (the legend bar uses the same stops, evenly spaced) */
+  function hexRgb(h) { var n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+  var RGB = {}; ["temp", "rain", "flow"].forEach(function (k) { RGB[k] = LEG[k].ramp.map(hexRgb); });
+  function rampAt(k, x) {
+    var r = RGB[k], f = Math.max(0, Math.min(1, x)) * (r.length - 1), i = Math.min(r.length - 2, Math.floor(f)), t = f - i, a = r[i], b = r[i + 1];
+    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+  }
   function tempCol(t) {
     var r = LEG.temp.ramp, x = Math.max(0, Math.min(1, (t + 20) / 60)) * (r.length - 1), i = Math.floor(x);
     return r[Math.min(i, r.length - 1)];
@@ -1974,9 +1983,30 @@
     for (var i = RAIN_STEPS.length - 1; i >= 0; i--) if (mm >= RAIN_STEPS[i]) return LEG.rain.ramp[i];
     return LEG.rain.ramp[0];
   }
+  /* where a rain rate sits on the ramp, 0 to 1: log-spaced between the steps, so the map and the legend bar agree */
+  function rainPos(mm) {
+    var S = RAIN_STEPS, n = S.length - 1;
+    if (mm <= S[0]) return 0; if (mm >= S[n]) return 1;
+    for (var i = 0; i < n; i++) if (mm < S[i + 1]) return (i + Math.log(mm / S[i]) / Math.log(S[i + 1] / S[i])) / n;
+    return 1;
+  }
   var FLOW_STEPS = [0, 5, 10, 15, 22, 34, 48, 64];
   function flowCol(kt) { for (var i = FLOW_STEPS.length - 1; i >= 0; i--) if (kt >= FLOW_STEPS[i]) return i; return 0; }
   function aqCol(v) { return v <= 50 ? "#00e400" : v <= 100 ? "#ffff00" : v <= 150 ? "#ff7e00" : v <= 200 ? "#ff0000" : v <= 300 ? "#8f3f97" : "#7e0023"; }
+  var AQ_RGB = ["#00e400", "#ffff00", "#ff7e00", "#ff0000", "#8f3f97", "#7e0023"].map(hexRgb);
+  function smooth(a, b, x) { var t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); }
+  /* the space each field is blended in: rain on its log ramp (dry = a little below the first step), the rest as they are */
+  var FIELD_IN = { rain: function (mm) { return mm <= 0 ? -0.25 : mm < 0.1 ? -0.25 + 2.5 * mm : rainPos(mm); } };
+  /* one blended value to [r, g, b, alpha 0..1] for the smooth map fields; null draws nothing */
+  var FIELD_COL = {
+    temp: function (t) { return rampAt("temp", (t + 20) / 60).concat(1); },
+    /* rain is blended on its ramp position, not in mm (see FIELD_IN), and fades in around 0.1 mm/h, the legend's lowest step: a shower
+       next to dry ground gets a soft edge instead of a cliff, and dry ground stays clear */
+    rain: function (f) { var a = smooth(-0.08, 0.06, f); return a > 0 ? rampAt("rain", Math.max(0, f)).concat(a) : null; },
+    /* cloud: a cool grey that reads on light, dark and satellite maps; thin cloud below 15% is left clear */
+    cloud: function (c) { if (c < 15) return null; var a = Math.min(1, (c - 15) / 85); return [150, 162, 176, Math.pow(a, 1.1)]; },
+    aq: function (v) { return AQ_RGB[v <= 50 ? 0 : v <= 100 ? 1 : v <= 150 ? 2 : v <= 200 ? 3 : v <= 300 ? 4 : 5].concat(1); }
+  };
   var LAY = [
     { k: "radar", name: "Rain radar", grp: "Rain", note: "National weather services' latest ground radar: Canada and the United States (with Alaska, Hawaii, the Caribbean and Guam), Germany, Finland, the Netherlands and Japan. Elsewhere use Satellite rain estimate or Rain, model forecast.", op: 0.75,
       lic: "ECCC, NOAA, DWD, FMI, KNMI and JMA open data, with attribution",
@@ -1994,10 +2024,10 @@
     { k: "ir", name: "Cloud, satellite infrared", grp: "Cloud", note: "NOAA global mosaic of geostationary satellites (GOES, Himawari, Meteosat), longwave infrared: bright white = cold, high cloud tops such as storms.", op: 0.7,
       lic: "NOAA nowCOAST, public domain", legend: function () { return '<span class="wxramp" style="background:linear-gradient(90deg,#111,#777,#eee)"></span><span class="wxrl"><span>warm, low or clear</span><span>cold, high tops</span></span>'; },
       make: function (op) { return L.tileLayer.wms(NOWCOAST + "satellite/wms", { layers: "global_longwave_imagery_mosaic", format: "image/png", transparent: true, version: "1.3.0", pane: "wxpane", opacity: op, attribution: "NOAA nowCOAST" }); } },
-    { k: "cloud", name: "Cloud cover, model", grp: "Cloud", grid: true, note: "Open-Meteo model total cloud cover at the chosen time; the only cloud layer that also forecasts ahead.", op: 0.6,
-      lic: "Open-Meteo, CC BY 4.0", legend: function () { return '<span class="wxramp" style="background:linear-gradient(90deg,rgba(90,90,90,0),rgba(90,90,90,.85))"></span><span class="wxrl"><span>0%</span><span>100%</span></span>'; } },
+    { k: "cloud", name: "Cloud cover, model", grp: "Cloud", grid: true, note: "Open-Meteo model total cloud cover at the chosen time; the only cloud layer that also forecasts ahead.", op: 0.7,
+      lic: "Open-Meteo, CC BY 4.0", legend: function () { return '<span class="wxramp" style="background:linear-gradient(90deg,rgba(150,162,176,0) 15%,rgb(150,162,176))"></span><span class="wxrl"><span>clear (under 15%)</span><span>100%</span></span>'; } },
     { k: "wind", name: "Wind barbs, 10 m", grp: "Wind", grid: true, note: "Open-Meteo model wind at the chosen time, knots. Barbs point into the wind: half barb 5 kt, full 10 kt, flag 50 kt.", op: 0.95,
-      lic: "Open-Meteo, CC BY 4.0", legend: function () { return barb(0, 15, 26) + " 15 kt from the north " + barb(270, 55, 26) + " 55 kt from the west"; } },
+      lic: "Open-Meteo, CC BY 4.0", legend: function () { return '<span class="wxcat">' + barb(0, 15, 26) + " 15 kt from the north</span> " + '<span class="wxcat">' + barb(270, 55, 26) + " 55 kt from the west</span>"; } },
     { k: "flow", name: "Wind flow, animated", grp: "Wind", grid: true, note: "Moving streaks follow the chosen model's 10 m wind at the chosen time; color is speed. Smoothed between grid points, so small valleys and coasts are not resolved.", op: 0.9,
       lic: "Open-Meteo, CC BY 4.0 (model data from the publishing weather service)", legend: function () { return ramp(LEG.flow); } },
     { k: "temp", name: "Temperature, 2 m", grp: "Temperature", grid: true, note: "Open-Meteo model air temperature at the chosen time, °C and °F.", op: 0.55,
@@ -2009,14 +2039,23 @@
     { k: "fhist", name: "Flood history", grp: "Flooding", mirror: "hist", note: "How often each spot was under water, 1984 to 2021 (JRC Global Surface Water).", lic: "EC JRC / Google, CC BY 4.0",
       legend: function () { return '<span class="wxramp" style="background:linear-gradient(90deg,rgba(149,109,235,.2),rgba(115,80,235,.6),rgba(80,50,235,.75))"></span><span class="wxrl"><span>rarely wet</span><span>often wet</span></span>'; } },
     { k: "tc", name: "Tropical cyclones", grp: "Storms", note: "Tracks and forecast cones: JMA and JTWC (from the app's 15-minute snapshot), NOAA NHC, CPHC and JTWC (nowCOAST), and GDACS storm alerts worldwide.", op: 0.85,
-      lic: "JMA, JTWC, NOAA nowCOAST (public domain), GDACS", legend: function () { return (W.OSAP_SYM ? W.OSAP_SYM.sw("a_hydromet", "#c62828") + " storm now (NATO weather-event symbol; dot = agency color) " : "") + cats([["#c62828", "track, forecast dashed"], ["rgba(198,40,40,.25)", "cone or wind area"]]); },
+      lic: "JMA, JTWC, NOAA nowCOAST (public domain), GDACS", legend: function () { return (W.OSAP_SYM ? W.OSAP_SYM.sw("a_hydromet", "#c62828") + " storm now (NATO weather-event symbol) " : "") +
+        cats([["#c62828", "JMA"], ["#6a1b9a", "JTWC"], ["#ef6c00", "GDACS"]]) + '<div class="wxl">Solid: track so far. Dashed: forecast. Shaded: uncertainty cone.</div>' +
+        '<div class="wxl">Dots: forecast wind</div><div class="stkey">' + STORM_CAT.map(function (c, i) { var lo = i ? STORM_CAT[i - 1][0] : 0;
+          return '<span title="' + (i ? lo + " kt or more" : "under 34 kt") + '"><i style="background:' + c[2] + '"></i>' + esc(c[1].replace("category ", "cat ")) + "</span>"; }).join("") + "</div>"; },
       make: function (op) { return stormLayer(op); } },
     { k: "warn", name: "Weather warnings", grp: "Warnings", note: "Mapped warnings and alerts: GDACS (worldwide), Pacific Disaster Center hazards for the open country, and U.S. National Weather Service warning areas. Warnings without a map position are listed in the Weather view.", op: 0.8,
       lic: "GDACS; PDC DisasterAWARE; NOAA NWS (public domain)", legend: function () { return (W.OSAP_SYM ? "NATO event symbols (flood, storm, quake, fire…); the dot is the level: " : "") + cats([["#c62828", "red or warning"], ["#ef6c00", "orange or watch"], ["#2e7d32", "green or advisory"]]); },
       make: function (op) { return warnLayer(op); } }
   ];
   var LBYK = {}; LAY.forEach(function (l) { LBYK[l.k] = l; });
-  function ramp(g) { return '<span class="wxramp" style="background:linear-gradient(90deg,' + g.ramp.join(",") + ')"></span><span class="wxrl"><span>' + esc(g.lo) + "</span><span>" + esc(g.hi) + "</span></span>"; }
+  function ramp(g) {
+    var bar = '<span class="wxramp" style="background:linear-gradient(90deg,' + g.ramp.join(",") + ')"></span>';
+    if (!g.ticks) return bar + '<span class="wxrl"><span>' + esc(g.lo) + "</span><span>" + esc(g.hi) + "</span></span>";
+    /* tick marks under the bar, evenly spaced like the colour stops; the end labels carry the units */
+    return bar + '<span class="wxtk" aria-hidden="true">' + g.ticks.map(function () { return "<i></i>"; }).join("") + '</span><span class="wxrl wxrlt">' + g.ticks.map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("") + "</span>" +
+      '<span class="wxsr">' + esc(g.lo + " to " + g.hi) + "</span>";
+  }
   function cats(c) { return c.map(function (x) { return '<span class="wxcat"><i style="background:' + x[0] + '"></i>' + esc(x[1]) + "</span>"; }).join(" "); }
   function barb(dir, kt, size) {
     size = size || 34;
@@ -2094,49 +2133,75 @@
       return ON[k] && !GRID.data.some(function (j) { var h = j && j.hourly, a = h && h[GRID_VAR[k]]; return a && a[gridIdx(j).i] != null; });
     }).map(function (k) { return LBYK[k].name; });
   }
+  /* ---------- smooth model fields ----------
+     The model answers on a coarse grid (7 to 11 points across the view). Each field layer is drawn as one picture: every pixel
+     blends its four nearest grid points (bilinear), and the colour comes from the same ramp as the legend, so there are no hard
+     squares. Rows are placed in Web Mercator, as the map is, so the picture lines up with coasts at every latitude. A grid point the
+     model left empty stays clear, never painted as a value. */
+  var FIELD = {};
+  function mercY(lat) { var r = Math.max(-85, Math.min(85, lat)) * Math.PI / 180; return Math.log(Math.tan(Math.PI / 4 + r / 2)); }
+  function fieldDraw(k, vals) {
+    var B = GRID.box, rows = B.rows, cols = B.cols, op = opOf(k, LBYK[k].op), col = FIELD_COL[k];
+    FIELD[k] = { vals: vals, cols: cols, rows: rows };
+    if (FIELD_IN[k]) vals = vals.map(function (v) { return v == null ? null : FIELD_IN[k](v); });
+    if (!vals.some(function (v) { return v != null; })) return;
+    /* about 3 screen pixels per picture pixel, capped; the browser smooths it further when it scales it to the map */
+    var sz = map.getSize(), Wd = Math.max(cols * 8, Math.min(640, Math.round(sz.x / 3))), Ht = Math.max(rows * 8, Math.min(640, Math.round(sz.y / 3)));
+    var cv = document.createElement("canvas"); cv.width = Wd; cv.height = Ht;
+    var cx = cv.getContext("2d"), img = cx.createImageData(Wd, Ht), d = img.data, yN = mercY(B.n), yS = mercY(B.s);
+    for (var py = 0; py < Ht; py++) {
+      var my = yN + (yS - yN) * (py + 0.5) / Ht, lat = (2 * Math.atan(Math.exp(my)) - Math.PI / 2) * 180 / Math.PI;
+      var fi = Math.max(0, Math.min(rows - 1, (lat - B.s) / (B.n - B.s) * rows - 0.5)), i0 = Math.floor(fi), i1 = Math.min(rows - 1, i0 + 1), di = fi - i0;
+      for (var px = 0; px < Wd; px++) {
+        var fj = Math.max(0, Math.min(cols - 1, (px + 0.5) / Wd * cols - 0.5)), j0 = Math.floor(fj), j1 = Math.min(cols - 1, j0 + 1), dj = fj - j0;
+        var q = [[vals[i0 * cols + j0], (1 - di) * (1 - dj)], [vals[i0 * cols + j1], (1 - di) * dj], [vals[i1 * cols + j0], di * (1 - dj)], [vals[i1 * cols + j1], di * dj]];
+        var sw = 0, sv = 0;
+        for (var n = 0; n < 4; n++) if (q[n][0] != null) { sv += q[n][0] * q[n][1]; sw += q[n][1]; }
+        if (sw < 0.35) continue;   /* mostly next to empty grid points: leave clear */
+        var c = col(sv / sw); if (!c) continue;
+        var o = (py * Wd + px) * 4; d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = Math.round(255 * c[3] * Math.min(1, sw));
+      }
+    }
+    cx.putImageData(img, 0, 0);
+    FIELD[k].canvas = cv;
+    LYR[k].addLayer(L.imageOverlay(cv.toDataURL("image/png"), [[B.s, B.w], [B.n, B.e]], { pane: "wxpane", opacity: op, interactive: false, className: "wxfield" }));
+  }
   function gridDraw() {
     ["cloud", "rain", "wind", "temp", "aq"].forEach(function (k) { if (LYR[k]) LYR[k].clearLayers(); });
+    if (LYR.hit) LYR.hit.clearLayers();
     if (!GRID.data) return;
-    var tt = null, small = map.getSize().x / ((GRID.box && GRID.box.cols) || 8) < 66;
+    if (!LYR.hit) LYR.hit = L.layerGroup();
+    var anyCell = ["cloud", "rain", "wind", "temp", "aq"].some(function (k) { return ON[k]; });
+    if (anyCell) LYR.hit.addTo(map); else map.removeLayer(LYR.hit);
+    var tt = null, small = map.getSize().x / ((GRID.box && GRID.box.cols) || 8) < 66, V = { cloud: [], rain: [], temp: [], aq: [] };
     GRID.pts.forEach(function (p, n) {
-      var j = GRID.data[n]; if (!j || !j.hourly) return;
+      var j = GRID.data[n];
+      if (!j || !j.hourly) { V.cloud[n] = V.rain[n] = V.temp[n] = V.aq[n] = null; return; }
       var ix = gridIdx(j), i = ix.i, h = j.hourly; tt = ix.t;
       var b = [[p.lat - p.dlat / 2, p.x - p.dlon / 2], [p.lat + p.dlat / 2, p.x + p.dlon / 2]], c = [p.lat, p.x];
       function v(k) { return h[k] && h[k][i] != null ? h[k][i] : null; }
       var T = v("temperature_2m"), S = v("wind_speed_10m"), G = v("wind_gusts_10m"), Pr = v("precipitation"), Cc = v("cloud_cover");
-      // every grid cell opens the model's values for that cell, the valid time and where they came from
       var aqv = GRID.aq && GRID.aq[n] && GRID.aq[n].hourly ? GRID.aq[n].hourly.us_aqi[gridIdx(GRID.aq[n]).i] : null;
+      V.cloud[n] = Cc; V.rain[n] = Pr; V.temp[n] = T; V.aq[n] = aqv == null ? null : aqv;
+      // every grid cell opens the model's values for that cell, the valid time and where they came from (an invisible square over the cell)
       var pop = '<div class="pop"><div class="tier">Model forecast grid cell · ' + esc(modelName(GRID.model)) + '</div><h3>' + esc(p.lat.toFixed(2) + ", " + p.x.toFixed(2)) + '</h3><p class="obs">' +
         esc([T != null ? "Temperature " + degCF(T) : "",
           S != null ? "wind " + Math.round(S) + " kt from " + Math.round(v("wind_direction_10m")) + "°" + (G != null ? ", gusts " + Math.round(G) + " kt" : "") : "",
           Pr != null ? (Pr >= 0.1 ? "rain " + Pr.toFixed(1) + " mm in the hour" : "dry") : "",
           Cc != null ? "cloud " + Math.round(Cc) + "%" : "", aqv != null ? "US AQI " + Math.round(aqv) : ""].filter(Boolean).join(" · ")) +
         "<br>Valid " + esc(ix.t ? zt(ix.t, null, true) : "") + '</p><p class="obs">Source: ' + esc(modelName(GRID.model)) + ' through <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>' + (aqv != null ? "; air quality CAMS" : "") +
-        ", averaged over this cell. A forecast, not a measurement.</p></div>";
-      function cell(style) { return L.rectangle(b, L.extend({ pane: "wxpane", stroke: false }, style)).bindPopup(pop, { maxWidth: 300 }); }
-      if (ON.cloud && Cc != null) LYR.cloud.addLayer(cell({ fillColor: "#5a5a5a", fillOpacity: opOf("cloud", 0.6) * Cc / 100 }));
-      if (ON.rain && Pr != null) {
-        var rc = rainCol(Pr);
-        LYR.rain.addLayer(cell(rc ? { fillColor: rc, fillOpacity: opOf("rain", 0.7) } : { fillColor: "#000", fillOpacity: 0 }));
-        if (rc && !small) LYR.rain.addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, icon: L.divIcon({ className: "wxval", html: Pr.toFixed(Pr < 10 ? 1 : 0) + " mm", iconSize: [48, 16], iconAnchor: [24, 8] }) }));
-      }
-      if (ON.temp && T != null) {
-        LYR.temp.addLayer(cell({ fillColor: tempCol(T), fillOpacity: opOf("temp", 0.55) }));
-        LYR.temp.addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, icon: L.divIcon({ className: "wxval", html: small ? Math.round(T) + "°" : Math.round(T) + "°C " + Math.round(cToF(T)) + "°F", iconSize: [64, 16], iconAnchor: [32, -6] }) }));
-      }
+        ", averaged over this cell and blended smoothly between cells on the map. A forecast, not a measurement.</p></div>";
+      if (anyCell) LYR.hit.addLayer(L.rectangle(b, { pane: "wxpane", stroke: false, fillColor: "#000", fillOpacity: 0 }).bindPopup(pop, { maxWidth: 300 }));
+      function lbl(k, html, w, ay) { LYR[k].addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, icon: L.divIcon({ className: "wxval", html: html, iconSize: [w, 16], iconAnchor: [w / 2, ay == null ? 8 : ay] }) })); }
+      if (ON.rain && Pr != null && Pr >= 0.1 && !small) lbl("rain", Pr.toFixed(Pr < 10 ? 1 : 0) + " mm", 48);
+      if (ON.temp && T != null) lbl("temp", small ? Math.round(T) + "°" : Math.round(T) + "°C " + Math.round(cToF(T)) + "°F", 64, -6);
       if (ON.wind && S != null) {
-        LYR.wind.addLayer(cell({ fillColor: "#000", fillOpacity: 0 }));
         LYR.wind.addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, opacity: opOf("wind", 0.95),
           icon: L.divIcon({ className: "wxbarbi", html: barb(v("wind_direction_10m"), S) + '<span class="wxbv">' + Math.round(S) + (G != null && G >= S + 10 ? "G" + Math.round(G) : "") + "</span>", iconSize: [34, 34], iconAnchor: [17, 17] }) }));
       }
-      if (ON.aq && GRID.aq && GRID.aq[n] && GRID.aq[n].hourly) {
-        var ai = gridIdx(GRID.aq[n]).i, av = GRID.aq[n].hourly.us_aqi[ai];
-        if (av != null) {
-          LYR.aq.addLayer(cell({ fillColor: aqCol(av), fillOpacity: opOf("aq", 0.55) }));
-          LYR.aq.addLayer(L.marker(c, { pane: "wxlbl", interactive: false, keyboard: false, icon: L.divIcon({ className: "wxval", html: String(Math.round(av)), iconSize: [34, 16], iconAnchor: [17, 8] }) }));
-        }
-      }
+      if (ON.aq && aqv != null) lbl("aq", String(Math.round(aqv)), 34);
     });
+    ["temp", "cloud", "rain", "aq"].forEach(function (k) { if (ON[k] && LYR[k]) fieldDraw(k, V[k]); else delete FIELD[k]; });
     flowField();
     var gaps = gridGaps();
     note("grid", tt ? modelName(GRID.model) + ", valid " + zt(tt, null, true) + (gaps.length ? ". This model gives nothing for: " + gaps.join(", ") + "." : "") + (ON.aq && GRID.aqErr ? " Air quality did not load (" + GRID.aqErr + ")." : "") : "");
@@ -2192,7 +2257,8 @@
   /* one step: fade what is there, then move every streak and draw its new segment, batched by colour */
   function flowStep(fade) {
     var ctx = FLOW.ctx, sz = map.getSize(), K = 0.065, buckets = LEG.flow.ramp.map(function () { return []; });
-    if (fade) { ctx.globalCompositeOperation = "destination-in"; ctx.fillStyle = "rgba(0,0,0,0.93)"; ctx.fillRect(0, 0, sz.x, sz.y); ctx.globalCompositeOperation = "source-over"; }
+    /* fade: a gentle step most frames for long trails, a stronger one every 8th so 8-bit alpha rounding cannot leave a faint haze behind */
+    if (fade) { ctx.globalCompositeOperation = "destination-in"; ctx.fillStyle = (FLOW.frames || 0) % 8 === 7 ? "rgba(0,0,0,0.85)" : "rgba(0,0,0,0.965)"; ctx.fillRect(0, 0, sz.x, sz.y); ctx.globalCompositeOperation = "source-over"; }
     FLOW.parts.forEach(function (p) {
       var uv = p.age > 0 && flowAt(p.x, p.y);
       if (!uv) { flowSeed(p); return; }
@@ -2201,7 +2267,7 @@
       p.x = x2; p.y = y2; p.age--;
       if (p.x < 0 || p.y < 0 || p.x > sz.x || p.y > sz.y) p.age = 0;
     });
-    ctx.lineWidth = sz.x < 600 ? 1.2 : 1.5; ctx.lineCap = "round";
+    ctx.lineWidth = sz.x < 600 ? 1.5 : 1.8; ctx.lineCap = "round";
     buckets.forEach(function (b, i) {
       if (!b.length) return;
       ctx.strokeStyle = LEG.flow.ramp[i]; ctx.beginPath();
@@ -2255,6 +2321,24 @@
     if (b) { b.setAttribute("aria-pressed", String(!!PLAY.t)); b.textContent = PLAY.t ? "❚❚" : "▶"; b.title = PLAY.t ? "Pause" : "Play the next four days, 3 hours a step"; b.setAttribute("aria-label", b.title); }
   }
 
+  /* storm intensity by the agency's forecast wind, knots: the usual tropical-depression / storm / category 1-5 steps */
+  var STORM_CAT = [[34, "depression", "#6ab0f0"], [64, "storm", "#22b5a5"], [83, "category 1", "#f2d04c"], [96, "category 2", "#f2a04a"], [113, "category 3", "#eb6040"], [137, "category 4", "#c8326e"], [1e9, "category 5", "#8e2bb0"]];
+  function stormCat(kt) { if (kt == null) return ["wind not given", "#b0b8c0"]; for (var i = 0; i < STORM_CAT.length; i++) if (kt < STORM_CAT[i][0]) return [STORM_CAT[i][1], STORM_CAT[i][2]]; return ["category 5", "#8e2bb0"]; }
+  /* the cone: for each pair of consecutive positions with an uncertainty radius, the convex hull of both circles, as one ring each */
+  function stormCone(tr) {
+    function circ(x) { var r = x.r_km || 0, out = [], k = Math.cos(x.lat * Math.PI / 180) || 1; for (var a = 0; a < 360; a += 15) out.push([x.lat + r / 111.2 * Math.cos(a * Math.PI / 180), x.lon + r / (111.2 * k) * Math.sin(a * Math.PI / 180)]); return out; }
+    function hull(P) {
+      P = P.slice().sort(function (a, b) { return a[1] - b[1] || a[0] - b[0]; });
+      function cr(o, a, b) { return (a[1] - o[1]) * (b[0] - o[0]) - (a[0] - o[0]) * (b[1] - o[1]); }
+      var lo = [], up = [], i;
+      for (i = 0; i < P.length; i++) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], P[i]) <= 0) lo.pop(); lo.push(P[i]); }
+      for (i = P.length - 1; i >= 0; i--) { while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], P[i]) <= 0) up.pop(); up.push(P[i]); }
+      return lo.slice(0, -1).concat(up.slice(0, -1));
+    }
+    var rings = [];
+    for (var i = 0; i + 1 < tr.length; i++) { if (!tr[i + 1].r_km) continue; rings.push(hull(circ(tr[i]).concat(circ(tr[i + 1])))); }
+    return rings;
+  }
   /* tropical cyclones: the app's JMA/JTWC tracks, nowCOAST cones and tracks (NHC, CPHC, JTWC), GDACS storm points */
   function stormLayer(op) {
     var g = L.layerGroup(), col = { JMA: "#c62828", JTWC: "#6a1b9a", GDACS: "#ef6c00" };
@@ -2266,15 +2350,32 @@
         // the storm's past track, forecast track and forecast circles open the same pop-up as its position, each saying which part it is
         var src = '<p class="obs"><a href="' + esc(p.url) + '" target="_blank" rel="noopener noreferrer">' + esc(p.agency) + " product</a>. The agency's statement, not confirmed here.</p></div>";
         function part(what) { return '<div class="pop"><div class="tier">Tropical cyclone · ' + esc(p.agencyName || p.agency) + "</div><h3>" + esc((p.cat ? p.cat + " " : "") + st.name) + '</h3><p class="obs">' + what + "</p>" + src; }
-        if (p.past && p.past.length > 1) g.addLayer(L.polyline(p.past.map(function (x) { return [x.lat, x.lon]; }), { pane: "wxvec", color: c, weight: 2, opacity: op }).bindPopup(part("Track so far, as the agency reported it")));
+        /* each line sits on a white casing so it reads over every basemap, rain and cloud */
+        function line(pts, dash, w, what) {
+          var ll = pts.map(function (x) { return [x.lat, x.lon]; });
+          g.addLayer(L.polyline(ll, { pane: "wxvec", color: "#fff", weight: w + 3, opacity: 0.85 * op, interactive: false }));
+          g.addLayer(L.polyline(ll, { pane: "wxvec", color: c, weight: w, dashArray: dash, opacity: op }).bindPopup(part(what)));
+        }
+        if (p.past && p.past.length > 1) line(p.past, null, 2.5, "Track so far, as the agency reported it");
         if (!p.now) return;
         var tr = [p.now].concat(p.fc || []);
-        (p.fc || []).forEach(function (x) { if (x.r_km) g.addLayer(L.circle([x.lat, x.lon], { pane: "wxvec", radius: x.r_km * 1000, color: c, weight: 1, dashArray: "3 3", fillColor: c, fillOpacity: 0.06 * op, opacity: op })
+        /* the agency's uncertainty circles joined into one soft cone (each pair of circles wrapped in its hull, filled as one shape) */
+        var cone = stormCone(tr);
+        if (cone.length) g.addLayer(L.polygon(cone, { pane: "wxvec", stroke: false, fillColor: c, fillOpacity: 0.16 * op, fillRule: "nonzero", interactive: false }));
+        (p.fc || []).forEach(function (x) { if (x.r_km) g.addLayer(L.circle([x.lat, x.lon], { pane: "wxvec", radius: x.r_km * 1000, stroke: false, fillOpacity: 0 })
           .bindPopup(part("Forecast position" + (x.t ? " for " + esc(String(x.t).replace("T", " ")) : "") + ", within about " + Math.round(x.r_km) + " km (the agency's uncertainty circle)"))); });
-        if (tr.length > 1) g.addLayer(L.polyline(tr.map(function (x) { return [x.lat, x.lon]; }), { pane: "wxvec", color: c, weight: 2.5, dashArray: "6 5", opacity: op }).bindPopup(part("Forecast track")));
+        if (tr.length > 1) line(tr, "7 5", 2.5, "Forecast track");
+        /* forecast points: a dot coloured by the agency's forecast wind (the key in the legend), labelled with the time, every 24 h */
+        (p.fc || []).forEach(function (x) {
+          var k = stormCat(x.wind_kt), lab = (x.t ? zOnly(Date.parse(String(x.t).replace(/Z?$/, "Z"))) + " " + dayLbl(Date.parse(String(x.t).replace(/Z?$/, "Z")), "UTC").split(" ")[0] : "+" + x.h + " h") + (x.wind_kt != null ? " · " + x.wind_kt + " kt" : "");
+          var m = L.circleMarker([x.lat, x.lon], { pane: "wxvec", radius: 5.5, color: "#1b1f24", weight: 1.5, fillColor: k[1], fillOpacity: op, opacity: op })
+            .bindPopup(part("Forecast for " + esc(x.t ? String(x.t).replace("T", " ") : "+" + x.h + " h") + ": " + esc([x.wind_kt != null ? x.wind_kt + " kt (" + k[0] + ")" : "", x.gust_kt != null ? "gusts " + x.gust_kt + " kt" : "", x.cat || ""].filter(Boolean).join(", "))));
+          if (x.h && x.h % 24 === 0) m.bindTooltip(esc(lab), { permanent: true, direction: "right", offset: [7, 0], className: "sttime" });
+          g.addLayer(m);
+        });
         g.addLayer(wxMark([p.now.lat, p.now.lon], "a_hydromet", c, 0.9, { pane: "wxvec", radius: 9, color: "#fff", weight: 2, fillColor: c, fillOpacity: 1 })
           .bindPopup(part(esc([p.now.wind_kt != null ? p.now.wind_kt + " kt" : "", p.now.pressure ? p.now.pressure + " hPa" : "", p.now.course ? "moving " + p.now.course : ""].filter(Boolean).join(" · "))))
-          .bindTooltip(esc(st.name), { permanent: true, direction: "right", offset: [10, 0], className: "stlbl" }));
+          .bindTooltip(esc(st.name + (p.now.wind_kt != null ? " · " + p.now.wind_kt + " kt" : "")), { permanent: true, direction: "right", offset: [10, 0], className: "stlbl" }));
       });
     });
     ((W.ASAP_GDACS || {}).events || []).forEach(function (e) {
@@ -2343,7 +2444,7 @@
       if (!LYR[k]) LYR[k] = L.layerGroup();
       if (on) { LYR[k].addTo(map); gridSoon(); } else { map.removeLayer(LYR[k]); LYR[k].clearLayers(); }
       if (k === "flow") flowSet(on);
-      if (on && GRID.data) gridDraw();
+      if (GRID.data) gridDraw();   /* also clears the cell pop-up squares once the last model layer is off */
       if (!gridOn()) playSet(false);
     } else {
       if (LYR[k]) { map.removeLayer(LYR[k]); LYR[k] = null; }
@@ -2385,7 +2486,7 @@
           '<i class="wxnote" id="wxn-' + l.k + '">' + esc(NOTE[l.k] || "") + "</i></span></label>" +
           '<div class="wxmore"><div class="wxleg">' + l.legend() + "</div>" + (l.extra ? l.extra() : "") +
           '<label class="mlop">Opacity <input type="range" min="0.1" max="1" step="0.05" value="' + (l.mirror ? (lsGet("asap-map-layers") || {}).op || 0.6 : opOf(l.k, l.op)) + '" data-wxop="' + l.k + '"></label></div></div>';
-      }).join("") + '<p class="mlkey">Model layers are the chosen weather model&rsquo;s forecast (through Open-Meteo) on a coarse grid across the map view, not observations. Rain radar and satellite layers are the publishers&rsquo; images.</p></div>';
+      }).join("") + '<p class="mlkey">Model layers are the chosen weather model&rsquo;s forecast (through Open-Meteo) on a coarse grid across the map view, blended smoothly between grid points; not observations. Rain radar and satellite layers are the publishers&rsquo; images.</p></div>';
   }
   function mountPanel() {
     var ex = W.ASAP_MAPLAYERS && W.ASAP_MAPLAYERS.panel && W.ASAP_MAPLAYERS.panel();
@@ -2534,12 +2635,24 @@
       "#ml-wx .wxbtn{font:inherit;font-size:12px;min-height:30px;min-width:34px;padding:2px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}#ml-wx .wxbtn[aria-pressed=true]{background:var(--accent,#1b6);color:#fff;border-color:transparent}",
       "#ml-wx .wxmore .wxbtn{margin:4px 0}canvas.wxflow{position:absolute;left:0;top:0;pointer-events:none}",
       ".wxramp{display:block;height:9px;border-radius:2px;margin:3px 0 1px;min-width:140px}.wxrl{display:flex;justify-content:space-between;font-size:10.5px;gap:8px}",
+      /* legend scale: ticks under the bar at the stops, values centred on each tick (the end ones pinned to the bar's edges) */
+      ".wxtk{display:flex;justify-content:space-between;height:3px;margin:-1px 0 0}.wxtk i{width:1px;background:currentColor;opacity:.55}.wxrl.wxrlt{gap:2px;font-variant-numeric:tabular-nums}.wxrl.wxrlt span{flex:1;text-align:center}.wxrl.wxrlt span:first-child{text-align:left}.wxrl.wxrlt span:last-child{text-align:right}",
+      ".wxsr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}",
+      /* the smooth field pictures are scaled up by the browser: keep that smooth, never pixelated */
+      "img.wxfield{image-rendering:auto}",
+      /* storm track: forecast point labels and the intensity key */
+      ".sttime{font:600 10.5px/14px system-ui,sans-serif;color:#111;background:rgba(255,255,255,.88);border:0;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.25);padding:0 4px;white-space:nowrap}.sttime:before{display:none}",
+      ":root[data-map=dark] .sttime,:root[data-map=grey] .sttime{color:#eef3f7;background:rgba(18,26,34,.88);box-shadow:0 0 0 1px rgba(255,255,255,.25)}",
+      ".stkey{display:flex;flex-wrap:wrap;gap:2px 8px;margin-top:3px}.stkey span{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;white-space:nowrap}.stkey i{width:10px;height:10px;border-radius:50%;border:1.5px solid #1b1f24;display:inline-block}",
       ".wxcat{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;margin-right:6px;white-space:nowrap}.wxcat i{display:inline-block;width:10px;height:10px;border-radius:2px;border:1px solid rgba(0,0,0,.25)}",
       ".wxleg img{max-width:100%;height:auto;background:#fff}.wxlegend{background:var(--surface,#fff);color:var(--ink,#111);padding:5px 7px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.3);max-width:250px;max-height:45vh;overflow:auto;font-size:11px}",
       ".wxlegb{background:none;border:0;padding:0;font:inherit;font-weight:600;cursor:pointer;color:inherit}.wxli{margin-top:5px}.wxli .wxbarb{vertical-align:middle}",
       ".wxval{color:#111;font:600 11px/16px system-ui,sans-serif;text-align:center;text-shadow:0 0 3px #fff,0 0 3px #fff;pointer-events:none}",
+      /* barbs keep a thin light halo so they stay readable over satellite imagery and coloured fields; dark maps flip it */
+      ".wxbarbi svg{filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)}:root[data-map=dark] .wxbarbi svg,:root[data-map=grey] .wxbarbi svg{filter:drop-shadow(0 0 1px #000) drop-shadow(0 0 1px #000)}",
       ".wxbarbi{color:#10263a;pointer-events:none}.wxbarbi .wxbv{position:absolute;left:24px;top:18px;font:600 10px/12px system-ui,sans-serif;text-shadow:0 0 3px #fff,0 0 3px #fff}",
-      "html.dark .wxbarbi,[data-theme=dark] .wxbarbi{color:#e8f1f8}html.dark .wxbarbi .wxbv,[data-theme=dark] .wxbarbi .wxbv{text-shadow:0 0 3px #000,0 0 3px #000}"
+      /* the map theme is :root[data-map] (light, grey or dark); barbs turn light on the grey and dark maps */
+      ":root[data-map=dark] .wxbarbi,:root[data-map=grey] .wxbarbi{color:#e8f1f8}:root[data-map=dark] .wxbarbi .wxbv,:root[data-map=grey] .wxbarbi .wxbv{text-shadow:0 0 3px #000,0 0 3px #000}"
     ].join("\n");
     document.head.appendChild(s);
   }
@@ -2566,7 +2679,11 @@
       regions: function (c, cb) { var l = regsFor(c); if (!l) loadRegs(c, cb); return l ? l.map(function (r) { return r[0]; }) : null; },
       chooseRegion: function (c, i) { var l = regsFor(c), r = l && l[i]; if (!r || c !== cc()) return false; setPlace({ k: "reg", n: r[0], t: r[1], la: r[2], lo: r[3], b: r[4], r: r[5] }); return true; }, refresh: function () { return go(true); }, layers: function () { return Object.keys(ON).filter(function (k) { return ON[k]; }); },
       airfields: avNear,
-      _test: { cells: function (k) { var n = 0, w = 0; if (LYR[k]) LYR[k].eachLayer(function (l) { if (l.setBounds) { n++; if (l.options.fillOpacity > 0) w++; } }); return { all: n, wet: w }; }, rainCol: rainCol, flowCol: flowCol, MAP_MODELS: MAP_MODELS, flowState: function () { return { on: FLOW.on, frames: FLOW.frames || 0, still: FLOW.still, field: !!FLOW.f, parts: FLOW.parts.length }; }, chartHtml: chartHtml, avwxHtml: avwxHtml, tafLines: tafLines, avDecoded: avDecoded, stability: stability, daFt: daFt, paFt: paFt, agreement: agreement, meteogram: meteogram, analyse: analyse, samplePoints: samplePoints, ceilingFt: ceilingFt, heatIndex: heatIndex, windChill: windChill, douglas: douglas, THR: THR, barb: barb } };
+      _test: { cells: function (k) { var F = FIELD[k], n = 0, w = 0; if (F) F.vals.forEach(function (v) { n++; if (v != null && FIELD_COL[k](FIELD_IN[k] ? FIELD_IN[k](v) : v)) w++; }); return { all: n, wet: w }; },
+        /* the drawn field picture: how many pixels are painted and how many distinct colours (a smooth blend has many, squares a few) */
+        field: function (k) { var F = FIELD[k]; if (!F || !F.canvas) return { painted: 0, colours: 0, overlays: 0 }; var d = F.canvas.getContext("2d").getImageData(0, 0, F.canvas.width, F.canvas.height).data, seen = {}, p = 0, ov = 0;
+          for (var i = 0; i < d.length; i += 4) if (d[i + 3]) { p++; seen[d[i] + "," + d[i + 1] + "," + d[i + 2] + "," + d[i + 3]] = 1; }
+          LYR[k].eachLayer(function (l) { if (l.setUrl) ov++; }); return { painted: p, colours: Object.keys(seen).length, overlays: ov, w: F.canvas.width, h: F.canvas.height }; }, rainCol: rainCol, flowCol: flowCol, MAP_MODELS: MAP_MODELS, flowState: function () { return { on: FLOW.on, frames: FLOW.frames || 0, still: FLOW.still, field: !!FLOW.f, parts: FLOW.parts.length }; }, chartHtml: chartHtml, avwxHtml: avwxHtml, tafLines: tafLines, avDecoded: avDecoded, stability: stability, daFt: daFt, paFt: paFt, agreement: agreement, meteogram: meteogram, analyse: analyse, samplePoints: samplePoints, ceilingFt: ceilingFt, heatIndex: heatIndex, windChill: windChill, douglas: douglas, THR: THR, barb: barb } };
   }
   /* Area > Weather brief: the one-page brief for the drawn shape (osap-atak.js asks for a shape first when there is none) */
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "wxbrief", label: "Weather brief", run: function () { if (W.OSAP_WX && W.OSAP_WX.briefAt) W.OSAP_WX.briefAt({ area: true }); } });
