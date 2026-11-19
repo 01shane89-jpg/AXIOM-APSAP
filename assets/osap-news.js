@@ -77,6 +77,9 @@
     return NAMES[id] || id.toUpperCase();
   }
   function here(ccs) { return ccs.indexOf(S.cc) >= 0; }
+  /* World (ww) has no headlines filed under it: a search there always covers every country, with no "Only World" toggle.
+     S.where keeps the analyst's choice for when a real country is picked again. */
+  function W() { return S.cc === "ww" ? "all" : S.where; }
 
   /* ---------- loading: manifest, then days newest first ---------- */
   function bust() { return "?t=" + Math.floor(Date.now() / 6e5); }
@@ -123,7 +126,7 @@
     var out = [];
     for (var i = 0; i < S.rows.length; i++) {
       var x = S.rows[i];
-      if (S.where === "here" && !here(x.ccs)) continue;
+      if (W() === "here" && !here(x.ccs)) continue;
       if (S.topic && x.tp.indexOf(S.topic) < 0) continue;
       var ok = true;
       for (var k = 0; k < terms.length && ok; k++) ok = terms[k].re.test(x.f) !== terms[k].not;
@@ -135,7 +138,7 @@
   function webUrl() {
     var q = S.q.trim();
     if (!q && S.topic && S.man) { var t = S.man.topics.filter(function (x) { return x.id === S.topic; })[0]; if (t) q = (t.words || []).slice(0, 3).map(function (w) { return '"' + w + '"'; }).join(" OR "); }
-    if (S.where === "here" && S.name) q = q + ' "' + S.name + '"';
+    if (W() === "here" && S.name) q = q + ' "' + S.name + '"';
     return "https://www.bing.com/news/search?q=" + encodeURIComponent(q.trim());
   }
 
@@ -143,7 +146,7 @@
   function drawChips() {
     var c = S.el && S.el.querySelector(".nqchips"); if (!c) return;
     /* a country's own data sets (countries in tools/topics.json) show only on that country, and in every-country search */
-    var T = ((S.man && S.man.topics) || []).filter(function (t) { return !t.countries || S.where === "all" || t.countries.indexOf(S.cc) >= 0 || S.topic === t.id; });
+    var T = ((S.man && S.man.topics) || []).filter(function (t) { return !t.countries || W() === "all" || t.countries.indexOf(S.cc) >= 0 || S.topic === t.id; });
     c.innerHTML = T.length ? '<span class="nqlbl">Data sets</span>' + T.map(function (t) {
       return '<button type="button" data-nqt="' + esc(t.id) + '" aria-pressed="' + (S.topic === t.id) + '" title="' + esc((t.words || []).join(", ")) + '">' + esc(t.name) + "</button>"; }).join("") : "";
   }
@@ -158,14 +161,14 @@
     var status = S.busy && !S.man ? "Opening the news index…" :
       (S.man ? "Searched " + done + " of " + total + " days" + (S.busy ? " (reading the next day…)" : "") + " · " + S.rows.length.toLocaleString() + " headlines" : "");
     h += '<div class="nqstat"><span><b>' + R.length.toLocaleString() + "</b> " + (R.length === 1 ? "headline" : "headlines") +
-      (S.where === "here" ? " filed under " + esc(S.name) : " from every country") + "</span><span class=\"nqobs\">" + esc(status) + "</span></div>";
+      (W() === "here" ? " filed under " + esc(S.name) : " from every country") + "</span><span class=\"nqobs\">" + esc(status) + "</span></div>";
     if (S.err) h += '<p class="nqnote">' + esc(S.err) + "</p>";
     if (S.man && S.man.relevance && S.man.relevance.left_out) h += '<p class="nqnote">Only security, politics, crime, disaster, health and economic news is searched: ' +
       S.man.relevance.left_out.toLocaleString() + " sport, celebrity and lifestyle headlines of the last " + total + " days are left out (they stay in Local news).</p>";
     R.slice(0, S.shown).forEach(function (x) {
       var r = x.r, url = safeUrl(r[5]), w = when(r[1]), fl = r[7] || "";
       /* the countries it is filed under: all of them when searching every country, else only the others it names */
-      var where = (S.where === "all" ? x.ccs : x.ccs.filter(function (c) { return c !== S.cc; })).slice(0, 3).map(cName);
+      var where = (W() === "all" ? x.ccs : x.ccs.filter(function (c) { return c !== S.cc; })).slice(0, 3).map(cName);
       h += '<article class="nqrow"><a class="nqh" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(txt(r[2])) + "</a>" +
         (r[3] ? '<span class="nqorig" lang="">' + esc(txt(r[3])) + "</span>" : "") +
         '<span class="nqsub">' + esc(r[4]) + (where.length ? " · " + esc(where.join(", ")) : "") + " · " + esc(w.txt) + "</span>" +
@@ -175,7 +178,7 @@
     var more = [];
     if (R.length > S.shown) more.push('<button type="button" class="tdlink" data-nq="more">Show ' + Math.min(PAGE, R.length - S.shown) + " more</button>");
     if (S.man && done < total && !S.busy) more.push('<button type="button" class="tdlink" data-nq="older">Search older days (' + (total - done) + " more)</button>");
-    more.push(S.where === "here" ? '<button type="button" class="tdlink" data-nq="all">Search every country</button>' : '<button type="button" class="tdlink" data-nq="here">Only ' + esc(S.name) + "</button>");
+    if (S.cc !== "ww") more.push(W() === "here" ? '<button type="button" class="tdlink" data-nq="all">Search every country</button>' : '<button type="button" class="tdlink" data-nq="here">Only ' + esc(S.name) + "</button>");
     more.push('<a class="tdlink nqweb" href="' + esc(webUrl()) + '" target="_blank" rel="noopener noreferrer">' + (R.length < 5 ? "Find more on the web ↗" : "More on the web ↗") + "</a>");
     h += '<div class="tdlinks">' + more.join("") + "</div>";
     if (!R.length && !S.busy && S.man && done >= total) h += '<p class="nqnote">Nothing in the last ' + total + " days of the pool. The web link above searches Bing News instead.</p>";
