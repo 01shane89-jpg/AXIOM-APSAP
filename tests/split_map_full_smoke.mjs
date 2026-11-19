@@ -1,6 +1,6 @@
 // Headless check of the docked window's Map / Half / Full stops on a large screen (assets/osap-split.js; Shane 19 Nov 2026:
 // "full screen view isnt actually full screen"), with the evacuation planner as the window: Map folds it to a small bar in
-// the top middle of the map, so nothing covers the side and the toolbar stays at the right edge; Full is the full-height side panel;
+// the top middle of the map, so nothing covers the side and the toolbar stays at the right edge; Full covers the whole window;
 // Half stays the top half on the right. Routers and other hosts are blocked.
 // Run from the repo root: node tests/split_map_full_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
 import { createServer } from "node:http";
@@ -55,7 +55,7 @@ ok(await p.evaluate(() => [...document.querySelectorAll("#epe .osheet-h .osh-b b
 await press("Full");
 g = await geo();
 if (OUT) await p.screenshot({ path: OUT + "/split-full.png" });
-ok(g.stop === "full" && g.w.r >= 1280 - 2 && g.w.w < g.m.w * 0.6, "Full is the full-height side panel (" + Math.round(g.w.l) + "-" + Math.round(g.w.r) + " vs " + Math.round(g.m.l) + "-" + Math.round(g.m.r) + ")");
+ok(g.stop === "full" && g.w.l <= 1 && g.w.t <= 1 && g.w.r >= 1280 - 2, "Full covers the whole window, edge to edge (Shane 19 Nov, \"legit full screen\") (" + Math.round(g.w.l) + "-" + Math.round(g.w.r) + " vs " + Math.round(g.m.l) + "-" + Math.round(g.m.r) + ")");
 ok(g.w.b >= 640 - 2, "down to the bottom of the window");
 
 await press("Map");
