@@ -108,13 +108,13 @@ let state;
   }
   await p.click('#epe [data-ep="showall"]');
   ok(await drawn(p) === all0, "Show all puts everything back");
-  await p.uncheck('#epe [data-ep-vis="o4"]');
+  await p.uncheck('#epe .epevis [data-ep-vis="o4"]');
   const nv = await drawn(p);
   ok(nv < all0 && (await kept(p))[0].opts.find((o) => o.id === "o4").hid === true, "one option can be hidden from the map, and that is kept (" + all0 + " to " + nv + ")");
   await p.click('#epe [data-ep="shownone"]');
   ok(await drawn(p) < nv, "Hide all clears the plan items from the map");
   await p.click('#epe [data-ep="showall"]');
-  await p.check('#epe [data-ep-vis="o4"]');
+  await p.check('#epe .epevis [data-ep-vis="o4"]');
   ok(await drawn(p) === all0, "and they all come back");
   if (OUT) { await p.screenshot({ path: OUT + "/epe-manage.png" }); await p.click("#epe details.epeshow summary"); await p.click('#epe [data-ep-rm="o2"]'); await (await p.$('#epe [data-ep-opt="o2"]')).scrollIntoViewIfNeeded(); await p.screenshot({ path: OUT + "/epe-remove.png" }); await p.click("#epe [data-ep-rmno]"); }
 
