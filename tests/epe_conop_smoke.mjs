@@ -68,6 +68,28 @@ const markText = (p, cls) => p.evaluate((c) => [...document.querySelectorAll(c)]
   const [pop] = await Promise.all([p.waitForEvent("popup", { timeout: 15000 }), p.click('#epe [data-ep="conop"]')]);
   await pop.waitForTimeout(800);
   ok(/CONCEPT OF OPERATIONS/.test(await pop.evaluate(() => document.body.innerText)), "CONOP (PDF) opens the CONOP page to print");
+  /* Shane 19 Nov: "this map from the conop it terrible": a crowded plan (9 phase lines, 15 air and 2 ground extraction points)
+     prints with one label per phase line, no label over another, a grid, a legend, and a numbered key for any name with no room */
+  const busy = await p.evaluate(() => {
+    const E = window.OSAP_EPE, ps = E.state().plan.opts, o = ps.find((x) => /Laem/.test(x.dest.i.name)) || ps[0], c = o.route.coords, n = c.length;
+    ["KICKOFF", "HUDDLE", "SNAP", "BLITZ", "MIDFIELD", "FIRST DOWN", "RED ZONE", "END ZONE", "GOAL POST"].forEach((nm, i) => { const q = c[Math.floor((i + 0.5) / 9 * (n - 1))]; E.addCm("pl", [[q[0] + 0.02, q[1] - 0.12], [q[0] - 0.02, q[1] + 0.12]], "PL " + nm); });
+    for (let i = 1; i <= 15; i++) { const q = c[Math.floor(i / 16 * (n - 1))]; E.addCm("axp", [[q[0] + 0.01, q[1] + 0.01]], "AXP " + i); }
+    [0.9, 0.97].forEach((t, i) => { const q = c[Math.floor(t * (n - 1))]; E.addCm("gxp", [[q[0], q[1] - 0.02]], "GXP " + (i + 1)); });
+    return E.conopHtml();
+  });
+  const mp = await ctx.newPage(); await mp.setContent(busy);
+  const lay = await mp.evaluate(() => {
+    const svg = document.querySelector("figure svg"), T = [...svg.querySelectorAll("text")].filter((t) => !/°[EN]$/.test(t.textContent) && t.textContent.length > 1);
+    const bx = T.map((t) => t.getBBox()), over = [];
+    for (let i = 0; i < bx.length; i++) for (let j = i + 1; j < bx.length; j++) { const a = bx[i], b = bx[j]; if (a.x < b.x + b.width - 1 && b.x < a.x + a.width - 1 && a.y < b.y + b.height - 1 && b.y < a.y + a.height - 1) over.push(T[i].textContent + " / " + T[j].textContent); }
+    const names = T.map((t) => t.textContent);
+    return { over, plTwice: ["PL KICKOFF", "PL HUDDLE", "PL GOAL POST"].filter((n) => names.filter((x) => x === n).length > 1), grid: [...svg.querySelectorAll("text")].some((t) => /°N$/.test(t.textContent)), legend: !!document.querySelector("figure .maplg i"), keyed: (document.querySelector("figure .mapkey") || {}).textContent || "", placed: names.length };
+  });
+  ok(!lay.over.length, "the crowded map has no label over another (" + lay.placed + " labels)" + (lay.over.length ? ": " + lay.over.slice(0, 4).join("; ") : ""));
+  ok(!lay.plTwice.length, "each phase line is labelled once");
+  ok(lay.grid && lay.legend, "with a lat/lon grid and a legend");
+  if (OUT) await (await mp.$("figure")).screenshot({ path: OUT + "/conop-map.png" });
+  await mp.close();
   if (OUT) await pop.screenshot({ path: OUT + "/conop.png", fullPage: true });
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
