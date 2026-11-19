@@ -434,6 +434,11 @@
 
   /* ---------- the corridor and the air and sea nodes in it (phase 3) ---------- */
   function corr(o) { if (!o.corr) o.corr = { w: 2, at: {} }; if (!o.corr.at) o.corr.at = {}; return o.corr; }
+  /* Shane 19 Nov: "I need to be able to choose not to have a corridor": per route, kept with the plan (o.corr.none). No band or
+     circles on the map, no corridor made from the route, and the printout and CONOP say so. The width stays as the search
+     distance for hazards, air and sea nodes and fuel near the line. */
+  function noCorr(o) { return !!(o && o.corr && o.corr.none); }
+  function corrTxt(o) { return noCorr(o) ? "No corridor (analyst's choice)" : corr(o).w + " km each side of the line"; }
   /* the circles round chosen nodes: [{ key, lat, lon, km }] */
   function circles(o) {
     var c = corr(o), out = [];
@@ -1053,7 +1058,7 @@
     pl.opts.forEach(function (o) {
       var lg = legsOf(o), haz = [];
       ((o.along && o.along.haz && o.along.haz.ranges) || []).forEach(function (rg) { rg.items.filter(function (x) { return x.p; }).forEach(function (x) { haz.push(pm(x.kind + " (km " + x.at + ")", x.p[0], x.p[1], x, x.text, "haz")); }); });
-      h += "<Folder><name>" + xml((o.role ? o.role + " " + ROLE_N[o.role] + ": " : "") + o.dest.i.name) + "</name><description>" + xml(o.label + ". Status " + (o.st || o.prop.st) + (o.st ? " (set by the analyst)" : " (OSAP proposal)") + ". " + dist(o.route.m) + ", " + dur(o.route.s) + ".") + "</description>" +
+      h += "<Folder><name>" + xml((o.role ? o.role + " " + ROLE_N[o.role] + ": " : "") + o.dest.i.name) + "</name><description>" + xml(o.label + ". Status " + (o.st || o.prop.st) + (o.st ? " (set by the analyst)" : " (OSAP proposal)") + ". " + dist(o.route.m) + ", " + dur(o.route.s) + ". Corridor: " + corrTxt(o) + ".") + "</description>" +
         ln("Route " + (o.role || o.id), o.route.coords, "r" + (o.role || "x"), dist(o.route.m) + ", " + dur(o.route.s) + (o.route.src ? ". " + o.route.src : "") + "." + gt("r:" + o.id)) +
         (lg.length > 1 ? fold("Legs", lg.map(function (l, i) { return ln("Leg " + (i + 1) + ": " + (l.a.name || "") + " to " + (l.b.name || ""), l.coords || [], flies(l.mode) ? "lfly" : "lgnd", (l.mode || "") + (l.m ? ", " + dist(l.m) : "") + (l.s ? ", " + dur(l.s) : "") + (l.bad ? ". Marked unusable." : "")); }).join("")) : "") +
         pm("Destination: " + o.dest.i.name, o.dest.i.lat, o.dest.i.lon, null, (o.kind === "posts" ? "Not verified as an evacuation destination." : "") + gt("d:" + o.id), "dest") +
@@ -1097,7 +1102,7 @@
       "<h1>" + E(pk.name) + "</h1><p class=\"n\">Evacuation route package, frozen " + E(dual(pk.made, true)) + ". Automatic draft from open data: roles and statuses are the analyst's; nothing here says a route, crossing or destination is open or safe. Plan SHA-256 <span class=\"m\">" + E(pk.fp) + "</span></p>" +
       "<p>Origin: <b>" + E(pl.origin.label || "") + "</b> " + E(grid(pl.origin.lat, pl.origin.lon)) + " (" + E(pl.origin.how) + ")</p>" + cmPrint(pl) + geoPrint(pl);
     pl.opts.slice().sort(function (a, b) { return (ROLES.indexOf(a.role) + 1 || 9) - (ROLES.indexOf(b.role) + 1 || 9); }).forEach(function (o) {
-      h += "<h2>" + E(o.role ? o.role + " " + ROLE_N[o.role] + ": " : "No role: ") + E(o.dest.i.name) + "</h2><p>" + E(o.label) + ". " + E(dist(o.route.m)) + ", " + E(dur(o.route.s)) + ". Status <b>" + E(o.st || o.prop.st) + "</b> " + E(o.st ? "(set by the analyst)" : "(OSAP proposal: " + o.prop.why + ")") + "</p>" +
+      h += "<h2>" + E(o.role ? o.role + " " + ROLE_N[o.role] + ": " : "No role: ") + E(o.dest.i.name) + "</h2><p>" + E(o.label) + ". " + E(dist(o.route.m)) + ", " + E(dur(o.route.s)) + ". Status <b>" + E(o.st || o.prop.st) + "</b> " + E(o.st ? "(set by the analyst)" : "(OSAP proposal: " + o.prop.why + ")") + ". Corridor: " + E(corrTxt(o)) + ".</p>" +
         ((o.cps || []).length ? "<h3>Checkpoints</h3><table><tr><th></th><th>Name</th><th>Grid</th><th>km</th><th>Where</th><th>Status</th></tr>" + o.cps.map(function (q) { return "<tr><td>" + E(q.kind) + "</td><td>" + E(cpNm(o, q)) + "</td><td class=\"m\">" + E(grid(q.lat, q.lon)) + "</td><td>" + E(q.km) + "</td><td>" + E(q.why) + "</td><td>" + (q.st === "proposed" ? "Proposed by OSAP, unverified" : "Checked by the analyst") + "</td></tr>"; }).join("") + "</table>" : "") +
         cmPrintOpt(o, pl) + "<h3>Legs</h3><table><tr><th>#</th><th>From</th><th>To</th><th>How</th><th>Distance</th><th>Time</th></tr>" + legsOf(o).map(function (l, i) { return "<tr><td>" + (i + 1) + "</td><td>" + E(l.a.name) + "</td><td>" + E(l.b.name) + "</td><td>" + E(flies(l.mode) ? LEG_M.filter(function (m) { return m[0] === l.mode; })[0][1] + " (straight line)" : "Road") + (l.bad ? " UNUSABLE" : "") + "</td><td>" + E(dist(l.m)) + "</td><td>" + E(dur(l.s)) + "</td></tr>"; }).join("") + "</table>";
       var rows = [];
@@ -1172,13 +1177,14 @@
         "<p><b>Phase III, Arrival.</b> Arrive at " + E(P.dest.i.name) + (g["d:" + P.id] ? ". " + E(g["d:" + P.id]) : "") + "." + (axp.length ? " Air extraction points: " + axp.join("; ") + "." : "") + " " + blank("reception and handover") + "</p>" +
         "<p><b>Phase IV, Handover and recovery.</b> " + blank("onward movement, accountability report") + "</p>";
     } else h += "<p>" + blank("No route options in this plan") + "</p>";
-    h += "<h3>c. Routes (PACE)</h3>" + tbl(["Role", "Destination", "Route", "Distance", "Time", "Heading", "Status"], opts.map(function (o) { var hd = heading(o, pl); return [E(o.role ? o.role + " " + ROLE_N[o.role] : "None"), E(o.dest.i.name), E(o.label), E(dist(o.route.m)), E(dur(o.route.s)), E(hd.c + " " + hd.b + "°"), "<b>" + E(stOf(o)) + "</b> " + E(o.st ? "(set by the analyst)" : "(OSAP proposal)")]; })) +
+    h += "<h3>c. Routes (PACE)</h3>" + tbl(["Role", "Destination", "Route", "Distance", "Time", "Heading", "Corridor", "Status"], opts.map(function (o) { var hd = heading(o, pl); return [E(o.role ? o.role + " " + ROLE_N[o.role] : "None"), E(o.dest.i.name), E(o.label), E(dist(o.route.m)), E(dur(o.route.s)), E(hd.c + " " + hd.b + "°"), E(noCorr(o) ? "None (analyst's choice)" : corr(o).w + " km each side"), "<b>" + E(stOf(o)) + "</b> " + E(o.st ? "(set by the analyst)" : "(OSAP proposal)")]; })) +
       "<p>Triggers to change route: " + blank("conditions that move the party from P to A, C or E") + "</p>";
     var legRows = []; opts.forEach(function (o) { var ls = legsOf(o); if (ls.length > 1) ls.forEach(function (l, i) { legRows.push([E(o.role || "–"), E(i + 1), E(l.a.name), E(l.b.name), E(flies(l.mode) ? (LEG_M.filter(function (m) { return m[0] === l.mode; })[0] || [0, l.mode])[1] : "By road"), E(dist(l.m || 0)), E(dur(l.s))]); }); });
     if (legRows.length) h += "<h3>d. Legs</h3>" + tbl(["Route", "#", "From", "To", "How", "Distance", "Time"], legRows);
     var pls = kindOf("pl"), corrs = kindOf("corr");
     h += "<h3>" + (legRows.length ? "e" : "d") + ". Control measures</h3>" +
       (pls.length ? "<p><b>Phase lines</b></p>" + tbl(["Phase line", "On the ground", "Crossed on the routes"], pls.map(function (x) { return [E(x.name), E(x.land && x.land.name ? x.land.name + (x.land.kind ? " (" + x.land.kind + ")" : "") : g[x.id] || "drawn by hand"), E(opts.map(function (o) { var xs = plCross(o.route.coords || [], x.pts); return xs.length ? (o.role || o.dest.i.name) + " km " + xs.join(", ") : ""; }).filter(Boolean).join("; ") || "not crossed")]; })) : "") +
+      (!corrs.length && P && noCorr(P) ? "<p><b>Evacuation corridor:</b> none. The planner chose no corridor for the " + E(rn(P)) + ".</p>" : "") +
       (corrs.length ? "<p><b>Evacuation corridor</b></p>" + li(corrs.map(function (x) { return "<b>" + E(x.name) + "</b>, " + E(areaKm2(x.pts)) + " km². " + E(g[x.id] || x.how || ""); })) : "") +
       tbl(["Name", "Kind", "Where"], list.filter(function (x) { return x.k !== "pl" && x.k !== "corr"; }).map(function (x) { var g2 = CM[x.k].g; return ["<b>" + E(x.name) + "</b>", E(CM[x.k].n), '<span class="m">' + E(g2 === "pt" ? grid(x.pts[0][0], x.pts[0][1]) : x.pts.length + " points, " + areaKm2(x.pts) + " km²") + "</span>"]; }));
     var cpRows = []; opts.forEach(function (o) { (o.cps || []).forEach(function (q) { cpRows.push([E(o.role ? o.role + " " + o.dest.i.name : o.dest.i.name), E(cpNm(o, q)), '<span class="m">' + E(grid(q.lat, q.lon)) + "</span>", E(q.km), E(q.why || ""), E(q.st === "proposed" ? "Proposed by OSAP" : "Checked by the analyst")]); }); });
@@ -1817,7 +1823,7 @@
     return '<section class="eposec epegeo"><h3>The ground <span class="obs">each part of the plan described by the towns, roads, rivers and railways round it</span></h3>' +
       '<div class="epebtns"><button type="button" data-ep="gdesc"' + (busy ? " disabled" : "") + ">" + (g ? "Describe again" : "Describe the ground") + "</button>" +
       '<button type="button" data-ep="gpl"' + (busy || !sel ? " disabled" : "") + ' title="Phase lines on the named rivers, canals, railways and main roads that cross the selected route">Phase lines on landmarks</button>' +
-      '<button type="button" data-ep="gcorr"' + (busy || !sel ? " disabled" : "") + ' title="A corridor whose sides follow roads, rivers, canals or railways along the selected route; the set width where none fits">Corridor on landmarks</button></div>' +
+      '<button type="button" data-ep="gcorr"' + (busy || !sel || noCorr(optOf(S.sel)) ? " disabled" : "") + ' title="' + (noCorr(optOf(S.sel)) ? "This route is set to No corridor. " : "") + 'A corridor whose sides follow roads, rivers, canals or railways along the selected route; the set width where none fits">Corridor on landmarks</button></div>' +
       '<p class="obs" role="status">' + E(S.gmsg || (g ? "Described " + dual(g.at, true) + " from " + g.src + ". " + GEO_NOTE : "Reads OpenStreetMap once round the plan. " + GEO_NOTE)) + "</p>" +
       (items ? '<ul class="epegeol">' + items + "</ul>" : "") + "</section>";
   }
@@ -1876,6 +1882,32 @@
     if (k === "avoid") roundAll(x.name + " added. ");
     return x;
   }
+  /* one corridor round every route (Shane 19 Nov: "i want to be able to have all the routes inside the corridor if i want"):
+     the routes with a PACE role (every route when none has one yet), skipping a route set to No corridor, wrapped in one
+     outline the widest set width beyond the outermost lines (a convex hull, so the ground between routes is inside too) */
+  function allRoutes(p) { var r = p.opts.filter(function (o) { return o.role; }); return (r.length ? r : p.opts).filter(function (o) { return !noCorr(o) && o.route && o.route.coords && o.route.coords.length > 1; }); }
+  function hullAll(list, wKm) {
+    var pts = [], k = 111320;
+    list.forEach(function (o) { thin(o.route.coords, 200).forEach(function (q) { var cl = Math.cos(q[0] * Math.PI / 180) || 1e-6; for (var a = 0; a < 16; a++) { var t = a * Math.PI / 8; pts.push([q[0] + Math.sin(t) * wKm * 1000 / k, q[1] + Math.cos(t) * wKm * 1000 / (k * cl)]); } }); });
+    if (pts.length < 3) return [];
+    var lat0 = pts[0][0], cl0 = Math.cos(lat0 * Math.PI / 180) || 1e-6;
+    var P = pts.map(function (q) { return [q[1] * cl0, q[0], q]; }).sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; });
+    function cr(o, a, b) { return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); }
+    var lo = [], up = [];
+    P.forEach(function (q) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); });
+    for (var i = P.length - 1; i >= 0; i--) { var q = P[i]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+    return lo.slice(0, -1).concat(up.slice(0, -1)).map(function (q) { return q[2]; });
+  }
+  function cmAll() {
+    var p = S.plan; if (!p) return;
+    var list = allRoutes(p);
+    if (!list.length) { S.cmmsg = "No route to wrap: every route is set to No corridor."; render(); return; }
+    var w = Math.max.apply(null, list.map(function (o) { return corr(o).w; }));
+    var ring = hullAll(list, w); if (ring.length < 3) return;
+    var x = cmAdd("corr", ring, "Corridor all routes", "Round " + (list.some(function (o) { return o.role; }) ? "the " + list.map(function (o) { return o.role; }).join(", ") + " routes" : "every route") + ", " + w + " km beyond");
+    if (x) { S.cmmsg = "Evacuation corridor " + x.name + " added: one outline round " + list.length + " route" + (list.length === 1 ? "" : "s") + ", " + areaKm2(x.pts) + " km². Drag its corners to tighten it, or delete it below."; render(); }
+  }
+
   /* the analyst's own point, named anything: at a typed grid, or at the next map tap; kept in this plan only (plan.cm, k "pt") */
   function ptAdd() {
     if (!S.plan) return;
@@ -2034,7 +2066,7 @@
         '<input id="epe-gtz" type="number" min="1" max="50" step="0.5" value="' + E(gf.sz || 3) + '" aria-label="Length on the ground in meters" title="Length on the ground, m (ICAO: at least 2.5)" style="flex:0 1 70px">' +
         '<input id="epe-gtn" maxlength="80" placeholder="Note: material, orientation, who lays it" aria-label="Note on the signal" value="' + E(gf.note || "") + '">' +
         '<input id="epe-gtg" maxlength="60" placeholder="Grid, or empty and tap the map" aria-label="Grid of the signal" value="' + E(gf.g || "") + '"><button type="submit">Add signal</button></form>' +
-      (optOf(S.sel) ? '<div class="epebtns"><button type="button" data-ep="cmband" title="An outline of the selected option\'s corridor width each side of its line, kept as your evacuation corridor">Corridor from the selected route (' + E(corr(optOf(S.sel)).w) + " km each side)</button></div>" : "") +
+      (optOf(S.sel) ? '<div class="epebtns"><button type="button" data-ep="cmband"' + (noCorr(optOf(S.sel)) ? ' disabled title="This route is set to No corridor"' : ' title="An outline of the selected option\'s corridor width each side of its line, kept as your evacuation corridor"') + ">Corridor from the selected route (" + E(noCorr(optOf(S.sel)) ? "none set" : corr(optOf(S.sel)).w + " km each side") + ")</button>" + '<button type="button" data-ep="cmall" title="One outline round every route with a PACE role (every route when none has one), the widest set width beyond the outer lines">Corridor round all routes</button></div>' : "") +
       '<p id="epe-cmmsg" class="obs" role="status">' + E(S.cmmsg || "") + "</p>" +
       (list.length ? '<ul class="epecmls">' + list.map(function (x) {
         var g = CM[x.k].g, pt = g === "pt";
@@ -2086,6 +2118,10 @@
       var col = CM_COL[x.k], av = x.k === "avoid";
       var pg = L.polygon(x.pts, { color: col, weight: av ? 2.5 : 2, dashArray: av ? null : "10 6", fillColor: col, fillOpacity: av ? 0.18 : 0.06, className: av ? "epeavoid" : "epecorr2", interactive: true })
         .bindTooltip(E((av ? "Area to avoid: " : "Evacuation corridor: ") + x.name + (live0 ? " (tap to move its corners)" : "")), { sticky: true }).addTo(lyr);
+      /* Shane 19 Nov: "when i try to select the route it always selects the corridor": the map draws on one canvas and a tap
+         goes to the topmost shape under it, so areas go to the back: routes, lines and points win where they overlap, and
+         the area still takes a tap on open ground */
+      if (pg.bringToBack) pg.bringToBack();
       if (live0) { pg.on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); cmEditTog(x.id); }); vx(x, pg); }
       var c0 = x.pts.reduce(function (a, q) { return [a[0] + q[0] / x.pts.length, a[1] + q[1] / x.pts.length]; }, [0, 0]);
       if (lbx(x) && x.edges) x.edges.forEach(function (e2) { if (e2.mid && e2.b - e2.a >= (e2.kind === "buffer" ? 15 : 3)) lbl(e2.mid, e2.kind === "buffer" ? "set width (no feature)" : e2.name || ("unnamed " + GEO_K[e2.kind]), col, e2.kind === "buffer" ? "epebuf" : "epeedge"); });
@@ -2506,10 +2542,12 @@
   function corrHtml(o) {
     var c = corr(o), ch = chain(o), busy = S.abusy === o.id, a = o.air, sp = speeds();
     var custom = WIDTHS.indexOf(c.w) < 0;
-    var h = '<div class="epecorr"><h4>Corridor <span class="obs">' + E(c.w) + " km each side of the line</span></h4>" +
-      '<div class="eperow"><label>Width <select data-ep-cw>' + WIDTHS.map(function (w) { return '<option value="' + w + '"' + (c.w === w ? " selected" : "") + ">" + w + " km</option>"; }).join("") + '<option value="x"' + (custom ? " selected" : "") + ">Your own…</option></select></label>" +
-        (custom ? '<label>km <input type="number" data-ep-cwx min="0.1" max="50" step="0.1" value="' + E(c.w) + '" style="width:80px"></label>' : "") + "</div>" +
-      '<details class="epecirc"' + (S.circOpen ? " open" : "") + '><summary>Wider circles at nodes' + (circles(o).length ? " (" + circles(o).length + ")" : "") + "</summary><ul>" + ch.map(function (n) {
+    var nc = noCorr(o);
+    var h = '<div class="epecorr"><h4>Corridor <span class="obs">' + E(corrTxt(o)) + "</span></h4>" +
+      '<div class="eperow"><label>Width <select data-ep-cw><option value="none"' + (nc ? " selected" : "") + ">No corridor</option>" + WIDTHS.map(function (w) { return '<option value="' + w + '"' + (!nc && c.w === w ? " selected" : "") + ">" + w + " km</option>"; }).join("") + '<option value="x"' + (!nc && custom ? " selected" : "") + ">Your own…</option></select></label>" +
+        (!nc && custom ? '<label>km <input type="number" data-ep-cwx min="0.1" max="50" step="0.1" value="' + E(c.w) + '" style="width:80px"></label>' : "") + "</div>" +
+      (nc ? '<p class="obs">No corridor for this route: nothing is drawn round the line, and the printout and CONOP say so. Searches for hazards, air and sea nodes and fuel still look ' + E(c.w) + " km either side of the line.</p>" : "") +
+      '<details class="epecirc"' + (nc ? " hidden" : "") + (S.circOpen ? " open" : "") + '><summary>Wider circles at nodes' + (circles(o).length ? " (" + circles(o).length + ")" : "") + "</summary><ul>" + ch.map(function (n) {
         var k = nodeKey(n), v = +c.at[k] || 0;
         return "<li><span>" + E(n.name || NODE_N[n.type] || k) + '</span><select data-ep-circ="' + E(k) + '" aria-label="Circle round ' + E(n.name || k) + '"><option value="0">None</option>' + [2, 5, 10, 25].map(function (km) { return '<option value="' + km + '"' + (v === km ? " selected" : "") + ">" + km + " km</option>"; }).join("") + "</select></li>";
       }).join("") + "</ul></details>" +
@@ -2594,14 +2632,15 @@
     else if (b.hasAttribute("data-ep-fdel")) { e.preventDefault(); foldDel(b.getAttribute("data-ep-fdel")); }
     else if (b.hasAttribute("data-ep-cm")) { var ck = b.getAttribute("data-ep-cm"); if (S.cmDraw && S.cmDraw.k === ck) { cmEnd(); S.cmmsg = ""; render(); draw(); } else cmStart(ck); }
     else if (k === "cmfin") cmFinish();
-    else if (k === "gdesc" || k === "gpl" || k === "gcorr") geoAct(k);
+    else if (k === "gdesc" || k === "gpl" || k === "gcorr" && !noCorr(optOf(S.sel))) geoAct(k);
     else if (b.hasAttribute("data-ep-gsnap")) geoAct("gsnap:" + b.getAttribute("data-ep-gsnap"));
     else if (k === "cmundo") { if (S.cmDraw) { S.cmDraw.pts.pop(); render(); draw(); } }
     else if (k === "cmcan") { cmEnd(); S.cmmsg = "Canceled."; render(); draw(); }
     else if (b.hasAttribute("data-ep-cmdel")) cmDel(b.getAttribute("data-ep-cmdel"));
     else if (b.hasAttribute("data-ep-cmto")) toCm(b.getAttribute("data-ep-cmto"));
     else if (b.hasAttribute("data-ep-cmnode")) cmToNode(b.getAttribute("data-ep-cmnode"));
-    else if (k === "cmband") { var obd = optOf(S.sel); if (obd && obd.route.coords.length > 1) cmAdd("corr", band(obd.route.coords, corr(obd).w), "Corridor " + (obd.role || obd.dest.i.name), "From the " + (obd.role ? obd.role + " " : "") + "route, " + corr(obd).w + " km each side"); }
+    else if (k === "cmall") cmAll();
+    else if (k === "cmband") { var obd = optOf(S.sel); if (obd && !noCorr(obd) && obd.route.coords.length > 1) cmAdd("corr", band(obd.route.coords, corr(obd).w), "Corridor " + (obd.role || obd.dest.i.name), "From the " + (obd.role ? obd.role + " " : "") + "route, " + corr(obd).w + " km each side"); }
     else if (k === "dirs") findDirs();
     else if (k === "round") { if (!S.rbusy) roundAll(""); }
     else if (k === "rstop") { S.rtok++; S.rbusy = false; S.ltok++; S.lbusy = null; S.cmmsg = "Stopped."; render(); draw(); }
@@ -2681,7 +2720,7 @@
     else if (t.hasAttribute("data-ep-cpname")) { var ocn = optOf(S.sel); if (ocn) cpEdit(ocn, t.getAttribute("data-ep-cpname"), function (x) { x.name = clean(t.value, 40); x.by = "you"; }); }
     else if (t.hasAttribute("data-ep-pname")) { if (S.plan) { S.plan.name = clean(t.value, 90) || S.plan.name; save(); S.svmsg = ""; render(); } }
     else if (t.hasAttribute("data-ep-spd")) setSpeed(t.getAttribute("data-ep-spd"), t.value);
-    else if (t.hasAttribute("data-ep-cw")) { var oc = optOf(S.sel); if (oc) { if (t.value === "x") { corr(oc).w = WIDTHS.indexOf(corr(oc).w) < 0 ? corr(oc).w : 3; } else corr(oc).w = +t.value; save(); render(); draw(); } }
+    else if (t.hasAttribute("data-ep-cw")) { var oc = optOf(S.sel); if (oc) { corr(oc).none = t.value === "none"; if (t.value === "none") { /* width kept */ } else if (t.value === "x") { corr(oc).w = WIDTHS.indexOf(corr(oc).w) < 0 ? corr(oc).w : 3; } else corr(oc).w = +t.value; save(); render(); draw(); } }
     else if (t.hasAttribute("data-ep-cwx")) { var ox = optOf(S.sel), v = Math.round(+t.value * 10) / 10; if (ox && v >= 0.1 && v <= 50) { corr(ox).w = v; save(); } render(); draw(); }
     else if (t.hasAttribute("data-ep-circ")) { var oz = optOf(S.sel); if (oz) { var km = +t.value; if (km > 0) corr(oz).at[t.getAttribute("data-ep-circ")] = km; else delete corr(oz).at[t.getAttribute("data-ep-circ")]; save(); render(); draw(); } }
     else if (t.hasAttribute("data-ep-nname")) { var oo = optOf(S.sel), nn = oo && (oo.nodes || []).filter(function (x) { return x.id === t.getAttribute("data-ep-nname"); })[0]; if (nn) { nn.name = clean(t.value, 60) || NODE_N[nn.type]; legsOf(oo).forEach(function (l) { if (l.a.id === nn.id) l.a.name = nn.name; if (l.b.id === nn.id) l.b.name = nn.name; }); save(); render(); draw(); } }
@@ -2731,6 +2770,9 @@
       if (shown("routes")) L.polyline(x.route.coords, { color: c, weight: sel ? 6 : 4, opacity: sel ? 1 : 0.75, dashArray: x.role ? null : "8 6", className: (x.legs || []).some(function (l) { return flies(l.mode); }) ? "epefly" : "" })
         .on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); S.sel = x.id; render(); draw(); })
         .bindTooltip(E((x.role ? x.role + " · " : "") + x.dest.i.name + " · " + dist(x.route.m) + " · " + dur(x.route.s)), { sticky: true }).addTo(layer);
+      /* a wider, invisible strip along the line so a finger finds the route (and not the corridor under it) */
+      if (shown("routes") && x.route.coords.length > 1) L.polyline(x.route.coords, { color: c, weight: 22, opacity: 0, className: "epehit" })
+        .on("click", function (ev) { if (ev.originalEvent) L.DomEvent.stop(ev.originalEvent); S.sel = x.id; render(); draw(); }).addTo(layer);
       if (shown("dests") && itemOn("d:" + x.id, p)) L.marker([x.dest.i.lat, x.dest.i.lon], { keyboard: false, icon: SY() ? W.OSAP_SYM.ptag([x.dest.i.kind, x.kindName, x.dest.i.name], x.role || "?", { cls: "epemk", badge: c, scale: 0.75 }) : L.divIcon({ className: "epemk", html: '<span style="background:' + c + '">' + E(x.role || "?") + "</span>", iconSize: [22, 22], iconAnchor: [11, 11] }) })
         .bindTooltip(E(x.dest.i.name + " (" + (x.dest.i.kind || x.kindName) + ")")).on("click", function () { S.sel = x.id; render(); draw(); }).addTo(layer);
       if (shown("cp")) cpsOf(x).forEach(function (q) {
@@ -2747,8 +2789,9 @@
       /* the corridor: a band its width each side of the line (a line this many pixels wide at this zoom), and the node circles */
       var cw = corr(x).w, mpp = 40075016.686 * Math.cos((x.route.coords[0] || [0])[0] * Math.PI / 180) / Math.pow(2, map.getZoom() + 8);
       S.dr = { band: Math.max(3, Math.min(4000, 2 * cw * 1000 / mpp)), circ: circles(x).length, air: ((x.air && x.air.list) || []).length };
-      if (shown("band") && x.route.coords.length > 1) L.polyline(x.route.coords, { color: c, weight: S.dr.band, opacity: 0.16, lineCap: "round", lineJoin: "round", interactive: false, className: "epecorrband" }).addTo(layer);
-      if (shown("band")) circles(x).forEach(function (cc0) { L.circle([cc0.lat, cc0.lon], { radius: cc0.km * 1000, color: c, weight: 1.5, opacity: 0.6, fillOpacity: 0.08, interactive: false, className: "epecirc" }).addTo(layer); });
+      if (noCorr(x)) S.dr.band = 0, S.dr.circ = 0;
+      if (shown("band") && !noCorr(x) && x.route.coords.length > 1) L.polyline(x.route.coords, { color: c, weight: S.dr.band, opacity: 0.16, lineCap: "round", lineJoin: "round", interactive: false, className: "epecorrband" }).addTo(layer);
+      if (shown("band") && !noCorr(x)) circles(x).forEach(function (cc0) { L.circle([cc0.lat, cc0.lon], { radius: cc0.km * 1000, color: c, weight: 1.5, opacity: 0.6, fillOpacity: 0.08, interactive: false, className: "epecirc" }).addTo(layer); });
       ((x.air && lay("air") && x.air.list) || []).forEach(function (a) {
         var k = CLS.indexOf(a.cls), col = ["#1864ab", "#1864ab", "#5f3dc4", "#e67700", "#2b8a3e", "#0b7285", "#0b7285"][k] || "#495057";
         (SY() ? W.OSAP_SYM.mark([a.lat, a.lon], ["i_air", "i_heli", "i_air", "g_medevac", "g_medevac", "i_port", "i_ferry"][k] || "i_air", { badge: col, scale: a.cls === "User-verified LZ" ? 0.7 : 0.55, className: "epeairmk" })
@@ -2884,7 +2927,7 @@
   W.OSAP_EPE = { open: open, close: close, state: function () { return { plan: S.plan, origin: S.origin, busy: S.busy, msg: S.msg, sel: S.sel, drawn: layer ? layer.getLayers().length : 0, lbusy: S.lbusy, lmsg: S.lmsg, dr: S.dr }; },
     /* tests and other modules: place a node on an option as a map tap would */
     addNode: function (optId, type, lat, lon) { var o = optOf(optId); if (o && NODE_N[type]) addNode(o, type, lat, lon); },
-    abusy: function () { return S.abusy || S.pbusy || S.kbusy; }, active: function () { return S.active; }, pkgs: pkgs, kml: function (id) { var pk = pkgOf(id); return pk ? toKml(pk) : ""; }, printHtml: function (id) { var pk = pkgOf(id); return pk ? printHtml(pk) : ""; }, conopHtml: function (w) { return S.plan ? conopHtml(S.plan, !!w) : ""; }, dbusy: function () { return S.dbusy || S.xbusy; }, amsg: function () { return S.amsg; },
+    abusy: function () { return S.abusy || S.pbusy || S.kbusy; }, active: function () { return S.active; }, pkgs: pkgs, kml: function (id) { var pk = pkgOf(id); return pk ? toKml(pk) : ""; }, printHtml: function (id) { var pk = pkgOf(id); return pk ? printHtml(pk) : ""; }, conopHtml: function (w) { return S.plan ? conopHtml(S.plan, !!w) : ""; }, planKml: function () { return S.plan ? toKml({ id: S.plan.id, name: S.plan.name || "Evacuation plan", plan: S.plan, made: Date.now() }) : ""; }, dbusy: function () { return S.dbusy || S.xbusy; }, amsg: function () { return S.amsg; },
     flyOut: function (optId, airId, lat, lon) { var o = optOf(optId); if (o) flyOut(o, airId, [lat, lon]); },
     /* tests: add a control measure as the analyst's taps would (k: cp gxp axp pl corr avoid; pts [[lat, lon]]), read one
        option's measures along it, and whether the direction or area work is running */
