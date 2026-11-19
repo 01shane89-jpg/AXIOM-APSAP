@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { compileRelevance } from "../tools/topics_lib.mjs";
-import { buildRules, buildWorld, validateAi, stripInlineCites, cluster, softSection, unent, fromRow, fingerprint, aiQueue, overclaims, dropOverclaims } from "../tools/daily_lib.mjs";
+import { briefFresh, buildRules, buildWorld, validateAi, stripInlineCites, cluster, softSection, unent, fromRow, fingerprint, aiQueue, overclaims, dropOverclaims } from "../tools/daily_lib.mjs";
 
 const R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")));
 const end = Date.parse("2026-09-28T01:00:00Z");
@@ -147,5 +147,15 @@ t("World summary: most reported stories of every country in 24 hours, each namin
 t("World summary with nothing reported says so", () => {
   const E = buildWorld({ end: wend, stories: [], conflicts: [] }, R);
   assert.equal(E.events.length, 0); assert.equal(E.bluf.length, 0); assert.match(E.gaps[0], /^No story was carried/);
+});
+t("a country brief's watch points are carried only while the brief is 30 days old or less", () => {
+  const brief = (as_of) => ({ as_of, threat: { watch_points: ["Watch the border", "Watch the vote"] } });
+  const fresh = buildRules({ ...inp, brief: brief("2026-09-20") }, R).watch.filter((w) => w.from === "brief");
+  assert.equal(fresh.length, 2); assert.equal(fresh[0].asof, "2026-09-20");
+  assert.equal(buildRules({ ...inp, brief: brief("2026-08-01") }, R).watch.filter((w) => w.from === "brief").length, 0);
+  assert.equal(buildRules({ ...inp, brief: brief("") }, R).watch.filter((w) => w.from === "brief").length, 0);
+  assert.equal(briefFresh("2026-09-26", Date.parse("2026-11-19T03:00:00Z")), false);
+  assert.equal(briefFresh("2026-11-01", Date.parse("2026-11-19T03:00:00Z")), true);
+  assert.equal(briefFresh("2027-01-01", Date.parse("2026-11-19T03:00:00Z")), false);
 });
 console.log(`${ok} passed`);

@@ -66,6 +66,13 @@ export function cluster(items) {
   return groups;
 }
 
+export const BRIEF_MAX_DAYS = 30;
+// true when a brief dated asof (YYYY-MM-DD...) is no more than BRIEF_MAX_DAYS before end (ms); undated or unreadable = not fresh
+export function briefFresh(asof, end) {
+  const t = Date.parse(String(asof || "").slice(0, 10) + "T00:00:00Z");
+  return Number.isFinite(t) && end - t <= BRIEF_MAX_DAYS * 864e5 && t - end <= 864e5;
+}
+
 // build the rules summary for one country. input: { cc, name, end (ms), items (reports), warnings, advisory, conflicts, flashpoints, brief }
 export function buildRules(inp, R) {
   const end = inp.end, from = end - 24 * 36e5;
@@ -127,7 +134,9 @@ export function buildRules(inp, R) {
   if (a && a.level) watch.push({ from: "advisory", text: `U.S. State Department travel advisory: Level ${a.level}${a.level_text ? ", " + a.level_text : ""}${a.date ? " (issued " + a.date + ")" : ""}. A government statement.`,
     refs: [ref({ title: a.title || "Travel advisory", outlet: "U.S. State Department", url: a.link || "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html", date: a.date || "", via: "advisory", flags: "g" })].filter(Boolean) });
   const b = inp.brief;
-  if (b && b.threat && Array.isArray(b.threat.watch_points)) b.threat.watch_points.slice(0, 2).forEach((t) => watch.push({ from: "brief", text: String(t), refs: [], asof: b.as_of }));
+  // A country brief's watch points are an AI draft written on its as_of day: carried only while that is within BRIEF_MAX_DAYS of the
+  // window's end, so a stale draft (all 160 briefs were dated 26 Sep 2026 on 19 Nov) is never shown as today's "What to watch".
+  if (b && b.threat && Array.isArray(b.threat.watch_points) && briefFresh(b.as_of, end)) b.threat.watch_points.slice(0, 2).forEach((t) => watch.push({ from: "brief", text: String(t), refs: [], asof: b.as_of }));
   const out = { schema: SCHEMA, cc: inp.cc, name: inp.name, date: new Date(end).toISOString().slice(0, 10), window: { from: iso(end - win * 36e5) + "Z", to: iso(end) + "Z", hours: win },
     method: "rules", bluf, events, watch, refs,
     basis: { reports: items.length, outlets: new Set(items.map((i) => i.outlet)).size, events: groups.length, conflict: items.filter((i) => i.via === "conflict").length, left_out: inp._soft || 0 },
