@@ -63,7 +63,7 @@ ok(await p.evaluate(() => { const a = document.querySelector("#epe .epefull"); r
 const before = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-epe-plans")));
 ok(before.length === 2 && before[0].opts.find((o) => o.id === "o2").st !== "Degraded", "nothing kept was overwritten by the failed save");
 /* deleting the older plan makes room: this one is saved at once */
-await p.evaluate((n) => { window.__room = n; }, JSON.stringify([OLD]).length + 4000);
+await p.evaluate((n) => { window.__room = n; }, JSON.stringify([OLD]).length * 2);
 await p.click('#epe [data-ep-del="epe-older-plan"]');
 const after = await p.evaluate(() => JSON.parse(localStorage.getItem("osap-epe-plans")));
 ok(after.length === 1 && after[0].id === OLD.id && after[0].opts.find((o) => o.id === "o2").st === "Degraded", "deleting an old plan saves the open one with its change");
