@@ -15,6 +15,7 @@
 //   - loses an air defense identification zone (카디즈, KADIZ, as "Cádiz"; a Khmer "air defense zone" as "airspace") or turns a
 //     Korean scramble (출격) into an attack (tools/mt_glossary.mjs, 2026-11-17), or loses a mine or the Strait of Hormuz
 //     ("Tabrak Ranjau", hit a mine, as "Collision with a Whale"; 荷姆茲 as "Homs");
+//   - turns a Chinese or Japanese intrusion (侵擾, 侵入) into an attack, or a Khmer intercept (ស្ទាក់) into a rescue (2026-11-19);
 //   - names Iraq or Syria where the original names neither (Newtalk's 伊, Iran, as "Iraqi forces", 2026-11-17);
 //   - drops the original's "possible" or "suspected", or makes its radioactive bomb a nuclear one (LSM's "warns of a possible
 //     Iranian dirty bomb attack" as "Iran's Dirty Bomb Attack on Washington", Naewna's ระเบิดกัมมันตรังสี as "nuclear bomb", 2026-11-18);
