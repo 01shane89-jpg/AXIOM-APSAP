@@ -270,7 +270,7 @@ jobs:
     # Also the phone-layout checks in WebKit (below). The hand-off of saved work from the old github.io address (assets/osap-carry.js) in WebKit, Safari's engine: the iPhone
     # is where most saved work sits, and Safari is the browser that decides how long an address may be.
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -279,12 +279,16 @@ jobs:
       - run: npm install --no-save --no-audit --no-fund playwright@1
       # Ubuntu's package servers sometimes fail to resolve on the runner (PR #712, 11 Nov: three runs lost before any test, and
       # each apt attempt then hung about 13 minutes). Skip apt when the runner image already has what is needed; otherwise try
-      # up to 4 times, 30 s apart, each apt call capped at 5 minutes with short network timeouts
+      # up to 4 times, 30 s apart, each apt call capped at 5 minutes with short network timeouts. When an attempt runs past its
+      # cap, timeout stops npx but not the root apt-get it started, which goes on holding the dpkg lock, so every later attempt
+      # failed at once with "Could not get lock /var/lib/dpkg/lock-frontend" (6 of 29 runs, 19 Nov). Each attempt first waits
+      # (up to 10 minutes) for that apt-get to finish; it usually completes the install, and the next attempt then passes.
       - run: |
           npx playwright install webkit
           if node -e "require('playwright').webkit.launch().then(b => b.close())"; then echo "webkit runs without extra packages"; exit 0; fi
           APT="-o Acquire::Retries=1 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20"
           for i in 1 2 3 4; do
+            sudo timeout 600 bash -c 'while fuser /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock >/dev/null 2>&1; do echo "waiting for another apt to finish"; sleep 10; done' || true
             sudo timeout 300 apt-get $APT update -q || true
             timeout 600 npx playwright install --with-deps webkit && exit 0
             echo "install attempt $i failed; retrying in 30 s"; sleep 30
