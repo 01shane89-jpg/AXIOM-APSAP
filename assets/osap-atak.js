@@ -582,6 +582,13 @@
     D.head.appendChild(sc);
   }
   W.OSAP_EPE_GO = epeGo;
+  /* Evac was open when this tab reloaded (device sync brings changes in with a reload, an update reloads, a phone drops a tab in
+     the background): open it again once the map is up, with the plan that was open (assets/osap-epe.js keeps it as current) */
+  try {
+    if (sessionStorage.getItem("osap-epe-open") === "1") (function wait(n) {
+      if (W.__asapMap && W.L) epeGo({}); else if (n < 300) setTimeout(function () { wait(n + 1); }, 100);
+    })(0);
+  } catch (e) { /* private mode: nothing remembered */ }
   /* the flight planner (airborne operations) lives in assets/osap-flight.js, fetched the first time "Plan a flight" (Route tab)
      is used. opts: { at: [lat, lon], name, cc, role } adds that point */
   /* both offer the aircraft catalogue (assets/osap-aircraft.js), fetched first so a saved plan's type is known when it loads */
