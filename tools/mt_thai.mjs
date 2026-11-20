@@ -80,14 +80,21 @@ const countries = () => {
     if (same) { if (EN_EXTRA[cc]) { same[0] = cc; same[2] = re; } same[3].push(...thn); continue; }
     COUNTRIES.push([cc, n, re, thn]);
   }
+  // each country's names as plain lower-case text (escapes and a trailing optional "s" dropped): a regex can only match where its
+  // text is in the headline, so only those countries' regexes are run (see thaiCountryAdded)
+  for (const c of COUNTRIES) c[4] = [...new Set(c[2].source.replace(/^\(\?<!\[\\p\{L\}\.\]\)\(\?:/, "").replace(/\)\(\?!\[\\p\{L\}\]\)$/, "")
+    .split("|").map((w) => w.replace(/s\?$/, "").replace(/\\/g, "").toLowerCase()).filter(Boolean))];
   return COUNTRIES;
 };
 export function thaiCountryAdded(orig, en) {
   orig = String(orig || ""); en = String(en || "");
   if (!THAI.test(orig)) return "";
-  const lo = orig.toLowerCase();
-  for (const [, name, re, thn] of countries()) {
-    if (!re.test(en)) continue;
+  const lo = orig.toLowerCase(), enLo = en.toLowerCase();
+  // Running all ~250 country regexes on every Thai headline made every other regex in the same process far slower: the news
+  // index build (tools/news_index.mjs) went from about 2 to over 25 minutes on 20 Nov 2026 and News search, Story coverage and
+  // Reporting spikes froze from 09:07Z. A country's regex now runs only when one of its names is in the English text.
+  for (const [, name, re, thn, lits] of countries()) {
+    if (!lits.some((w) => enLo.includes(w)) || !re.test(en)) continue;
     if (re.test(orig) || thn.some((t) => lo.includes(t.toLowerCase()))) continue;
     return name;
   }
