@@ -97,9 +97,11 @@ export function buildPrompt(brief, reports, now) {
 const clean = (s, n) => String(s || "").replace(/\s+/g, " ").trim().slice(0, n);
 function refsOk(a, n) { return [...new Set((Array.isArray(a) ? a : []).map((x) => +String(x).replace(/\D/g, "")).filter((x) => x >= 1 && x <= n))].slice(0, 6); }
 // one sentence: { text, refs } -> { text, refs } or { why }
-// a factual line says who reports it: an outlet or official verb ("X reports", "the ministry says", "the UK announces");
-// "United States" is a name, not "states"
-const ATTRIB = /\b(reports?|reported|reporting|says?|said|according to|announc(?:e|es|ed|ing)|warns?|warned|claims?|claimed|states?|stated|alleges?|alleged|accuses?|accused|denies|denied|tells?|told|quot(?:es|ed))\b/i;
+// a factual line says who reports it: an outlet or official verb ("X reports", "the ministry says", "the UK announces").
+// Not "state"/"states": a noun far more often ("Borno states", "state of siege") than the verb, and the 20 Nov 2026 backfill
+// kept 6 unattributed lines on it ("Nigerian troops have killed several terrorists ... in Borno states"). "United States" is a name.
+const ATTRIB = /\b(reports?|reported|reporting|says?|said|according to|announc(?:e|es|ed|ing)|warns?|warned|claims?|claimed|stated|alleges?|alleged|accuses?|accused|denies|denied|tells?|told|quot(?:es|ed)|condemns?|condemned)\b/i;
+export function attributed(text) { return ATTRIB.test(String(text || "").replace(/\bUnited States\b/g, "")); }
 export function checkLine(p, reports, background, country, { attribution = true } = {}) {
   const n = reports.length;
   // leftovers of a small model's citing ("(refs:)", "(ref: 3)") are taken out before the checks
@@ -111,7 +113,7 @@ export function checkLine(p, reports, background, country, { attribution = true 
   const refs = refsOk([...((p && p.refs) || []), ...inline], n);
   if (text.length < 16) return { why: "too short" };
   if (!refs.length) return { why: "no valid citation" };
-  if (attribution && !ATTRIB.test(text.replace(/\bUnited States\b/g, ""))) return { why: "not attributed to an outlet or official source" };
+  if (attribution && !attributed(text)) return { why: "not attributed to an outlet or official source" };
   const cited = refs.map((k) => reports[k - 1]);
   const heads = cited.flatMap((r) => [r.title, r.orig]);
   if (overclaims(text, heads)) return { why: "calls a report confirmed" };
@@ -184,6 +186,8 @@ export function applyUpdate(brief, upd, reports, meta, now) {
     const items = (upd && upd.sections && upd.sections[s]) || [];
     if (items.length) { p.recent = { items: items.map((x) => ({ text: x.text, src: x.refs.map(addSrc) })), as_of: today }; kept.sections += items.length; }
     else if (p.recent && ageDays(p.recent.as_of, now) > BRIEF_STALE_DAYS) delete p.recent;
+    // a kept update is checked again against today's attribution rule, so a line an older rule let through comes off
+    else if (p.recent) { p.recent.items = (p.recent.items || []).filter((x) => attributed(x.text)); if (!p.recent.items.length) delete p.recent; }
   }
   // watch points: a new set replaces the old one; an old set no refresh has backed for BRIEF_STALE_DAYS is taken off
   const w = (upd && upd.watch) || [];
