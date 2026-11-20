@@ -122,6 +122,15 @@ ok(leftover.text === "Daily Test reports a march on parliament.", "a '(refs:)' l
 ok(checkLine({ text: "Daily Test reports a march on parliament (refs:,,).", refs: [pi] }, reports, "", "Testland").text === "Daily Test reports a march on parliament.", "a '(refs:,,)' leftover is taken out");
 ok(checkLine({ text: "Daily Test reports a march on parliament (refs: [1]).", refs: [pi] }, reports, "", "Testland").text === "Daily Test reports a march on parliament.", "a '(refs: [n])' leftover is taken out");
 ok(checkLine({ text: "Testland and the United States agree to march on parliament.", refs: [pi] }, reports, "", "Testland").why === "not attributed to an outlet or official source", "'United States' does not count as an outlet verb");
+// backfill 20 Nov 2026: "state"/"states" as a noun let unattributed lines through
+ok(checkLine({ text: "Daily Test troops have killed several fighters in three northern states.", refs: [pi] }, reports, "", "Testland").why === "not attributed to an outlet or official source", "'states' as a noun is not an outlet verb");
+ok(checkLine({ text: "Clashes continue under a state of siege near parliament.", refs: [pi] }, reports, "", "Testland").why === "not attributed to an outlet or official source", "'state' as a noun is not an outlet verb");
+{
+  const old = JSON.parse(JSON.stringify(brief));
+  old.pmesii.political.recent = { items: [{ text: "Troops killed fighters in three states.", src: [0] }, { text: "Daily Test reports a march on parliament.", src: [0] }], as_of: "2026-11-18" };
+  const b5 = applyUpdate(old, { sections: {}, watch: [], threat: [], rejected: [] }, [], {}, NOW);
+  ok(b5.pmesii.political.recent && b5.pmesii.political.recent.items.length === 1 && /reports/.test(b5.pmesii.political.recent.items[0].text), "a kept update an older rule let through is taken off at the next check");
+}
 const mixed = collectReports({ cc: "th", days: [day("2026-11-19", [{ text: "x", n: 3, refs: [1] }, { text: "y", n: 2, refs: [2] }, { text: "z", n: 1, refs: [3] }], [
   { n: 1, title: "Floods hit India's Assam state", outlet: "INN", url: "https://n.example/in", date: "2026-11-19T01:00" },
   { n: 2, title: "Thailand and Cambodia talk border", outlet: "Khaosod", url: "https://n.example/kh", date: "2026-11-19T02:00" },
