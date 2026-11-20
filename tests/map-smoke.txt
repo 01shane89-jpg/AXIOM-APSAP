@@ -59,6 +59,7 @@ tests/mywork_panel_smoke.mjs
 tests/mlfold_smoke.mjs
 tests/map_display_smoke.mjs
 tests/photocheck_smoke.mjs
+tests/skyline_smoke.mjs
 tests/3d_smoke.mjs
 # the map compass behind the north arrow and the shared phone-compass reader (assets/osap-compass.js, assets/osap-heading.js)
 tests/compass_smoke.mjs
