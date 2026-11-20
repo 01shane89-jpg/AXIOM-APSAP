@@ -2,7 +2,7 @@
 // (Terrain > Radio coverage from here, registered in index.html). Elevation tiles are made-up terrarium tiles: flat ground at
 // 100 m round 13.75 N, 100.50 E with a 60 m ridge about 2 km east (as in tests/commslink_smoke.mjs).
 // Checks: the ring lists it and opens Link with the transmitter on the map at once; rays draw as they come; 72 directions;
-// the ridge cuts the reach east; labelled modelled, terrain only; a tap shows the margin and starts no phone check; changed
+// the ridge cuts the reach east; labelled modelled, terrain only; a hilltop site is heard far over the plain; a tap shows the margin and starts no phone check; changed
 // numbers say recalculate and less power reaches less; leaving Link hides it, Clear removes it; Set on map then a tap runs;
 // no elevation never claims likely; a phone does not scroll sideways; no page errors.
 // Run from the repo root: node tests/commsradio_smoke.mjs   (needs the playwright package and Chromium; OUT=dir saves screenshots)
@@ -36,7 +36,10 @@ function png(w, h, rgb) {
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk("IHDR", ih), chunk("IDAT", deflateSync(raw)), chunk("IEND", Buffer.alloc(0))]);
 }
 const C0 = [13.75, 100.5], RIDGE = [100.5180, 100.5195];   /* about 1.95 to 2.1 km east */
-function elev(lat, lon) { return lon >= RIDGE[0] && lon <= RIDGE[1] ? 160 : 100; }
+/* a cone hill 1,300 m above a flat plain at 100 m, far from the first site: 1,400 m at the top, plain from 3 km out */
+const HILL = [14.30, 101.10];
+function hillUp(lat, lon) { const dy = (lat - HILL[0]) * 111.2, dx = (lon - HILL[1]) * 111.2 * Math.cos(HILL[0] * Math.PI / 180), r = Math.hypot(dx, dy); return r < 3 ? 1300 * (1 - r / 3) : 0; }
+function elev(lat, lon) { return (lon >= RIDGE[0] && lon <= RIDGE[1] ? 160 : 100) + hillUp(lat, lon); }
 const tileLon = (x, z) => x / 2 ** z * 360 - 180;
 function tile(z, x, y) {
   const n = 2 ** z, rgb = Buffer.alloc(256 * 256 * 3);
@@ -121,6 +124,18 @@ const done = (p) => p.waitForFunction(() => { const s = window.OSAP_COMMSPLAN.ra
   ok((await rad(p)).rays === 72, "and works out coverage from there");
   ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   if (OUT) await p.screenshot({ path: OUT + "/commsradio.png" });
+  await ctx.close();
+}
+// ---------- a hilltop site: antennas count at their height above the plain, not 2 m above the summit ----------
+{
+  const { ctx, p, errors } = await open({ viewport: { width: 1360, height: 860 } });
+  await p.evaluate((c) => window.OSAP_COMMSPLAN.radioFrom(c[0], c[1]), HILL);
+  await done(p);
+  const s = await rad(p), at = await p.evaluate((c) => window.OSAP_COMMSPLAN.radioAt(c[0] - 0.1, c[1] + 0.05), HILL);
+  ok(!s.err && s.stats.pct.likely > 80 && s.stats.far_m >= s.R_km * 1000 * 0.97, "hilltop 1,300 m above the plain, 20 W VHF: likely over " + Math.round(s.stats.pct.likely) + "% of the ground, out to the edge (" + Math.round(s.stats.far_m) + " m of " + s.R_km + " km)");
+  ok(at && at.cls === "likely" && at.margin_db > 20, "a spot on the plain about 12 km out is likely (margin " + (at && Math.round(at.margin_db)) + " dB)");
+  ok(/may carry further/.test(await p.textContent("#cp-rcout")), "reaching the edge says it may carry further, not that it stops there");
+  ok(!errors.length, "hilltop: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }
 // ---------- no ground data: unknown, never likely ----------

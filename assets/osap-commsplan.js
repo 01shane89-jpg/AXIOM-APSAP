@@ -552,7 +552,8 @@
   /* ---------- Link: radio coverage from one transmitter (long-press > Terrain > Radio coverage from here, or this tab) ----------
      72 rays every 5 degrees out to the range the link numbers below can reach (2 to 40 km). Along each ray the ground comes from
      the terrain engine (OSAP_TERRAIN_ANALYSIS.profile) and every point is checked with OSAP_RADIO.terrainLink, the same model as
-     the A to B link for the ground, with the path loss taken as the larger of free-space and plane-earth (two-ray) loss, plus
+     the A to B link for the ground, with the path loss taken as the larger of free-space and plane-earth (two-ray) loss
+     (OSAP_RADIO.groundPathLoss: antenna heights above a line fitted to the ground along the path, not above their own footing), plus
      the single knife-edge loss where the ground rises above the line of sight, against the receiver's sensitivity. Antenna A is the transmitter, antenna B the receiver. Rays draw as they come in. MODELLED, terrain only. */
   var RC = { run: 0, busy: false, at: null, rays: [], n: 72, done: 0, err: "", arm: false, stale: false, R_km: 0, when: 0 }, rcLayer = null, rcAbort = null;
   var RCC = { likely: ["Likely (10 dB or more in hand)", "#2b8a3e", 0.42], marginal: ["Marginal (0 to 10 dB)", "#f08c00", 0.4], unlikely: ["Unlikely (below sensitivity)", "#c92a2a", 0.14], unknown: ["Unknown (no ground data)", "#868e96", 0.25] };
@@ -575,14 +576,13 @@
     var sm = (prof && prof.samples) || [], n = sm.length, out = [], step = Math.max(1, Math.round(n / 40)), prev = 0, Rd = R();
     for (var i = step; i < n; i += step) {
       var d = num(sm[i].dist_m, 0); if (!(d > 0)) continue;
-      var t = Rd.terrainLink({ samples: sm.slice(0, i + 1) }, { f_mhz: L.f_mhz, hA_m: L.ha_m, hB_m: L.hb_m, k: L.k });
-      var cls = "unknown", m = NaN;
-      var tdb = 0;
+      /* free space or open ground (two-ray, with antenna heights above the ground the path crosses, not above their own
+         footing, so a hilltop site is treated as high), plus a knife-edge loss where ground rises above the line of sight */
+      var t = Rd.groundPathLoss({ samples: sm.slice(0, i + 1) }, { f_mhz: L.f_mhz, hA_m: L.ha_m, hB_m: L.hb_m, k: L.k });
+      var cls = "unknown", m = NaN, tdb = 0;
       if (t.verdict !== "unknown") {
-        /* open ground: the larger of free-space and plane-earth loss; ground above the line of sight adds its knife-edge loss */
-        var fs = Rd.fspl(d / 1000, L.f_mhz), base = Math.max(fs, Rd.planeEarth_db(d / 1000, L.ha_m, L.hb_m));
-        tdb = t.verdict === "blocked" && isFinite(t.knife_db) ? t.knife_db : 0;
-        m = Rd.linkBudget({ ptx_w: L.ptx_w, gtx_dbi: L.gtx_dbi, ltx_db: L.ltx_db, grx_dbi: L.grx_dbi, lrx_db: L.lrx_db, sens_dbm: L.sens_dbm, d_km: d / 1000, f_mhz: L.f_mhz, extra_db: base - fs + tdb }).margin_db;
+        tdb = t.knife_db;
+        m = Rd.linkBudget({ ptx_w: L.ptx_w, gtx_dbi: L.gtx_dbi, ltx_db: L.ltx_db, grx_dbi: L.grx_dbi, lrx_db: L.lrx_db, sens_dbm: L.sens_dbm, d_km: d / 1000, f_mhz: L.f_mhz, extra_db: t.loss_db - t.fs_db }).margin_db;
         cls = Rd.marginClass(m);
       }
       out.push({ d0: prev, d1: d, cls: cls, margin: m, knife: tdb, verdict: t.verdict });
@@ -647,8 +647,8 @@
     var st = rcStats(), L = RC.L || linkIn();
     el.innerHTML = (RC.busy ? '<p class="obs" id="cprc-prog">Reading the ground: ' + RC.done + " of " + RC.n + " directions…</p>" : "") +
       (RC.stale ? '<p class="cpres" style="border-left:5px solid #e67700">You changed the link numbers: press <b>Recalculate</b> to use them.</p>' : "") +
-      '<p class="cpres" style="border-left:5px solid #1c7ed6"><b>MODELED COVERAGE</b>: terrain only. Path loss is free space or open ground (two-ray), whichever is larger, plus a knife-edge loss where hills are in the way. Buildings, trees, interference and the ionosphere are not modeled, so this is a best case. ' +
-      (st.far_m ? "Heard furthest about <b>" + f(st.far_m / 1000, 1) + " km</b> out." : RC.busy ? "" : "No direction is heard.") + "</p>" +
+      '<p class="cpres" style="border-left:5px solid #1c7ed6"><b>MODELED COVERAGE</b>: terrain only. Path loss is free space or open ground (two-ray, each antenna counted at its height above the ground the path crosses, so a hilltop counts as high), whichever is larger, plus a knife-edge loss where hills are in the way. Buildings, trees, interference and the ionosphere are not modeled, so expect less in towns and forest. ' +
+      (st.far_m && st.far_m >= RC.R_km * 1000 * 0.97 ? "Heard out to the edge of the worked-out area, <b>" + f(RC.R_km, 0) + " km</b>; it may carry further." : st.far_m ? "Heard furthest about <b>" + f(st.far_m / 1000, 1) + " km</b> out." : RC.busy ? "" : "No direction is heard.") + "</p>" +
       '<table class="rttab"><tbody>' + ["likely", "marginal", "unlikely", "unknown"].map(function (k) { return '<tr><th><span class="cpbadge" style="background:' + RCC[k][1] + '">' + E(RCC[k][0].split(" (")[0]) + "</span></th><td>" + f(st.pct[k], 0) + "% of the ground within " + f(RC.R_km, 0) + " km</td></tr>"; }).join("") +
       "<tr><th>Model</th><td>" + f(L.f_mhz, 3) + " MHz, " + f(L.ptx_w, 1) + " W, antennas " + f(L.ha_m, 1) + " m (transmitter) and " + f(L.hb_m, 1) + " m (receiver), sensitivity " + f(L.sens_dbm, 0) + " dBm, k " + f(L.k, 2) + "; " + RC.n + " directions every " + 360 / RC.n + "°, out to " + f(RC.R_km, 1) + " km</td></tr></tbody></table>" +
       '<p class="obs">Green: likely, 10 dB or more above the receiver\'s sensitivity. Orange: marginal, 0 to 10 dB. Faint red: below sensitivity. Gray: no ground data. Tap the map to see a spot\'s margin.</p>';
