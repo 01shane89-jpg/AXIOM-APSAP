@@ -51,7 +51,7 @@ let pick = await p.evaluate(() => {
   const ids = [...document.querySelectorAll("[data-rec]")].map((b) => b.getAttribute("data-rec"));
   const recs = ids.map((id) => window.TSAP.records.find((r) => r.id === id)).filter((r) => r && /^https:/.test(r.url || ""));
   const r = recs.find((x) => x.type === "report") || recs[0];
-  return r ? { id: r.id, type: r.type, url: r.url, src: r.src.name, detail: r.detail || "", today: true } : null;
+  return r ? { id: r.id, type: r.type, url: r.url, src: r.src.name, detail: r.detail || "", news: !!(r.news || r.lf || /news|outlet|media/i.test((r.src && r.src.kind) || "")), today: true } : null;
 });
 if (pick) await p.locator(`[data-rec="${pick.id}"]`).first().tap();
 else {
@@ -60,7 +60,7 @@ else {
     const r = window.TSAP.records.find((x) => (x.news || x.lf) && /^https:/.test(x.url || ""));
     if (window.OSAP_TODAY && window.OSAP_TODAY.isOpen()) window.OSAP_TODAY.hide();
     window.TSAP.setView("timeline"); window.TSAP.select(r.id, true);
-    return { id: r.id, type: r.type, url: r.url, src: r.src.name, detail: r.detail || "", today: false };
+    return { id: r.id, type: r.type, url: r.url, src: r.src.name, detail: r.detail || "", news: !!(r.news || r.lf || /news|outlet|media/i.test((r.src && r.src.kind) || "")), today: false };
   });
 }
 console.log(`  opened ${pick.id} (type ${pick.type}, ${pick.src})` + (pick.today ? " from Today" : " from the timeline"));
@@ -79,7 +79,9 @@ ok(g.open, "tapping the story opens its report");
 ok(g.btn && g.btn.href === pick.url && g.btn.t === "_blank" && /noopener/.test(g.btn.rel) && /noreferrer/.test(g.btn.rel), "a Read button links the outlet's page, new tab, no referrer");
 ok(g.btn && g.btn.h >= 40, `the Read button is a full-size tap target (${g.btn && g.btn.h} px)`);
 ok(g.btn && g.btn.text.indexOf(pick.src) >= 0, "the button names the outlet");
-if (!pick.detail.trim()) ok(/headline only/.test(g.note) && /not copied/.test(g.note), "OSAP says it shows the headline only and does not copy the article");
+// the note is for an outlet's article; a social post or official record opens "the original" with no such note (20 Nov 2026: a
+// PBS NewsHour post, type claim, was the first linked Today row and failed this check)
+if (pick.news && !pick.detail.trim()) ok(/headline only/.test(g.note) && /not copied/.test(g.note), "OSAP says it shows the headline only and does not copy the article");
 ok(g.orig && g.orig.href === pick.url && g.orig.t === "_blank" && /underline/.test(g.orig.u), "the Original link is underlined and opens in a new tab");
 ok(!g.bad.length, "no link in the panel uses a non-web address" + (g.bad.length ? ": " + g.bad.join(", ") : ""));
 ok(g.sx <= 0 && g.bx <= 0, "nothing scrolls sideways");

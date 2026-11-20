@@ -119,6 +119,17 @@
         /* key feeds stay marked in red only when the data really is down; a single late key feed is listed in amber */
         h += "<ul>" + EV.probs.map(function (p) { return "<li" + (p.key ? ' class="' + (EV.state === "down" ? "hk" : "ha") + '"' : "") + "><strong>" + esc(p.name) + "</strong>: " + esc(p.why) + (p.key ? " (key feed)" : "") + "</li>"; }).join("") + "</ul>";
       }
+      /* behind schedule (tools/health_lib.mjs lateJobs, quietSources): scheduled data jobs with no recent success and sources that
+         answer but have had nothing new for 10+ days or fail. Listed here and read by the nightly run; they never change the badge. */
+      var jl = (H.jobs && H.jobs.list) || [], late = jl.filter(function (j) { return j.maxMin && (!j.last || now - Date.parse(j.last) > j.maxMin * 60000); });
+      var qn = (H.quiet && H.quiet.n) || 0, ql = (H.quiet && H.quiet.list) || [];
+      if (late.length || qn || (H.jobs && H.jobs.error)) {
+        h += '<p><strong>Behind schedule</strong></p><ul class="ohops">' +
+          late.map(function (j) { return '<li class="ha"><strong>' + esc(j.name) + "</strong>: " + (j.last ? "last succeeded " + ago(now - Date.parse(j.last)) + " ago" : "no successful run on record") + "</li>"; }).join("") +
+          (H.jobs && H.jobs.error ? "<li><strong>Scheduled job check</strong>: " + esc(H.jobs.error) + "</li>" : "") +
+          ql.slice(0, 8).map(function (q) { return "<li><strong>" + esc(q.name) + "</strong>" + (q.cc ? " (" + esc(String(q.cc).toUpperCase()) + ")" : "") + ": " + esc(q.why) + "</li>"; }).join("") +
+          (qn > 8 ? "<li>" + (qn - 8) + " more quiet source" + (qn - 8 === 1 ? "" : "s") + "</li>" : "") + "</ul>";
+      } else if (jl.length) h += '<p class="obs">All ' + jl.length + " scheduled data jobs have run on time.</p>";
       if (H.run) h += '<p class="obs"><a href="' + esc(H.run) + '" target="_blank" rel="noopener noreferrer">The refresh run that wrote this</a></p>';
     }
     var topic = H && H.topic;
