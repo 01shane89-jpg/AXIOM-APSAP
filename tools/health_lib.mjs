@@ -260,6 +260,18 @@ export function jobLimitMin(crons) {
   // several schedules together fire more often than any one alone: the combined gap is at most the smallest single gap
   return 2 * Math.min(...gaps) + 180;
 }
+/** a job's limit when it also writes watched feeds: never longer than the shortest of their limits, so the keeper restarts it
+ *  before (or as) its data goes stale, not hours after (refresh-factchecks.yml: 3-hourly, limit 540 min, but its feed's 420;
+ *  the fact checks sat stale 18:59Z to 20:34Z on 20 Nov 2026 with the job not yet "late"). Never under one gap of its own
+ *  schedule + 60 min, so a job is not called late between two normal runs. yml = the workflow text; feeds = tools/health.json feeds. */
+export function jobLimitFor(crons, yml, feeds, defaultMaxMin = 120) {
+  const lim = jobLimitMin(crons);
+  if (!lim) return null;
+  const own = (feeds || []).filter((f) => f && f.file && String(yml).includes(f.file)).map((f) => f.maxMin || defaultMaxMin);
+  if (!own.length) return lim;
+  const gap = Math.min(...crons.map(cronGapMin).filter((g) => g != null));
+  return Math.max(Math.min(lim, ...own), gap + 60);
+}
 /** a workflow's name as a data set: "Refresh airfield weather (METAR/TAF)" -> "Airfield weather (METAR/TAF)" */
 export function jobLabel(name) { const s = String(name || "").replace(/^Refresh\s+/i, ""); return s.charAt(0).toUpperCase() + s.slice(1); }
 /** jobs: [{ file, name, maxMin, last: ISO of last success or null, since: ISO the workflow was added }] -> late ones [{ file, name, why, last }]
@@ -271,5 +283,5 @@ export const RUN_ALIVE_MIN = 360; // GitHub ends any job after 6 h: a run "in pr
 export function lateJobs(jobs, now = Date.now()) {
   return (jobs || []).filter((j) => j && j.maxMin && !(j.running && now - Date.parse(j.running) < RUN_ALIVE_MIN * 60000) &&
     (j.last ? now - Date.parse(j.last) > j.maxMin * 60000 : !(j.since && now - Date.parse(j.since) <= j.maxMin * 60000)))
-    .map((j) => ({ file: j.file, name: j.name || j.file, why: j.last ? "last succeeded " + ago(now - Date.parse(j.last)) + " ago (runs at least every " + ago(((j.maxMin - 180) / 2) * 60000) + ")" : "no successful run on record", last: j.last || null }));
+    .map((j) => ({ file: j.file, name: j.name || j.file, why: j.last ? "last succeeded " + ago(now - Date.parse(j.last)) + " ago (runs at least every " + ago((j.gapMin || (j.maxMin - 180) / 2) * 60000) + ")" : "no successful run on record", last: j.last || null }));
 }

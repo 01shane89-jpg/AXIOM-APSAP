@@ -11,7 +11,7 @@
 //   Env: HEALTH_DRY=1 prints instead of posting; HEALTH_SITE / HEALTH_TOPIC override tools/health.json (tests).
 import fs from "node:fs";
 import vm from "node:vm";
-import { stampOf, sourcesOf, countOf, evaluate, decide, lastAnnounced, fpTag, updateSeen, quietSources, cronsOf, jobLimitMin, lateJobs } from "./health_lib.mjs";
+import { stampOf, sourcesOf, countOf, evaluate, decide, lastAnnounced, fpTag, updateSeen, quietSources, cronsOf, jobLimitMin, jobLimitFor, cronGapMin, lateJobs } from "./health_lib.mjs";
 
 const cfg = JSON.parse(fs.readFileSync(new URL("./health.json", import.meta.url), "utf8"));
 const SITE = (process.env.HEALTH_SITE || cfg.site).replace(/\/?$/, "/");
@@ -32,7 +32,7 @@ async function jobs(prev) {
   if (!token) return prev || null;
   const dir = ".github/workflows", list = []; let asked = 0, failed = 0;
   for (const file of fs.readdirSync(dir).filter((f) => /\.ya?ml$/.test(f)).sort()) {
-    const yml = fs.readFileSync(`${dir}/${file}`, "utf8"), maxMin = jobLimitMin(cronsOf(yml));
+    const yml = fs.readFileSync(`${dir}/${file}`, "utf8"), maxMin = jobLimitFor(cronsOf(yml), yml, cfg.feeds, cfg.defaultMaxMin);
     if (!maxMin) continue;
     const name = (/^name:\s*(.+)$/m.exec(yml) || [])[1] || file;
     let last = null; asked++;
@@ -62,7 +62,8 @@ async function jobs(prev) {
         if (run) running = run.run_started_at || run.created_at;
       } catch (e) {}
     }
-    list.push({ file, name: name.replace(/^["']|["']$/g, "").trim(), maxMin, last, ...(since ? { since } : {}), ...(running ? { running } : {}) });
+    const gapMin = Math.min(...cronsOf(yml).map(cronGapMin).filter((g) => g != null));
+    list.push({ file, name: name.replace(/^["']|["']$/g, "").trim(), maxMin, gapMin, last, ...(since ? { since } : {}), ...(running ? { running } : {}) });
   }
   // when GitHub would not answer, the last answer is kept and the failure is listed, never an empty "nothing late"
   if (asked && failed === asked) return { ...(prev || { list: [] }), error: "could not read the workflow runs (" + failed + " of " + asked + " failed)" };

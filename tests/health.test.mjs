@@ -261,6 +261,16 @@ console.log("health tests passed");
   assert.equal(lateJobs([keeper], N).length, 1, "past its limit with nothing running: late");
   assert.deepEqual(lateJobs([{ ...keeper, running: new Date(N - 319 * 60000).toISOString() }], N), [], "a run going for 5 h 19 min: working, not late");
   assert.equal(lateJobs([{ ...keeper, running: new Date(N - 400 * 60000).toISOString() }], N).length, 1, "a run 'in progress' for 6 h 40 min: stuck");
+  // a job that writes a watched feed is late no later than that feed is stale (refresh-factchecks.yml, 20 Nov 2026)
+  {
+    const { jobLimitFor } = await import("../tools/health_lib.mjs");
+    const feeds = [{ id: "factchecks", file: "data/live/factchecks.js", maxMin: 420 }, { id: "news", file: "data/live/news.js", maxMin: 90 }];
+    assert.equal(jobLimitFor(["17 */3 * * *"], "git add data/live/factchecks.js", feeds), 420, "3-hourly job (540) writing a 420-min feed: 420");
+    assert.equal(jobLimitFor(["17 */3 * * *"], "git add data/other.js", feeds), 540, "writes no watched feed: its own schedule");
+    assert.equal(jobLimitFor(["7,22,37,52 * * * *"], "data/live/news.js", feeds), 90, "15-min job writing a 90-min feed: 90");
+    assert.equal(jobLimitFor(["17 3 * * *"], "data/live/news.js", feeds), 1500, "never under one gap of its own schedule + 60");
+    assert.equal(jobLimitFor([], "data/live/news.js", feeds), null);
+  }
   // quiet sources are listed as ops only: never part of the badge or the phone alerts
   const fresh1 = { asof: new Date(N - 5 * 60000).toISOString(), feeds: [{ id: "quakes", name: "Earthquakes", key: true, maxMin: 90, asof: new Date(N - 10 * 60000).toISOString() }] };
   const evq = evaluate({ ...fresh1, quiet: { n: 2, list: [] } }, cfg, N);
