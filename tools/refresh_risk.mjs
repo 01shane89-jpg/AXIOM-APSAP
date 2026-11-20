@@ -174,7 +174,7 @@ for (const cc of list) {
       quakes: quakePts.filter((q) => km(ct.lat, ct.lon, q.lat, q.lon) <= 200),
       storms: stormsNear([ct])
     });
-    const Rc = rate(Ic, { health: healthEv, hazards: hzc, hazardsOk, outage: io });
+    const Rc = rate(Ic, { health: healthEv, hazards: hzc, hazardsOk, outage: io, warDeaths: I.deaths });
     return { n: ct.n, lat: ct.lat, lon: ct.lon, pop: ct.pop, cap: ct.cap, overall: Rc.overall,
       cats: Object.fromEntries(Object.entries(Rc.cats).map(([k, v]) => [k, k === "security" || k === "hazards" ? v : { score: v.score, level: v.level, label: v.label, national: true }])) };
   });
