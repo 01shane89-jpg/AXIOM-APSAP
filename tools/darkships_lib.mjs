@@ -26,12 +26,22 @@
 //   - reappeared: a ship flagged quiet that is heard again; the event keeps the gap and the distance between the two fixes;
 //   - jump: two fixes of one MMSI at least JUMP_MIN_S seconds apart, JUMP_KM or more apart, implying over JUMP_KN knots.
 //   Events are kept EVENT_KEEP_H hours; vessels not heard for STATE_KEEP_H hours are forgotten.
+//
+// Per-ship routes ("track-v1", TRACK below; they never change who is flagged): each held vessel keeps the positions it was heard
+// at in this box over the last TRK_KEEP_H hours, at least TRK_STEP_MIN minutes apart (the newest always kept), at most TRK_MAX.
+// A quiet ship carries that route up to its last report (`before`); a reappeared ship or a jump carries the route up to the
+// gap or jump (`before`) and, for AFTER_H hours, the positions heard after it (`after`, filled in by later sweeps). Points are
+// [lat, lon, ISO time] of real reports; the line between two of them is a straight join, not a measured route. The routes are
+// a projection of the reports Open Waters served (same NC licence) and are rebuilt from scratch when state.json is deleted.
+// Sanctions: a ship's IMO (or, weaker, MMSI) is compared with the vessels on the US Treasury OFAC SDN list
+// (tools/vessel_sanctions.mjs); a match says the number is on the list, nothing about the voyage.
 export const RULES = "dark-v1", SCHEMA = "osap-darkships/1";
 export const CELL = 0.25, COV_MIN = 3, COV_KEEP = 6, COV_SWEEPS = 4, FRESH_MIN = 30;
 export const REG_FIXES = 3, REG_MIN = 30, MIN_KN = 3, QUIET_H = 3, MAX_QUIET_H = 48;
 export const JUMP_KN = 60, JUMP_KM = 10, JUMP_MIN_S = 60, EVENT_KEEP_H = 72, STATE_KEEP_H = 72, MAX_EVENTS = 400;
 export const STOPPED_NAV = new Set([1, 5, 6]); // at anchor, moored, aground
 export const PRIVATE_TYPES = new Set([36, 37]); // sailing, pleasure craft
+export const TRACK = "track-v1", TRK_STEP_MIN = 10, TRK_KEEP_H = 6, TRK_MAX = 40, AFTER_H = 6, AFTER_MAX = 40;
 
 export const SOURCE = { id: "openwaters", name: "Open Waters AIS", url: "https://openwaters.io/ais/", api: "https://ais.openwaters.io/v1/vessels",
   lic: "Free for personal use (commercial use is paid); each position keeps its source's own licence and credit", nc: true };
@@ -81,8 +91,27 @@ export function toFix(f) {
   if (PRIVATE_TYPES.has(type)) return null;
   return { mmsi, la: rnd(c[1]), lo: rnd(c[0]), t, sog: typeof p.sog === "number" ? p.sog : null, cog: typeof p.cog === "number" ? p.cog : null,
     nav: typeof p.nav_status === "number" ? p.nav_status : null, type, name: String(p.name || "").slice(0, 40), flag: /^[A-Z]{2}$/.test(p.flag || "") ? p.flag : "",
-    src: String(p.source || "").slice(0, 40) };
+    src: String(p.source || "").slice(0, 40), imo: /^\d{7}$/.test(String(p.imo == null ? "" : p.imo)) && +p.imo > 0 ? String(p.imo) : "" };
 }
+
+// route points: held as [lat, lon, minutes since 1970] (small state), published as [lat, lon, ISO time]
+const tmin = (t) => Math.round(t / 60e3);
+/** adds fix x to route trk (in place): the newest point always kept, earlier ones at least TRK_STEP_MIN apart, at most max */
+export function addPoint(trk, x, max = TRK_MAX) {
+  const p = [rnd(x.la, 3), rnd(x.lo, 3), tmin(x.t)], n = trk.length;
+  if (n && p[2] <= trk[n - 1][2]) return trk; // not newer
+  if (n >= 2 && trk[n - 1][2] - trk[n - 2][2] < TRK_STEP_MIN) trk[n - 1] = p; else trk.push(p); // the newest is provisional until TRK_STEP_MIN after the one before
+  if (trk.length > max) trk.splice(0, trk.length - max);
+  return trk;
+}
+/** route held for a vessel, cut to the TRK_KEEP_H hours before its newest point */
+export function trimTrack(trk) {
+  if (!Array.isArray(trk) || !trk.length) return [];
+  const end = trk[trk.length - 1][2];
+  return trk.filter((p) => end - p[2] <= TRK_KEEP_H * 60);
+}
+export const routeOut = (trk) => (trk || []).map((p) => [p[0], p[1], new Date(p[2] * 60e3).toISOString().slice(0, 16) + "Z"]);
+const evKey = (e) => e.k + "|" + e.mmsi + "|" + e.to[2];
 
 export function emptyState() { return { schema: "osap-darkships-state/1", rules: RULES, boxes: {}, events: [] }; }
 function boxState(state, id) { return (state.boxes[id] = state.boxes[id] || { v: {}, cov: [] }); }
@@ -126,27 +155,48 @@ export function quietCheck(v, box, cover, now) {
  * One sweep of one box. features: the API's GeoJSON features. Updates state in place; returns { fixes, cells, quiet, events }.
  * box: an entry of BOXES. now: ms.
  */
-export function sweepBox(state, box, features, now) {
+export function sweepBox(state, box, features, now, sanc = null) {
   const id = box[0], B = boxState(state, id), events = [];
+  const held = new Map((state.events || []).map((e) => [evKey(e), e]));
+  const hit = (x, p) => (sanc ? sanc(x.imo || (p && p.imo) || "", x.mmsi) : null);
   const fixes = [];
   for (const f of features || []) { const x = toFix(f); if (x && inBox(box, x.la, x.lo)) fixes.push(x); }
   const cells = coverage(fixes, now);
   B.cov.push({ t: now, cells }); B.cov = B.cov.slice(-COV_KEEP);
   for (const x of fixes) {
     const v = B.v[x.mmsi];
-    if (!v) { B.v[x.mmsi] = { first: x.t, n: 1, last: x }; continue; }
+    if (!v) { B.v[x.mmsi] = { first: x.t, n: 1, last: x, trk: addPoint([], x) }; continue; }
     if (!(x.t > v.last.t)) continue; // nothing new heard
     const p = v.last, dt = (x.t - p.t) / 1000, d = km(p.la, p.lo, x.la, x.lo), kn = dt > 0 ? (d / 1.852) / (dt / 3600) : Infinity;
+    const before = () => routeOut(trimTrack(v.trk || [[rnd(p.la, 3), rnd(p.lo, 3), tmin(p.t)]]));
+    let ev = null;
     if (v.quiet) {
-      events.push({ k: "reappeared", box: id, mmsi: x.mmsi, name: x.name || p.name, type: x.type || p.type, flag: x.flag || p.flag,
+      ev = { k: "reappeared", box: id, mmsi: x.mmsi, name: x.name || p.name, type: x.type || p.type, flag: x.flag || p.flag,
         from: [p.la, p.lo, new Date(p.t).toISOString()], to: [x.la, x.lo, new Date(x.t).toISOString()], gap_h: Math.round((dt / 3600) * 10) / 10,
-        km: Math.round(d * 10) / 10, kn: Math.round(kn * 10) / 10 });
+        km: Math.round(d * 10) / 10, kn: Math.round(kn * 10) / 10 };
       delete v.quiet;
     } else if (dt >= JUMP_MIN_S && d >= JUMP_KM && kn > JUMP_KN) {
-      events.push({ k: "jump", box: id, mmsi: x.mmsi, name: x.name || p.name, type: x.type || p.type, flag: x.flag || p.flag,
+      ev = { k: "jump", box: id, mmsi: x.mmsi, name: x.name || p.name, type: x.type || p.type, flag: x.flag || p.flag,
         from: [p.la, p.lo, new Date(p.t).toISOString()], to: [x.la, x.lo, new Date(x.t).toISOString()], gap_h: Math.round((dt / 3600) * 100) / 100,
-        km: Math.round(d * 10) / 10, kn: Math.round(kn) });
+        km: Math.round(d * 10) / 10, kn: Math.round(kn) };
     }
+    if (ev) {
+      const imo = x.imo || p.imo || "", sm = hit(x, p);
+      if (imo) ev.imo = imo;
+      if (sm) ev.sanc = sm;
+      ev.before = before(); ev.after = routeOut([[rnd(x.la, 3), rnd(x.lo, 3), tmin(x.t)]]);
+      events.push(ev);
+      // the route after a gap starts afresh at the new fix; later sweeps add to ev.after for AFTER_H hours
+      v.trk = []; v.ev = { key: evKey(ev), until: x.t + AFTER_H * 36e5 };
+    } else if (v.ev) {
+      const e = held.get(v.ev.key);
+      if (!e || x.t > v.ev.until) delete v.ev;
+      else {
+        const a = (e.after || []).map((q) => [q[0], q[1], tmin(Date.parse(q[2]))]);
+        e.after = routeOut(addPoint(a, x, AFTER_MAX));
+      }
+    }
+    v.trk = trimTrack(addPoint(v.trk || [], x));
     v.n++; v.last = x;
   }
   const cover = steady(B.cov), quiet = [];
@@ -156,8 +206,12 @@ export function sweepBox(state, box, features, now) {
     if (q) {
       v.quiet = 1;
       const f = v.last;
-      quiet.push({ box: id, mmsi, name: f.name, type: f.type, flag: f.flag, la: f.la, lo: f.lo, sog: f.sog, cog: f.cog, nav: f.nav, src: f.src,
-        last: new Date(f.t).toISOString(), gap_h: q.gap_h, dr: q.dr, fixes: v.n });
+      const row = { box: id, mmsi, name: f.name, type: f.type, flag: f.flag, la: f.la, lo: f.lo, sog: f.sog, cog: f.cog, nav: f.nav, src: f.src,
+        last: new Date(f.t).toISOString(), gap_h: q.gap_h, dr: q.dr, fixes: v.n,
+        before: routeOut(trimTrack(v.trk && v.trk.length ? v.trk : [[rnd(f.la, 3), rnd(f.lo, 3), tmin(f.t)]])) };
+      if (f.imo) row.imo = f.imo;
+      const sm = hit(f, null); if (sm) row.sanc = sm;
+      quiet.push(row);
     } else if (v.quiet && (now - v.last.t) / 36e5 > MAX_QUIET_H) delete v.quiet;
   }
   quiet.sort((a, b) => b.gap_h - a.gap_h || (a.mmsi < b.mmsi ? -1 : 1));
