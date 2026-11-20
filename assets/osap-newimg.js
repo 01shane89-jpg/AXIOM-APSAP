@@ -512,6 +512,7 @@
     "#nimg .srcs{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px}#nimg table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:auto}#nimg td:last-child{width:1%}#nimg th{white-space:normal}" +
     "#nimg th,#nimg td{text-align:left;padding:3px 4px;border-bottom:1px solid var(--line,#e3e3e3);vertical-align:middle}#nimg tr.on td{background:var(--accent-soft,#e3f2f4)}" +
     "#nimg td button{min-width:64px;font-size:12px;padding:2px 8px}#nimg .tag{font-size:10.5px;border:1px solid var(--line,#bbb);border-radius:3px;padding:0 4px;color:var(--muted,#555);white-space:nowrap}" +
+    "#nimg .wbt td{overflow-wrap:anywhere}#nimg .wbt .tag{white-space:normal}#nimg .wbt td button{width:100%;min-width:0}" +
     "#nimg .sid{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;word-break:break-all;color:var(--muted,#555)}" +
     "#nimg .attr{font-size:11.5px;color:var(--muted,#555);border-top:1px solid var(--line,#ddd);margin-top:10px;padding-top:6px}" +
     "@media (max-width:700px){#nimg{padding:6px}#nimg button,#nimg select{font-size:16px}#nimg td{font-size:12px}}" +
@@ -600,7 +601,7 @@
     if (w.err) return h + '<p class="err">' + esc(w.err) + "</p>";
     if (!rs.length) return h + '<p class="mut">No sharp pictures listed here.</p>';
     var L2 = LIC.esri, sh = S.shown && S.shown.src === "wb";
-    h += '<table><thead><tr><th>Taken and age</th><th>Satellite and source</th><th></th></tr></thead><tbody>' + rs.map(function (r) {
+    h += '<table class="wbt" style="table-layout:fixed"><colgroup><col style="width:30%"><col><col style="width:7.5em"></colgroup><thead><tr><th>Taken and age</th><th>Satellite and source</th><th></th></tr></thead><tbody>' + rs.map(function (r) {
       var on = S.shown && S.shown.id === r.id, cm = S.cmp && S.cmp.id === r.id;
       return "<tr" + (on || cm ? ' class="on"' : "") + "><td>" + (r.t != null ? esc(r.day) + "<br><b>" + esc(ageDay(r.t, now)) + "</b>" : '<span class="mut">capture date not given</span>') + "</td>" +
         "<td><b>" + esc(r.sat) + "</b>" + (r.prov ? " " + esc(r.prov) : "") + ' <span class="mut">' + esc(r.res) + (r.acc != null ? ", ±" + esc(r.acc) + " m" : "") + "</span><br>" +

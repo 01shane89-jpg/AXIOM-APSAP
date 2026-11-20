@@ -200,7 +200,10 @@ const settled = (p) => p.waitForFunction(() => { const st = window.OSAP_NEWIMG.s
   ok(clip1 !== clip0 && Math.abs(c0.lat - c1.lat) + Math.abs(c0.lng - c1.lng) < 1e-9, "dragging the handle moves the swipe line, not the map: " + clip1);
   await p.evaluate(() => window.__asapMap.panBy([80, 40], { animate: false })); await p.waitForTimeout(200);
   ok(await p.evaluate(() => document.querySelector(".leaflet-nimgcmp-pane").style.clip) !== clip1, "swipe clip follows the map when it pans");
-  ok(await p.evaluate(() => { const c = document.querySelector("#nimg .cbox"); return c.scrollWidth <= c.clientWidth + 1; }), "with Wayback rows and Compare buttons the list still fits the docked window");
+  const fits = [];
+  for (const wd of [1100, 1360, 1600]) { await p.setViewportSize({ width: wd, height: 860 }); await p.waitForTimeout(250); fits.push(await p.evaluate(() => { const c = document.querySelector("#nimg .cbox"); return c.scrollWidth - c.clientWidth; })); }
+  await p.setViewportSize({ width: 1360, height: 860 }); await p.waitForTimeout(250);
+  ok(fits.every((d) => d <= 1), "with Wayback rows and Compare buttons the list fits the docked window at 1100, 1360 and 1600 px wide (overflow " + fits.join(", ") + ")");
   ok(await p.evaluate(() => !/Maxar, Maxar/.test(document.querySelector(".leaflet-control-attribution").textContent)), "Maxar credited once");
   if (OUT) await p.screenshot({ path: OUT + "/newimg-wayback-compare.png" });
   await p.click('#nimg [data-nimg-show="' + L.find((r) => r.src === "hls").id + '"]'); await p.waitForTimeout(400);
