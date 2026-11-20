@@ -6,7 +6,7 @@
 // Crisis24 publish (Minimal, Low, Moderate, High, Extreme), per category and overall.
 // Every category is a score from 0 (no risk seen) to 100, made of indicators that each keep their raw value, year or window,
 // the points they gave and their source link, so anyone can redo the sum.
-export const RULE = "osap.risk/0.1";
+export const RULE = "osap.risk/0.2";
 export const LEVELS = ["", "Minimal", "Low", "Moderate", "High", "Extreme"];
 // score -> level: 0-19 Minimal, 20-39 Low, 40-59 Moderate, 60-79 High, 80-100 Extreme
 export function levelOf(score) { return score == null || !isFinite(score) ? 0 : score >= 80 ? 5 : score >= 60 ? 4 : score >= 40 ? 3 : score >= 20 ? 2 : 1; }
@@ -116,15 +116,26 @@ export function hazards(events, feedsOk = true) {
   if (!feedsOk) return { score: null, parts: [], missing: ["Hazard feeds"], events: [] };
   return { score: r1(Math.min(100, events.reduce((s, e) => s + e.pts, 0))), parts: [], missing: [], events };
 }
+// war damage to power, water, roads and hospitals, from the conflict deaths of the past 365 days (UCDP) per million people:
+// nothing below 40 points on the per-million scale (about 20 per million), then 2 points per point above it, so 50 per million
+// gives 34, 100 per million 53, 250 per million 80 and 700+ per million 100. Only with 100 or more deaths, so a handful of deaths
+// in a very small country does not read as a war. The access figures alone are years old and cannot see a war's damage.
+export function warDamagePts(n, popM) {
+  if (!(n >= 100) || !(popM > 0)) return 0;
+  return clamp((perMillionPts(n / popM) - 40) * 2);
+}
 // Infrastructure and services: 80% of the lack of electricity access (50%) and internet use (50%), plus a large internet
-// outage seen by IODA in the past week (40, or 20 for a moderate one)
-export function infra(I, outage) {
+// outage seen by IODA in the past week (40, or 20 for a moderate one), plus war damage (warDamagePts)
+export function infra(I, outage, deaths) {
+  const dz = deaths || I.deaths;
   const base = mix([
     { k: "elec", name: "People without electricity, %", v: I.elec != null && I.elec.v != null ? r1(100 - I.elec.v) : null, year: I.elec && I.elec.y, pts: I.elec ? lackPts(I.elec.v) : null, w: 0.5, src: I.elec && I.elec.src },
     { k: "net", name: "People not using the internet, %", v: I.net != null && I.net.v != null ? r1(100 - I.net.v) : null, year: I.net && I.net.y, pts: I.net ? lackPts(I.net.v) : null, w: 0.5, src: I.net && I.net.src }
   ]);
   const ev = [];
   if (outage && outage.score > 0) { const l = Math.log10(outage.score); if (l >= 6) ev.push({ k: "outage", text: "Internet outage signal, " + outage.events + " event" + (outage.events === 1 ? "" : "s") + " in the past week (IODA)", link: outage.link, pts: l >= 7 ? 40 : 20 }); }
+  const war = dz ? r1(warDamagePts(dz.n, dz.popM)) : 0;
+  if (war > 0) ev.push({ k: "war", text: "Armed conflict: " + Math.round(dz.n).toLocaleString("en-US") + " conflict deaths in the past 365 days, " + r1(dz.n / dz.popM) + " per million people (UCDP)", link: dz.src, pts: war });
   return withEvents(base, ev, 0.8);
 }
 function capEvents(ev, cap) {
@@ -146,9 +157,10 @@ export function overall(cats) {
   const floor = level > levelOf(score) ? (level === sec ? "security" : "category") : undefined;
   return { score, level, label: LEVELS[level], floor, missing: CATS.filter((c) => !have.includes(c)).map((c) => c.name) };
 }
-// all categories for one place
+// all categories for one place; ev.warDeaths (optional) gives the conflict deaths infrastructure uses, so a city keeps the
+// national figure
 export function rate(I, ev) {
-  const cats = { security: security(I), crime: crime(I), health: health(I, ev.health || []), hazards: hazards(ev.hazards || [], ev.hazardsOk !== false), infra: infra(I, ev.outage) };
+  const cats = { security: security(I), crime: crime(I), health: health(I, ev.health || []), hazards: hazards(ev.hazards || [], ev.hazardsOk !== false), infra: infra(I, ev.outage, ev.warDeaths) };
   for (const k in cats) { cats[k].level = levelOf(cats[k].score); cats[k].label = LEVELS[cats[k].level]; }
   return { overall: overall(cats), cats };
 }
