@@ -43,6 +43,41 @@
     var d = num(d_km) * 1000, a = Math.max(0.5, num(hA_m, 2)), b = Math.max(0.5, num(hB_m, 2));
     return d > 0 ? 40 * Math.log10(d) - 20 * Math.log10(a) - 20 * Math.log10(b) : NaN;
   }
+  /* effective antenna heights over the ground a path crosses: each antenna's height above the typical (median) ground from
+     10% to 90% of the path, where its own ground stands above that, never less than its mast (like the effective height
+     above average terrain of ITU-R P.1546). A 2 m mast on a hill 1,300 m above the plain is about 1,302 m above the surface
+     that reflects its signal, not 2 m, so the two-ray loss must use that. A median, not a fitted line, so the slope of the
+     hill itself does not lift a receiver standing on the plain. */
+  function effHeights(prof, hA_m, hB_m) {
+    var s = (prof && prof.samples) || [], n = s.length, hA = Math.max(0, num(hA_m, 2)), hB = Math.max(0, num(hB_m, 2));
+    var out = { hA_m: hA, hB_m: hB, ref_m: NaN };
+    if (n < 2) return out;
+    var A = s[0], B = s[n - 1], D = num(B.dist_m, 0);
+    if (!(D > 0) || A.nodata || A.elev_m == null || B.nodata || B.elev_m == null) return out;
+    var pick = function (lo, hi) { return s.filter(function (p) { var d = num(p.dist_m); return d >= lo && d <= hi && !p.nodata && p.elev_m != null && isFinite(p.elev_m); }).map(function (p) { return num(p.elev_m); }); };
+    var z = pick(0.1 * D, 0.9 * D); if (z.length < 3) z = pick(0, D);
+    if (!z.length) return out;
+    z.sort(function (x, y) { return x - y; });
+    var mid = z.length >> 1, ref = z.length % 2 ? z[mid] : (z[mid - 1] + z[mid]) / 2;
+    out.ref_m = ref;
+    out.hA_m = hA + Math.max(0, num(A.elev_m) - ref);
+    out.hB_m = hB + Math.max(0, num(B.elev_m) - ref);
+    return out;
+  }
+  /* path loss over the ground for coverage, dB: the larger of free-space and plane-earth (with effective heights), plus the
+     single knife-edge loss when ground stands above the line of sight. Same terrain model as the A to B link. */
+  function groundPathLoss(prof, o) {
+    o = o || {};
+    var t = terrainLink(prof, o), D = t.total_m, out = { verdict: t.verdict, fs_db: NaN, pe_db: NaN, knife_db: 0, loss_db: NaN, hA_eff_m: NaN, hB_eff_m: NaN };
+    if (t.verdict === "unknown" || !(D > 0)) return out;
+    var e = effHeights(prof, o.hA_m, o.hB_m);
+    out.hA_eff_m = e.hA_m; out.hB_eff_m = e.hB_m;
+    out.fs_db = fspl(D / 1000, num(o.f_mhz));
+    out.pe_db = planeEarth_db(D / 1000, e.hA_m, e.hB_m);
+    out.knife_db = t.verdict === "blocked" && isFinite(t.knife_db) ? t.knife_db : 0;
+    out.loss_db = Math.max(out.fs_db, out.pe_db) + out.knife_db;
+    return out;
+  }
   function marginClass(m) { return !isFinite(m) ? "unknown" : m >= 10 ? "likely" : m >= 0 ? "marginal" : "unlikely"; }
 
   /* frequency band presets (planning reference, not an allocation table) */
@@ -339,6 +374,7 @@
     METHODS: METHODS, STATUS: STATUS, covers: covers, hav_km: hav_km, round: round,
     CABLES: CABLES, cableDb100: cableDb100, feedline: feedline, antennaLen_m: antennaLen_m, CONNECTORS: CONNECTORS, adapterChain: adapterChain,
     ituRegion: ituRegion, SPECTRUM: SPECTRUM, spectrumAt: spectrumAt, looksLikeKey: looksLikeKey,
-    splitLine: splitLine, segStatus: segStatus, geoLook: geoLook, knifeEdge_db: knifeEdge_db, terrainLink: terrainLink
+    splitLine: splitLine, segStatus: segStatus, geoLook: geoLook, knifeEdge_db: knifeEdge_db, terrainLink: terrainLink,
+    effHeights: effHeights, groundPathLoss: groundPathLoss
   };
 })(typeof window !== "undefined" ? window : globalThis);
