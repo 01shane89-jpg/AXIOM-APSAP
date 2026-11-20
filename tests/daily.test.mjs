@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { compileRelevance } from "../tools/topics_lib.mjs";
-import { briefFresh, buildRules, buildWorld, validateAi, stripInlineCites, cluster, softSection, unent, fromRow, fingerprint, aiQueue, overclaims, dropOverclaims } from "../tools/daily_lib.mjs";
+import { briefFresh, buildRules, buildWorld, validateAi, stripInlineCites, cluster, softSection, unent, fromRow, fingerprint, aiQueue, overclaims, dropOverclaims, misattributed } from "../tools/daily_lib.mjs";
 
 const R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")));
 const end = Date.parse("2026-09-28T01:00:00Z");
@@ -164,5 +164,27 @@ t("a refreshed brief's watch points are dated by watch_asof, not by its as_of", 
   assert.equal(w.length, 1); assert.equal(w[0].asof, "2026-09-19");
   // as_of moved by a section update while the watch points stayed from an old research date: not carried
   assert.equal(buildRules({ ...inp, brief: b("2026-09-20", null) }, R).watch.filter((x) => x.from === "brief").length, 0);
+});
+t("an AI line may not give one country's institution to another (20 Nov 2026: \"Iran's Senate\" from US Senate headlines)", () => {
+  const senate = ["Senate Republicans reject war powers resolution to end Iran conflict", "Iran war powers measure again falls short in Senate",
+    "US Senate Republicans reject resolution calling on Trump to end Iran war"];
+  assert.deepEqual(misattributed("Iran's Senate rejects war powers resolution to end the conflict with Iran.", senate), ["Iran's Senate"]);
+  assert.deepEqual(misattributed("China's military considers using gamers for drone surveillance.", ["Malaysia’s military eyes gamers for South China Sea drone surveillance"]), ["China's military"]);
+  // negatives: the headline's own pairing, a demonym, a loose pairing nearby, no other country named, and a non-country owner all stay
+  assert.deepEqual(misattributed("The US Senate rejects the resolution.", senate), []);
+  assert.deepEqual(misattributed("America's Senate rejects the resolution.", senate), [], "America = US");
+  assert.deepEqual(misattributed("Iran's military downs a drone.", ["Iranian military downs 17th US drone, US military says"]), [], "Iranian military supports Iran's military");
+  assert.deepEqual(misattributed("Iran's military attacks a radar in Bahrain.", ["Iran attacks US military radar system in Bahrain"]), [], "Iran within three words of military");
+  assert.deepEqual(misattributed("Thailand's army reports a clash.", ["Army says clash on border"]), [], "no other country named: not judged");
+  assert.deepEqual(misattributed("Trump's government faces a vote.", senate), [], "a person, not a country");
+  // the build drops it; a kept summary drops it too and counts it apart from overclaims
+  const refs = senate.map((title, i) => ({ n: i + 1, title, outlet: "O" + i, url: "https://x/" + i }));
+  const v = validateAi({ bluf: [{ text: "Iran's Senate rejects war powers resolution to end the Iran conflict.", refs: [1, 2, 3] },
+    { text: "The US Senate rejects a resolution to end the Iran war, as reported by The Hill.", refs: [1, 3] }] }, 3, refs);
+  assert.deepEqual(v.bluf.map((b) => b.refs.length), [2]);
+  const day = { method: "ai", refs, rules_bluf: [{ text: "Most reported: Senate Republicans reject war powers resolution", refs: [1] }],
+    bluf: [{ text: "Iran's Senate rejects war powers resolution to end the Iran conflict.", refs: [1, 2, 3] }], ai_watch: [] };
+  assert.equal(dropOverclaims(day), 1);
+  assert.equal(day.ai_misattributed, 1); assert.equal(day.ai_overclaim, undefined); assert.equal(day.method, "rules");
 });
 console.log(`${ok} passed`);

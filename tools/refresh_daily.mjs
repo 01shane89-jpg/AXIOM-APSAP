@@ -154,7 +154,8 @@ for (const cc of only || ccs) {
   // a retry keeps the morning's rules summary unless this run added an AI draft
   const old = (prev[cc] && prev[cc].days) || [];
   // the kept days are checked again with today's machine translation guard (tools/daily_lib.mjs scrubDay)
-  // and with the rule that an AI line may not call a report confirmed on its own authority (dropOverclaims)
+  // and with the rules that an AI line may not call a report confirmed on its own authority, nor give one country's institution
+  // ("Iran's Senate") to another (dropOverclaims)
   const mtN = old.reduce((n, x) => n + scrubDay(x), 0), ocN = old.reduce((n, x) => n + dropOverclaims(x), 0), scrubbed = mtN + ocN;
   mtScrubbed += mtN; ocDropped += ocN;
   const same = old[0] && old[0].date === today;
@@ -168,7 +169,7 @@ for (const cc of only || ccs) {
   index.countries[cc] = { method: d.method, reports: d.basis.reports };
 }
 if (mtScrubbed) console.log(`daily: ${mtScrubbed} source headlines in kept summaries failed the machine translation guard and now show their original words`);
-if (ocDropped) console.log(`daily: ${ocDropped} AI lines in kept summaries called a report confirmed when no cited headline says so, and were dropped`);
+if (ocDropped) console.log(`daily: ${ocDropped} AI lines in kept summaries called a report confirmed when no cited headline says so, or gave one country's institution to another, and were dropped`);
 index.ai.total = Object.values(index.countries).filter((c) => c.method === "ai").length;   // countries whose summary today is an AI draft
 if (!only) fs.writeFileSync(INDEX, "window.OSAP_DAILY_INDEX=" + JSON.stringify(index) + ";\n");
 const n = Object.values(built), quiet = n.filter((d) => !d.basis.reports).length;

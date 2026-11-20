@@ -205,17 +205,63 @@ export const CONFIRM_RE = /\b(?:confirm(?:s|ed|ing|ation)?|verif(?:y|ies|ied|yin
 export function overclaims(text, heads) {
   return CONFIRM_RE.test(String(text || "")) && !(heads || []).some((h) => CONFIRM_RE.test(String(h || "")));
 }
+// An AI line may not hand a country's institution to another country (20 Nov 2026: the World BLUF said "Iran's Senate rejects war
+// powers resolution" when its three headlines were about the US Senate; the China summary said "China's military considers using
+// gamers" from a headline about Malaysia's military). The local model reads the country a story is filed under as its actor. A line
+// saying "<Country>'s <institution>" is dropped only when no cited headline puts that country near that institution (within three
+// words) AND one cited headline names another country right before it ("US Senate", "Malaysia's military"). Checked on every kept
+// AI line of 20 Nov (1,382 lines): exactly those two were caught. Country names come from Intl (the same list as evsum_lib.mjs).
+const INST = "senate|congress|parliament|supreme court|army|navy|air force|military|president|prime minister|government|cabinet|foreign minister|defen[cs]e minister|police|coast guard|house of representatives";
+const POSS_INST = new RegExp("\\b((?:[A-Z][\\w.]*)(?:\\s+[A-Z][\\w.]*){0,2})['’]s\\s+(" + INST + ")\\b", "gi");
+const COUNTRY = new Map([["us", "US"], ["u.s.", "US"], ["usa", "US"], ["america", "US"], ["uk", "GB"], ["britain", "GB"], ["burma", "MM"]]);
+try { const dn = new Intl.DisplayNames(["en"], { type: "region" });
+  for (let a = 65; a <= 90; a++) for (let b = 65; b <= 90; b++) { const c = String.fromCharCode(a, b), n = dn.of(c); if (n && n !== c) COUNTRY.set(n.toLowerCase(), c); }
+} catch (e) {}
+// a word's stem, so a demonym matches its country (Iranian -> iran, Malaysian -> malay): long words lose their last three letters
+const stemOf = (w) => (w.length > 5 ? w.slice(0, Math.max(4, w.length - 3)) : w);
+function countryOf(words) {
+  const w = words.join(" "); if (COUNTRY.has(w)) return COUNTRY.get(w);
+  for (const [n, c] of COUNTRY) if (n.length >= 4 && w.startsWith(stemOf(n))) return c;
+  return null;
+}
+const headWords = (s) => String(s || "").toLowerCase().replace(/['’]s\b/g, " ").replace(/[^\p{L}\d.\s-]+/gu, " ").split(/\s+/).filter(Boolean);
+/** the "<Country>'s <institution>" phrases in text that its cited headlines give to another country (empty when none) */
+export function misattributed(text, heads) {
+  const out = [];
+  for (const m of String(text || "").matchAll(POSS_INST)) {
+    const own = m[1].toLowerCase().replace(/^the\s+/, "").split(/\s+/), inst = m[2].toLowerCase().replace(/\s+/g, " "), cc = countryOf(own);
+    if (!cc) continue;
+    const it = inst.split(" "), st = stemOf(own[own.length - 1]);
+    let support = false, other = false;
+    for (const h of heads || []) {
+      const t = headWords(h);
+      for (let i = 0; i < t.length; i++) {
+        if (t.slice(i, i + it.length).join(" ") !== inst) continue;
+        if (t.slice(Math.max(0, i - 3), i + it.length + 3).some((w) => w.startsWith(st))) support = true;
+        for (let k = Math.max(0, i - 2); k < i; k++) { const c2 = countryOf(t.slice(k, i)); if (c2 && c2 !== cc) other = true; }
+      }
+    }
+    if (!support && other) out.push(m[0]);
+  }
+  return out;
+}
 const headsOf = (refs, ns) => (ns || []).flatMap((n) => { const r = (refs || []).find((x) => x && x.n === n); return r ? [r.title, r.orig] : []; });
-// A kept AI summary is checked again with this rule; an AI summary left with no top line falls back to its rules top lines.
+// A kept AI summary is checked again with this rule and the misattributed-institution rule; an AI summary left with no top line falls back to its rules top lines.
 // Returns the number of AI lines dropped.
 export function dropOverclaims(d) {
   if (!d || d.method !== "ai") return 0;
-  const keep = (p) => !overclaims(p && p.text, headsOf(d.refs, p && p.refs));
+  let wrong = 0;
+  const keep = (p) => {
+    const h = headsOf(d.refs, p && p.refs);
+    if (misattributed(p && p.text, h).length) { wrong++; return false; }
+    return !overclaims(p && p.text, h);
+  };
   const before = (d.bluf || []).length + (d.ai_watch || []).length;
   d.bluf = (d.bluf || []).filter(keep); d.ai_watch = (d.ai_watch || []).filter(keep);
   const n = before - d.bluf.length - d.ai_watch.length;
   if (!n) return 0;
-  d.ai_overclaim = (d.ai_overclaim || 0) + n;
+  if (n - wrong) d.ai_overclaim = (d.ai_overclaim || 0) + n - wrong;
+  if (wrong) d.ai_misattributed = (d.ai_misattributed || 0) + wrong;
   if (!d.bluf.length) { d.bluf = d.rules_bluf || []; d.method = "rules"; }
   return n;
 }
@@ -225,7 +271,7 @@ export function validateAi(o, nRefs, refs) {
   const clean = (s, n) => String(s || "").replace(/\s+/g, " ").trim().slice(0, n);
   const ok = (a) => [...new Set((Array.isArray(a) ? a : []).map((x) => +String(x).replace(/\D/g, "")).filter((x) => x >= 1 && x <= nRefs))].slice(0, 6);
   const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: stripInlineCites(clean(p && p.text, 400).replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, "")), refs: ok(p && p.refs) }))
-    .filter((p) => p.text.length > 15 && p.refs.length && !overclaims(p.text, headsOf(refs, p.refs))).slice(0, max);
+    .filter((p) => p.text.length > 15 && p.refs.length && !overclaims(p.text, headsOf(refs, p.refs)) && !misattributed(p.text, headsOf(refs, p.refs)).length).slice(0, max);
   const bluf = list(o && o.bluf, 3), watch = list(o && o.watch, 3);
   if (!bluf.length) return null;
   return { bluf, watch };
