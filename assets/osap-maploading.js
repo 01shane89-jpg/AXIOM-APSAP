@@ -61,6 +61,9 @@
       label.innerHTML = navigator.onLine === false ? esc("Offline: the map shows what this device saved.") :
         esc(n + " map pictures from " + hs.slice(0, 2).join(" and ") + " did not load. ") + '<button type="button">Try again</button>';
     } else label.textContent = "Loading map " + pct + "%";
+    /* the failure line wraps only when it would be cut with "..." (a phone): the cut hid its Try again button (20 Nov 2026) */
+    label.classList.remove("wrap");
+    if (bad && !busy && label.scrollWidth > label.clientWidth + 1) label.classList.add("wrap");
     place();
     if (busy) kick();
   }
@@ -93,8 +96,9 @@
     "#mload span{position:absolute;left:50%;top:8px;transform:translateX(-50%);white-space:nowrap;max-width:calc(100% - 140px);overflow:hidden;text-overflow:ellipsis;" +
     "font:600 11.5px/1.2 system-ui,-apple-system,sans-serif;color:#fff;background:rgba(20,24,28,.8);padding:4px 9px;border-radius:10px;pointer-events:auto}" +
     "#mload.err i{background:#e8590c;box-shadow:none}" +
-    /* the failure line wraps instead of ending in "...": on a phone the cut used to hide its Try again button (20 Nov 2026) */
-    "#mload.err span{white-space:normal;width:max-content;text-align:center;line-height:1.35}#mload span button{font:inherit;color:#ffd8a8;background:none;border:0;padding:0 2px;text-decoration:underline;cursor:pointer;min-height:24px}";
+    "#mload.err span.wrap{white-space:normal;width:max-content;text-align:center;line-height:1.35}" +
+    /* a map pop-up's buttons stay clickable: the label steps aside while one is open, as the data sets note does (index.html) */
+    "#map.pop-open #mload span{visibility:hidden}#mload span button{font:inherit;color:#ffd8a8;background:none;border:0;padding:0 2px;text-decoration:underline;cursor:pointer;min-height:24px}";
   D.head.appendChild(st);
   W.OSAP_MAPLOAD = { state: function () { return { hidden: bar.hidden, err: bar.classList.contains("err"), want: want, got: got, fails: fails.length, text: label.textContent }; } };
 })();

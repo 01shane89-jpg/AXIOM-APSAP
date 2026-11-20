@@ -54,6 +54,7 @@ const hint = () => { const e = document.querySelector(".dshint"); if (!e || e.hi
   // a pop-up that stays a pop-up (the terrain menu, data-keep-pop) can sit under the note; the note steps aside until it closes (lidar_smoke caught this)
   await p.evaluate(() => { const m = window.__asapMap; window.__pp = L.popup().setLatLng(m.getCenter()).setContent('<div data-keep-pop="1">Viewshed from here</div>').openOn(m); });
   ok(!(await p.evaluate(hint)), "a map popup open: the note steps aside");
+  ok(await p.evaluate(() => { const e = document.querySelector("#mload span"); return !e || getComputedStyle(e).visibility === "hidden" || !e.getClientRects().length; }), "a map popup open: the map-loading label steps aside too, so it never takes the popup's clicks (route_savedpts, area_shapes)");
   await p.evaluate(() => window.__asapMap.closePopup());
   ok(!!(await p.evaluate(hint)), "popup closed: the note is back");
   await p.evaluate(() => document.querySelector(".dshint [data-dsgone]").click());
