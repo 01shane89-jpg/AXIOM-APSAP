@@ -1,5 +1,5 @@
 {
-  "about": "Data health (tools/health.mjs). Each refresh writes data/live/health.json from the files below; the keeper checks the published copy every 15 minutes and posts to the ntfy channel when data stops arriving. Ages are minutes. A feed's own stamp is when the refresh read it, up to about 25 minutes before the commit, and commits come every 15 to 35 minutes, so a feed read every run is normally up to about 60 minutes old: limits sit above that. 'key' feeds send a phone alert when stale; a feed with a 'url' instead of a 'file' is published outside main (live air traffic and drones, swept about every 15 minutes by refresh-air.yml and refresh-drones.yml, which the keeper starts) and is read from that address at build and at every watch; the rest only show in the app's data-health panel. Anyone can subscribe to the channel: it carries feed names and times only, never report content. 'count' names a feed's list (an array, or an object of arrays): a feed that always carries something counts as a problem with fewer than minItems (default 1) items even when its stamp is fresh (16 Nov 2026: GDACS was empty for days but looked fresh). ReliefWeb is not listed: its API needs a registered appname and its RSS refuses GitHub's runners (checked 2026-10-20), so it would sit amber for good; tools/refresh_feeds.mjs still tries the RSS each run.",
+  "about": "Data health (tools/health.mjs). Besides these feeds, every build lists sources that answer but have had nothing new for 10+ days or have failed for 3+ days (data/live/source-seen.json) and every scheduled workflow whose last success on main is older than twice its schedule allows (health.json quiet and jobs; shown in the app panel and read by the nightly run, never a phone alert on their own). Each refresh writes data/live/health.json from the files below; the keeper checks the published copy every 15 minutes and posts to the ntfy channel when data stops arriving. Ages are minutes. A feed's own stamp is when the refresh read it, up to about 25 minutes before the commit, and commits come every 15 to 35 minutes, so a feed read every run is normally up to about 60 minutes old: limits sit above that. 'key' feeds send a phone alert when stale; a feed with a 'url' instead of a 'file' is published outside main (live air traffic and drones, swept about every 15 minutes by refresh-air.yml and refresh-drones.yml, which the keeper starts) and is read from that address at build and at every watch; the rest only show in the app's data-health panel. Anyone can subscribe to the channel: it carries feed names and times only, never report content. 'count' names a feed's list (an array, or an object of arrays): a feed that always carries something counts as a problem with fewer than minItems (default 1) items even when its stamp is fresh (16 Nov 2026: GDACS was empty for days but looked fresh). ReliefWeb is not listed: its API needs a registered appname and its RSS refuses GitHub's runners (checked 2026-10-20), so it would sit amber for good; tools/refresh_feeds.mjs still tries the RSS each run.",
   "site": "https://01shane89-jpg.github.io/AXIOM-APSAP/",
   "topic": "osap-health-952c35918047",
   "amberMin": 40,
@@ -37,6 +37,22 @@
     { "id": "evsum", "file": "data/live/evsum.js", "name": "Event summaries (AI draft)", "maxMin": 180 },
     { "id": "osm", "file": "data/live/osm-sources.js", "name": "Live map data (OpenStreetMap via Postpass)", "maxMin": 120, "key": true },
     { "id": "airtraffic", "url": "https://raw.githubusercontent.com/01shane89-jpg/AXIOM-APSAP/live-air/index.json", "stamp": "built", "name": "Live air traffic (ADS-B)", "maxMin": 45, "key": true },
-    { "id": "drones", "url": "https://raw.githubusercontent.com/01shane89-jpg/AXIOM-APSAP/live-drones/drones.json", "stamp": "built", "name": "Live drones and military aircraft", "maxMin": 45, "key": true }
+    { "id": "drones", "url": "https://raw.githubusercontent.com/01shane89-jpg/AXIOM-APSAP/live-drones/drones.json", "stamp": "built", "name": "Live drones and military aircraft", "maxMin": 45, "key": true },
+    { "id": "daily", "file": "data/live/daily.js", "name": "Daily country summaries", "maxMin": 1560, "key": true },
+    { "id": "evsum-ai", "file": "data/live/evsum_ai.js", "name": "Incident summaries (AI draft)", "maxMin": 480 },
+    { "id": "osirdraft", "file": "data/live/osirdraft.js", "name": "OSIR analyst sections (AI draft)", "maxMin": 480 },
+    { "id": "digest", "file": "data/live/digest.js", "name": "Report digests (AI draft)", "maxMin": 480 },
+    { "id": "cf-suggest", "file": "data/live/conflicts/suggest.js", "name": "Incident record suggestions (AI draft)", "maxMin": 480 },
+    { "id": "news-index", "file": "data/live/news-index.js", "name": "News search index", "maxMin": 120 },
+    { "id": "stories", "file": "data/live/stories.js", "name": "Story coverage", "maxMin": 120 },
+    { "id": "spikes", "file": "data/live/spikes.js", "name": "Reporting spikes", "maxMin": 120 },
+    { "id": "topics", "file": "data/live/topics.js", "name": "Data set topics", "maxMin": 120 },
+    { "id": "pulse", "file": "data/live/pulse.js", "name": "Social pulse", "maxMin": 120 },
+    { "id": "aiwatch", "file": "data/live/aiwatch.js", "name": "Watch list flashpoints", "maxMin": 120 },
+    { "id": "fulltext", "file": "data/live/fulltext/index.js", "name": "Full articles (open licence)", "maxMin": 180 },
+    { "id": "factchecks", "file": "data/live/factchecks.js", "name": "Fact checks", "maxMin": 420 },
+    { "id": "risk", "file": "data/live/risk/index.json", "name": "Risk rating equivalents", "maxMin": 900 },
+    { "id": "econ", "file": "data/live/econ/index.json", "name": "Economic stress signals (daily)", "maxMin": 2880 },
+    { "id": "milref", "file": "data/live/milref/index.json", "name": "Military reference (weekly)", "maxMin": 12000 }
   ]
 }

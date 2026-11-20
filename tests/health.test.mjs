@@ -205,3 +205,57 @@ assert.match(fs.readFileSync(new URL("../assets/osap-health.js", import.meta.url
 // GDACS and the other always-full key feeds are counted
 for (const id of ["quakes", "gdacs", "warnings", "news", "social", "conflicts"]) assert.ok(C.feeds.find((f) => f.id === id).count, id + " has a count list");
 console.log("health tests passed");
+
+// ---------- operations checks: quiet sources and late scheduled jobs (20 Nov 2026) ----------
+{
+  const { updateSeen, quietSources, cronGapMin, cronsOf, jobLimitMin, lateJobs, QUIET_DAYS, DEAD_DAYS } = await import("../tools/health_lib.mjs");
+  const day = (d) => "2026-11-" + String(d).padStart(2, "0");
+  // a source that answers ok with nothing for 10+ days (NHK's old feed, 8 Aug to 19 Nov 2026) and one that fails
+  let seen = {};
+  for (let d = 1; d <= 12; d++) {
+    seen = updateSeen(seen, [{ feed: "news", sources: [
+      { cc: "jp", source: "NHK", url: "https://nhk.example/old", ok: true, n: 0 },
+      { cc: "jp", source: "Busy", url: "https://busy.example", ok: true, n: 5 },
+      { cc: "th", source: "Broken", url: "https://broken.example", ok: d < 8, n: d < 8 ? 2 : 0 },
+    ] }], day(d)).seen;
+  }
+  const q = quietSources(seen, day(12));
+  assert.deepEqual(q.map((x) => x.name).sort(), ["Broken", "NHK"], "the frozen and the failing source are quiet; the busy one is not");
+  assert.match(q.find((x) => x.name === "Broken").why, /^failing since 2026-11-07/);
+  assert.match(q.find((x) => x.name === "NHK").why, /^no items since it was first listed/);
+  assert.equal(quietSources(updateSeen({}, [{ feed: "news", sources: [{ source: "New", url: "u", ok: true, n: 0 }] }], day(1)).seen, day(1)).length, 0, "a new source is not judged on its first day");
+  // a source that gives its newest item's date is judged at once
+  const nw = updateSeen({}, [{ feed: "news", sources: [{ source: "Frozen", url: "f", ok: true, n: 0, newest: "2026-08-08T03:00" }, { source: "Fine", url: "g", ok: true, n: 0, newest: "2026-11-18T03:00" }] }], day(20)).seen;
+  assert.deepEqual(quietSources(nw, day(20)).map((x) => x.why), ["answers, but its newest item is from 2026-08-08"], "a frozen feed shows on its first check");
+  // a source the feed stopped listing is dropped from the quiet list at once and forgotten after 30 days
+  const gone = updateSeen(seen, [{ feed: "news", sources: [] }], day(13)).seen;
+  assert.equal(quietSources(gone, day(13)).length, 0);
+  assert.equal(Object.keys(updateSeen(gone, [], "2026-12-30").seen).length, 0);
+  assert.ok(QUIET_DAYS >= 7 && DEAD_DAYS >= 2);
+
+  // schedules -> longest gap and the late limit
+  assert.equal(cronGapMin("17 3 * * *"), 1440);
+  assert.equal(cronGapMin("37 */6 * * *"), 360);
+  assert.equal(cronGapMin("8,23,38,53 * * * *"), 15);
+  assert.equal(cronGapMin("41 4 * * 0"), 10080);
+  assert.equal(cronGapMin("17 4 * * 2,5"), 5760);
+  assert.ok(cronGapMin("17 5 3 * *") >= 28 * 1440, "monthly");
+  assert.equal(cronGapMin("not a cron"), null);
+  assert.deepEqual(cronsOf('on:\n  schedule:\n    - cron: "23 1 * * *"\n    - cron: \'53 */3 * * *\'\n'), ["23 1 * * *", "53 */3 * * *"]);
+  assert.equal(jobLimitMin(["23 1 * * *", "53 */3 * * *"]), 2 * 180 + 180);
+  assert.equal(jobLimitMin([]), null, "no schedule: not watched");
+  // a daily job that last succeeded 3 days ago is late; one from yesterday is not
+  const N = Date.parse("2026-11-20T12:00:00Z");
+  const late = lateJobs([{ file: "a.yml", name: "Econ", maxMin: jobLimitMin(["17 3 * * *"]), last: "2026-11-17T03:30:00Z" },
+    { file: "b.yml", name: "Risk", maxMin: jobLimitMin(["17 3 * * *"]), last: "2026-11-19T03:30:00Z" },
+    { file: "c.yml", name: "Never", maxMin: 600, last: null }], N);
+  assert.deepEqual(late.map((j) => j.name), ["Econ", "Never"]);
+  assert.match(late[0].why, /^last succeeded 3 days ago \(runs at least every 24 h\)$/);
+  // late jobs and quiet sources are listed as ops: never part of the badge or the phone alerts
+  const ev2 = evaluate({ asof: new Date(N - 5 * 60000).toISOString(), feeds: [{ id: "quakes", name: "Earthquakes", key: true, maxMin: 90, asof: new Date(N - 10 * 60000).toISOString() }],
+    quiet: { n: 2, list: [] }, jobs: { list: [{ file: "a.yml", name: "Econ", maxMin: 3060, last: "2026-11-17T03:30:00Z" }] } }, cfg, N);
+  assert.equal(ev2.state, "ok", "ops findings do not change the badge");
+  assert.deepEqual(ev2.alerts, []);
+  assert.deepEqual(ev2.ops.map((o) => o.id), ["job:a.yml", "quiet"]);
+  console.log("operations checks passed");
+}

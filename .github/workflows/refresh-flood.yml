@@ -39,6 +39,7 @@ jobs:
     permissions:
       contents: write
       issues: write
+      actions: read
     # A full run takes about 25 minutes (news ~8, social ~6, warnings ~3). At 30 the job was cancelled before "Commit if a snapshot
     # changed", so nothing was saved. Each pull step has its own time limit (about 1.5x its slowest run on 2026-10-03), so one stuck
     # feed is cut off and the run still commits everything else: on 2026-10-03 the news step hung for 50 minutes and nothing was saved.
@@ -340,6 +341,9 @@ jobs:
       # app's data badge reads and the keeper checks every 15 minutes to send outage alerts. Main only, so it is committed below.
       - name: Write the data health file
         if: ${{ github.ref == 'refs/heads/main' && !startsWith(inputs.only, 'probe') }}
+        # GITHUB_TOKEN (actions: read): each scheduled workflow's last success on main, at most hourly (tools/health.mjs jobs)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: node tools/health.mjs build
         continue-on-error: true
       # sold version only (tools/nc_strip.mjs): with the repository variable OSAP_COMMERCIAL set to true, non-commercial

@@ -90,7 +90,13 @@ export function evaluate(health, cfg, now = Date.now()) {
   const state = alerts.length ? "down" : problems.length || ageMin > amberMin ? "amber" : "ok";
   // what the alert is about, so the same problem is not sent twice: stalled, or which key feeds are wrong
   const fp = ageMin > downMin ? "stall" : problems.filter((p) => p.key).map((p) => p.id).sort().join(",");
-  return { state, ageMin, problems, alerts, fp, ui: userView(health, problems, ageMin, now - at, amberMin, downMin) };
+  // operations checks (below): listed for the panel and the nightly run, never part of the badge state or the phone alerts
+  const ops = [];
+  for (const j of lateJobs(health.jobs && health.jobs.list, now)) ops.push({ id: "job:" + j.file, name: j.name, why: j.why, ops: true });
+  if (health.jobs && health.jobs.error) ops.push({ id: "jobs", name: "Scheduled job check", why: health.jobs.error, ops: true });
+  const q = health.quiet && health.quiet.n;
+  if (q) ops.push({ id: "quiet", name: "Quiet sources", why: q + " source" + (q === 1 ? "" : "s") + " with nothing new for " + QUIET_DAYS + "+ days or failing for " + DEAD_DAYS + "+ days", ops: true });
+  return { state, ageMin, problems, alerts, fp, ops, ui: userView(health, problems, ageMin, now - at, amberMin, downMin) };
 }
 
 // What a reader of the app sees (the header DATA badge; assets/osap-health.js keeps a copy). Milder than the alert state above:
@@ -163,4 +169,94 @@ export function lastAnnounced(ndjson) {
 export function decide(ev, last) {
   if (ev.state === "down") return !last || last.state !== "down" || last.tag !== fpTag(ev.fp) ? "down" : null;
   return last && last.state === "down" ? "ok" : null;
+}
+
+// ---------- operations checks (Shane 2026-11-20: "we can't afford to have stuck data. Ever") ----------
+// Two kinds of stuck data that a feed's own fresh stamp hides. They go in data/live/health.json as "quiet" and "jobs", are listed
+// in the app's data-health panel and read by the nightly run; they are marked ops so they never change the reader's badge or
+// send a phone alert on their own (the key-feed alerts above do that).
+//
+// 1. Quiet sources. A source inside a feed can answer "ok" with nothing new for months while the feed as a whole stays fresh
+//    (NHK's old news feed froze on 8 Aug 2026 and kept answering ok, n: 0, until 19 Nov). data/live/source-seen.json keeps, for
+//    every source of every feed that lists them, the first day it was listed, the last day it answered ok and the last day it
+//    gave items (n > 0). A source with no items for QUIET_DAYS (or no ok answer for DEAD_DAYS), and listed for longer than that,
+//    is quiet. Day resolution, so the file changes at most once a day per source.
+export const QUIET_DAYS = 10, DEAD_DAYS = 3, FORGET_DAYS = 30;
+const dayMs = 864e5;
+const dayNum = (d) => Math.floor(Date.parse(d + "T00:00:00Z") / dayMs);
+export function sourceKey(feedId, s) { return feedId + "|" + String(s.url || ((s.source || s.name || s.agency || s.id || "?") + "|" + (s.cc || ""))).slice(0, 300); }
+/** seen: { key: { f, name, cc, first, ok, item } } (days YYYY-MM-DD); lists: [{ feed, sources: [...] }] -> { seen, changed } */
+export function updateSeen(seen, lists, today) {
+  const out = { ...(seen || {}) }; let changed = false;
+  for (const { feed, sources } of lists) for (const s of sources || []) {
+    if (!s || typeof s !== "object" || typeof s.ok !== "boolean") continue;
+    const k = sourceKey(feed, s), o = out[k] ? { ...out[k] } : { f: feed, name: srcName(s), cc: s.cc || "", first: today };
+    const before = JSON.stringify(out[k] || null);
+    o.last = today;   // still listed by the feed
+    if (s.ok) o.ok = today;
+    if (s.ok && typeof s.n === "number" && s.n > 0) o.item = today;
+    // a feed that gives its newest item's own date (tools/refresh_news.mjs "newest") is judged by that at once
+    if (s.ok && typeof s.newest === "string" && /^\d{4}-\d\d-\d\d/.test(s.newest)) o.newest = s.newest.slice(0, 10);
+    if (JSON.stringify(o) !== before) { out[k] = o; changed = true; }
+  }
+  // a source the feed no longer lists is forgotten after FORGET_DAYS (it was removed or renamed on purpose)
+  for (const [k, o] of Object.entries(out)) if (dayNum(today) - dayNum(o.last || o.first) > FORGET_DAYS) { delete out[k]; changed = true; }
+  return { seen: out, changed };
+}
+/** -> [{ feed, name, cc, why, days }] most days first */
+export function quietSources(seen, today) {
+  const t = dayNum(today), out = [];
+  for (const o of Object.values(seen || {})) {
+    if (o.last !== today) continue;                  // only sources the feeds list today
+    const listed = t - dayNum(o.first);
+    const noOk = t - dayNum(o.ok || o.first), noItem = t - dayNum(o.item || o.first);
+    if (noOk >= DEAD_DAYS && listed >= DEAD_DAYS) out.push({ feed: o.f, name: o.name, cc: o.cc, why: o.ok ? "failing since " + o.ok : "failing since it was first listed (" + o.first + ")", days: noOk });
+    else if (o.newest && o.ok === today && t - dayNum(o.newest) >= QUIET_DAYS) out.push({ feed: o.f, name: o.name, cc: o.cc, why: "answers, but its newest item is from " + o.newest, days: t - dayNum(o.newest) });
+    else if (!o.newest && noItem >= QUIET_DAYS && listed >= QUIET_DAYS) out.push({ feed: o.f, name: o.name, cc: o.cc, why: o.item ? "no new items since " + o.item : "no items since it was first listed (" + o.first + ")", days: noItem });
+  }
+  return out.sort((a, b) => b.days - a.days || a.name.localeCompare(b.name));
+}
+
+// 2. Stalled jobs. Every scheduled workflow's last successful run on main is checked against its own schedule: a job is late when
+//    its last success is older than twice the longest gap between its scheduled starts plus 3 hours (GitHub runs crons late or
+//    skips them when busy). That covers the daily, weekly and monthly data jobs that have no live feed stamp to watch.
+const cronField = (f, lo, hi) => {
+  const set = new Set();
+  for (const part of String(f).split(",")) {
+    const m = /^(\*|\d+(?:-\d+)?)(?:\/(\d+))?$/.exec(part.trim()); if (!m) return null;
+    let a = lo, b = hi; if (m[1] !== "*") { const r = m[1].split("-").map(Number); a = r[0]; b = r.length > 1 ? r[1] : (m[2] ? hi : r[0]); }
+    for (let v = a; v <= b; v += +(m[2] || 1)) set.add(v);
+  }
+  return set;
+};
+/** "m h dom mon dow" -> the longest gap in minutes between two starts (over 35 days from a Monday), or null if unreadable */
+export function cronGapMin(expr) {
+  const p = String(expr).trim().split(/\s+/); if (p.length !== 5) return null;
+  const [mi, ho, dm, mo, dw] = [cronField(p[0], 0, 59), cronField(p[1], 0, 23), cronField(p[2], 1, 31), cronField(p[3], 1, 12), cronField(p[4], 0, 7)];
+  if (!mi || !ho || !dm || !mo || !dw) return null;
+  if (dw.has(7)) dw.add(0);
+  const domStar = p[2] === "*", dowStar = p[4] === "*";
+  const start = Date.UTC(2026, 0, 5), fires = [];
+  for (let d = 0; d < 70; d++) {
+    const t = new Date(start + d * dayMs), dayOk = domStar && dowStar ? true : domStar ? dw.has(t.getUTCDay()) : dowStar ? dm.has(t.getUTCDate()) : dm.has(t.getUTCDate()) || dw.has(t.getUTCDay());
+    if (!dayOk || !mo.has(t.getUTCMonth() + 1)) continue;
+    for (const h of [...ho].sort((a, b) => a - b)) for (const m of [...mi].sort((a, b) => a - b)) fires.push(d * 1440 + h * 60 + m);
+  }
+  if (fires.length < 2) return null;
+  let gap = 0; for (let i = 1; i < fires.length; i++) gap = Math.max(gap, fires[i] - fires[i - 1]);
+  return gap;
+}
+/** the schedules in a workflow file's text -> ["17 3 * * *", ...] */
+export function cronsOf(yml) { return [...String(yml).matchAll(/^\s*-\s*cron:\s*["']([^"']+)["']/gm)].map((m) => m[1]); }
+/** the longest a workflow may go without a success, in minutes: 2 x the longest gap of its combined schedules + 180 */
+export function jobLimitMin(crons) {
+  const gaps = crons.map(cronGapMin).filter((g) => g != null);
+  if (!gaps.length) return null;
+  // several schedules together fire more often than any one alone: the combined gap is at most the smallest single gap
+  return 2 * Math.min(...gaps) + 180;
+}
+/** jobs: [{ file, name, maxMin, last: ISO of last success or null }] -> late ones [{ file, name, why }] */
+export function lateJobs(jobs, now = Date.now()) {
+  return (jobs || []).filter((j) => j && j.maxMin && (!j.last || now - Date.parse(j.last) > j.maxMin * 60000))
+    .map((j) => ({ file: j.file, name: j.name || j.file, why: j.last ? "last succeeded " + ago(now - Date.parse(j.last)) + " ago (runs at least every " + ago(((j.maxMin - 180) / 2) * 60000) + ")" : "no successful run on record" }));
 }
