@@ -270,6 +270,8 @@
           " · " + [o.dom ? o.dom + " based in " + esc(cName(top.cc)) : "", o.out ? o.out + " elsewhere" : ""].filter(Boolean).join(", ") + "</p>" +
         // Share this trail (assets/osap-trail.js): the first report, repeats, denials and sources as one vertical picture
         (W.OSAP_TRAIL ? '<button type="button" class="thshare" data-thshare title="A phone-sized picture of this story\'s reporting trail: the first report, who repeated it, headlines that deny or dispute it, and the sources. Claims, never a verdict.">Share this trail</button>' : "") +
+        // Play on the map (assets/osap-trailmap.js): the same trail played over time, outlets lighting up where they are based
+        (W.OSAP_TRAILMAP ? ' <button type="button" class="thshare" data-thmap="' + esc(top.cc + ":" + top.id) + '" title="Play this story\'s reporting trail on the map: each outlet lights up when it published, where it is based. Claims, never a verdict.">Play on the map</button>' : "") +
         '<div class="thtabs" role="tablist">' + [["parts", "The story", "Story"], ["dev", "Timeline", "Timeline"], ["check", "Check it", "Check it"], ["conn", "Connections", "Links"], ["all", "All reports", "Reports"]].map(function (b) {
           return '<button type="button" role="tab" data-thtab="' + b[0] + '" aria-selected="' + (tab === b[0]) + '" aria-label="' + esc(b[1]) + '"><span class="thl">' + esc(b[1]) + '</span><span class="thsh">' + esc(b[2]) + "</span></button>"; }).join("") + "</div>" : "") +
       '</div><div class="thbody">' + body +
