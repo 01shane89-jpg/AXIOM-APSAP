@@ -48,6 +48,12 @@
     var m = Math.max(0, Math.round(ms / 60000)); if (m < 60) return m + " min";
     var h = Math.floor(m / 60), r = m % 60; return h < 48 ? h + " h" + (r ? " " + r + " min" : "") : Math.round(h / 24) + " days";
   }
+  /* scheduled data jobs with no success within their limit; one with none on record counts once it has existed that long */
+  function lateJobs(h, now) {
+    return ((h && h.jobs && h.jobs.list) || []).filter(function (j) {
+      return j && j.maxMin && (j.last ? now - Date.parse(j.last) > j.maxMin * 60000 : !(j.since && now - Date.parse(j.since) <= j.maxMin * 60000));
+    });
+  }
   function when(ms) { var T = window.OSAP_TIME; return T && T.dualT ? T.dualT(ms) : new Date(ms).toISOString().slice(11, 16) + "Z"; }
   /* same rules as tools/health_lib.mjs evaluate() */
   function evaluate(h, now) {
@@ -62,6 +68,11 @@
       else if (f.src && f.src.ok + f.src.fail >= 4 && f.src.fail > f.src.ok) why = f.src.fail + " of " + (f.src.ok + f.src.fail) + " sources failing";
       else if (f.minItems > 0 && typeof f.n === "number" && f.n < f.minItems) why = f.n + " items";
       if (why) probs.push({ name: f.name || f.id, why: why, key: !!f.key });
+    });
+    /* a scheduled data job past its limit (health_lib lateJobs) is named like a late minor feed: amber, never a phone alert */
+    lateJobs(h, now).forEach(function (j) {
+      var nm = String(j.name || j.file).replace(/^Refresh\s+/i, "");
+      probs.push({ name: nm.charAt(0).toUpperCase() + nm.slice(1), why: j.last ? "last updated " + ago(now - Date.parse(j.last)) + " ago" : "no successful run", key: false, job: true });
     });
     /* what the reader sees (tools/health_lib.mjs userView): red only when nothing has refreshed for downMin or most key feeds
        are down; one or a few late feeds are amber and named. The keeper's phone alerts still fire for any key feed. */
@@ -115,13 +126,15 @@
       h += "<p>Last refresh " + esc(when(EV.at)) + " (" + ago(now - EV.at) + " ago). Refreshes run about every 15 to 25 minutes.</p>";
       if (EV.stall) h += '<p class="hk"><strong>No new data for ' + ago(now - EV.at) + ".</strong> Everything below is at least that old.</p>";
       else h += '<p class="ohl ' + EV.state + '"><strong>' + esc(EV.line) + "</strong></p>";
-      if (EV.probs.length) {
+      var fp = EV.probs.filter(function (p) { return !p.job; });
+      if (fp.length) {
         /* key feeds stay marked in red only when the data really is down; a single late key feed is listed in amber */
-        h += "<ul>" + EV.probs.map(function (p) { return "<li" + (p.key ? ' class="' + (EV.state === "down" ? "hk" : "ha") + '"' : "") + "><strong>" + esc(p.name) + "</strong>: " + esc(p.why) + (p.key ? " (key feed)" : "") + "</li>"; }).join("") + "</ul>";
+        h += "<ul>" + fp.map(function (p) { return "<li" + (p.key ? ' class="' + (EV.state === "down" ? "hk" : "ha") + '"' : "") + "><strong>" + esc(p.name) + "</strong>: " + esc(p.why) + (p.key ? " (key feed)" : "") + "</li>"; }).join("") + "</ul>";
       }
-      /* behind schedule (tools/health_lib.mjs lateJobs, quietSources): scheduled data jobs with no recent success and sources that
-         answer but have had nothing new for 10+ days or fail. Listed here and read by the nightly run; they never change the badge. */
-      var jl = (H.jobs && H.jobs.list) || [], late = jl.filter(function (j) { return j.maxMin && (!j.last || now - Date.parse(j.last) > j.maxMin * 60000); });
+      /* behind schedule (tools/health_lib.mjs lateJobs, quietSources): scheduled data jobs with no recent success (they also turn the
+         badge amber, through EV.probs; listed here only, by their workflow name) and sources that answer but have had nothing new for 10+ days or fail (listed here
+         and read by the nightly run; they never change the badge). */
+      var jl = (H.jobs && H.jobs.list) || [], late = lateJobs(H, now);
       var qn = (H.quiet && H.quiet.n) || 0, ql = (H.quiet && H.quiet.list) || [];
       if (late.length || qn || (H.jobs && H.jobs.error)) {
         h += '<p><strong>Behind schedule</strong></p><ul class="ohops">' +

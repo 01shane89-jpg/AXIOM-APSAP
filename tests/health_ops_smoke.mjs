@@ -1,6 +1,6 @@
 // Data health panel, "Behind schedule" (assets/osap-health.js; tools/health_lib.mjs lateJobs, quietSources): a scheduled data job
-// with no recent success and a source that answers but has had nothing new for weeks are listed by name, while the badge stays as
-// the feeds make it (green here). 390 px phone, no page errors, nothing scrolls sideways. External hosts are blocked.
+// with no recent success and a source that answers but has had nothing new for weeks are listed by name; the late job also turns
+// the badge amber and is named on it (never red on its own). 390 px phone, no page errors, nothing scrolls sideways. External hosts are blocked.
 // Run from the repo root: node tests/health_ops_smoke.mjs   (SHOTS=dir saves a screenshot)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -33,7 +33,7 @@ const served = await p.evaluate(() => fetch("data/live/health.json?fresh=1", { c
 ok(served === true, "the test health file is served (" + served + ")");
 await p.evaluate(() => window.OSAP_HEALTH_UI.reload());
 await p.waitForTimeout(1500);
-const badge = await p.evaluate(() => document.querySelector(".ohw").className + " " + document.querySelector(".ohb").textContent);
+const badge = await p.evaluate(() => document.querySelector(".ohb").className + " " + document.querySelector(".ohb").textContent);
 // the Today page opens first on a phone: its own badge is the one a reader taps
 await p.click("#today .ohb");
 await p.waitForFunction(() => /Behind schedule/.test((document.querySelector(".ohp") || {}).innerText || ""), null, { timeout: 15000 }).catch(() => {});
@@ -42,7 +42,8 @@ ok(/Behind schedule/.test(r.text), "the panel has a Behind schedule list");
 ok(r.items.some((t) => /Refresh economic stress signals: last succeeded 4 days ago/.test(t)), "a late data job is named with its last success");
 ok(!r.items.some((t) => /Refresh risk/.test(t)), "a job within its schedule is not listed");
 ok(r.items.some((t) => /NHK World \(old feed\) \(JP\): answers, but its newest item is from 2026-08-08/.test(t)), "a quiet source is named with its newest item");
-ok(!/amber|down/.test(badge.split(" ").slice(0, 3).join(" ")) || !/late/.test(badge), "the badge is not turned amber by ops findings (" + badge.trim() + ")");
+ok(/\bamber\b/.test(badge) && /Economic stress signals late/.test(badge), "a late job turns the badge amber and names it (" + badge.trim() + ")");
+ok(!/\bdown\b/.test(badge), "a late job alone never turns the badge red");
 ok(!r.wide, "nothing scrolls sideways");
 ok(!errs.length, "no page errors" + (errs.length ? ": " + errs.join(" | ") : ""));
 if (process.env.SHOTS) await p.screenshot({ path: process.env.SHOTS + "/health-ops.png" });

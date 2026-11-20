@@ -2,7 +2,8 @@ name: Keep the 15-minute refresh running
 
 # GitHub runs scheduled workflows late or skips them when it is busy (the 15-minute cron in refresh-flood.yml has been firing
 # only about every 3 hours). This job starts both lanes of "Refresh live snapshots" on main every 15 minutes itself (and the
-# live air traffic and drone sweeps, the conflict tabs and the AI drafts), for about 5 h 30 min (under
+# live air traffic and drone sweeps, the conflict tabs, the AI drafts, and any other scheduled data job the health file lists as
+# late), for about 5 h 30 min (under
 # GitHub's 6-hour job limit), then starts a fresh copy of itself so the chain carries on. The hourly schedule below restarts
 # the chain if it ever breaks. Only one keeper runs at a time: a new copy waits in the queue until the current one ends
 # (GitHub keeps at most one waiting), so the hand-over and the hourly restart never double up.
@@ -94,6 +95,21 @@ jobs:
                 echo "$(date -u +%H:%MZ) a $wf run is still waiting; skipping this round"
               fi
             done
+            # any other scheduled data job that is late (data/live/health.json jobs; tools/late_jobs.mjs): start it again, at most
+            # once per 2 hours each, so a job whose own schedule GitHub skips does not sit late (refresh-avwx.yml "every 20 min" and
+            # refresh-darkships.yml "every 15 min" fired only every 4 to 9 h in the week to 20 Nov 2026). The live health file is
+            # read from main each round; a job that keeps failing stays late, named on the Data badge and in the nightly run.
+            if gh api "repos/$GH_REPO/contents/data/live/health.json?ref=main" -H "Accept: application/vnd.github.raw" > "$RUNNER_TEMP/health.json" 2>/dev/null; then
+              since=$(date -u -d '2 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+              for wf in $(node tools/late_jobs.mjs "$RUNNER_TEMP/health.json" || true); do
+                rw=$(gh run list --workflow "$wf" --branch main --limit 10 --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 1)
+                if [ "$rw" = "0" ]; then
+                  gh workflow run "$wf" --ref main && echo "$(date -u +%H:%MZ) $wf is behind schedule; started it" || echo "$(date -u +%H:%MZ) $wf is behind schedule; could not start it"
+                else
+                  echo "$(date -u +%H:%MZ) $wf is behind schedule; a run was started in the last 2 h, not starting another"
+                fi
+              done
+            fi
             # data health: alert on the ntfy health channel when the published data has stopped (never fails the keeper)
             timeout 90 node tools/health.mjs watch || echo "$(date -u +%H:%MZ) health check did not finish"
             [ $(( $(date +%s) + 900 )) -lt "$end" ] || break
