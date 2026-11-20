@@ -2,7 +2,7 @@
 // prepareForModel). The rejected lines are real MADLAD-400 output from the news pool, 2026-11-17 (Russian aircraft entering the
 // Korean and Japanese air defense identification zones). Run: node tests/mt_glossary.test.mjs
 import assert from "node:assert/strict";
-import { protectTerms, termMissing, countryAdded, hedgeLost } from "../tools/mt_glossary.mjs";
+import { protectTerms, termMissing, countryAdded, hedgeLost, verdictAdded } from "../tools/mt_glossary.mjs";
 import { mtSuspect } from "../tools/mt_guard.mjs";
 import { prepareForModel } from "../tools/translate.mjs";
 
@@ -131,6 +131,31 @@ t("an intrusion turned into an attack, and an intercept into a rescue, are rejec
   assert.match(mtSuspect("ជប៉ុន-​កូរ៉េខាងត្បូង បញ្ជូន​យន្តហោះចម្បាំង​​ស្ទាក់​បន្ទាន់ ក្រោយ​ យន្តហោះ​យោធា​​រុស្ស៊ី ២គ្រឿង រំលោភ​ចូលដែនអាកាស ជប៉ុន ​",
     "Japan-South Korea Deploys Emergency Fighter Rescue Aircraft After Two Russian Military Planes Violate Japanese Airspace", now, "km"), /rescue/);
   assert.equal(termMissing("សមត្ថកិច្ចកម្ពុជាស្ទាក់ចាប់លុយ១២.៨លានដុល្លារ", "Cambodia Police Seize 12.8 Million Dollars from Online Scammers"), "", "ស្ទាក់ចាប់ is also a seizure");
+});
+
+// 2026-11-20, the ICJ's Rohingya genocide ruling and the UK expelling Myanmar's defence attaché: real output from the stored index
+t("a verdict, an amount of money or an ambassador the original does not give is rejected", () => {
+  assert.match(mtSuspect("ศาลยุติธรรมระหว่างประเทศประกาศคำตัดสินเมียนมา ในคดีฆ่าล้างเผ่าพันธุ์โรฮิงยา",
+    "The International Court of Justice has ruled Myanmar guilty of genocide against the Rohingya.", now, "th"), /guilty/);
+  assert.match(mtSuspect("শেখ হাসিনাসহ ৪১ আসামির অব্যাহতি চেয়ে শুনানি আজ", "41 accused including Sheikh Hasina plead guilty to murder", now, "bn"), /guilty/);
+  assert.match(mtSuspect("“호감 품고 있었다” 세 번째 만남서 일본인 여성 살해한 30대 송치",
+    "30-year-old man convicted of murdering Japanese woman at third meeting", now, "ko"), /convicted/);
+  assert.equal(verdictAdded("Gjykata Speciale e shpall fajtor Hashim Thaçin, e dënon me 17 muaj burgim", "Special Court Finds Hashim Thaci Guilty"), "");
+  assert.equal(verdictAdded("محكمة العدل الدولية تقضي بارتكاب ميانمار إبادة جماعية بحق الروهينجا", "ICJ finds Myanmar guilty of genocide"), "");
+  assert.equal(verdictAdded("Υπόθεση Μάγγου: Ενοχοι πέντε αστυνομικοί για βασανιστήρια", "Five policemen found guilty of torture"), "", "Greek without accents");
+  assert.equal(verdictAdded("Excónsul se declara no culpable de tres cargos", "Ex-Consul Pleads Not Guilty to Three Charges"), "");
+  assert.match(mtSuspect("ရိုဟင်ဂျာလူမျိုးသုဉ်း သတ်ဖြတ်မှုမြန်မာနိုင်ငံတွင် တာဝန်ရှိကြောင်း ICJ တရားရုံး ဆုံးဖြတ်လိုက်ပြီ",
+    "Myanmar to Pay $10 Million in Damage Compensation for Rohingya Genocide", now, "my"), /10 Million/);
+  assert.match(mtSuspect("Štai kokį atlygį Nyderlandai siūlo už ieškomą narkomafijos bosą", "The Netherlands Offers $10 Million Reward for Wanted Drug Boss", now, "lt"), /10 Million/);
+  assert.equal(mtSuspect("Trump anuncia recompensa de un millón de dólares a quien avise de fraude", "Trump announces $1 million reward for information on fraud", now, "es"), "");
+  assert.equal(mtSuspect("RS izdvojila šest miliona eura za bjeloruske traktore", "RS allocated 6 million euros for Belarusian tractors", now, "bs"), "");
+  assert.equal(mtSuspect("Seis muertos en un tiroteo en Lima", "Six dead in Lima shooting", now, "es"), "", "a number word is not money");
+  assert.match(mtSuspect("Genosid: UK usir atase pertahanan Myanmar", "Genocide: UK expels Myanmar defence chief", now, "ms"), /attaché/);
+  assert.match(termMissing("อังกฤษสั่งขับทูตทหารเมียนมา เรียกอุปทูตเข้าพบ", "UK expels Myanmar military ambassador, summons deputy"), /attaché/);
+  assert.match(termMissing("မြန်မာစစ်သံမှူးကို ဗြိတိန် ချက်ချင်းနှင်ထုတ်", "UK immediately expels Myanmar ambassador"), /attaché/);
+  assert.equal(termMissing("Genosid: UK usir atase pertahanan Myanmar", "Genocide: UK expels Myanmar defence attaché"), "");
+  assert.equal(protectTerms("Genosid: UK usir atase pertahanan Myanmar"), "Genosid: UK usir defence attaché Myanmar");
+  assert.equal(protectTerms("ปลัดกลาโหม ต้อนรับ ‘ผู้ช่วยทูตทหารปากีสถาน’"), "ปลัดกลาโหม ต้อนรับ ‘military attaché ปากีสถาน’");
 });
 
 console.log(ok + " passed");

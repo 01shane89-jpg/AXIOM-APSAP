@@ -19,7 +19,11 @@
 //   - names Iraq or Syria where the original names neither (Newtalk's 伊, Iran, as "Iraqi forces", 2026-11-17);
 //   - drops the original's "possible" or "suspected", or makes its radioactive bomb a nuclear one (LSM's "warns of a possible
 //     Iranian dirty bomb attack" as "Iran's Dirty Bomb Attack on Washington", Naewna's ระเบิดกัมมันตรังสี as "nuclear bomb", 2026-11-18);
-//   - gives a number the original does not have (a date moved from "05 Novembre" to "28 Novembre", "Gulf 28" turned into
+//   - finds someone guilty or convicted where the original has no word for guilt, a conviction or a sentence (Thai Post's "ICJ
+//     announces its verdict on Myanmar" as "has ruled Myanmar guilty", 15 days before the ruling, 2026-11-20), or calls a Thai,
+//     Malay, Burmese or Chinese military attaché an ambassador or a chief ("atase pertahanan" as "defence chief");
+//   - gives a number the original does not have, or an amount of money where the original has no number and no word for a sum
+//     (Myanmar Now's "ICJ rules Myanmar responsible for the Rohingya genocide" as "Myanmar to Pay $10 Million", 2026-11-20) (a date moved from "05 Novembre" to "28 Novembre", "Gulf 28" turned into
 //     "Gulf Games 26", "The 100 Most Powerful People in the World" for an Armenian headline with no number in it).
 // looksEnglish() finds a headline that is already English under another language's label (a Gulf or West African outlet's
 // English titles, a broadcaster's YouTube channel): it is shown as written and never given to the model, which on 2026-11-08
@@ -34,7 +38,7 @@ import { MONTHS } from "./mt_months.mjs";
 import { WEEKDAYS } from "./mt_weekdays.mjs";
 import { extraCount, extraHarm, numberWordValues } from "./mt_facts.mjs";
 import { missingThaiPlace } from "./th_places.mjs";
-import { termMissing, countryAdded, hedgeLost } from "./mt_glossary.mjs";
+import { termMissing, countryAdded, hedgeLost, verdictAdded } from "./mt_glossary.mjs";
 
 // any script's decimal digits as ASCII ("২০০১" -> "2001"), so a year written in Bengali or Thai digits is recognised
 export function asciiDigits(s) {
@@ -108,6 +112,8 @@ export function mtSuspect(orig, en, now = Date.now(), lang = "") {
   if (ca) return "country " + ca + " not in the original";
   const hl = hedgeLost(orig, en);
   if (hl) return "the original's " + hl + " not kept";
+  const va = verdictAdded(orig, en);
+  if (va) return "\"" + va + "\" not in the original";
   const n = extraNumber(orig, en);
   if (n) return "number " + n + " not in the original";
   const mo = extraMonth(orig, en);
@@ -172,6 +178,8 @@ export function numberIn(orig) {
   const { tokens, vals } = originalNumbers(String(orig || ""));
   return (x) => tokens.has(x) || vals.some((v) => SCALES.some((k) => same(v * k, x) || same(v / k, x)));
 }
+// a word for a sum, a large number or a currency, in the languages of the index ("un millón", "mil milhões", ล้าน, 万, ڈالر)
+const SUM_WORD = /mil|miljo|εκατομμ|δισεκ|χιλι|হাজার|টাকা|މިލިއަނ|میلیون|میلیارد|هزار|trăm|мил+и|мільй|мілья|милја|bili|billón|bilhão|bilhões|ملي|مليار|ملايين|ألف|آلاف|ล้าน|แสน|หมื่น|พัน|លាន|ពាន់|万|萬|億|亿|兆|千|만|억|천|조|triệu|tỷ|tỉ|nghìn|ngàn|juta|ribu|lakh|লাখ|লক্ষ|কোটি|अर्ब|अरब|करोड|लाख|हजार|सय|सौ|သိန်း|သန်း|ထောင်|သောင်း|dolar|dollar|доллар|долар|دولار|ডলার|ดอลลาร์|ដុល្លារ|ဒေါ်လာ|đô|euro|евро|евра|يورو|eura|pound|funt|جنيه|yuan|元|円|원|dinar|dinara|динар|rupe|ریال|ريال|тыс|тис|хиљ|хил|tisuć|tisíc|ezer|bin\b|hundred|cien|cent|сто|mia\b|mld|mln|млн|млрд/i;
 export function extraNumber(orig, en) {
   orig = String(orig || ""); en = String(en || "");
   const { tokens, vals } = originalNumbers(orig);
@@ -188,7 +196,11 @@ export function extraNumber(orig, en) {
     if (v >= 1900 && v <= 2100 && !raw.includes(".") && !m[2]) continue;        // a year: the year rule's job
     if (v <= 1 && parts.length === 1) continue;
     if (okVal(v * sc) || okVal(v) || parts.every(okTok) || (sc === 1 && words.has(v))) continue;
-    if (!tokens.size && !vals.length && v <= 12 && parts.length === 1) continue;  // a number word in the original
+    // a number word in the original, but not an amount of money or a number of millions the original has no word for
+    // (Myanmar Now's "ICJ rules Myanmar responsible for genocide" as "Myanmar to Pay $10 Million in Damage Compensation")
+    const amount = !!m[2] || /(?:[$€£¥₹₩]|\b(?:US|USD|EUR|Rs)\.?)\s?$/i.test(enS.slice(Math.max(0, m.index - 5), m.index)) ||
+      /^\s*(?:dollars|euros|pounds|yuan|yen|rupees|baht|ringgit|won)\b/i.test(enS.slice(m.index + m[0].length));
+    if (!tokens.size && !vals.length && v <= 12 && parts.length === 1 && !(amount && !SUM_WORD.test(orig))) continue;
     return raw + (m[2] ? " " + m[2] : "");
   }
   return "";
