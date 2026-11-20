@@ -574,11 +574,12 @@
       if (x.s === "same_event") h.push('<div class="cflnk" title="' + esc("An analyst judged these reports describe the same event UCDP coded (" + day(x.at) + (x.r ? ": " + x.r : "") + "). Figures and sides stay as each source gives them.") + '"><b>Same event as UCDP event ' + esc(id) + "</b> (analyst)" +
         (e ? "<br>" + uTxt(e) : "") + ' <button type="button" data-cflk="unlink_coded" data-k="' + k + '" data-u="' + esc(id) + '" title="Take this link back. Opens a GitHub issue to add your reason and submit">Take back</button></div>');
     });
-    var sentM = sent(), props = M.propose(g.all, d.ucdp || []).filter(function (p) { return !done[p.ev.id]; });
+    // the sent mark is keyed by the first report in SORTED order, as decideLink writes it (g.all order is the page's own)
+    var key = fps.slice().sort()[0], sentM = sent(), props = M.propose(g.all, d.ucdp || []).filter(function (p) { return !done[p.ev.id]; });
     var ruled = Object.keys(done).filter(function (id) { return done[id].s === "not_same"; });
     if (!props.length && !ruled.length) return h.join("");
     var rows = props.map(function (p) {
-      var e = p.ev, s = sentM[active + ":u" + e.id + ":" + fps[0]], isSent = s && Date.now() - s.t < 864e5;
+      var e = p.ev, s = sentM[active + ":u" + e.id + ":" + key], isSent = s && Date.now() - s.t < 864e5;
       return '<div class="mt">' + uTxt(e) + '<br><span class="cfm">' + (p.km < 1 ? "under 1 km" : num(Math.round(p.km)) + " km") + " from the closest report, " + (p.days ? p.days + (p.days === 1 ? " day" : " days") + " apart" : "within UCDP's dates") +
         (p.hints.length ? "; " + esc(p.hints.join("; ")) : "") + "</span><br>" +
         (isSent ? '<span class="tag vsent">Decision sent</span>' : '<button type="button" data-cflk="link_coded" data-k="' + k + '" data-u="' + esc(e.id) + '" title="These reports describe the same event UCDP coded. Opens a GitHub issue to add your reason and submit">Same event</button>' +
