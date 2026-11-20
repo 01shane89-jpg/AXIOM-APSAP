@@ -29,6 +29,7 @@ const ZONES = [
 // Newtalk's 荷姆茲 (Hormuz) as "Homs" (Syria), Arabic هرمز as "Hermes". [source pattern, what the model is given (null: the
 // original is kept), what the English must have, what was lost].
 const MINE_EN = /\b(?:land|sea)?mine|\bde-?min/i;
+const ATTACHE_EN = /\battach[eé]/i;
 const KEEP = [
   [/\branjau(?:\s+laut)?\b/gi, "mine", MINE_EN, "mine"],                   // Indonesian, Malay
   [/ทุ่นระเบิด/g, "mine", MINE_EN, "mine"],                                // Thai
@@ -43,6 +44,16 @@ const KEEP = [
   // Thai "radioactive bomb", which the model wrote as "nuclear bomb" (Naewna, 2026-11-18)
   [/ระเบิดกัมมันต(?:ภาพ)?รังสี/g, "radioactive bomb", /radioactiv|radiolog|dirty/i, "radioactive bomb"],
   [/호르무즈/g, null, /\bH[oe]rmoz|\bHormuz/i, "Strait of Hormuz"],
+  // 2026-11-20, the UK expelling Myanmar's defence attaché: Berita Harian's "atase pertahanan" came out as "defence chief",
+  // Myanmar Now's စစ်သံမှူး as "ambassador", and every Thai ทูตทหาร (military attaché) in the stored index as a "military
+  // ambassador" (12 of 12 lines, Thai, Malay, Burmese, Chinese). An attaché is neither an ambassador nor a chief.
+  [/(?:ผู้ช่วย)?ทูต(?:ฝ่าย)?ทหาร(?:บก|เรือ|อากาศ)?/g, "military attaché", ATTACHE_EN, "attaché"],
+  [/ผู้ช่วยทูต/g, "attaché", ATTACHE_EN, "attaché"],
+  [/\batase\s+pertahanan\b/gi, "defence attaché", ATTACHE_EN, "attaché"],
+  [/\batase\s+(?:militer|tentera|ketenteraan)\b/gi, "military attaché", ATTACHE_EN, "attaché"],
+  [/\batase\b/gi, "attaché", ATTACHE_EN, "attaché"],
+  [/စစ်သံမှူး/g, "military attaché", ATTACHE_EN, "attaché"],
+  [/武官/g, "military attaché", ATTACHE_EN, "attaché"],
 ];
 // Iraq and Syria named in the English when the original names neither (Newtalk's 伊, Iran, read as "Iraqi forces" and
 // "Syria"; Korean 이란 as "Iraq"; a Croatian "Russians fired on a school" as "a Syrian attack"). Measured on the stored
@@ -127,4 +138,18 @@ export function countryAdded(orig, en) {
   const o = fold(orig);
   for (const [name, re, forms] of ADDED) if (re.test(String(en || "")) && !forms.some((f) => o.includes(f))) return name;
   return "";
+}
+
+// 2026-11-20, the ICJ's Rohingya genocide case: Thai Post's "ICJ announces its verdict on Myanmar" (ประกาศคำตัดสิน) came out
+// as "has ruled Myanmar guilty" 15 days before the ruling. A finding of guilt or a conviction in the English needs a word for
+// guilt, a conviction, a sentence or a verdict against someone in the original. Measured on the stored index (20 Nov): 27
+// of 1,184 English lines saying guilty or convicted, nearly all wrong: a suspect (ผู้ต้องหา, 涉), a case sent to prosecutors
+// (송치), a sentence asked for (求刑), an impeachment (luận tội) or a hearing to drop the charges read as a conviction or plea.
+const GUILT = /culp|conden|convict|coupable|schuld|verurteil|colpevol|bersalah|ผิด|พิพากษ|จำคุก|โทษ|有罪|判|罪|유죄|선고|징역|형|виновн|вінават|винуват|осужд|осуд|засуд|присуд|приговор|вирок|مذنب|إدان|ادان|أدين|يدين|تدين|ارتكاب|محكوم|حكم|حکم|suçlu|mahk[uû]m|có tội|kết án|tuyên án|phạm tội|ένοχ|καταδικ|skaz|winn|winien|vinen|vinn|odsouz|odsúd|osuđ|осуђ|bűnös|elítél|ítél|skyldig|dömd|dömt|dømt|domfelt|syyllin|tuomi|veroordeel|dihukum|divonis|vonis|penjara|kesalahan|အပြစ်|ပြစ်ဒဏ်|ထောင်|ពិរុទ្ធ|កាត់ទោស|ទោស|দোষী|দণ্ড|সাজা|दोषी|सजा|मुजरिम|مجرم|محکوم|אשם|הורשע|דין|დამნაშავ|მსჯავრ|გაასამართლ|condamn|kalt|pinarusahan|nahatulan|süüdi|mõist|مدان|مدين|καταδ|tiền án|lãnh án|xử tội|án tù|reo\b|notiesā|tiesāt|fajtor|fajës|fajes|dënim|dënua|dënon|dënuar|dënonte|vinov|nuteist|nuosprend|осъд|kriv|obsoj|obsod|syylli|döms|veroordel|condann|julgad|təqsir|təqsirli|viinov|виновен|sentenc|guilty|culpa|grižnj|savjest|元凶|usvedč|məhkum|teist|内疚|內疚|귀책|mang tội|nhận tội|혐의 인정|гэм буру|ნასამართლ|kết tội|yahamije|icyaha|ενοχ|vainīg|vainig|vaini|vině|vina\b|вина|usvědč|souzen|fäll|döm|dæm|domm|մեղավոր|դատապարտ|günä|condemn|en tort|ސާބިތ|죄|ادين|اُدين|кривиц|крив/i;
+// "" when the English adds no finding of guilt, else the word it added
+export function verdictAdded(orig, en) {
+  orig = String(orig || ""); en = String(en || "");
+  const m = en.match(/\bguilty\b|\bconvicted\b/i);
+  if (!m || /\bnot guilty\b|\binnocent\b/i.test(en)) return "";
+  return GUILT.test(orig) || GUILT.test(fold(orig)) ? "" : m[0].toLowerCase();
 }
