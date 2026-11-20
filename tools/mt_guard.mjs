@@ -19,6 +19,8 @@
 //   - in a Thai headline, adds a death, a foreign currency or a country the Thai does not name (tools/mt_thai.mjs: Amarin TV's
 //     ambushed and badly hurt mayor as "shot and killed", Naewna's 10 ล้าน baht as "10 million rupees", The Standard's NSC
 //     secretary-general as "Mr. Lee Myung-bak" with "the United States", ใต้, the Deep South, as "South Korea", 2026-11-20);
+//   - in a Chinese headline, keeps one noun of a combined 機艦 count of aircraft and ships, or adds an aircraft carrier
+//     (tools/mt_zh.mjs: CNA's 中共17機艦船 as "17 ships", FTNN's 15共機艦 as "15 aircraft", "14 aircraft carriers", 2026-11-20);
 //   - names Iraq or Syria where the original names neither (Newtalk's 伊, Iran, as "Iraqi forces", 2026-11-17);
 //   - drops the original's "possible" or "suspected", or makes its radioactive bomb a nuclear one (LSM's "warns of a possible
 //     Iranian dirty bomb attack" as "Iran's Dirty Bomb Attack on Washington", Naewna's ระเบิดกัมมันตรังสี as "nuclear bomb", 2026-11-18);
@@ -42,6 +44,7 @@ import { WEEKDAYS } from "./mt_weekdays.mjs";
 import { extraCount, extraHarm, numberWordValues } from "./mt_facts.mjs";
 import { missingThaiPlace } from "./th_places.mjs";
 import { thaiDeathAdded, thaiCurrencyAdded, thaiCountryAdded } from "./mt_thai.mjs";
+import { zhCombinedCountLost, zhCarrierAdded } from "./mt_zh.mjs";
 import { termMissing, countryAdded, hedgeLost, verdictAdded } from "./mt_glossary.mjs";
 
 // any script's decimal digits as ASCII ("২০০১" -> "2001"), so a year written in Bengali or Thai digits is recognised
@@ -115,6 +118,11 @@ export function mtSuspect(orig, en, now = Date.now(), lang = "") {
   if (tc) return "currency " + tc + " not in the original";
   const tk = thaiCountryAdded(orig, en);
   if (tk) return "country " + tk + " not in the original";
+  // Chinese: an aircraft carrier the original does not name, or a 機艦 count of aircraft and ships kept as one (tools/mt_zh.mjs)
+  const zc = zhCarrierAdded(orig, en);
+  if (zc) return zc + " not in the original";
+  const zk = zhCombinedCountLost(orig, en);
+  if (zk) return "count of aircraft and ships: " + zk + " left out";
   const pl = missingThaiPlace(orig, en);
   if (pl) return "place " + pl + " left out";
   const tm = termMissing(orig, en);
