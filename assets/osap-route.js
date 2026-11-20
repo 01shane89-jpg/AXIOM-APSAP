@@ -1103,8 +1103,11 @@ function main() {
     if (t.military === "airfield" || /military|air_?base/.test(ty) || t.landuse === "military") return "Military airfield";
     if (t.aeroway === "heliport") return "Heliport";
     if (t.aeroway === "airstrip") return "Airstrip";
-    if (/international/.test(ty)) return "International airport";
-    if (/regional|domestic/.test(ty)) return "Regional airport";
+    /* "international" or "regional" is only trusted with an ICAO or IATA code: anyone can tag a flying club or a microlight
+       strip as regional (Siem Reap's 320 m Aero Cambodia strip is), and "airport" tells a planner it takes airliners */
+    var coded = /^[A-Z0-9]{3,4}$/i.test(String(t.icao || t.iata || "").trim());
+    if (coded && /international/.test(ty)) return "International airport";
+    if (coded && /regional|domestic/.test(ty)) return "Regional airport";
     if (/gliding|glider/.test(ty)) return "Gliding field";
     if (/private/.test(ty)) return "Private airfield";
     if (/public/.test(ty)) return "Public airfield";
@@ -1112,7 +1115,9 @@ function main() {
   }
   function afSkip(t) {
     var all = [t["aerodrome:type"], t.aerodrome, t.name, t["name:en"]].join(" ");
-    return /\bmodel\b|\brc\b|aeromodel|modelflug/i.test(all) || t.disused === "yes" || t.abandoned === "yes" || /^(no|disused|abandoned)$/.test(t.operational_status || "");
+    /* model fields; disused, abandoned or closed ones; and an office, shop or company mapped with an aerodrome tag */
+    return /\bmodel\b|\brc\b|aeromodel|modelflug/i.test(all) || t.disused === "yes" || t.abandoned === "yes" || t.closed === "yes" ||
+      /^(no|disused|abandoned|closed)$/.test(t.operational_status || "") || /^(closed|no)$/.test(t.status || "") || !!(t.office || t.shop || t.craft);
   }
   function afQuery(p, R) {
     var at = "(around:" + Math.round(R) + "," + p[0].toFixed(5) + "," + G.wrap(p[1]).toFixed(5) + ")";
@@ -1147,7 +1152,11 @@ function main() {
       if (v[0] == null && !ref.length) throw new Error("OpenStreetMap airfields did not load and no reference airport is near");
       var all = ref.concat(osm.filter(function (x) { return !ref.some(function (y) { return hav([x.i.lat, x.i.lon], [y.i.lat, y.i.lon]) < 3000; }); }));
       all = all.filter(function (x) { return x.line < 1500000; }).sort(function (x, y) { return x.line - y.line; }).slice(0, 4);
-      return afRunways(all).then(function () { return all; });
+      return afRunways(all).then(function () {
+        /* a mapped runway under 800 m takes light aircraft only: say so in the kind, so it is not read as an airport */
+        all.forEach(function (x) { var r = x.i.longest_runway; if (/^osm:/.test(x.i.id || "") && r && r.mapped && r.length_m < 800) x.i.kind = (x.i.kind === "Airfield" ? "Short strip" : x.i.kind + ", short strip") + ", light aircraft only"; });
+        return all;
+      });
     });
   }
   /* runways of the OpenStreetMap airfields picked: the longest mapped one within 3 km of each, with its surface */
