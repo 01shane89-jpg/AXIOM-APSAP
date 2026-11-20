@@ -51,6 +51,20 @@ t("a country the Thai does not name is rejected", () => {
   assert.equal(thaiCountryAdded("ฝนตกหนัก ภาคใต้", "Heavy rain in the south, us and them"), "", "lower-case 'us' is a word");
 });
 
+t("every country's name is still found after the plain-text prefilter (20 Nov 2026 speed fix)", () => {
+  // thaiCountryAdded runs a country's regex only when one of its names is in the English text; no name may be lost to that step
+  const dn = new Intl.DisplayNames(["en"], { type: "region" }), missed = [];
+  for (let a = 65; a < 91; a++) for (let b = 65; b < 91; b++) {
+    const cc = String.fromCharCode(a, b); let n; try { n = dn.of(cc); } catch { continue; }
+    if (!n || n === cc || /Unknown|Outlying|Pseudo/.test(n) || ["TH", "UN", "EU", "EZ", "QO", "XA", "XB", "ZZ"].includes(cc)) continue;
+    if (!thaiCountryAdded("ข่าวต่างประเทศ", "News from " + n + " today")) missed.push(n);
+  }
+  assert.deepEqual(missed, []);
+  // the short forms in EN_EXTRA too, with dots, an optional plural and the capitals-only US/UK
+  for (const en of ["The U.S. said", "Americans protest", "Burmese army moves", "UK sends aid", "Saudi prince visits", "Korean drama row"])
+    assert.notEqual(thaiCountryAdded("ข่าวต่างประเทศ", en), "", en);
+});
+
 t("Bana is a place the translation must keep", () => {
   assert.match(missingThaiPlace(MGR, "Assassins shot and wounded Banana City Mayor, family takes him to hospital."), /Bana/);
   assert.equal(missingThaiPlace(MGR, "Gunmen shot and wounded the Bana mayor; family takes him to hospital, now safe."), "");
