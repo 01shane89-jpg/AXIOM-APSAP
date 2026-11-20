@@ -341,7 +341,7 @@ html.briefing,html.briefing body{background:#fff!important}html.briefing .bpage.
 /* on touch screens an open brief or report is the page itself: the map and panels behind it are taken out of rendering and the report scrolls as the document, so pinch-zooming it stays cheap (zooming a fixed overlay over the live map ran iPhone Safari out of memory, which reloads the page back to the map) */
 @media screen and (hover:none),screen and (max-width:700px){html.briefing body>*:not(#brief):not(.bmeasure){display:none!important}html.briefing:root,html.briefing:root body{height:auto!important;overflow:visible!important}html.briefing #brief{position:relative;inset:auto;min-height:100vh;overflow:visible}}
 .bpage.breport{margin-top:14px}.breport .radv{border:1px solid #999;border-left-width:5px;padding:4px 8px;margin:8px 0}.breport .radv h3{margin:0 0 2px}.breport .radvl{font-size:1.15em}.breport .radvt{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.breport .radvi{border:1px solid #bbb;border-radius:3px;padding:0 5px;font-size:.92em}.breport .rdraft{margin:4px 0}
-.breport .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}.breport .rgrid p{margin:0 0 3px}.breport .rgrid h4{margin:4px 0 1px;font-size:1em;color:#12324a}
+.breport .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}.breport .rgrid p{margin:0 0 3px}.breport .rgrid h4{margin:4px 0 1px;font-size:1em;color:#12324a}.breport .rnew{border-left:3px solid #2f6f9f;padding-left:6px}
 .breport .rt{display:inline-block;min-width:62px;text-align:center;padding:0 4px;border-radius:3px;font-weight:600;font-size:.92em;color:#111}
 .breport .rt-Low{background:#cfe8cf}.breport .rt-Moderate{background:#ffe8a3}.breport .rt-High{background:#ffc38a}.breport .rt-Critical{background:#f28b82}
 .breport sup a{color:#335;text-decoration:none}.breport ol.rsrc{margin:2px 0 0 16px;padding:0;font-size:.9em;color:#444;column-count:2;column-gap:14px}.breport ol.rsrc li{overflow-wrap:anywhere;break-inside:avoid}.breport ol.rsrc a{color:inherit}
@@ -5482,17 +5482,30 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     function rt(r) { r = RLEVEL[r] ? r : "Moderate"; return '<span class="rt rt-' + r + '">' + esc(r) + "</span>"; }
     var P = B.pmesii || {}, names = [["political", "Political"], ["military", "Military"], ["economic", "Economic"], ["social", "Social"], ["information", "Information"], ["infrastructure", "Infrastructure"]];
     var T = B.threat || {}, ov = T.overall || {};
-    return '<article class="bpage breport" id="report"><header><div><b>AXIOM OSAP</b> · Country report</div><h2>' + esc(B.country || C.name) + "</h2><div>As of " + esc(B.as_of || "") + "</div></header>" +
+    /* a refreshed brief (tools/refresh_briefs.mjs, weekly from OSAP's own reports) keeps its researched background with that date;
+       its updates, watch points and rating changes carry their own dates, and nothing older than 30 days is shown as current */
+    function fresh(d) { var t = Date.parse(String(d || "").slice(0, 10) + "T00:00:00Z"); return isFinite(t) && Date.now() - t <= 30 * 864e5; }
+    var wDate = T.watch_asof || B.researched || B.as_of, wOk = fresh(wDate);
+    function recentHtml(p) {
+      var r = p.recent; if (!r || !fresh(r.as_of) || !(r.items || []).length) return "";
+      return '<p class="rnew"><b>Update ' + esc(fmtD(r.as_of)) + ":</b> " + r.items.map(function (x) { return esc(x.text) + cite(x.src); }).join(" ") + "</p>";
+    }
+    var dates = B.researched ? "Updated " + esc(fmtD(B.as_of)) + (B.checked && B.checked !== B.as_of ? " · checked " + esc(fmtD(B.checked)) : "") + " · background researched " + esc(fmtD(B.researched))
+      : "As of " + esc(B.as_of || "");
+    return '<article class="bpage breport" id="report"><header><div><b>AXIOM OSAP</b> · Country report</div><h2>' + esc(B.country || C.name) + "</h2><div>" + dates + "</div></header>" +
       '<p class="rdraft"><span class="aitag" title="Draft, AI-generated from the cited public sources. Not analyst-approved. The ratings and watch points are AI judgments, not official ratings; facts are what each source reports." tabindex="0">AI generated</span></p>' +
-      "<h3>PMESII summary</h3><div class=\"rgrid\">" + names.map(function (n) { var p = P[n[0]] || {}; return p.text ? "<div><h4>" + n[1] + "</h4><p>" + esc(p.text) + cite(p.src) + "</p></div>" : ""; }).join("") + "</div>" +
+      "<h3>PMESII summary</h3>" + (B.researched ? '<p class="bm">Background as researched on ' + esc(fmtD(B.researched)) + "; dated updates from the reports OSAP collected in the week before each refresh.</p>" : "") +
+      "<div class=\"rgrid\">" + names.map(function (n) { var p = P[n[0]] || {}; return p.text || p.recent ? "<div><h4>" + n[1] + "</h4>" + (p.text ? "<p>" + esc(p.text) + cite(p.src) + "</p>" : "") + recentHtml(p) + "</div>" : ""; }).join("") + "</div>" +
       advOfficialHtml() +
-      "<h3>Threat assessment: " + rt(ov.rating) + ' <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></h3>' + (ov.reason ? '<p class="bm">' + esc(ov.reason) + "</p>" : "") +
+      "<h3>Threat assessment: " + rt(ov.rating) + ' <span class="aitag" title="Draft, AI-generated, not analyst-approved." tabindex="0">AI generated</span></h3>' + (ov.reason ? '<p class="bm">' + esc(ov.reason) + (B.researched ? " (overall rating as researched " + esc(fmtD(B.researched)) + ")" : "") + "</p>" : "") +
       '<table class="btwo"><tr><th style="width:34%">Category</th><th style="width:14%">Rating</th><th>Why</th></tr>' + (T.categories || []).map(function (c) {
-        return "<tr><td>" + esc(c.name) + "</td><td>" + rt(c.rating) + '</td><td class="w">' + esc(c.reason || "") + cite(c.src) + "</td></tr>";
+        var moved = c.prev && fresh(c.as_of) ? ' <span class="bm">(changed ' + esc(fmtD(c.as_of)) + ", was " + esc(c.prev.rating) + ")</span>" : "";
+        return "<tr><td>" + esc(c.name) + "</td><td>" + rt(c.rating) + '</td><td class="w">' + esc(c.reason || "") + cite(c.src) + moved + "</td></tr>";
       }).join("") + "</table>" +
-      ((T.watch_points || []).length ? "<h3>Watch points</h3><ul>" + T.watch_points.map(function (w) { return "<li>" + esc(w) + "</li>"; }).join("") + "</ul>" : "") +
+      ((T.watch_points || []).length && wOk ? "<h3>Watch points" + (B.researched ? " (" + esc(fmtD(wDate)) + ")" : "") + "</h3><ul>" + T.watch_points.map(function (w, i) { return "<li>" + esc(w) + cite((T.watch_src || [])[i]) + "</li>"; }).join("") + "</ul>"
+        : T.watch_note ? '<h3>Watch points</h3><p class="bm">' + esc(T.watch_note) + "</p>" : "") +
       ((B.gaps || []).length ? '<h3>Gaps</h3><p class="bm">' + B.gaps.map(esc).join(" · ") + "</p>" : "") +
-      (src.length ? '<h3>Sources</h3><ol class="rsrc">' + src.map(function (x) { return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener noreferrer">' + esc(x.title || x.url) + "</a>" + (x.publisher ? ", " + esc(x.publisher) : "") + (x.accessed ? ", accessed " + esc(x.accessed) : "") + "</li>"; }).join("") + "</ol>" : "") +
+      (src.length ? '<h3>Sources</h3><ol class="rsrc">' + src.map(function (x) { return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener noreferrer">' + esc(x.title || x.url) + "</a>" + (x.publisher ? ", " + esc(x.publisher) : "") + (x.kind === "report" && x.date ? ", report of " + esc(x.date) : x.accessed ? ", accessed " + esc(x.accessed) : "") + "</li>"; }).join("") + "</ol>" : "") +
       "</article>";
   }
   function openBrief(ev, toReport) {

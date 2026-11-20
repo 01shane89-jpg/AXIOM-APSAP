@@ -99,6 +99,7 @@ jobs:
       - run: node tests/ref_layers.test.mjs
       # daily summary rules (tools/daily_lib.mjs): grouping, AI output checks, citations dropped from inside sentences
       - run: node tests/daily.test.mjs
+      - run: node tests/brief_refresh.test.mjs
       - run: node tests/newimg.test.mjs
       - run: node tests/feedparse_image.test.mjs
       - run: node tests/news_pics.test.mjs

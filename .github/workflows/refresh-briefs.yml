@@ -1,0 +1,203 @@
+name: Refresh country briefs
+run-name: "Country briefs (${{ github.event_name == 'workflow_dispatch' && (inputs.all && 'backfill' || inputs.only || 'due') || github.event_name == 'pull_request' && 'test' || 'due' }})"
+
+# The 160 country briefs (data/brief/<cc>.js) were researched once, on 26-27 Sep 2026, and nothing refreshed them (Shane
+# 2026-11-20: "we can't afford to have stuck data. Ever"). This keeps each one about a week fresh: tools/refresh_briefs.mjs
+# picks the briefs whose last check is 6 or more days old, drafts what the last 7 days of OSAP's own reports add to each
+# (tools/brief_lib.mjs: every sentence must cite reports that exist, with no figure, name or death they do not give), and
+# takes off any update, watch point or rating change no refresh has backed for 30 days. The researched background stays,
+# with its date. AI through tools/ai_gateway.mjs: GitHub Models with this workflow's GITHUB_TOKEN first, else an open-weight
+# model on the runner itself (no key, nothing leaves the runner). Drafts stay "AI generated", never analyst-approved.
+# Twice a day (GitHub skips crons when busy; a run with nothing due ends in seconds). The shards run on their own runners,
+# at most 6 at a time so the 15-minute refresh lanes keep their slots. data/live/brief-refresh.js records every country's
+# last check; tools/health.mjs reads it, so a stopped refresh shows as stale data and alerts.
+# Backfill: run by hand with "all" ticked (every brief, in 16 shards of 10).
+# On a pull request that changes the refresh itself: a test of three countries, nothing committed (output as an artifact).
+on:
+  schedule:
+    - cron: "29 5,17 * * *"
+  workflow_dispatch:
+    inputs:
+      all:
+        description: "Every brief now (backfill), not only the due ones"
+        type: boolean
+        default: false
+      only:
+        description: "Country codes for a test, e.g. th,ua,ve (empty = the due ones)"
+        required: false
+        default: ""
+      shards:
+        description: "Runners to split the list over (at most 6 run at once)"
+        required: false
+        default: "3"
+      max:
+        description: "Most briefs this run (0 = no limit)"
+        required: false
+        default: "30"
+      model:
+        description: "qwen2.5-7b (Apache-2.0, strongest; default), phi-3.5-mini (MIT) or qwen2.5-1.5b (Apache-2.0)"
+        required: false
+        default: "qwen2.5-7b"
+  pull_request:
+    paths:
+      - tools/brief_lib.mjs
+      - tools/refresh_briefs.mjs
+      - .github/workflows/refresh-briefs.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-briefs-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+      count: ${{ steps.plan.outputs.count }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Pick the briefs due
+        id: plan
+        env:
+          BRIEFS_ALL: ${{ inputs.all && '1' || '' }}
+          BRIEFS_ONLY: ${{ github.event_name == 'pull_request' && 'th,ua,ve' || inputs.only }}
+          BRIEFS_SHARDS: ${{ github.event_name == 'pull_request' && '1' || inputs.all && '16' || inputs.shards || '3' }}
+          BRIEFS_MAX: ${{ github.event_name == 'pull_request' && '3' || inputs.all && '0' || inputs.max || '30' }}
+        run: node tools/refresh_briefs.mjs plan
+
+  draft:
+    needs: plan
+    if: ${{ needs.plan.outputs.count != '0' && needs.plan.outputs.shards != '[]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    permissions:
+      contents: read
+      models: read
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    env:
+      MODEL_KEY: ${{ inputs.model || 'qwen2.5-7b' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.11"
+      # the same model files and server build as .github/workflows/refresh-ai.yml (and the same cache keys, so no new download)
+      - name: Pick the model file
+        id: pick
+        run: |
+          case "$MODEL_KEY" in
+            qwen2.5-1.5b) f=qwen2.5-1.5b-instruct-q4_k_m.gguf; u=https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/$f; lic=Apache-2.0 ;;
+            phi-3.5-mini) f=Phi-3.5-mini-instruct-Q4_K_M.gguf; u=https://huggingface.co/bartowski/Phi-3.5-mini-instruct-GGUF/resolve/main/$f; lic=MIT ;;
+            qwen2.5-7b) f=Qwen2.5-7B-Instruct-Q4_K_M.gguf; u=https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF/resolve/main/$f; lic=Apache-2.0 ;;
+            *) echo "unknown model $MODEL_KEY"; exit 1 ;;
+          esac
+          echo "file=$f" >> "$GITHUB_OUTPUT"; echo "url=$u" >> "$GITHUB_OUTPUT"; echo "licence=$lic" >> "$GITHUB_OUTPUT"
+      - name: Restore the model and the server
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/osap-llm
+          key: osap-llm-${{ steps.pick.outputs.file }}-llamacpp-0.3.2-v3
+      - name: Install the model server
+        env:
+          CMAKE_ARGS: "-DGGML_NATIVE=OFF -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON"
+        run: |
+          w=~/.cache/osap-llm/wheels; mkdir -p $w
+          ls $w/llama_cpp_python-0.3.2-*.whl >/dev/null 2>&1 || python -m pip wheel --quiet --no-deps -w $w "llama-cpp-python==0.3.2"
+          python -m pip install --quiet "$(ls $w/llama_cpp_python-0.3.2-*.whl | head -1)[server]"
+      - name: Download the model (once; kept in the cache)
+        env:
+          F: ${{ steps.pick.outputs.file }}
+          U: ${{ steps.pick.outputs.url }}
+        run: |
+          mkdir -p ~/.cache/osap-llm
+          [ -s ~/.cache/osap-llm/$F ] || curl -sSfL --retry 3 -o ~/.cache/osap-llm/$F "$U"
+          sha256sum ~/.cache/osap-llm/$F
+      - name: Start the model server
+        env:
+          F: ${{ steps.pick.outputs.file }}
+        run: |
+          nohup python -m llama_cpp.server --model ~/.cache/osap-llm/$F --model_alias local --host 127.0.0.1 --port 8080 \
+            --n_ctx 8192 --n_threads 4 > llm.log 2>&1 &
+          for i in $(seq 1 90); do curl -sf http://127.0.0.1:8080/v1/models >/dev/null && { echo "server up after ${i}x2 s"; exit 0; }; sleep 2; done
+          tail -30 llm.log; exit 1
+      - name: Draft this shard's updates
+        timeout-minutes: 125
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          OSAP_LOCAL_LLM: http://127.0.0.1:8080
+          OSAP_LOCAL_MODEL: ${{ steps.pick.outputs.file }} (${{ steps.pick.outputs.licence }}, on-runner)
+          BRIEFS_BUDGET_MIN: "115"
+        run: node tools/refresh_briefs.mjs draft "${{ matrix.shard }}"
+      - name: Model server log (tail)
+        if: ${{ always() }}
+        run: tail -15 llm.log || true
+      - name: Keep the drafts for the apply job
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: briefs-${{ strategy.job-index }}
+          path: out/briefs/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  apply:
+    needs: [plan, draft]
+    if: ${{ always() && needs.plan.outputs.count != '0' && needs.plan.outputs.shards != '[]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || (github.ref == 'refs/heads/main' && 'main' || github.ref) }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: briefs-*
+          path: out/briefs
+          merge-multiple: true
+      - name: Merge the drafts into the briefs
+        run: node tools/refresh_briefs.mjs apply out/briefs
+      - name: Show the test result (pull request or branch run; nothing committed)
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          git diff --stat -- data/brief data/live/brief-refresh.js | tail -5
+          for cc in th ua ve; do node -e 'const w={};new Function("window",require("fs").readFileSync("data/brief/'$cc'.js","utf8"))(w);const b=w.ASAP_BRIEF["'$cc'"];const P=b.pmesii;console.log("'$cc'", b.as_of, b.checked, JSON.stringify(b.refresh));for(const s in P) if(P[s].recent) P[s].recent.items.forEach(x=>console.log("  "+s+": "+x.text));(b.threat.watch_points||[]).forEach(w=>console.log("  watch: "+w))' 2>/dev/null || true; done
+      - name: Keep the merged briefs (test)
+        if: ${{ github.ref != 'refs/heads/main' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: briefs-merged
+          path: |
+            data/brief/
+            data/live/brief-refresh.js
+          retention-days: 7
+      - name: Commit the briefs
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git add -N data/live/brief-refresh.js 2>/dev/null || true
+          if git diff --quiet -- data/brief data/live/brief-refresh.js; then echo "no change"; exit 0; fi
+          git config user.name "asap-brief-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/brief data/live/brief-refresh.js
+          git commit -m "Country briefs refreshed $(date -u +'%Y-%m-%d %H:%MZ')"
+          bash tools/push_rebase.sh main theirs 3 && exit 0
+          exit 1
