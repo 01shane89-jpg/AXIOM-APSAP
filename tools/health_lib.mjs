@@ -79,6 +79,10 @@ export function evaluate(health, cfg, now = Date.now()) {
     else if (f.minItems > 0 && typeof f.n === "number" && f.n < f.minItems) why = f.n + " items";
     if (why) problems.push({ id: f.id, name: f.name || f.id, why, key: !!f.key });
   }
+  // a scheduled data job past its limit (lateJobs below) is a stale data set the reader can't see from a feed stamp: it turns the
+  // badge amber and is named like a late minor feed, but never sends a phone alert on its own (20 Nov 2026: three jobs sat late
+  // in the panel only, with the badge green; "a quiet panel entry nobody sees" is the stuck data Shane ruled out)
+  for (const j of lateJobs(health.jobs && health.jobs.list, now)) problems.push({ id: "job:" + j.file, name: jobLabel(j.name), why: j.last ? "last updated " + ago(now - Date.parse(j.last)) : "no successful run", key: false, job: true });
   let alerts;
   if (ageMin > downMin) {
     // nothing is refreshing: one line says so, not one per feed
@@ -90,7 +94,8 @@ export function evaluate(health, cfg, now = Date.now()) {
   const state = alerts.length ? "down" : problems.length || ageMin > amberMin ? "amber" : "ok";
   // what the alert is about, so the same problem is not sent twice: stalled, or which key feeds are wrong
   const fp = ageMin > downMin ? "stall" : problems.filter((p) => p.key).map((p) => p.id).sort().join(",");
-  // operations checks (below): listed for the panel and the nightly run, never part of the badge state or the phone alerts
+  // operations checks (below): listed for the panel and the nightly run (quiet sources never touch the badge or the phone alerts)
+  // (late jobs are both: a minor problem above, and listed here with the full reason for the nightly run)
   const ops = [];
   for (const j of lateJobs(health.jobs && health.jobs.list, now)) ops.push({ id: "job:" + j.file, name: j.name, why: j.why, ops: true });
   if (health.jobs && health.jobs.error) ops.push({ id: "jobs", name: "Scheduled job check", why: health.jobs.error, ops: true });
@@ -173,8 +178,8 @@ export function decide(ev, last) {
 
 // ---------- operations checks (Shane 2026-11-20: "we can't afford to have stuck data. Ever") ----------
 // Two kinds of stuck data that a feed's own fresh stamp hides. They go in data/live/health.json as "quiet" and "jobs", are listed
-// in the app's data-health panel and read by the nightly run; they are marked ops so they never change the reader's badge or
-// send a phone alert on their own (the key-feed alerts above do that).
+// in the app's data-health panel and read by the nightly run. Quiet sources never change the reader's badge or send a phone
+// alert; a late job turns the badge amber (evaluate above) but sends no phone alert on its own (the key-feed alerts do that).
 //
 // 1. Quiet sources. A source inside a feed can answer "ok" with nothing new for months while the feed as a whole stays fresh
 //    (NHK's old news feed froze on 8 Aug 2026 and kept answering ok, n: 0, until 19 Nov). data/live/source-seen.json keeps, for
@@ -255,8 +260,12 @@ export function jobLimitMin(crons) {
   // several schedules together fire more often than any one alone: the combined gap is at most the smallest single gap
   return 2 * Math.min(...gaps) + 180;
 }
-/** jobs: [{ file, name, maxMin, last: ISO of last success or null }] -> late ones [{ file, name, why }] */
+/** a workflow's name as a data set: "Refresh airfield weather (METAR/TAF)" -> "Airfield weather (METAR/TAF)" */
+export function jobLabel(name) { const s = String(name || "").replace(/^Refresh\s+/i, ""); return s.charAt(0).toUpperCase() + s.slice(1); }
+/** jobs: [{ file, name, maxMin, last: ISO of last success or null, since: ISO the workflow was added }] -> late ones [{ file, name, why, last }]
+ *  A job with no success on record is late only once it has existed longer than its limit (a monthly job added mid-month has
+ *  not reached its first run: refresh-outlet-facts.yml, added 14 Nov 2026, first due 7 Dec). */
 export function lateJobs(jobs, now = Date.now()) {
-  return (jobs || []).filter((j) => j && j.maxMin && (!j.last || now - Date.parse(j.last) > j.maxMin * 60000))
-    .map((j) => ({ file: j.file, name: j.name || j.file, why: j.last ? "last succeeded " + ago(now - Date.parse(j.last)) + " ago (runs at least every " + ago(((j.maxMin - 180) / 2) * 60000) + ")" : "no successful run on record" }));
+  return (jobs || []).filter((j) => j && j.maxMin && (j.last ? now - Date.parse(j.last) > j.maxMin * 60000 : !(j.since && now - Date.parse(j.since) <= j.maxMin * 60000)))
+    .map((j) => ({ file: j.file, name: j.name || j.file, why: j.last ? "last succeeded " + ago(now - Date.parse(j.last)) + " ago (runs at least every " + ago(((j.maxMin - 180) / 2) * 60000) + ")" : "no successful run on record", last: j.last || null }));
 }

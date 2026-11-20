@@ -251,11 +251,54 @@ console.log("health tests passed");
     { file: "c.yml", name: "Never", maxMin: 600, last: null }], N);
   assert.deepEqual(late.map((j) => j.name), ["Econ", "Never"]);
   assert.match(late[0].why, /^last succeeded 3 days ago \(runs at least every 24 h\)$/);
-  // late jobs and quiet sources are listed as ops: never part of the badge or the phone alerts
-  const ev2 = evaluate({ asof: new Date(N - 5 * 60000).toISOString(), feeds: [{ id: "quakes", name: "Earthquakes", key: true, maxMin: 90, asof: new Date(N - 10 * 60000).toISOString() }],
-    quiet: { n: 2, list: [] }, jobs: { list: [{ file: "a.yml", name: "Econ", maxMin: 3060, last: "2026-11-17T03:30:00Z" }] } }, cfg, N);
-  assert.equal(ev2.state, "ok", "ops findings do not change the badge");
-  assert.deepEqual(ev2.alerts, []);
-  assert.deepEqual(ev2.ops.map((o) => o.id), ["job:a.yml", "quiet"]);
+  // a monthly job added 6 days ago with no run yet is not late (refresh-outlet-facts.yml, 20 Nov 2026); one added long ago is
+  const monthly = jobLimitMin(["41 4 7 * *"]);
+  assert.deepEqual(lateJobs([{ file: "o.yml", name: "Outlet facts", maxMin: monthly, last: null, since: "2026-11-14T08:16:00Z" }], N), [], "a new job before its first run is not late");
+  assert.equal(lateJobs([{ file: "o.yml", name: "Outlet facts", maxMin: monthly, last: null, since: "2026-07-01T00:00:00Z" }], N).length, 1, "an old job that never succeeded is late");
+  // quiet sources are listed as ops only: never part of the badge or the phone alerts
+  const fresh1 = { asof: new Date(N - 5 * 60000).toISOString(), feeds: [{ id: "quakes", name: "Earthquakes", key: true, maxMin: 90, asof: new Date(N - 10 * 60000).toISOString() }] };
+  const evq = evaluate({ ...fresh1, quiet: { n: 2, list: [] } }, cfg, N);
+  assert.equal(evq.ui.state, "ok", "quiet sources do not change the badge");
+  assert.deepEqual(evq.ops.map((o) => o.id), ["quiet"]);
+  // a late job turns the badge amber and is named (20 Nov 2026: three late jobs sat in the panel with the badge green), but no phone alert
+  const ev2 = evaluate({ ...fresh1, quiet: { n: 2, list: [] }, jobs: { list: [{ file: "a.yml", name: "Refresh economic stress signals", maxMin: 3060, last: "2026-11-17T03:30:00Z" }] } }, cfg, N);
+  assert.equal(ev2.ui.state, "amber", "a late job turns the badge amber");
+  assert.equal(ev2.ui.short, "Economic stress signals late");
+  assert.equal(ev2.ui.line, "Economic stress signals last updated 3 days ago; everything else is fresh.");
+  assert.deepEqual(ev2.alerts, [], "a late job sends no phone alert on its own");
+  assert.equal(decide(ev2, null), null);
+  assert.deepEqual(ev2.ops.map((o) => o.id), ["job:a.yml", "quiet"], "still listed for the nightly run");
+  // the app's copy agrees
+  {
+    const src = fs.readFileSync(new URL("../assets/osap-health.js", import.meta.url), "utf8");
+    const m = /\/\* same rules as tools\/health_lib\.mjs[\s\S]*?\n  (function evaluate[\s\S]*?\n  \})\n/.exec(src);
+    const helpers = /(function parseStamp[\s\S]*?)\n  function when/.exec(src)[1];
+    const appEval = new Function(helpers + "\n" + m[1] + "\nreturn evaluate;")();
+    const jobs = { list: [{ file: "a.yml", name: "Refresh economic stress signals", maxMin: 3060, last: "2026-11-17T03:30:00Z" }, { file: "b.yml", name: "Refresh airfield weather", maxMin: 220, last: new Date(N - 266 * 60000).toISOString() }, { file: "c.yml", name: "On time", maxMin: 220, last: new Date(N - 30 * 60000).toISOString() }] };
+    for (const h of [{ ...fresh1, jobs }, { ...fresh1, jobs: { list: jobs.list.slice(1) } }, { ...fresh1, feeds: fresh1.feeds.concat({ id: "news", name: "News", key: true, maxMin: 90, asof: new Date(N - 300 * 60000).toISOString() }), jobs }]) {
+      const a = appEval(Object.assign({ amberMin: 40, downMin: 60 }, h), N), b = evaluate(h, cfg, N).ui;
+      assert.equal(a.state, b.state); assert.equal(a.line, b.line); assert.equal(a.short, b.short);
+    }
+  }
   console.log("operations checks passed");
+}
+
+// ---------- restarting late jobs (tools/late_jobs.mjs, run by refresh-keeper.yml each round) ----------
+{
+  const { dispatchable, toRestart } = await import("../tools/late_jobs.mjs");
+  assert.equal(dispatchable('on:\n  schedule:\n    - cron: "7 * * * *"\n  workflow_dispatch:\n'), true);
+  assert.equal(dispatchable('on:\n  schedule:\n    - cron: "7 * * * *"\n  workflow_dispatch:\n    inputs:\n      lane:\n        description: x\n        default: fast\n'), true, "inputs with defaults are fine");
+  assert.equal(dispatchable('on:\n  workflow_dispatch:\n    inputs:\n      cc:\n        required: true\n  schedule:\n    - cron: "7 * * * *"\n'), false, "a required input: not started by hand");
+  assert.equal(dispatchable('on:\n  schedule:\n    - cron: "7 * * * *"\n'), false, "no workflow_dispatch");
+  const N = Date.parse("2026-11-20T12:00:00Z"), yml = 'on:\n  workflow_dispatch:\n';
+  const h = { jobs: { list: [{ file: "refresh-avwx.yml", maxMin: 220, last: "2026-11-20T07:00:00Z" }, { file: "refresh-keeper.yml", maxMin: 300, last: "2026-11-19T07:00:00Z" },
+    { file: "on-time.yml", maxMin: 220, last: "2026-11-20T11:00:00Z" }, { file: "no-dispatch.yml", maxMin: 220, last: "2026-11-20T01:00:00Z" }, { file: "../x.yml", maxMin: 1, last: null }] } };
+  assert.deepEqual(toRestart(h, (f) => (f === "no-dispatch.yml" ? "on:\n  schedule:\n" : yml), N), ["refresh-avwx.yml"], "only late, startable jobs, never the keeper or an odd file name");
+  assert.deepEqual(toRestart({}, () => yml, N), []);
+  // every scheduled workflow in the repository can be started again by hand
+  for (const f of fs.readdirSync(new URL("../.github/workflows/", import.meta.url))) {
+    const t = fs.readFileSync(new URL("../.github/workflows/" + f, import.meta.url), "utf8");
+    if (/^\s*-\s*cron:/m.test(t)) assert.ok(dispatchable(t), f + " has a schedule but cannot be started by hand");
+  }
+  console.log("late job restart checks passed");
 }

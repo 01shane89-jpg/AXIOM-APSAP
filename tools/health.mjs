@@ -42,7 +42,16 @@ async function jobs(prev) {
       if (!r.ok) { failed++; console.log(`  jobs: ${file} answered HTTP ${r.status}`); if (prev) { const o = (prev.list || []).find((x) => x.file === file); if (o) list.push(o); } continue; }
       const run = ((await r.json()).workflow_runs || [])[0]; last = run ? run.updated_at || run.created_at : null;
     } catch (e) { failed++; console.log(`  jobs: ${file}: ${e.message}`); continue; }
-    list.push({ file, name: name.replace(/^["']|["']$/g, "").trim(), maxMin, last });
+    // no success on record: when was the workflow added? (a new monthly job has not reached its first run yet)
+    let since;
+    if (!last) {
+      try {
+        const w = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/${file}`,
+          { headers: { authorization: "Bearer " + token, accept: "application/vnd.github+json", "user-agent": "osap-health" }, signal: AbortSignal.timeout(20000) });
+        if (w.ok) since = (await w.json()).created_at || undefined;
+      } catch (e) {}
+    }
+    list.push({ file, name: name.replace(/^["']|["']$/g, "").trim(), maxMin, last, ...(since ? { since } : {}) });
   }
   // when GitHub would not answer, the last answer is kept and the failure is listed, never an empty "nothing late"
   if (asked && failed === asked) return { ...(prev || { list: [] }), error: "could not read the workflow runs (" + failed + " of " + asked + " failed)" };
