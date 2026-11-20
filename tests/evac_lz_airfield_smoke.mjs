@@ -5,7 +5,8 @@
 // Checks: both destinations are offered; nearest LZ loads the finder on demand, searches round waypoint A without opening the
 // Find LZ card, routes to candidates within the search radius and labels each "candidate from open data, verify on the
 // ground"; the mapped helipad is offered; airfields of any size include an airstrip and a military airfield from
-// OpenStreetMap with the mapped runway length, leave out a model-aircraft field and a disused one, and keep the reference
+// OpenStreetMap with the mapped runway length, leave out a model-aircraft field, a disused one, a closed one and an office tagged as an aerodrome; call an uncoded
+// "regional" field with a 300 m runway a short strip, not an airport; and keep the reference
 // airports; with Overpass down the reference airports still answer and the failure is said; a kept LZ plan opens offline
 // with its note; no page errors.
 // Run from the repo root: node tests/evac_lz_airfield_smoke.mjs   (needs playwright and Chromium; OUT=dir saves screenshots)
@@ -64,14 +65,19 @@ const OBST = { elements: [
   { type: "way", id: 7, tags: { power: "line" }, geometry: [{ lat: 13.744, lon: 100.5035 }, { lat: 13.768, lon: 100.5035 }] },
   { type: "node", id: 8, lat: 13.7505, lon: 100.5005, tags: { aeroway: "helipad", name: "Test Pad" } }
 ] };
-const STRIP = [14.02, 100.75], MIL = [13.62, 100.30];
+const STRIP = [14.02, 100.75], MIL = [13.62, 100.30], MICRO = [13.80, 100.55];
 const FIELDS = { elements: [
   { type: "way", id: 101, center: { lat: STRIP[0], lon: STRIP[1] }, tags: { aeroway: "airstrip", name: "Test Farm Strip", surface: "grass" } },
   { type: "way", id: 102, center: { lat: MIL[0], lon: MIL[1] }, tags: { aeroway: "aerodrome", military: "airfield", name: "Test Air Base", icao: "VTXX" } },
   { type: "node", id: 103, lat: 13.76, lon: 100.52, tags: { aeroway: "aerodrome", "aerodrome:type": "model", name: "Test RC Club" } },
-  { type: "node", id: 104, lat: 13.77, lon: 100.47, tags: { aeroway: "aerodrome", name: "Old Strip", disused: "yes" } }
+  { type: "node", id: 104, lat: 13.77, lon: 100.47, tags: { aeroway: "aerodrome", name: "Old Strip", disused: "yes" } },
+  /* tagged "regional" with no ICAO or IATA code and a 300 m runway (like Siem Reap's Aero Cambodia microlight strip) */
+  { type: "way", id: 105, center: { lat: MICRO[0], lon: MICRO[1] }, tags: { aeroway: "aerodrome", "aerodrome:type": "regional", name: "Test Microlight Club" } },
+  { type: "node", id: 106, lat: 13.745, lon: 100.50, tags: { aeroway: "aerodrome", office: "airline", name: "Test Airline Office" } },
+  { type: "node", id: 107, lat: 13.735, lon: 100.47, tags: { aeroway: "aerodrome", operational_status: "closed", name: "Test Closed Field" } }
 ] };
-const RUNWAY = { elements: [{ type: "way", id: 201, tags: { aeroway: "runway", surface: "grass" }, geometry: [{ lat: STRIP[0] - 0.004, lon: STRIP[1] }, { lat: STRIP[0] + 0.004, lon: STRIP[1] }] }] };
+const RUNWAY = { elements: [{ type: "way", id: 201, tags: { aeroway: "runway", surface: "grass" }, geometry: [{ lat: STRIP[0] - 0.004, lon: STRIP[1] }, { lat: STRIP[0] + 0.004, lon: STRIP[1] }] },
+  { type: "way", id: 202, tags: { aeroway: "runway" }, geometry: [{ lat: MICRO[0] - 0.00135, lon: MICRO[1] }, { lat: MICRO[0] + 0.00135, lon: MICRO[1] }] }] };
 
 /* ---------- routers: a straight line ---------- */
 function line(a, b, n = 30) { const out = []; for (let i = 0; i <= n; i++) { const t = i / n; out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]); } return out; }
@@ -157,6 +163,8 @@ let state;
   const names = af.b.join(" | ");
   ok(/Test Farm Strip \(Airstrip\)/.test(names) || /Test Air Base \(VTXX\) \(Military airfield\)/.test(names), "airfields: an airstrip or military airfield from OpenStreetMap is offered (" + names.slice(0, 200) + ")");
   ok(!/RC Club|Old Strip/.test(af.txt), "airfields: model-aircraft and disused fields are left out");
+  ok(!/Airline Office|Closed Field/.test(af.txt + names), "airfields: an office tagged as an aerodrome and a closed field are left out");
+  ok(/Test Microlight Club/.test(names) && !/Microlight Club[^|]*Regional airport/.test(names) && /Microlight Club \(Short strip, light aircraft only\)/.test(names), "airfields: an uncoded field tagged regional with a 300 m runway is a short strip, not a regional airport (" + (names.match(/[^|]*Microlight[^|]*/) || [""])[0].trim() + ")");
   ok(calls.fields >= 1, "airfields: OpenStreetMap was asked (" + calls.fields + ")");
   ok(/Mapped is not open/.test(af.txt), "airfields: says mapped is not open");
   /* the strip's runway: plan from next to the strip so it is the nearest */
