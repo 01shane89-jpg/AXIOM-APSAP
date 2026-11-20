@@ -91,7 +91,7 @@ ok(b1.sources[0].url === "https://example.gov/a" && b1.sources.length === 2 + ne
 ok(b1.threat.watch_points.length === 1 && b1.threat.watch_asof === "2026-11-20" && b1.threat.watch_src.length === 1, "new watch points replace the old ones, with their sources and date");
 const nh = b1.threat.categories.find((c) => c.name === "Natural hazards");
 ok(nh.rating === "Moderate" && nh.prev.rating === "Low" && nh.as_of === "2026-11-20", "a rating change keeps the earlier rating beside it");
-ok(b1.refresh.provider === "local" && b1.refresh.prompt === "brief/1" && b1.refresh.reports === 3, "the refresh records provider, prompt version and inputs");
+ok(b1.refresh.provider === "local" && b1.refresh.prompt === "brief/2" && b1.refresh.reports === 3, "the refresh records provider, prompt version and inputs");
 ok(b1.status === brief.status, "the brief stays an AI draft, never analyst-approved");
 
 // a quiet refresh: nothing new, nothing stale yet
@@ -112,6 +112,17 @@ ok(b3.pmesii.political.src[0] === 0 && b3.threat.categories[1].src[0] === 1, "ba
 // a never-refreshed brief with September watch points: the first quiet check takes them off
 const b4 = applyUpdate(brief, { sections: {}, watch: [], threat: [], rejected: [] }, [], {}, NOW);
 ok(!b4.threat.watch_points.length && b4.as_of === "2026-09-26" && b4.checked === "2026-11-20", "September watch points are taken off; as_of stays (nothing new), checked moves");
+
+// first runner test (20 Nov 2026): unattributed facts, "(refs:)" leftovers and other countries' stories
+ok(checkLine({ text: "Russian strikes damage embassies in the capital.", refs: [pi] }, reports, "", "Testland").why === "not attributed to an outlet or official source", "a fact stated with no outlet or official source is dropped");
+ok(checkLine({ text: "Whether the march on parliament grows.", refs: [pi] }, reports, "", "Testland", { attribution: false }).text, "a watch point needs no outlet verb");
+const leftover = checkLine({ text: "Daily Test reports a march on parliament (refs:).", refs: [pi] }, reports, "", "Testland");
+ok(leftover.text === "Daily Test reports a march on parliament.", "a '(refs:)' leftover is taken out (" + leftover.text + ")");
+const mixed = collectReports({ cc: "th", days: [day("2026-11-19", [{ text: "x", n: 3, refs: [1] }, { text: "y", n: 2, refs: [2] }, { text: "z", n: 1, refs: [3] }], [
+  { n: 1, title: "Floods hit India's Assam state", outlet: "INN", url: "https://n.example/in", date: "2026-11-19T01:00" },
+  { n: 2, title: "Thailand and Cambodia talk border", outlet: "Khaosod", url: "https://n.example/kh", date: "2026-11-19T02:00" },
+  { n: 3, title: "Bangkok floods close schools", outlet: "Nation", url: "https://n.example/bk", date: "2026-11-19T03:00" }])] }, NOW);
+ok(mixed.map((r) => r.url).join(",") === "https://n.example/kh,https://n.example/bk", "a report naming only another country is left out; one naming this country stays");
 
 // planning
 const list = [{ cc: "aa", checked: "2026-11-19" }, { cc: "th", checked: null }, { cc: "bb", checked: "2026-11-10" }, { cc: "cc", checked: null }];

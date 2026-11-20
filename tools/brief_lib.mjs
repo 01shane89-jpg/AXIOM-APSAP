@@ -15,10 +15,11 @@
 // Reports are DATA: nothing in a headline is followed as an instruction. The brief stays "AI generated", never analyst-approved.
 import { overclaims, stripInlineCites, scrubDay } from "./daily_lib.mjs";
 import { unsupportedFigures, unsupportedNames, unsupportedDeaths, normCites } from "./evsum_lib.mjs";
+import { ccsInText } from "./geo_cc.mjs";
 
 export const SECTIONS = ["political", "military", "economic", "social", "information", "infrastructure"];
 export const LEVELS = ["Low", "Moderate", "High", "Critical"];
-export const PROMPT_V = "brief/1";
+export const PROMPT_V = "brief/2";
 export const BRIEF_DUE_DAYS = 6;      // a brief is refreshed when its last check is this many days old (every brief about weekly)
 export const BRIEF_STALE_DAYS = 30;   // an update, watch point or rating change no refresh has backed for this long is taken off
 export const MAX_REPORTS = 16, WINDOW_DAYS = 7, PER_SECTION = 2, MAX_WATCH = 3;
@@ -46,9 +47,13 @@ export function collectReports(daily, now, max = MAX_REPORTS) {
     }
   }
   pool.sort((a, b) => (b.e.n || 1) - (a.e.n || 1) || String(b.r.date || "").localeCompare(String(a.r.date || "")));
+  const cc = daily && daily.cc;
   for (const { e, r } of pool) {
     const key = String(r.title || e.text || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim().slice(0, 90);
     if (!key || seen.has(key) || seen.has(r.url)) continue;
+    // a national outlet's story about another country is left out: the first test run (20 Nov 2026) put an Indian flood into
+    // Thailand's social section and a Chinese rain warning into its infrastructure line
+    if (cc) { const named = ccsInText(r.title || e.text || ""); if (named.length && !named.includes(cc) && !(cc === "oki" && named.includes("jp"))) continue; }
     seen.add(key); seen.add(r.url);
     out.push({ k: out.length + 1, title: String(r.title || e.text).slice(0, 300), orig: r.orig ? String(r.orig).slice(0, 300) : "",
       outlet: String(r.outlet || (e.outlets || [])[0] || "").slice(0, 80), outlets: e.n || 1,
@@ -67,8 +72,9 @@ export const SYSTEM = [
   "Write only what the reports add or change compared with the background. Use only the reports for new facts; attribute every",
   "statement to its outlet or official source ('X reports', 'the ministry says'); government and state-media figures are claims of",
   "that government, never facts; do not name private individuals; no speculation, advice or opinion; plain English.",
-  "Never call a report confirmed, verified or proven. Skip a section when no report bears on it (an empty list). Every sentence must",
-  "cite the report numbers it rests on in 'refs'. Answer with JSON only:",
+  "Never call a report confirmed, verified or proven. Skip a section when no report bears on it (an empty list). Leave out any report",
+  "about another country. Each sentence covers one report, names who reports it ('Khaosod reports ...'), and cites the report",
+  "numbers it rests on in 'refs' (never in the text). Answer with JSON only:",
   "{\"sections\": {\"political\": [{\"text\": string, \"refs\": [numbers]}], \"military\": [...], \"economic\": [...], \"social\": [...],",
   "  \"information\": [...], \"infrastructure\": [...]} (0 to 2 sentences each),",
   " \"watch\": [{\"text\": string, \"refs\": [numbers]}] (1 to 3 concrete things to watch in the coming days, only where the reports support it),",
@@ -91,14 +97,18 @@ export function buildPrompt(brief, reports, now) {
 const clean = (s, n) => String(s || "").replace(/\s+/g, " ").trim().slice(0, n);
 function refsOk(a, n) { return [...new Set((Array.isArray(a) ? a : []).map((x) => +String(x).replace(/\D/g, "")).filter((x) => x >= 1 && x <= n))].slice(0, 6); }
 // one sentence: { text, refs } -> { text, refs } or { why }
-export function checkLine(p, reports, background, country) {
+// a factual line says who reports it: an outlet or official verb ("X reports", "the ministry says", "the UK announces")
+const ATTRIB = /\b(reports?|reported|reporting|says?|said|according to|announc(?:e|es|ed|ing)|warns?|warned|claims?|claimed|states?|stated|alleges?|alleged|accuses?|accused|denies|denied|tells?|told|quot(?:es|ed))\b/i;
+export function checkLine(p, reports, background, country, { attribution = true } = {}) {
   const n = reports.length;
-  let text = normCites(clean(p && (p.text || p.reason), 420), n);
+  // leftovers of a small model's citing ("(refs:)", "(ref: 3)") are taken out before the checks
+  let text = normCites(clean(p && (p.text || p.reason), 420).replace(/\s*\((?:refs?|sources?)\s*:?\s*[\d,\s]*\)/gi, ""), n);
   const inline = [...text.matchAll(/\[(\d{1,2})\]/g)].map((m) => +m[1]);
   text = stripInlineCites(text.replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, "")).trim();
   const refs = refsOk([...((p && p.refs) || []), ...inline], n);
   if (text.length < 16) return { why: "too short" };
   if (!refs.length) return { why: "no valid citation" };
+  if (attribution && !ATTRIB.test(text)) return { why: "not attributed to an outlet or official source" };
   const cited = refs.map((k) => reports[k - 1]);
   const heads = cited.flatMap((r) => [r.title, r.orig]);
   if (overclaims(text, heads)) return { why: "calls a report confirmed" };
@@ -130,7 +140,8 @@ export function validateUpdate(o, reports, brief) {
     }
   }
   for (const p of (Array.isArray(o && o.watch) ? o.watch : []).slice(0, MAX_WATCH + 1)) {
-    const c = checkLine(p, reports, bg, country);
+    // a watch point looks ahead ("Whether ..."), so it needs no outlet verb; every other check still applies
+    const c = checkLine(p, reports, bg, country, { attribution: false });
     if (c.why) { res.rejected.push({ where: "watch", why: c.why }); continue; }
     if (res.watch.length < MAX_WATCH) res.watch.push(c);
   }
