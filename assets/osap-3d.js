@@ -724,6 +724,14 @@
       drawMarks();
       /* tap a point or shape: its 2D popup, and a way back to it in 2D */
       var popup = null;
+      /* keep an open popup clear of the bars along the bottom (tilt, the position bar) and the credits at the top: a building's
+         popup grows when OpenStreetMap answers, and its buttons ended up under the bars, where a tap could not reach them */
+      function fitPop() {
+        var el = popup && popup.getElement && popup.getElement(); if (!el) return;
+        var r = el.getBoundingClientRect(), b = box.getBoundingClientRect(), low = b.bottom - 76, high = b.top + 44;
+        var dy = r.height > low - high || r.top < high ? r.top - high : r.bottom > low ? r.bottom - low : 0;
+        if (Math.abs(dy) > 2) gl.panBy([0, dy], { duration: 0 });
+      }
       function pop(l, at) {
         if (!l) return;
         if (popup) popup.remove();
@@ -736,7 +744,7 @@
             if (l.openPopup && l.getPopup && l.getPopup()) l.openPopup(ll); else l.fire("click", { latlng: ll, originalEvent: { target: mapEl } });
           });
         });
-        popup = new ml.Popup({ maxWidth: "320px", className: "o3-popw" }).setLngLat(at).setDOMContent(d).addTo(gl);
+        popup = new ml.Popup({ maxWidth: "320px", className: "o3-popw" }).setLngLat(at).setDOMContent(d).addTo(gl); fitPop();
       }
       /* tap a building: what the open data records about it */
       function bldPop(f, at) {
@@ -746,12 +754,12 @@
         var box2 = d.querySelector(".o3-osm"), lat = at[1], lon = at[0];
         function ask() {
           box2.innerHTML = '<p class="o3-nr">Checking OpenStreetMap at this spot…</p>';
-          osmAsk(lat, lon).then(function (j) { box2.innerHTML = osmHtml(j, lat, lon); }, function () {
+          osmAsk(lat, lon).then(function (j) { box2.innerHTML = osmHtml(j, lat, lon); fitPop(); }, function () {
             box2.innerHTML = '<p class="o3-nr">OpenStreetMap could not be reached. <button type="button" class="o3-again">Try again</button></p>';
-            box2.querySelector(".o3-again").addEventListener("click", ask);
+            box2.querySelector(".o3-again").addEventListener("click", ask); fitPop();
           });
         }
-        ask();
+        ask(); fitPop();
       }
       gl.on("click", function (e) {
         var f = gl.queryRenderedFeatures([[e.point.x - 8, e.point.y - 8], [e.point.x + 8, e.point.y + 8]], { layers: ["vp", "vl", "vld", "vf"] })
@@ -869,7 +877,7 @@
     "#o3d .o3-load i{display:block;height:3px;width:0;background:#15aabf;transition:width .25s}" +
     "#o3d .o3-load span{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;top:6px;font:600 11.5px/1 system-ui,sans-serif;color:#fff;background:rgba(20,24,28,.78);padding:3px 7px;border-radius:9px;pointer-events:auto}" +
     "#o3d .o3-load.err i{background:#e8590c}#o3d .o3-load span button{font:inherit;color:#ffd8a8;background:none;border:0;padding:0 2px;text-decoration:underline;cursor:pointer}" +
-    "#o3d .o3-msg{position:absolute;left:50%;top:40%;transform:translateX(-50%);max-width:80%;background:rgba(20,24,28,.9);color:#fff;padding:10px 14px;border-radius:8px;font:14px/1.35 system-ui,sans-serif;text-align:center;z-index:3}" +
+    "#o3d .o3-msg{pointer-events:none;position:absolute;left:50%;top:40%;transform:translateX(-50%);max-width:80%;background:rgba(20,24,28,.9);color:#fff;padding:10px 14px;border-radius:8px;font:14px/1.35 system-ui,sans-serif;text-align:center;z-index:3}" +
     "#o3d .o3-msg[hidden]{display:none}" +
     /* the toolbar, bottom bar and their panels sit over the 3D view (z-index 1000 and up); the flat map's own corner
        controls, loading bar and press-and-hold ring are hidden while it is open */

@@ -306,6 +306,10 @@ function pmFixture() {
   await p.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
   const down = await p.waitForFunction(() => /could not be reached/.test((document.querySelector("#o3d .o3-osm") || {}).textContent || "") && !!document.querySelector("#o3d .o3-osm .o3-again"), null, { timeout: 20000 }).then(() => true).catch(() => false);
   ok(down, "buildings: when OpenStreetMap is down the popup says so and offers Try again");
+  // the popup stays clear of the bars along the bottom, so Try again can be tapped (it grew under the tilt bar, 2026-11-20)
+  const clear = await p.evaluate(() => { const b = document.querySelector("#o3d .o3-osm .o3-again"); if (!b) return null; const r = b.getBoundingClientRect();
+    const at = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return at === b || b.contains(at) ? "" : (at && at.className) || "nothing"; });
+  ok(clear === "", "buildings: the popup's Try again is not under the 3D controls " + JSON.stringify(clear));
   ovpDown = false; await p.click("#o3d .o3-osm .o3-again");
   const back = await p.waitForFunction(() => /OpenStreetMap at this spot/.test((document.querySelector("#o3d .o3-osm") || {}).textContent || ""), null, { timeout: 8000 }).then(() => true).catch(() => false);
   ok(back, "buildings: Try again fetches it");
