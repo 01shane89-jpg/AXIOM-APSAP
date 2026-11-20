@@ -724,6 +724,14 @@
       drawMarks();
       /* tap a point or shape: its 2D popup, and a way back to it in 2D */
       var popup = null;
+      /* keep an open popup clear of the bars along the bottom (tilt, the position bar) and the credits at the top: a building's
+         popup grows when OpenStreetMap answers, and its buttons ended up under the bars, where a tap could not reach them */
+      function fitPop() {
+        var el = popup && popup.getElement && popup.getElement(); if (!el) return;
+        var r = el.getBoundingClientRect(), b = box.getBoundingClientRect(), low = b.bottom - 76, high = b.top + 44;
+        var dy = r.height > low - high || r.top < high ? r.top - high : r.bottom > low ? r.bottom - low : 0;
+        if (Math.abs(dy) > 2) gl.panBy([0, dy], { duration: 0 });
+      }
       function pop(l, at) {
         if (!l) return;
         if (popup) popup.remove();
@@ -736,7 +744,7 @@
             if (l.openPopup && l.getPopup && l.getPopup()) l.openPopup(ll); else l.fire("click", { latlng: ll, originalEvent: { target: mapEl } });
           });
         });
-        popup = new ml.Popup({ maxWidth: "320px", className: "o3-popw" }).setLngLat(at).setDOMContent(d).addTo(gl);
+        popup = new ml.Popup({ maxWidth: "320px", className: "o3-popw" }).setLngLat(at).setDOMContent(d).addTo(gl); fitPop();
       }
       /* tap a building: what the open data records about it */
       function bldPop(f, at) {
@@ -746,12 +754,12 @@
         var box2 = d.querySelector(".o3-osm"), lat = at[1], lon = at[0];
         function ask() {
           box2.innerHTML = '<p class="o3-nr">Checking OpenStreetMap at this spot…</p>';
-          osmAsk(lat, lon).then(function (j) { box2.innerHTML = osmHtml(j, lat, lon); }, function () {
+          osmAsk(lat, lon).then(function (j) { box2.innerHTML = osmHtml(j, lat, lon); fitPop(); }, function () {
             box2.innerHTML = '<p class="o3-nr">OpenStreetMap could not be reached. <button type="button" class="o3-again">Try again</button></p>';
-            box2.querySelector(".o3-again").addEventListener("click", ask);
+            box2.querySelector(".o3-again").addEventListener("click", ask); fitPop();
           });
         }
-        ask();
+        ask(); fitPop();
       }
       gl.on("click", function (e) {
         var f = gl.queryRenderedFeatures([[e.point.x - 8, e.point.y - 8], [e.point.x + 8, e.point.y + 8]], { layers: ["vp", "vl", "vld", "vf"] })
