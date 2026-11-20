@@ -81,6 +81,9 @@
     var svg = L.svg({ pane: "areapane" });
     layer = L.layerGroup(mine.map(function (a) {
       var t = TYPES[a.type], st = okSt(a.st), zw = A() && A().zoomW, w = zw ? zw(st ? st.w : 2) : 2, ln = lineOf(a, st, w);
+      /* a folder colour in My places (assets/osap-places.js) wins over the area's own */
+      var fc = window.OSAP_PLACES && window.OSAP_PLACES.colorOf && window.OSAP_PLACES.colorOf("ai:" + a.id);
+      if (fc) st = Object.assign({}, st || { w: 2, dash: "solid", op: 0.06 }, { line: fc, fill: fc });
       var p = L.polygon(a.pts, { pane: "areapane", renderer: svg, color: st ? st.line : t.col, weight: w, dashArray: ln.d, lineCap: ln.cap,
         fillColor: st ? st.fill : t.col, fillOpacity: st ? st.op : 0.06, interactive: false });
       p.__aoiW = st ? st.w : 2; p.__aoiDash = st && st.dash !== "solid" ? st.dash : "";

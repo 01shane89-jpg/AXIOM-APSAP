@@ -51,6 +51,8 @@ tests/points_declutter_smoke.mjs
 tests/photo_map_smoke.mjs
 tests/places_smoke.mjs
 tests/places_all_smoke.mjs
+# My places layer tree: one item in several folders, 20 deep, folder colours, KML/JSON tree out and in (assets/osap-places.js)
+tests/places_tree_smoke.mjs
 # My work side panel on the left of the map, holding My places and saved reports (assets/osap-work.js #mywk)
 tests/mywork_panel_smoke.mjs
 # Map overlays find box, section chips and folding headings; Settings headings (assets/osap-mlfold.js, assets/osap-tidy.js)
