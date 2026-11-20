@@ -51,7 +51,18 @@ async function jobs(prev) {
         if (w.ok) since = (await w.json()).created_at || undefined;
       } catch (e) {}
     }
-    list.push({ file, name: name.replace(/^["']|["']$/g, "").trim(), maxMin, last, ...(since ? { since } : {}) });
+    // past its limit: is a run going on main right now? (the keeper runs about 5 h 20 min a time, longer than its hourly
+    // schedule's limit, so its last success is always "late" near the end of each run while it is plainly working)
+    let running;
+    if (!last || Date.now() - Date.parse(last) > maxMin * 60000) {
+      try {
+        const g = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/${file}/runs?branch=main&status=in_progress&per_page=1`,
+          { headers: { authorization: "Bearer " + token, accept: "application/vnd.github+json", "user-agent": "osap-health" }, signal: AbortSignal.timeout(20000) });
+        const run = g.ok ? ((await g.json()).workflow_runs || [])[0] : null;
+        if (run) running = run.run_started_at || run.created_at;
+      } catch (e) {}
+    }
+    list.push({ file, name: name.replace(/^["']|["']$/g, "").trim(), maxMin, last, ...(since ? { since } : {}), ...(running ? { running } : {}) });
   }
   // when GitHub would not answer, the last answer is kept and the failure is listed, never an empty "nothing late"
   if (asked && failed === asked) return { ...(prev || { list: [] }), error: "could not read the workflow runs (" + failed + " of " + asked + " failed)" };

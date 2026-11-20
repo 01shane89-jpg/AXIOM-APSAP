@@ -264,8 +264,12 @@ export function jobLimitMin(crons) {
 export function jobLabel(name) { const s = String(name || "").replace(/^Refresh\s+/i, ""); return s.charAt(0).toUpperCase() + s.slice(1); }
 /** jobs: [{ file, name, maxMin, last: ISO of last success or null, since: ISO the workflow was added }] -> late ones [{ file, name, why, last }]
  *  A job with no success on record is late only once it has existed longer than its limit (a monthly job added mid-month has
- *  not reached its first run: refresh-outlet-facts.yml, added 14 Nov 2026, first due 7 Dec). */
+ *  not reached its first run: refresh-outlet-facts.yml, added 14 Nov 2026, first due 7 Dec). A job with a run going on main
+ *  (running: when it started, under 6 h ago) is working, not late: refresh-keeper.yml runs 5 h 20 min a time on an hourly
+ *  schedule and showed as late for ~20 min at the end of every run (20 Nov 2026). */
+export const RUN_ALIVE_MIN = 360; // GitHub ends any job after 6 h: a run "in progress" for longer is stuck, not working
 export function lateJobs(jobs, now = Date.now()) {
-  return (jobs || []).filter((j) => j && j.maxMin && (j.last ? now - Date.parse(j.last) > j.maxMin * 60000 : !(j.since && now - Date.parse(j.since) <= j.maxMin * 60000)))
+  return (jobs || []).filter((j) => j && j.maxMin && !(j.running && now - Date.parse(j.running) < RUN_ALIVE_MIN * 60000) &&
+    (j.last ? now - Date.parse(j.last) > j.maxMin * 60000 : !(j.since && now - Date.parse(j.since) <= j.maxMin * 60000)))
     .map((j) => ({ file: j.file, name: j.name || j.file, why: j.last ? "last succeeded " + ago(now - Date.parse(j.last)) + " ago (runs at least every " + ago(((j.maxMin - 180) / 2) * 60000) + ")" : "no successful run on record", last: j.last || null }));
 }
