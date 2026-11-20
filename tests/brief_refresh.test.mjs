@@ -118,6 +118,10 @@ ok(checkLine({ text: "Russian strikes damage embassies in the capital.", refs: [
 ok(checkLine({ text: "Whether the march on parliament grows.", refs: [pi] }, reports, "", "Testland", { attribution: false }).text, "a watch point needs no outlet verb");
 const leftover = checkLine({ text: "Daily Test reports a march on parliament (refs:).", refs: [pi] }, reports, "", "Testland");
 ok(leftover.text === "Daily Test reports a march on parliament.", "a '(refs:)' leftover is taken out (" + leftover.text + ")");
+// second runner test: "(refs:,,)" kept, and "the United States" read as an outlet verb ("states")
+ok(checkLine({ text: "Daily Test reports a march on parliament (refs:,,).", refs: [pi] }, reports, "", "Testland").text === "Daily Test reports a march on parliament.", "a '(refs:,,)' leftover is taken out");
+ok(checkLine({ text: "Daily Test reports a march on parliament (refs: [1]).", refs: [pi] }, reports, "", "Testland").text === "Daily Test reports a march on parliament.", "a '(refs: [n])' leftover is taken out");
+ok(checkLine({ text: "Testland and the United States agree to march on parliament.", refs: [pi] }, reports, "", "Testland").why === "not attributed to an outlet or official source", "'United States' does not count as an outlet verb");
 const mixed = collectReports({ cc: "th", days: [day("2026-11-19", [{ text: "x", n: 3, refs: [1] }, { text: "y", n: 2, refs: [2] }, { text: "z", n: 1, refs: [3] }], [
   { n: 1, title: "Floods hit India's Assam state", outlet: "INN", url: "https://n.example/in", date: "2026-11-19T01:00" },
   { n: 2, title: "Thailand and Cambodia talk border", outlet: "Khaosod", url: "https://n.example/kh", date: "2026-11-19T02:00" },

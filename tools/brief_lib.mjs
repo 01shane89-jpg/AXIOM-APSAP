@@ -97,18 +97,21 @@ export function buildPrompt(brief, reports, now) {
 const clean = (s, n) => String(s || "").replace(/\s+/g, " ").trim().slice(0, n);
 function refsOk(a, n) { return [...new Set((Array.isArray(a) ? a : []).map((x) => +String(x).replace(/\D/g, "")).filter((x) => x >= 1 && x <= n))].slice(0, 6); }
 // one sentence: { text, refs } -> { text, refs } or { why }
-// a factual line says who reports it: an outlet or official verb ("X reports", "the ministry says", "the UK announces")
+// a factual line says who reports it: an outlet or official verb ("X reports", "the ministry says", "the UK announces");
+// "United States" is a name, not "states"
 const ATTRIB = /\b(reports?|reported|reporting|says?|said|according to|announc(?:e|es|ed|ing)|warns?|warned|claims?|claimed|states?|stated|alleges?|alleged|accuses?|accused|denies|denied|tells?|told|quot(?:es|ed))\b/i;
 export function checkLine(p, reports, background, country, { attribution = true } = {}) {
   const n = reports.length;
   // leftovers of a small model's citing ("(refs:)", "(ref: 3)") are taken out before the checks
-  let text = normCites(clean(p && (p.text || p.reason), 420).replace(/\s*\((?:refs?|sources?)\s*:?\s*[\d,\s]*\)/gi, ""), n);
+  const LEFT = /\s*\((?:refs?|sources?)\s*:?[\s\d,;\[\]]*\)/gi;
+  let text = normCites(clean(p && (p.text || p.reason), 420).replace(LEFT, ""), n);
   const inline = [...text.matchAll(/\[(\d{1,2})\]/g)].map((m) => +m[1]);
-  text = stripInlineCites(text.replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, "")).trim();
+  // again after the bracket cites are gone: "(refs: [3])" leaves "(refs:)"
+  text = stripInlineCites(text.replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, "")).replace(LEFT, "").replace(/\s+([.,;])/g, "$1").trim();
   const refs = refsOk([...((p && p.refs) || []), ...inline], n);
   if (text.length < 16) return { why: "too short" };
   if (!refs.length) return { why: "no valid citation" };
-  if (attribution && !ATTRIB.test(text)) return { why: "not attributed to an outlet or official source" };
+  if (attribution && !ATTRIB.test(text.replace(/\bUnited States\b/g, ""))) return { why: "not attributed to an outlet or official source" };
   const cited = refs.map((k) => reports[k - 1]);
   const heads = cited.flatMap((r) => [r.title, r.orig]);
   if (overclaims(text, heads)) return { why: "calls a report confirmed" };
