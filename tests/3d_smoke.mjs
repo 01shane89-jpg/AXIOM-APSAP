@@ -285,6 +285,10 @@ function pmFixture() {
     gl.jumpTo({ center: [lon, lat], zoom: 16, pitch: 0, bearing: 0 }); });
   await p.waitForTimeout(2500);
   const box = await p.locator("#o3d .o3-map canvas").boundingBox();
+  /* a status note ("Elevation tiles are not loading…") sits over the middle of the map; it must never swallow the tap meant for what is under it */
+  const note = await p.evaluate(([x, y]) => { const m = document.querySelector("#o3d .o3-msg"), was = m.hidden; m.textContent = "Elevation tiles are not loading, so the ground may look flat."; m.hidden = false;
+    const e = document.elementFromPoint(x, y), hit = !!(e && e.closest(".o3-msg")); m.hidden = was; if (was) m.textContent = ""; return { hit, pe: getComputedStyle(m).pointerEvents }; }, [box.x + box.width / 2, box.y + box.height / 2]);
+  ok(!note.hit && note.pe === "none", "3D: a status note over the map lets taps through to the map " + JSON.stringify(note));
   await p.mouse.click(box.x + box.width / 2, box.y + box.height / 2); await p.waitForTimeout(600);
   await p.waitForFunction(() => /OpenStreetMap at this spot/.test((document.querySelector("#o3d .o3-osm") || {}).textContent || ""), null, { timeout: 8000 }).catch(() => {});
   const pop = await p.evaluate(() => { const e = document.querySelector("#o3d .o3-popw .o3-pc"); if (!e) return null;
