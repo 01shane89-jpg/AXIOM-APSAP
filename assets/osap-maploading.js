@@ -92,7 +92,9 @@
     "#mload i{display:block;height:3px;width:0;background:#15aabf;transition:width .25s;box-shadow:0 0 4px rgba(21,170,191,.6)}" +
     "#mload span{position:absolute;left:50%;top:8px;transform:translateX(-50%);white-space:nowrap;max-width:calc(100% - 140px);overflow:hidden;text-overflow:ellipsis;" +
     "font:600 11.5px/1.2 system-ui,-apple-system,sans-serif;color:#fff;background:rgba(20,24,28,.8);padding:4px 9px;border-radius:10px;pointer-events:auto}" +
-    "#mload.err i{background:#e8590c;box-shadow:none}#mload span button{font:inherit;color:#ffd8a8;background:none;border:0;padding:0 2px;text-decoration:underline;cursor:pointer;min-height:24px}";
+    "#mload.err i{background:#e8590c;box-shadow:none}" +
+    /* the failure line wraps instead of ending in "...": on a phone the cut used to hide its Try again button (20 Nov 2026) */
+    "#mload.err span{white-space:normal;width:max-content;text-align:center;line-height:1.35}#mload span button{font:inherit;color:#ffd8a8;background:none;border:0;padding:0 2px;text-decoration:underline;cursor:pointer;min-height:24px}";
   D.head.appendChild(st);
   W.OSAP_MAPLOAD = { state: function () { return { hidden: bar.hidden, err: bar.classList.contains("err"), want: want, got: got, fails: fails.length, text: label.textContent }; } };
 })();

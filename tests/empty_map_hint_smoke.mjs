@@ -78,6 +78,10 @@ const hint = () => { const e = document.querySelector(".dshint"); if (!e || e.hi
   await p.waitForFunction(() => { const e = document.querySelector("#mload:not([hidden]) span"); return e && e.textContent; }, null, { timeout: 20000 }).catch(() => {});
   const t3 = await p.evaluate(toast);
   ok(t3 && apart(t3, h), "phone: the map-loading label does not cover the note " + JSON.stringify({ t3, h }));
+  // the "did not load" line wraps on a phone rather than being cut with "...", so its Try again button stays on screen and tappable
+  await p.waitForFunction(() => document.querySelector("#mload.err span button"), null, { timeout: 30000 }).catch(() => {});
+  const tb = await p.evaluate(() => { const s = document.querySelector("#mload.err span"), b = s && s.querySelector("button"); if (!b) return null; const r = b.getBoundingClientRect(), q = s.getBoundingClientRect(); return { inside: r.width > 0 && r.left >= q.left - 1 && r.right <= q.right + 1 && r.bottom <= q.bottom + 1, onscreen: r.right <= innerWidth && r.left >= 0, cut: s.scrollWidth > s.clientWidth + 1 }; });
+  ok(tb && tb.inside && tb.onscreen && !tb.cut, "phone: the map-loading failure line shows its Try again button in full " + JSON.stringify(tb));
   ok(h && apart(h, g.arrow), "phone: the note does not cover the north arrow " + JSON.stringify({ h, a: g.arrow }));
   ok(h && apart(h, g.bar), "phone: the note does not cover the toolbar " + JSON.stringify({ h, bar: g.bar }));
   ok(h && h.btn.every((x) => x >= 40), "phone: the note's buttons are at least 40 px tall (" + (h && h.btn) + ")");
