@@ -26,12 +26,17 @@ await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
 await ctx.route(/\/data\/live\/health\.json(\?|$)/, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(health) }));
 const p = await ctx.newPage(), errs = []; p.on("pageerror", (e) => errs.push(e.message));
 await p.goto(base + "#th", { waitUntil: "domcontentloaded" });
-await p.waitForFunction(() => document.querySelector(".ohb") && !/…/.test(document.querySelector(".ohb").textContent), null, { timeout: 60000 });
+await p.waitForFunction(() => document.querySelector(".ohb") && !/…/.test(document.querySelector(".ohb").textContent) && window.OSAP_HEALTH_UI, null, { timeout: 60000 });
+// the page reads the file once at start; on a busy runner that first read can race the page's other loads, so read it again
+// (what the five-minute timer does) and wait until the test file is the one shown
+const served = await p.evaluate(() => fetch("data/live/health.json?fresh=1", { cache: "no-store" }).then((r) => r.json()).then((j) => !!(j.jobs && j.quiet)).catch((e) => "error " + e.message));
+ok(served === true, "the test health file is served (" + served + ")");
+await p.evaluate(() => window.OSAP_HEALTH_UI.reload());
 await p.waitForTimeout(1500);
 const badge = await p.evaluate(() => document.querySelector(".ohw").className + " " + document.querySelector(".ohb").textContent);
 // the Today page opens first on a phone: its own badge is the one a reader taps
 await p.click("#today .ohb");
-await p.waitForTimeout(600);
+await p.waitForFunction(() => /Behind schedule/.test((document.querySelector(".ohp") || {}).innerText || ""), null, { timeout: 15000 }).catch(() => {});
 const r = await p.evaluate(() => { const e = document.querySelector(".ohp"); return { text: e ? e.innerText : "", items: e ? [...e.querySelectorAll(".ohops li")].map((l) => l.innerText) : [], wide: document.documentElement.scrollWidth > innerWidth + 1 }; });
 ok(/Behind schedule/.test(r.text), "the panel has a Behind schedule list");
 ok(r.items.some((t) => /Refresh economic stress signals: last succeeded 4 days ago/.test(t)), "a late data job is named with its last success");
