@@ -869,7 +869,7 @@
     "#o3d .o3-load i{display:block;height:3px;width:0;background:#15aabf;transition:width .25s}" +
     "#o3d .o3-load span{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;top:6px;font:600 11.5px/1 system-ui,sans-serif;color:#fff;background:rgba(20,24,28,.78);padding:3px 7px;border-radius:9px;pointer-events:auto}" +
     "#o3d .o3-load.err i{background:#e8590c}#o3d .o3-load span button{font:inherit;color:#ffd8a8;background:none;border:0;padding:0 2px;text-decoration:underline;cursor:pointer}" +
-    "#o3d .o3-msg{position:absolute;left:50%;top:40%;transform:translateX(-50%);max-width:80%;background:rgba(20,24,28,.9);color:#fff;padding:10px 14px;border-radius:8px;font:14px/1.35 system-ui,sans-serif;text-align:center;z-index:3}" +
+    "#o3d .o3-msg{pointer-events:none;position:absolute;left:50%;top:40%;transform:translateX(-50%);max-width:80%;background:rgba(20,24,28,.9);color:#fff;padding:10px 14px;border-radius:8px;font:14px/1.35 system-ui,sans-serif;text-align:center;z-index:3}" +
     "#o3d .o3-msg[hidden]{display:none}" +
     /* the toolbar, bottom bar and their panels sit over the 3D view (z-index 1000 and up); the flat map's own corner
        controls, loading bar and press-and-hold ring are hidden while it is open */
