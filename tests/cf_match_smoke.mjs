@@ -30,9 +30,15 @@ const A = reps[0], B = reps.find((r) => Math.abs(r.geo.la - A.geo.la) + Math.abs
 if (!A || !B) { console.log("SKIP: need two placed " + ID + " reports apart in place and time"); server.close(); process.exit(0); }
 const uev = (id, la, lo, date, o = {}) => ({ id: String(id), date, end: date, lat: la, lon: lo, where: "Fixture township", adm1: "Fixture region", country: "Myanmar (Burma)", conflict: "Myanmar: Government",
   sideA: "Government of Myanmar (Burma)", sideB: "Fixture Army", type: 1, best: 3, low: 3, high: 5, civ: 0, prec: 2, headline: "Fixture clash", file: "fixture.csv", fp: String(id).padStart(2, "0").repeat(32).slice(0, 64), cc: "mm", ...o });
+// A2: a fixture second report of A (same headline and place, an hour earlier, another outlet), so A's incident always holds two reports and the first report in the
+// page's order (newest, A) is not the first in sorted order (A2's fp sorts first). The sent mark must survive that (20 Nov 2026: a data
+// refresh made A's incident multi-report and "Decision sent" never showed, because the mark was written and read under different keys).
+const A2 = { ...A, fp: "0".repeat(64), date: new Date(Date.parse(A.date) - 36e5).toISOString().slice(0, 16), outlet: "Fixture outlet", link: "https://example.org/fixture-a2" };
+known.get(ID).set(A2.fp, A2);
 const U1 = uev(91, +A.geo.la + 0.05, +A.geo.lo, A.date.slice(0, 10)), U2 = uev(92, +B.geo.la, +B.geo.lo, B.date.slice(0, 10)), U9 = uev(99, +A.geo.la + 3, +A.geo.lo + 3, A.date.slice(0, 10));
 const file = await readFile(join(root, "data/live/conflicts/" + ID + ".js"), "utf8");
 const obj = JSON.parse(file.slice(file.indexOf("={") + 1).replace(/;\s*$/, ""));
+obj.items = (obj.items || []).filter((i) => i.fp !== A2.fp).concat([A2]);
 obj.ucdp = (obj.ucdp || []).filter((e) => !["91", "92", "99"].includes(String(e.id))).concat([U1, U2, U9]);
 const served = file.slice(0, file.indexOf("={") + 1) + JSON.stringify(obj) + ";\n";
 const FIX = { schema: "osap-incident-verified/1", asof: "2026-10-23 07:00Z", decisions: 0, by: {}, incidents: {},
@@ -59,6 +65,7 @@ await p.waitForTimeout(800);
 const li = (fp) => p.evaluate((fp) => { const gs = document.getElementById("cf-list")._groups || []; const k = gs.findIndex((g) => g.all.some((x) => x.fp === fp));
   const e = document.querySelector('#cf-list li[data-k="' + k + '"]'); return k < 0 || !e ? null : { k, html: e.innerHTML, text: e.textContent }; }, fp);
 const a = await li(A.fp);
+ok(a && (await li(A2.fp) || {}).k === a.k, "The fixture second report shares A's incident (so the sent mark is keyed across reports)");
 ok(a && /Possibly the same event in UCDP/.test(a.text) && /91/.test(a.html) && /Fixture Army/.test(a.text), "The report beside U1 carries a proposal for it" + (a ? "" : " (report not listed)"));
 ok(a && !/data-u="99"/.test(a.html), "U9, far away, is not proposed");
 ok(a && /under 1 km|\d+ km from the closest report/.test(a.text) && /3 deaths \(UCDP best estimate, 3 to 5\)/.test(a.text), "The proposal says how far, and gives UCDP's deaths as estimates");
@@ -70,7 +77,7 @@ const q = new URL(url || "https://x/"), b = readBody(q.searchParams.get("body") 
 const ucdp = { [ID]: new Map([[U1.id, U1], [U2.id, U2]]) };
 const c = b.data ? check(b.data, known, {}, ucdp) : { why: "no block" };
 ok(/^https:\/\/github\.com\/01shane89-jpg\/AXIOM-APSAP\/issues\/new/.test(url) && /^OSAP incident decision: Same event as UCDP 91/.test(q.searchParams.get("title") || ""), "Same event opens a decision issue: " + (q.searchParams.get("title") || "").slice(0, 80));
-ok(c.action === "link_coded" && c.coded && c.coded.id === "91" && c.reports.includes(A.fp), "The issue's block is one the job accepts (" + (c.why || "ok") + ")");
+ok(c.action === "link_coded" && c.coded && c.coded.id === "91" && c.reports.includes(A.fp) && c.reports.includes(A2.fp), "The issue's block is one the job accepts (" + (c.why || "ok") + ")");
 ok(await p.evaluate((k) => /Decision sent/.test(document.querySelector('#cf-list li[data-k="' + k + '"]').textContent), a.k), "The proposal shows Decision sent");
 const bb = await li(B.fp);
 ok(bb && /Same event as UCDP event 92/.test(bb.text) && /\(analyst\)/.test(bb.text) && /data-cflk="unlink_coded"/.test(bb.html), "A recorded link shows on its incident with Take back");

@@ -30,10 +30,15 @@ const FIX = { schema: "osap-darkships/1", rules: "dark-v1", built: iso(NOW - 4 *
   boxes: [{ id: "hormuz", name: "Strait of Hormuz", bbox: [24.5, 54.5, 27.5, 58.5], ok: true, fixes: 442, cells: 20, steady: 18, quiet: 1 },
     { id: "bab", name: "Bab al-Mandab", bbox: [11.5, 42, 14.5, 45.5], ok: true, fixes: 0, cells: 0, steady: 0, quiet: 0 }],
   quiet: [{ box: "hormuz", mmsi: "636000001", name: "TEST TANKER", type: 80, flag: "LR", la: 26.3, lo: 56.4, sog: 12.1, cog: 300, nav: 0, src: "aishub",
-    last: iso(NOW - 4.2 * 36e5), gap_h: 4.2, dr: [[26.4, 56.2], [26.5, 56.0]], fixes: 9 }],
+    last: iso(NOW - 4.2 * 36e5), gap_h: 4.2, dr: [[26.4, 56.2], [26.5, 56.0]], fixes: 9, imo: "9187629",
+    before: [[26.1, 56.75, iso(NOW - 5.2 * 36e5)], [26.2, 56.58, iso(NOW - 4.7 * 36e5)], [26.3, 56.4, iso(NOW - 4.2 * 36e5)]],
+    sanc: { by: "imo", uid: "15036", name: "ARTAVIL", prog: "IRAN", list: "OFAC SDN" } }],
   events: [{ k: "jump", box: "hormuz", mmsi: "636000002", name: "TEST CARGO", type: 70, flag: "PA", from: [25.9, 56.9, iso(NOW - 3 * 36e5)], to: [25.0, 55.1, iso(NOW - 2.9 * 36e5)], gap_h: 0.1, km: 205.4, kn: 1109 },
-    { k: "reappeared", box: "hormuz", mmsi: "636000003", name: "TEST BULKER", type: 70, flag: "MH", from: [26.1, 56.5, iso(NOW - 10 * 36e5)], to: [26.6, 55.5, iso(NOW - 2 * 36e5)], gap_h: 8, km: 112.3, kn: 7.6 }],
-  counts: { quiet: 1, reappeared: 1, jump: 1 } };
+    { k: "reappeared", box: "hormuz", mmsi: "636000003", name: "TEST BULKER", type: 70, flag: "MH", from: [26.1, 56.5, iso(NOW - 10 * 36e5)], to: [26.6, 55.5, iso(NOW - 2 * 36e5)], gap_h: 8, km: 112.3, kn: 7.6,
+      before: [[25.9, 56.9, iso(NOW - 11 * 36e5)], [26.0, 56.7, iso(NOW - 10.5 * 36e5)], [26.1, 56.5, iso(NOW - 10 * 36e5)]],
+      after: [[26.6, 55.5, iso(NOW - 2 * 36e5)], [26.65, 55.3, iso(NOW - 1.5 * 36e5)]] }],
+  sanc: { src: { id: "ofac-sdn", name: "US Treasury OFAC SDN list", nc: false }, built: iso(NOW - 3 * 36e5), n: 1566, ok: true },
+  counts: { quiet: 1, reappeared: 1, jump: 1, sanc: 1 } };
 
 async function open(opts, mode = {}) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
@@ -70,10 +75,27 @@ const txt = (h) => h.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
   let pop = txt(await popOf(p, "quiet"));
   ok(/Gone quiet: TEST TANKER · Tanker/.test(pop) && /MMSI 636000001/.test(pop) && /Liberia/.test(pop) && /Silent 4.2 h/.test(pop) && /Strait of Hormuz/.test(pop) && /dead reckoning, a guess/.test(pop), "desktop: quiet pop-up facts (" + pop.slice(0, 160) + ")");
   ok(/not ranked/.test(pop) && /lawful/.test(pop) && /none of them is proof/.test(pop) && /Open Waters AIS/.test(pop) && /NC/.test(pop) && /dark-v1/.test(pop) && /fingerprint/.test(pop), "desktop: quiet pop-up reasons, caveat, source, rules, fingerprint");
+  ok(/IMO 9187629/.test(pop) && /Route heard in this area: 3 reports before over 1 h/.test(pop) && /not a measured route/.test(pop), "desktop: quiet pop-up gives the IMO and the route before the gap (" + pop.slice(0, 80) + ")");
+  ok(/Sanctions list match/.test(pop) && /OFAC SDN list as &quot;ARTAVIL&quot; \(IRAN\)/.test(pop) && /not a finding about this voyage/.test(pop), "desktop: quiet pop-up names the OFAC match as a listed number, not a finding");
+  ok(k.includes("sanc-ring"), "desktop: a sanctions match gets a ring on the map");
+  ok(/Sanctions check: US OFAC SDN list of 1566 vessels/.test(st) && /1 match among the ships shown/.test(st), "desktop: status names the sanctions list and the match count");
   pop = txt(await popOf(p, "jump"));
   ok(/Position jump: TEST CARGO/.test(pop) && /205.4 km in 6 min/.test(pop) && /1109 kn: no ship sails that fast/.test(pop) && /spoofing/.test(pop) && /sharing one MMSI/.test(pop), "desktop: jump pop-up (" + pop.slice(0, 160) + ")");
   pop = txt(await popOf(p, "reappeared"));
   ok(/Reappeared: TEST BULKER/.test(pop) && /112.3 km in 8 h/.test(pop) && /not its route/.test(pop), "desktop: reappeared pop-up");
+  ok(/3 reports before over 1 h/.test(pop) && /2 after over 30 min/.test(pop) && /kept for 6 h after/.test(pop) && /dashed join/.test(pop) && !/Sanctions list match/.test(pop), "desktop: reappeared pop-up gives the route before and after, no sanctions line");
+  // tapping the reappearance draws its route: blue before, green after, a dashed join over the gap; closing clears it
+  const rk = () => p.evaluate(() => window.OSAP_DARK.route().getLayers().map((l) => l.dark));
+  await p.evaluate(() => { const l = window.OSAP_DARK.layer().getLayers().filter((x) => x.dark === "reappeared-end")[1]; window.__asapMap.setView(l.getLatLng(), 9, { animate: false }); l.openPopup(); });
+  await p.waitForTimeout(500);
+  let r = await rk();
+  ok(r.includes("route-before") && r.includes("route-after") && r.includes("route-gap") && r.filter((x) => x === "route-pt").length === 5, "desktop: an open reappearance draws its route before, after and the gap: " + r.join(","));
+  ok(await p.evaluate(() => window.__asapMap.hasLayer(window.OSAP_DARK.route())), "desktop: the route is on the map");
+  if (OUT) { await p.evaluate(() => { const x = document.querySelector("#atk-om .x, #atk-om [aria-label=Close]"); if (x) x.click(); window.__asapMap.setView([26.3, 56.1], 9, { animate: false }); }); await p.waitForTimeout(800); await p.screenshot({ path: OUT + "/dark-route.png" }); await om(p); }
+  await p.evaluate(() => window.__asapMap.closePopup()); await p.waitForTimeout(300);
+  ok((await rk()).includes("route-before"), "desktop: the route stays once the pop-up has moved to the Details panel");
+  await p.evaluate(() => document.querySelector("[data-dkhide]").click()); await p.waitForTimeout(200);
+  ok((await rk()).length === 0, "desktop: Hide route clears it");
   pop = txt(await popOf(p, "box"));
   ok(/Strait of Hormuz/.test(pop) && /18 cells/.test(pop), "desktop: covered box pop-up");
   const bab = await p.evaluate(() => { const l = window.OSAP_DARK.layer().getLayers().filter((x) => x.dark === "box")[1]; const c = l.getPopup().getContent(); return typeof c === "function" ? c(l) : c; });
@@ -81,6 +103,8 @@ const txt = (h) => h.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
   // open the quiet ship's pop-up on the map: the SHA-256 fills in
   await p.evaluate(() => { const l = window.OSAP_DARK.layer().getLayers().find((x) => x.dark === "quiet"); window.__asapMap.setView(l.getLatLng(), 9, { animate: false }); l.openPopup(); });
   await p.waitForTimeout(800);
+  r = await rk();
+  ok(r.includes("route-before") && !r.includes("route-after") && r.filter((x) => x === "route-pt").length === 3, "desktop: an open quiet ship draws the route before its gap: " + r.join(","));
   ok(await p.evaluate(() => /SHA-256 [0-9a-f]{64}/.test(document.body.textContent)), "desktop: the open pop-up shows its SHA-256 fingerprint");
   if (OUT) await p.screenshot({ path: OUT + "/dark-popup.png" });
   await p.evaluate(() => window.__asapMap.closePopup());
@@ -88,6 +112,8 @@ const txt = (h) => h.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
   await p.evaluate(() => window.__asapMap.setView([0, 0], 3, { animate: false }));
   await p.click("#dk-list [data-dkgo]"); await p.waitForTimeout(500);
   ok(await p.evaluate(() => { const c = window.__asapMap.getCenter(); return Math.abs(c.lat - 26.3) < 0.2 && Math.abs(c.lng - 56.4) < 0.2 && window.__asapMap.getZoom() >= 9; }), "desktop: a list row takes the map to the ship");
+  ok((await rk()).includes("route-before") && /OFAC list match/.test(await p.evaluate(() => document.querySelector("#dk-list [data-dkgo]").textContent)), "desktop: a list row opens the ship and draws its route; the sanctions match is listed first and labelled");
+  await p.evaluate(() => window.__asapMap.closePopup());
   if (OUT) { await om(p); await p.waitForTimeout(300); await p.screenshot({ path: OUT + "/dark-desktop.png" }); }
   await p.uncheck('#ml-dark input[data-dark="on"]'); await p.waitForTimeout(300);
   ok(!(await p.evaluate(() => window.__asapMap.hasLayer(window.OSAP_DARK.layer()))), "desktop: switching off removes the layer");

@@ -13,6 +13,7 @@ import { fold, relevance } from "./topics_lib.mjs";
 import { ccsInText } from "./geo_cc.mjs";
 import { mtSuspect } from "./mt_guard.mjs";
 import { worldStories } from "./world_lib.mjs";
+import { actorCountryAdded, cutOff } from "./ai_lines.mjs";
 
 export const SCHEMA = "osap-daily/1";
 export const MAX_EVENTS = 6, MAX_REFS = 30;
@@ -207,25 +208,39 @@ export function overclaims(text, heads) {
 }
 const headsOf = (refs, ns) => (ns || []).flatMap((n) => { const r = (refs || []).find((x) => x && x.n === n); return r ? [r.title, r.orig] : []; });
 // A kept AI summary is checked again with this rule; an AI summary left with no top line falls back to its rules top lines.
-// Returns the number of AI lines dropped.
+// Returns the number of AI lines dropped or cut back.
+// The same re-check drops a line that gives an institution the wrong country (tools/ai_lines.mjs actorCountryAdded: "Iran's Senate"
+// for the US Senate, World, 20 Nov) and cuts a line that stops mid-sentence back to its last whole sentence (cutOff).
 export function dropOverclaims(d) {
   if (!d || d.method !== "ai") return 0;
-  const keep = (p) => !overclaims(p && p.text, headsOf(d.refs, p && p.refs));
+  let actor = 0, cut = 0;
+  const keep = (p) => {
+    if (!p || overclaims(p.text, headsOf(d.refs, p.refs))) return false;
+    if (actorCountryAdded(p.text, headsOf(d.refs, p.refs))) { actor++; return false; }
+    const t = cutOff(p.text);
+    if (!t) { cut++; return false; }
+    if (t !== p.text) { p.text = t; d.ai_cut = (d.ai_cut || 0) + 1; }
+    return true;
+  };
   const before = (d.bluf || []).length + (d.ai_watch || []).length;
+  const trimmed = d.ai_cut || 0;
   d.bluf = (d.bluf || []).filter(keep); d.ai_watch = (d.ai_watch || []).filter(keep);
   const n = before - d.bluf.length - d.ai_watch.length;
-  if (!n) return 0;
-  d.ai_overclaim = (d.ai_overclaim || 0) + n;
+  if (actor) d.ai_actor = (d.ai_actor || 0) + actor;
+  if (!n) return (d.ai_cut || 0) - trimmed;
+  if (n - actor - cut) d.ai_overclaim = (d.ai_overclaim || 0) + n - actor - cut;
   if (!d.bluf.length) { d.bluf = d.rules_bluf || []; d.method = "rules"; }
-  return n;
+  return n + (d.ai_cut || 0) - trimmed;
 }
-// keep only AI sentences that cite existing sources (and, given the numbered sources, that do not call a report confirmed when no
+// keep only AI sentences that cite existing sources (a line cut at 400 characters goes back to its last whole sentence; Taiwan,
+// 20 Nov, ended "... Matsue-lu due to"), that give no institution the wrong country (tools/ai_lines.mjs) and, given the numbered
+// sources, that do not call a report confirmed when no
 // cited headline says so); returns null when nothing usable is left
 export function validateAi(o, nRefs, refs) {
   const clean = (s, n) => String(s || "").replace(/\s+/g, " ").trim().slice(0, n);
   const ok = (a) => [...new Set((Array.isArray(a) ? a : []).map((x) => +String(x).replace(/\D/g, "")).filter((x) => x >= 1 && x <= nRefs))].slice(0, 6);
-  const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: stripInlineCites(clean(p && p.text, 400).replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, "")), refs: ok(p && p.refs) }))
-    .filter((p) => p.text.length > 15 && p.refs.length && !overclaims(p.text, headsOf(refs, p.refs))).slice(0, max);
+  const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: cutOff(stripInlineCites(clean(p && p.text, 400).replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, ""))), refs: ok(p && p.refs) }))
+    .filter((p) => p.text.length > 15 && p.refs.length && !overclaims(p.text, headsOf(refs, p.refs)) && !actorCountryAdded(p.text, headsOf(refs, p.refs))).slice(0, max);
   const bluf = list(o && o.bluf, 3), watch = list(o && o.watch, 3);
   if (!bluf.length) return null;
   return { bluf, watch };
