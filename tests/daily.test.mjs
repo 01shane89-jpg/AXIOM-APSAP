@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { compileRelevance } from "../tools/topics_lib.mjs";
+import { actorCountryAdded, cutOff } from "../tools/ai_lines.mjs";
 import { briefFresh, buildRules, buildWorld, validateAi, stripInlineCites, cluster, softSection, unent, fromRow, fingerprint, aiQueue, overclaims, dropOverclaims } from "../tools/daily_lib.mjs";
 
 const R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")));
@@ -101,6 +102,32 @@ t("AI output: a line may not call a report confirmed on its own authority (18 No
   assert.equal(dropOverclaims(day), 0, "a rules summary is left alone");
   const kept = { method: "ai", refs, bluf: [{ text: "China confirms a trilateral summit.", refs: [2] }], ai_watch: [] };
   assert.equal(dropOverclaims(kept), 0); assert.equal(kept.method, "ai");
+});
+t("an AI line may not give an institution another country's name, or stop mid-sentence (World and Taiwan, 20 Nov)", () => {
+  const refs = [{ n: 1, title: "Senate Republicans reject war powers resolution to end Iran conflict" },
+    { n: 2, title: "Iran war powers measure again falls short in Senate" },
+    { n: 3, title: "US Senate Republicans reject resolution calling on Trump to end Iran war" },
+    { n: 4, title: "Malaysia’s military eyes gamers for South China Sea drone surveillance" },
+    { n: 5, title: "Supreme Court dismisses appeal of accused convicted for supporting Iranian terrorist attacks against the Kingdom of Bahrain" }];
+  const v = validateAi({ bluf: [
+    { text: "Iran's Senate rejects war powers resolution to end the conflict with Iran as reported by The Hill, CBS News, and The Jerusalem Post.", refs: [1, 2, 3] },
+    { text: "The US Senate rejects a war powers resolution on the Iran conflict, The Hill reports.", refs: [1, 2, 3] },
+    { text: "China's military considers using gamers for drone surveillance in the South China Sea, SCMP reports.", refs: [4] },
+    { text: "The Supreme Court of Bahrain dismissed appeals of people convicted for supporting Iranian attacks.", refs: [5] }] }, 5, refs);
+  assert.deepEqual(v.bluf.map((b) => b.text.slice(0, 20)), ["The US Senate reject", "The Supreme Court of"], "the wrong owner goes; a context country no headline contradicts stays");
+  assert.equal(actorCountryAdded("Myanmar's junta carries out airstrikes", ["Myanmar: Junta carries out double-tap airstrikes", "Thailand offers to mediate"]), "");
+  assert.equal(actorCountryAdded("The Cambodian prime minister raises the Thai invasion", ["Prime Minister raises issue of Thai invasion of Cambodia"]), "");
+  const cut = "Russian Tu-95 bombers approach Taiwan's east, while balloons fly over the west (TVBS). The Central Weather Administration has issued warnings leading to road closures in Tai 14 A line section from 18K Tsui-pieng to 32.7K Matsue-lu due to";
+  assert.equal(cutOff(cut), "Russian Tu-95 bombers approach Taiwan's east, while balloons fly over the west (TVBS).");
+  assert.equal(cutOff("Warnings stay in force until 3:00AM EST due to flooding (US National Weather Service),"), "", "one unfinished sentence: nothing left");
+  assert.equal(cutOff("Haiti police kill 34 suspected gang members, Dominican Today reports."), "Haiti police kill 34 suspected gang members, Dominican Today reports.");
+  assert.equal(cutOff("Floods close 3 roads in Yala"), "Floods close 3 roads in Yala", "no full stop but whole");
+  // a kept summary: the wrong-owner line goes, the cut line is trimmed
+  const day = { method: "ai", refs, rules_bluf: [{ text: "Most reported: Senate rejects war powers measure", refs: [1] }],
+    bluf: [{ text: "Iran's Senate rejects the war powers resolution, The Hill reports.", refs: [1, 3] }, { text: cut, refs: [4] }], ai_watch: [] };
+  assert.equal(dropOverclaims(day), 2);
+  assert.equal(day.bluf.length, 1); assert.match(day.bluf[0].text, /\(TVBS\)\.$/); assert.equal(day.ai_actor, 1); assert.equal(day.ai_cut, 1);
+  assert.equal(dropOverclaims(day), 0, "checked again: nothing more to do");
 });
 t("fingerprint is stable and ignores the build time", () => {
   assert.equal(fingerprint({ ...d, made: "a" }), fingerprint({ ...d, made: "b" }));
