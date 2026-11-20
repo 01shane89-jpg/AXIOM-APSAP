@@ -116,6 +116,8 @@
     all().forEach(function (r) {
       if ((r.cc && here && r.cc !== here) || !shown(r)) return;
       var ln = line(r); if (ln.length < 2) return;
+      /* a folder colour in My places (assets/osap-places.js) wins over the ruler's own */
+      var fc = W.OSAP_PLACES && W.OSAP_PLACES.colorOf && W.OSAP_PLACES.colorOf("ru:" + r.id); if (fc) r = Object.assign({}, r, { col: fc });
       var g = legs(r), lbl = G.fmtDist(total(r), u) + (g.length === 1 ? " · " + deg(g[0].t) + "T" : "");
       L.polyline(ln, { pane: "rulpane", renderer: svg, color: "#fff", weight: 7, opacity: 0.85, interactive: false }).addTo(layer);
       var pl = L.polyline(ln, { pane: "rulpane", renderer: svg, color: r.col, weight: 4, opacity: 1 }).addTo(layer);

@@ -102,6 +102,7 @@ jobs:
       - run: node tests/brief_refresh.test.mjs
       - run: node tests/newimg.test.mjs
       - run: node tests/skyline.test.mjs
+      - run: node tests/trailmap.test.mjs
       - run: node tests/feedparse_image.test.mjs
       - run: node tests/news_pics.test.mjs
       # news item dates: outlets that write local time as UTC, and no item dated in the future (tools/news_date.mjs)

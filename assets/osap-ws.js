@@ -165,8 +165,8 @@
       if (s.cc !== c) return;
       /* unticked in My places (its own box, or a folder above it: assets/osap-places.js) */
       if (W.OSAP_PLACES && !W.OSAP_PLACES.shown("sh:" + s.id)) return;
-      var st = s.st || {}, o = { pane: "wsshapes", renderer: shSvg, color: col(st.line, "#e8590c"), weight: Math.min(8, Math.max(1, +st.w || 3)), opacity: isFinite(st.lop) ? Math.min(1, Math.max(0.2, +st.lop)) : 1 };
-      var lay = s.kind === "line" ? L.polyline(s.pts, o) : L.polygon(s.pts, Object.assign(o, { fill: st.fill !== null, fillColor: col(st.fill, o.color), fillOpacity: isFinite(st.op) ? Math.min(0.8, Math.max(0, +st.op)) : 0.15 }));
+      var st = s.st || {}, fc = (W.OSAP_PLACES && W.OSAP_PLACES.colorOf && W.OSAP_PLACES.colorOf("sh:" + s.id)), o = { pane: "wsshapes", renderer: shSvg, color: fc || col(st.line, "#e8590c"), weight: Math.min(8, Math.max(1, +st.w || 3)), opacity: isFinite(st.lop) ? Math.min(1, Math.max(0.2, +st.lop)) : 1 };
+      var lay = s.kind === "line" ? L.polyline(s.pts, o) : L.polygon(s.pts, Object.assign(o, { fill: st.fill !== null, fillColor: fc || col(st.fill, o.color), fillOpacity: isFinite(st.op) ? Math.min(0.8, Math.max(0, +st.op)) : 0.15 }));
       lay.bindPopup(function () {
         var d = D.createElement("div"); d.setAttribute("data-keep-pop", ""); d.className = "wspop";
         d.innerHTML = "<b>" + esc(s.name || "Imported shape") + '</b> <span class="obs">your own import</span>' +
@@ -347,6 +347,11 @@
       return o;
     }
     function folderOf(pm) { var n = []; for (var e = pm.parentElement; e && n.length < 3; e = e.parentElement) if (e.localName === "Folder") { var t = clip(txt(kid(e, "name")), 60); if (t) n.unshift(t); } return n.join(" / "); }
+    /* the whole Folder path and OSAP's own item key (written by My places' tree export, assets/osap-places.js), kept as
+       non-enumerable fields so they never reach a saved store */
+    function pathOf(pm) { var n = []; for (var e = pm.parentElement; e && n.length < 24; e = e.parentElement) if (e.localName === "Folder") n.unshift({ name: clip(txt(kid(e, "name")), 60) || "Folder", vis: txt(kid(e, "visibility")) !== "0", id: clip(e.getAttribute("id") || "", 40) }); return n; }
+    function keyOf(pm) { var k = ""; Array.prototype.forEach.call(pm.getElementsByTagNameNS("*", "Data"), function (d) { if (d.getAttribute("name") === "osap_key") k = txt(kid(d, "value")).slice(0, 64); }); return /^[a-z]{2}:[\w-]{1,60}$/.test(k) ? k : ""; }
+    function tag(x, pm) { Object.defineProperty(x, "_fp", { value: pathOf(pm) }); Object.defineProperty(x, "_key", { value: keyOf(pm) }); Object.defineProperty(x, "_vis", { value: txt(kid(pm, "visibility")) !== "0" }); return x; }
     var R = { pts: [], shapes: [], skipped: 0, holes: 0 }, now = Date.now();
     Array.prototype.forEach.call(doc.getElementsByTagNameNS("*", "Placemark"), function (pm, i) {
       var name = clip(txt(kid(pm, "name")), 60), d = desc(kid(pm, "description")), st = styleFor(pm), folder = folderOf(pm), G = geoms(pm, []);
@@ -354,26 +359,31 @@
       G.forEach(function (g) {
         if (g.k === "pt") {
           var es = extSym(pm); if (es && /^ic:/.test(es)) d = d.replace(/^Marker: [^\n]*\n?/, "");
-          R.pts.push({ id: "p" + now.toString(36) + Math.random().toString(36).slice(2, 7), cc: ccFor(g.p[0], g.p[1]), lat: g.p[0], lon: g.p[1], n: name || "K" + (R.pts.length + 1),
-            note: clip((d + (folder ? "\n" + folder : "")).trim(), 2000).replace(/ ?\n ?/g, "\n"), t: now, sym: es || symOf(st), src: "KML " + clip(file, 80) });
+          R.pts.push(tag({ id: "p" + now.toString(36) + Math.random().toString(36).slice(2, 7), cc: ccFor(g.p[0], g.p[1]), lat: g.p[0], lon: g.p[1], n: name || "K" + (R.pts.length + 1),
+            note: clip((d + (folder ? "\n" + folder : "")).trim(), 2000).replace(/ ?\n ?/g, "\n"), t: now, sym: es || symOf(st), src: "KML " + clip(file, 80) }, pm));
         } else {
           var P = g.p; if (g.k === "poly" && P.length > 3 && P[0][0] === P[P.length - 1][0] && P[0][1] === P[P.length - 1][1]) P = P.slice(0, -1);
           if (P.length < (g.k === "line" ? 2 : 3)) { R.skipped++; return; }
           if (g.holes) R.holes++;
           P = thin(P, MAX_VERT); var mid = bounds(P);
-          R.shapes.push({ id: rid("sh-"), kind: g.k, name: name, desc: d, folder: folder, cc: ccFor((mid[0][0] + mid[1][0]) / 2, (mid[0][1] + mid[1][1]) / 2), pts: P,
-            st: { line: st.line || st.icon || "#e8590c", w: st.w || 3, lop: st.lop, fill: st.fill === null ? null : st.fill || st.line || "#e8590c", op: st.op }, file: clip(file, 80), added: now });
+          R.shapes.push(tag({ id: rid("sh-"), kind: g.k, name: name, desc: d, folder: folder, cc: ccFor((mid[0][0] + mid[1][0]) / 2, (mid[0][1] + mid[1][1]) / 2), pts: P,
+            st: { line: st.line || st.icon || "#e8590c", w: st.w || 3, lop: st.lop, fill: st.fill === null ? null : st.fill || st.line || "#e8590c", op: st.op }, file: clip(file, 80), added: now }, pm));
         }
       });
     });
     return R;
   }
-  function importKml(text, file) {
-    var R = parseKml(text, file), A = W.OSAP_ATAK && W.OSAP_ATAK.pts, have = A ? A.all() : arr(json(raw(PTS) || "[]", []));
-    var room = Math.max(0, MAX_PTS - have.length), P = R.pts.slice(0, room), S = shapes(), sroom = Math.max(0, MAX_SHAPES - S.length), SH = R.shapes.slice(0, sroom);
+  /* parsed points and shapes into the active workspace, within the caps: -> { pts, shapes } as saved */
+  function addParsed(pts, shs) {
+    var A = W.OSAP_ATAK && W.OSAP_ATAK.pts, have = A ? A.all() : arr(json(raw(PTS) || "[]", []));
+    var room = Math.max(0, MAX_PTS - have.length), P = arr(pts).slice(0, room), S = shapes(), sroom = Math.max(0, MAX_SHAPES - S.length), SH = arr(shs).slice(0, sroom);
     if (P.length) { if (A) { A.save(have.concat(P)); A.draw(); A.paint(); } else put(PTS, JSON.stringify(have.concat(P))); }
     if (SH.length && !put(SHAPES, JSON.stringify(S.concat(SH)))) { SH = []; }
     drawShapes();
+    return { pts: P, shapes: SH };
+  }
+  function importKml(text, file) {
+    var R = parseKml(text, file), got = addParsed(R.pts, R.shapes), P = got.pts, SH = got.shapes;
     var pl = function (n, w) { return n + " " + w + (n === 1 ? "" : "s"); };
     var m = "Imported " + [pl(P.length, "point"), pl(SH.filter(function (s) { return s.kind === "line"; }).length, "line"), pl(SH.filter(function (s) { return s.kind === "poly"; }).length, "area")].join(", ") +
       " from " + file + " into " + active().name + ".";
@@ -640,5 +650,5 @@
   if (W.__asapMap) later(); else W.addEventListener("load", later);
   W.OSAP_WS = { open: open, close: close, active: active, scoped: scoped, list: function () { return reg().list.slice(); }, items: liveItems, switchTo: switchTo, create: newWs, remove: dropWs,
     importText: function (text, name) { return importKml(text, name || "file.kml"); }, importFile: importFile, kml: function () { return toKml(active().name, features(raw, liveAreas(raw, liveKeys()))); },
-    zip: zip, unzip: unzip, exportZip: exportZip, parseKml: parseKml, draw: drawShapes };
+    zip: zip, unzip: unzip, exportZip: exportZip, parseKml: parseKml, addParsed: addParsed, draw: drawShapes, kHex: kHex };
 })();
