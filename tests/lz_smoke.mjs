@@ -274,7 +274,8 @@ let viaPostpass = "";
   const ar = await p.evaluate(() => window.OSAP_LZ.state().res.cands.map((k) => [k.lat, k.lon]));
   ok(ar.length >= 1 && ar.every((q) => inBox(q, 13.745, 100.484, 13.752, 100.5025)), "desktop: area search keeps candidates inside the drawn area (" + ar.length + ")");
 
-  ok(await p.evaluate(() => { const c = document.getElementById("lz-card").getBoundingClientRect(), m = window.__asapMap.getContainer().getBoundingClientRect(); return !!document.querySelector("#lz-dock.osplit #lz-card") && Math.abs(c.right - innerWidth) < 2 && Math.abs(c.top - Math.max(0, m.top)) < 2 && c.width <= 482; }), "desktop: split view docks the card on the right, under the header");
+  ok(await p.evaluate(() => { const c = document.getElementById("lz-dock").getBoundingClientRect(), m = window.__asapMap.getContainer().getBoundingClientRect(); return !!document.querySelector("#lz-dock.osplit #lz-card") && Math.abs(c.right - innerWidth) < 2 && Math.abs(c.top - Math.max(0, m.top)) < 2 && c.width <= 482; }), "desktop: split view docks the card on the right, under the header");
+  ok(await p.evaluate(() => { const h = document.querySelector("#lz-dock > .osheet-h"); return !!h && h.offsetHeight > 0 && h.querySelector(".osh-t b").textContent === "Landing zones" && [...h.querySelectorAll(".osh-b button")].map((b) => b.textContent).join("/") === "Map/Half/Full"; }), "desktop: the docked card has the Map / Half / Full bar, titled Landing zones");
   ok(await p.evaluate(() => { const pad = window.OSAP_SPLIT.clear(document.getElementById("lz-dock")), m = window.__asapMap, b = m.getBounds(); return window.OSAP_LZ.state().res.cands.every((k) => { const pt = m.latLngToContainerPoint([k.lat, k.lon]); return pt.x >= pad.tl[0] && pt.x <= m.getSize().x - pad.br[0]; }); }), "desktop: every candidate is in the part of the map the panel leaves clear");
   await p.click('#lz-card [data-lz="close"]'); await p.waitForTimeout(200);
   ok(await p.evaluate(() => document.querySelectorAll(".leaflet-lzpane-pane path, .leaflet-lzpane-pane img").length === 0 && document.getElementById("lz-card").hidden), "desktop: Close removes the card and the marks");
@@ -314,6 +315,16 @@ let viaPostpass = "";
   await p.evaluate(() => window.TSAP.areaApi.setArea([[13.745, 100.484], [13.752, 100.484], [13.752, 100.5025], [13.745, 100.5025]])); await p.waitForTimeout(300);
   await p.evaluate(() => window.OSAP_AREA_TOOLS.filter((t) => t.id === "lz")[0].run()); await p.waitForTimeout(300); await done(p);
   ok(await p.evaluate(() => !!document.querySelector("#lz-dock.osplit:not([hidden]) #lz-card")), "phone results: Landing zones opens in half screen");
+  {
+    const sz = () => p.evaluate(() => { const d = document.getElementById("lz-dock"), r = d.getBoundingClientRect(); return { stop: d.getAttribute("data-osheet"), h: r.height, vh: innerHeight, bar: !!d.querySelector(":scope > .osheet-h .osh-b") }; });
+    const go = async (t) => { await p.click('#lz-dock > .osheet-h .osh-b button:text-is("' + t + '")'); await p.waitForTimeout(350); };
+    const h0 = await sz();
+    await go("Map"); const hm = await sz();
+    await go("Full"); const hf = await sz();
+    await go("Half"); const hh = await sz();
+    ok(h0.bar && h0.stop === "half" && hm.stop === "min" && hm.h < 90 && hf.stop === "full" && hf.h > hf.vh * 0.8 && hh.stop === "half" && Math.abs(hh.h - h0.h) < 4, "phone results: the Map / Half / Full bar folds the card to its bar, fills the screen and comes back (" + [h0, hm, hf, hh].map((x) => x.stop + " " + Math.round(x.h)).join(", ") + ")");
+    if (OUT) { await go("Map"); await p.screenshot({ path: OUT + "/lz-phone-map.png" }); await go("Half"); await p.screenshot({ path: OUT + "/lz-phone-half.png" }); }
+  }
   const tip = await p.evaluate(() => { const t = document.querySelector(".leaflet-tooltip.lznum"); if (!t) return null; const c = getComputedStyle(t); return { bg: c.backgroundColor, col: c.color, ts: c.textShadow, op: c.opacity, h: t.getBoundingClientRect().height }; });
   ok(!!tip && tip.bg === "rgb(46, 125, 50)" && tip.col === "rgb(255, 255, 255)" && tip.ts === "none" && tip.op === "1" && Math.abs(tip.h - 24) < 0.5, "phone results: candidate numbers are solid green badges with white text, no blurred shadow, full opacity " + JSON.stringify(tip));
   /* tapping a candidate in the list centres it in the strip of map above the panel, with its pop-up there too */
