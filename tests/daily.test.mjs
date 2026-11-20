@@ -158,4 +158,11 @@ t("a country brief's watch points are carried only while the brief is 30 days ol
   assert.equal(briefFresh("2026-11-01", Date.parse("2026-11-19T03:00:00Z")), true);
   assert.equal(briefFresh("2027-01-01", Date.parse("2026-11-19T03:00:00Z")), false);
 });
+t("a refreshed brief's watch points are dated by watch_asof, not by its as_of", () => {
+  const b = (as_of, watch_asof) => ({ as_of, researched: "2026-08-01", threat: { watch_points: ["Watch the border"], watch_asof } });
+  const w = buildRules({ ...inp, brief: b("2026-09-20", "2026-09-19") }, R).watch.filter((x) => x.from === "brief");
+  assert.equal(w.length, 1); assert.equal(w[0].asof, "2026-09-19");
+  // as_of moved by a section update while the watch points stayed from an old research date: not carried
+  assert.equal(buildRules({ ...inp, brief: b("2026-09-20", null) }, R).watch.filter((x) => x.from === "brief").length, 0);
+});
 console.log(`${ok} passed`);

@@ -136,7 +136,9 @@ export function buildRules(inp, R) {
   const b = inp.brief;
   // A country brief's watch points are an AI draft written on its as_of day: carried only while that is within BRIEF_MAX_DAYS of the
   // window's end, so a stale draft (all 160 briefs were dated 26 Sep 2026 on 19 Nov) is never shown as today's "What to watch".
-  if (b && b.threat && Array.isArray(b.threat.watch_points) && briefFresh(b.as_of, end)) b.threat.watch_points.slice(0, 2).forEach((t) => watch.push({ from: "brief", text: String(t), refs: [], asof: b.as_of }));
+  // A refreshed brief (tools/refresh_briefs.mjs) dates its watch points apart (watch_asof); its as_of can move for other updates.
+  const wDate = b && b.threat && (b.threat.watch_asof || b.researched || b.as_of);
+  if (b && b.threat && Array.isArray(b.threat.watch_points) && briefFresh(wDate, end)) b.threat.watch_points.slice(0, 2).forEach((t) => watch.push({ from: "brief", text: String(t), refs: [], asof: wDate }));
   const out = { schema: SCHEMA, cc: inp.cc, name: inp.name, date: new Date(end).toISOString().slice(0, 10), window: { from: iso(end - win * 36e5) + "Z", to: iso(end) + "Z", hours: win },
     method: "rules", bluf, events, watch, refs,
     basis: { reports: items.length, outlets: new Set(items.map((i) => i.outlet)).size, events: groups.length, conflict: items.filter((i) => i.via === "conflict").length, left_out: inp._soft || 0 },

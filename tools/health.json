@@ -35,6 +35,7 @@
     { "id": "roads", "file": "data/live/roads.js", "name": "Road closures", "maxMin": 90, "count": "items" },
     { "id": "wx", "file": "data/live/wx-forecast.js", "name": "Weather forecast", "maxMin": 90 },
     { "id": "evsum", "file": "data/live/evsum.js", "name": "Event summaries (AI draft)", "maxMin": 180 },
+    { "id": "briefs", "file": "data/live/brief-refresh.js", "name": "Country briefs (refreshed twice daily, each about weekly)", "maxMin": 2160, "key": true },
     { "id": "osm", "file": "data/live/osm-sources.js", "name": "Live map data (OpenStreetMap via Postpass)", "maxMin": 120, "key": true },
     { "id": "airtraffic", "url": "https://raw.githubusercontent.com/01shane89-jpg/AXIOM-APSAP/live-air/index.json", "stamp": "built", "name": "Live air traffic (ADS-B)", "maxMin": 45, "key": true },
     { "id": "drones", "url": "https://raw.githubusercontent.com/01shane89-jpg/AXIOM-APSAP/live-drones/drones.json", "stamp": "built", "name": "Live drones and military aircraft", "maxMin": 45, "key": true }
