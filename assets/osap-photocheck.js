@@ -547,6 +547,8 @@
         '<p class="obs">Stepping uses the frame rate you set (30 if you do not know it); the browser shows the nearest frame it can decode.</p>';
     } else if (S.url) {
       h = '<img class="phc-media" alt="' + esc(f.name) + '" src="' + S.url + '">' +
+        /* Skyline match (assets/osap-skyline.js): where the hills on the horizon fit the terrain; proposals only */
+        (W.OSAP_SKYLINE ? '<p><button type="button" class="phc-b" data-phc-sky title="Trace the skyline and search the terrain for spots it fits. Proposals, never a confirmation.">Skyline match: where could this be?</button></p>' : "") +
         (f.frame ? '<p class="obs">A frame from ' + esc(f.src) + ' at ' + S.frame.t.toFixed(3) + ' s. A frame has no metadata of its own; the video\'s is shown below. <button type="button" class="phc-b sm" data-phc="back">Back to the video</button></p>' : "");
     }
     h += '<p class="obs">' + esc(f.name) + " \u00b7 " + esc(kb(f.size)) + (f.type ? " \u00b7 " + esc(f.type) : "") + (S.sha ? '<br>SHA-256 <code class="phc-sha">' + esc(S.sha) + "</code>" : "") + "</p>";

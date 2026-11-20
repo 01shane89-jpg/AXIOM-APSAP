@@ -1794,7 +1794,8 @@ function main() {
     if (!S.kept) return; S.kept.clearLayers();
     savedAll().forEach(function (x) {
       if (!x.show || sameWps(x.wps, S.wps) || (W.OSAP_PLACES && !W.OSAP_PLACES.shown("rt:" + x.id))) return;
-      var col = KCOL.indexOf(x.color) >= 0 ? x.color : KCOL[0], ln = keptLine(x), straight = !(Array.isArray(x.line) && x.line.length > 1);
+      /* a folder colour in My places (assets/osap-places.js) wins over the route's own */
+      var col = (W.OSAP_PLACES && W.OSAP_PLACES.colorOf && W.OSAP_PLACES.colorOf("rt:" + x.id)) || (KCOL.indexOf(x.color) >= 0 ? x.color : KCOL[0]), ln = keptLine(x), straight = !(Array.isArray(x.line) && x.line.length > 1);
       L.polyline(ln, { pane: "routepane", renderer: S.svg, color: "#fff", weight: 7, opacity: 0.85, interactive: false }).addTo(S.kept);
       var pl = L.polyline(ln, { pane: "routepane", renderer: S.svg, color: col, weight: 4, opacity: 0.95, dashArray: straight ? "8 6" : null });
       pl.bindPopup(function () {
