@@ -60,10 +60,9 @@
       var hs = []; fails.forEach(function (l) { var h = host(l); if (hs.indexOf(h) < 0) hs.push(h); });
       label.innerHTML = navigator.onLine === false ? esc("Offline: the map shows what this device saved.") :
         esc(n + " map pictures from " + hs.slice(0, 2).join(" and ") + " did not load. ") + '<button type="button">Try again</button>';
+      /* on a narrow map (a phone) the line was cut with "..." and its Try again button with it (20 Nov 2026): drop the service names */
+      if (navigator.onLine !== false && label.scrollWidth > label.clientWidth + 1) label.innerHTML = esc("Map pictures did not load. ") + '<button type="button">Try again</button>';
     } else label.textContent = "Loading map " + pct + "%";
-    /* the failure line wraps only when it would be cut with "..." (a phone): the cut hid its Try again button (20 Nov 2026) */
-    label.classList.remove("wrap");
-    if (bad && !busy && label.scrollWidth > label.clientWidth + 1) label.classList.add("wrap");
     place();
     if (busy) kick();
   }
@@ -78,6 +77,9 @@
     }
     label.style.top = top + "px";
   }
+  /* a map pop-up's buttons stay clickable: the label steps aside while one is open, as the data sets note does */
+  map.on("popupopen", function () { bar.classList.add("pop"); });
+  map.on("popupclose", function () { bar.classList.remove("pop"); });
   /* the note can close or open while the label is up */
   mapEl.addEventListener("click", function () { if (!bar.hidden) setTimeout(place, 0); });
   bar.addEventListener("click", function (e) {
@@ -96,9 +98,8 @@
     "#mload span{position:absolute;left:50%;top:8px;transform:translateX(-50%);white-space:nowrap;max-width:calc(100% - 140px);overflow:hidden;text-overflow:ellipsis;" +
     "font:600 11.5px/1.2 system-ui,-apple-system,sans-serif;color:#fff;background:rgba(20,24,28,.8);padding:4px 9px;border-radius:10px;pointer-events:auto}" +
     "#mload.err i{background:#e8590c;box-shadow:none}" +
-    "#mload.err span.wrap{white-space:normal;width:max-content;text-align:center;line-height:1.35}" +
-    /* a map pop-up's buttons stay clickable: the label steps aside while one is open, as the data sets note does (index.html) */
-    "#map.pop-open #mload span{visibility:hidden}#mload span button{font:inherit;color:#ffd8a8;background:none;border:0;padding:0 2px;text-decoration:underline;cursor:pointer;min-height:24px}";
+    /* it steps aside while a pop-up is open or an area is being drawn, as the data sets note does (index.html .dshint) */
+    "#mload.pop span,.area-drawing #mload span,.area-editing #mload span{visibility:hidden}#mload span button{font:inherit;color:#ffd8a8;background:none;border:0;padding:0 2px;text-decoration:underline;cursor:pointer;min-height:24px}";
   D.head.appendChild(st);
   W.OSAP_MAPLOAD = { state: function () { return { hidden: bar.hidden, err: bar.classList.contains("err"), want: want, got: got, fails: fails.length, text: label.textContent }; } };
 })();
