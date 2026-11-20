@@ -35,6 +35,7 @@ const EXTRA = {
   "เกาะลันตา": ["Ko Lanta", "Koh Lanta", "Lanta"], "เกาะกูด": ["Ko Kut", "Koh Kood", "Koh Kut"], "เกาะเสม็ด": ["Ko Samet", "Koh Samet", "Samet"],
   "แม่สอด": ["Mae Sot"], "แม่สาย": ["Mae Sai"], "สนามบินสุวรรณภูมิ": ["Suvarnabhumi"], "ดอนเมือง": ["Don Mueang", "Don Muang"],
   "สุไหงโก-ลก": ["Sungai Kolok", "Su-ngai Kolok", "Sungai Golok"], "เบตง": ["Betong"], "อรัญประเทศ": ["Aranyaprathet"],
+  "บานา": ["Bana"],
 };
 const STRIP_EN = /^(?:Amphoe|Changwat|King Amphoe|Mueang|Muang|Amphur|Khet|Ban)\s+|\s+(?:Province|District)$/i;
 const STRIP_TH = /^(?:จังหวัด|อำเภอ|กิ่งอำเภอ|เขต|เมือง)/;

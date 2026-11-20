@@ -179,6 +179,7 @@ jobs:
       - run: node tests/mt_facts.test.mjs
       - run: node tests/th_places.test.mjs
       - run: node tests/mt_glossary.test.mjs
+      - run: node tests/mt_thai.test.mjs
       # licence: outlet summaries are read by the jobs but never stored
       - run: node tests/outlet_text.test.mjs
       # sold-version switch: non-commercial sources come out in one step (tools/nc_strip.mjs)
