@@ -61,8 +61,22 @@
       label.innerHTML = navigator.onLine === false ? esc("Offline: the map shows what this device saved.") :
         esc(n + " map pictures from " + hs.slice(0, 2).join(" and ") + " did not load. ") + '<button type="button">Try again</button>';
     } else label.textContent = "Loading map " + pct + "%";
+    place();
     if (busy) kick();
   }
+  /* The "No data sets on the map yet" note (index.html .dshint) sits at the top left of the map; on a first open the label landed
+     on top of it and covered its Choose data sets button (design review, 20 Nov 2026). While the note shows, the label moves to
+     just below it. */
+  function place() {
+    var h = mapEl.querySelector(".dshint"), top = 8;
+    if (h && !h.hidden && h.getClientRects().length) {
+      var hr = h.getBoundingClientRect(), mr = mapEl.getBoundingClientRect();
+      if (hr.height) top = Math.max(8, Math.round(hr.bottom - mr.top + 6));
+    }
+    label.style.top = top + "px";
+  }
+  /* the note can close or open while the label is up */
+  mapEl.addEventListener("click", function () { if (!bar.hidden) setTimeout(place, 0); });
   bar.addEventListener("click", function (e) {
     if (!e.target.closest("button")) return;
     var ls = []; fails.forEach(function (l) { if (ls.indexOf(l) < 0) ls.push(l); });
