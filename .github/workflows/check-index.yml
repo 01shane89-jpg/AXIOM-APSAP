@@ -101,6 +101,7 @@ jobs:
       - run: node tests/daily.test.mjs
       - run: node tests/brief_refresh.test.mjs
       - run: node tests/newimg.test.mjs
+      - run: node tests/whatchanged.test.mjs
       - run: node tests/skyline.test.mjs
       - run: node tests/trailmap.test.mjs
       - run: node tests/feedparse_image.test.mjs

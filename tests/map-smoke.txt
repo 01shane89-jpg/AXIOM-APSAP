@@ -88,6 +88,8 @@ tests/pop_smoke.mjs
 tests/warngeo_smoke.mjs
 tests/sat_smoke.mjs
 tests/newimg_smoke.mjs
+# What changed here: dated Wayback pictures compared at one point (assets/osap-newimg.js, rules chg-v1)
+tests/whatchanged_smoke.mjs
 tests/plumes_smoke.mjs
 tests/keydates_smoke.mjs
 tests/coverage_smoke.mjs
