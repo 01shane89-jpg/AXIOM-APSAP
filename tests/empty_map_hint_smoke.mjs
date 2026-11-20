@@ -32,12 +32,20 @@ async function open(opts, sets) {
   await p.waitForTimeout(2500);
   return { p, ctx, errors };
 }
+// the map-loading label (assets/osap-maploading.js #mload span: "Loading map 60%" or "16 map pictures ... did not load") must not cover
+// the note: on 20 Nov 2026 both sat at the top of the map and the label hid the Choose data sets button
+const toast = () => { const e = document.querySelector("#mload:not([hidden]) span"); if (!e || !e.getClientRects().length) return null; const b = e.getBoundingClientRect(), m = window.__asapMap.getContainer().getBoundingClientRect(); return { l: b.left, r: b.right, top: b.top, bot: b.bottom, rel: Math.round(b.top - m.top) }; };
+const apart = (a, b) => !a || !b || a.r <= b.l || b.r <= a.l || a.bot <= b.top || b.bot <= a.top;
 const hint = () => { const e = document.querySelector(".dshint"); if (!e || e.hidden || getComputedStyle(e).display === "none") return null; const b = e.getBoundingClientRect(); return { t: e.textContent, l: b.left, r: b.right, top: b.top, bot: b.bottom, btn: [...e.querySelectorAll("button")].map((x) => Math.round(x.getBoundingClientRect().height)) }; };
 
 {
   const { p, ctx, errors } = await open({ viewport: { width: 1440, height: 900 } });
   const h = await p.evaluate(hint);
   ok(h && /No data sets on the map yet/.test(h.t) && /Choose data sets/.test(h.t), "desktop, nothing ticked: the note says so (" + (h && h.t) + ")");
+  // outside tiles are blocked, so the map-loading label is up (loading, then "did not load"); it sits below the note, not on it
+  await p.waitForFunction(() => { const e = document.querySelector("#mload:not([hidden]) span"); return e && e.textContent; }, null, { timeout: 20000 }).catch(() => {});
+  const t1 = await p.evaluate(toast);
+  ok(t1 && apart(t1, h), "desktop: the map-loading label does not cover the note " + JSON.stringify({ t1, h }));
   // the map-loading bar stays up with outside tiles blocked and would take a real pointer click, so the buttons are pressed in the page
   await p.evaluate(() => document.querySelector(".dshint [data-dspick]").click());
   await p.waitForTimeout(800);
@@ -46,11 +54,15 @@ const hint = () => { const e = document.querySelector(".dshint"); if (!e || e.hi
   // a pop-up that stays a pop-up (the terrain menu, data-keep-pop) can sit under the note; the note steps aside until it closes (lidar_smoke caught this)
   await p.evaluate(() => { const m = window.__asapMap; window.__pp = L.popup().setLatLng(m.getCenter()).setContent('<div data-keep-pop="1">Viewshed from here</div>').openOn(m); });
   ok(!(await p.evaluate(hint)), "a map popup open: the note steps aside");
+  ok(await p.evaluate(() => { const e = document.querySelector("#mload span"); return !e || getComputedStyle(e).visibility === "hidden" || !e.getClientRects().length; }), "a map popup open: the map-loading label steps aside too, so it never takes the popup's clicks (route_savedpts, area_shapes)");
   await p.evaluate(() => window.__asapMap.closePopup());
   ok(!!(await p.evaluate(hint)), "popup closed: the note is back");
   await p.evaluate(() => document.querySelector(".dshint [data-dsgone]").click());
   await p.evaluate(() => window.OSAP_DATASETS && window.OSAP_DATASETS.refresh && window.OSAP_DATASETS.refresh());
   ok(!(await p.evaluate(hint)), "closing the note keeps it gone for this tab");
+  await p.waitForTimeout(300);
+  const t2 = await p.evaluate(toast);
+  ok(!t2 || t2.rel <= 10, "note closed: the map-loading label goes back to the top of the map (" + (t2 && t2.rel) + ")");
   ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }
@@ -63,8 +75,14 @@ const hint = () => { const e = document.querySelector(".dshint"); if (!e || e.hi
   const { p, ctx, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   const h = await p.evaluate(hint);
   const g = await p.evaluate(() => { const r = (s) => { const e = document.querySelector(s); if (!e) return null; const b = e.getBoundingClientRect(); return { l: b.left, r: b.right, top: b.top, bot: b.bottom }; }; return { arrow: r(".ocp-btn"), bar: r("#atk-tools") }; });
-  const apart = (a, b) => !a || !b || a.r <= b.l || b.r <= a.l || a.bot <= b.top || b.bot <= a.top;
   ok(!!h, "phone, nothing ticked: the note shows");
+  await p.waitForFunction(() => { const e = document.querySelector("#mload:not([hidden]) span"); return e && e.textContent; }, null, { timeout: 20000 }).catch(() => {});
+  const t3 = await p.evaluate(toast);
+  ok(t3 && apart(t3, h), "phone: the map-loading label does not cover the note " + JSON.stringify({ t3, h }));
+  // the "did not load" line is not cut with "..." on a phone (it drops the service names), so its Try again button stays on screen
+  await p.waitForFunction(() => document.querySelector("#mload.err span button"), null, { timeout: 30000 }).catch(() => {});
+  const tb = await p.evaluate(() => { const s = document.querySelector("#mload.err span"), b = s && s.querySelector("button"); if (!b) return null; const r = b.getBoundingClientRect(), q = s.getBoundingClientRect(); return { inside: r.width > 0 && r.left >= q.left - 1 && r.right <= q.right + 1 && r.bottom <= q.bottom + 1, onscreen: r.right <= innerWidth && r.left >= 0, cut: s.scrollWidth > s.clientWidth + 1 }; });
+  ok(tb && tb.inside && tb.onscreen && !tb.cut, "phone: the map-loading failure line shows its Try again button in full " + JSON.stringify(tb));
   ok(h && apart(h, g.arrow), "phone: the note does not cover the north arrow " + JSON.stringify({ h, a: g.arrow }));
   ok(h && apart(h, g.bar), "phone: the note does not cover the toolbar " + JSON.stringify({ h, bar: g.bar }));
   ok(h && h.btn.every((x) => x >= 40), "phone: the note's buttons are at least 40 px tall (" + (h && h.btn) + ")");
