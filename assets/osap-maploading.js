@@ -79,7 +79,8 @@
   }
   /* a map pop-up's buttons stay clickable: the label steps aside while one is open, as the data sets note does */
   map.on("popupopen", function () { bar.classList.add("pop"); });
-  map.on("popupclose", function () { bar.classList.remove("pop"); });
+  /* on close, look again: a pop-up re-drawn in place opens its new copy before the old one closes */
+  map.on("popupclose", function () { setTimeout(function () { bar.classList.toggle("pop", !!mapEl.querySelector(".leaflet-popup")); }, 0); });
   /* the note can close or open while the label is up */
   mapEl.addEventListener("click", function () { if (!bar.hidden) setTimeout(place, 0); });
   bar.addEventListener("click", function (e) {
@@ -99,7 +100,9 @@
     "font:600 11.5px/1.2 system-ui,-apple-system,sans-serif;color:#fff;background:rgba(20,24,28,.8);padding:4px 9px;border-radius:10px;pointer-events:auto}" +
     "#mload.err i{background:#e8590c;box-shadow:none}" +
     /* it steps aside while a pop-up is open or an area is being drawn, as the data sets note does (index.html .dshint) */
-    "#mload.pop span,.area-drawing #mload span,.area-editing #mload span{visibility:hidden}#mload span button{font:inherit;color:#ffd8a8;background:none;border:0;padding:0 2px;text-decoration:underline;cursor:pointer;min-height:24px}";
+    "#mload.pop span,.area-drawing #mload span,.area-editing #mload span{visibility:hidden}" +
+    /* its own rule: a browser without :has drops only this one */
+    ".leaflet-container:has(.leaflet-popup) #mload span{visibility:hidden}#mload span button{font:inherit;color:#ffd8a8;background:none;border:0;padding:0 2px;text-decoration:underline;cursor:pointer;min-height:24px}";
   D.head.appendChild(st);
   W.OSAP_MAPLOAD = { state: function () { return { hidden: bar.hidden, err: bar.classList.contains("err"), want: want, got: got, fails: fails.length, text: label.textContent }; } };
 })();
