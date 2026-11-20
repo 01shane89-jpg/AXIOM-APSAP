@@ -289,3 +289,4 @@ tests/empty_map_hint_smoke.mjs
 tests/daily_confirm_smoke.mjs
 tests/split_map_full_smoke.mjs
 tests/brief_report_smoke.mjs
+tests/health_ops_smoke.mjs

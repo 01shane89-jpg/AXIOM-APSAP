@@ -133,7 +133,10 @@ async function readFeed(f) {
     // an outlet's own date older than MAX_AGE_DAYS is an archive hit (search fallbacks, front-page feeds that stopped updating),
     // not current news: left out of the live list (data/history keeps older items it already had)
     const cut = new Date(Date.now() - MAX_AGE_DAYS * 864e5).toISOString().slice(0, 16), fresh = list.filter((o) => o.date_seen || !(o.date < cut));
-    push(f.st ? "us:" + f.st : f.cc, fresh); status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: true, n: fresh.length, ...(fresh.length < list.length ? { old: list.length - fresh.length } : {}) });
+    // newest: the outlet's own date of its newest item, so tools/health.mjs sees at once a feed that answers but stopped
+    // publishing (NHK's old feed answered ok with nothing newer than 8 Aug 2026 until 19 Nov)
+    const newest = list.reduce((m, o) => (typeof o.date === "string" && o.date > m ? o.date : m), "").slice(0, 16);
+    push(f.st ? "us:" + f.st : f.cc, fresh); status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: true, n: fresh.length, ...(fresh.length < list.length ? { old: list.length - fresh.length } : {}), ...(newest ? { newest } : {}) });
   } catch (e) {
     if (f.names && failed.has(f.url)) return;   // a regional outlet that did not answer is listed failed once, not once per country
     failed.add(f.url); status.push({ cc: f.cc, st: f.st, source: f.outlet, url: f.url, ok: false, error: e.name === "AbortError" ? "timed out" : e.message + (e.cause && e.cause.code ? " (" + e.cause.code + ")" : "") });

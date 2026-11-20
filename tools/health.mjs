@@ -11,7 +11,7 @@
 //   Env: HEALTH_DRY=1 prints instead of posting; HEALTH_SITE / HEALTH_TOPIC override tools/health.json (tests).
 import fs from "node:fs";
 import vm from "node:vm";
-import { stampOf, sourcesOf, countOf, evaluate, decide, lastAnnounced, fpTag } from "./health_lib.mjs";
+import { stampOf, sourcesOf, countOf, evaluate, decide, lastAnnounced, fpTag, updateSeen, quietSources, cronsOf, jobLimitMin, lateJobs } from "./health_lib.mjs";
 
 const cfg = JSON.parse(fs.readFileSync(new URL("./health.json", import.meta.url), "utf8"));
 const SITE = (process.env.HEALTH_SITE || cfg.site).replace(/\/?$/, "/");
@@ -24,8 +24,33 @@ async function remoteText(f) {
   try { const r = await get(f.url + (f.url.includes("?") ? "&" : "?") + "t=" + Date.now(), 20000); return r.ok ? await r.text() : null; } catch (e) { return null; }
 }
 
+// every scheduled workflow's last successful run on main (tools/health_lib.mjs lateJobs); asked at most hourly, else the last
+// answer is carried over. Needs a token with actions: read (refresh-flood.yml gives its GITHUB_TOKEN); without one, skipped.
+async function jobs(prev) {
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN, repo = process.env.GITHUB_REPOSITORY || "01shane89-jpg/AXIOM-APSAP";
+  if (prev && prev.at && Date.now() - Date.parse(prev.at) < 55 * 60000 && !process.env.HEALTH_JOBS_NOW) return prev;
+  if (!token) return prev || null;
+  const dir = ".github/workflows", list = []; let asked = 0, failed = 0;
+  for (const file of fs.readdirSync(dir).filter((f) => /\.ya?ml$/.test(f)).sort()) {
+    const yml = fs.readFileSync(`${dir}/${file}`, "utf8"), maxMin = jobLimitMin(cronsOf(yml));
+    if (!maxMin) continue;
+    const name = (/^name:\s*(.+)$/m.exec(yml) || [])[1] || file;
+    let last = null; asked++;
+    try {
+      const r = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/${file}/runs?branch=main&status=success&per_page=1`,
+        { headers: { authorization: "Bearer " + token, accept: "application/vnd.github+json", "user-agent": "osap-health" }, signal: AbortSignal.timeout(20000) });
+      if (!r.ok) { failed++; console.log(`  jobs: ${file} answered HTTP ${r.status}`); if (prev) { const o = (prev.list || []).find((x) => x.file === file); if (o) list.push(o); } continue; }
+      const run = ((await r.json()).workflow_runs || [])[0]; last = run ? run.updated_at || run.created_at : null;
+    } catch (e) { failed++; console.log(`  jobs: ${file}: ${e.message}`); continue; }
+    list.push({ file, name: name.replace(/^["']|["']$/g, "").trim(), maxMin, last });
+  }
+  // when GitHub would not answer, the last answer is kept and the failure is listed, never an empty "nothing late"
+  if (asked && failed === asked) return { ...(prev || { list: [] }), error: "could not read the workflow runs (" + failed + " of " + asked + " failed)" };
+  return { at: new Date().toISOString().slice(0, 19) + "Z", list };
+}
+
 async function build() {
-  const feeds = [];
+  const feeds = [], srcLists = [];
   for (const f of cfg.feeds) {
     const row = { id: f.id, name: f.name, key: !!f.key, maxMin: f.maxMin || cfg.defaultMaxMin, asof: null };
     if (f.url) { const t = await remoteText(f); row.asof = t ? stampOf(t, f.stamp || "asof") : null; feeds.push(row); continue; }
@@ -40,6 +65,7 @@ async function build() {
         const obj = Object.values(box.window)[0];
         const src = sourcesOf(obj);
         if (src) row.src = src;
+        for (const k of ["sources", "feeds"]) { let v = obj && obj[k]; if (v && !Array.isArray(v) && typeof v === "object") v = Object.values(v); if (Array.isArray(v)) { srcLists.push({ feed: f.id, sources: v }); break; } }
         if (f.count) { const n = countOf(obj, f.count); if (n != null) { row.n = n; row.minItems = f.minItems || 1; } }
         if (obj === null) row.asof = null;
       } catch (e) {}
@@ -47,12 +73,23 @@ async function build() {
     feeds.push(row);
   }
   const run = process.env.GITHUB_RUN_ID ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}` : null;
-  const out = { v: 1, asof: new Date().toISOString().slice(0, 19) + "Z", run, topic: TOPIC, amberMin: cfg.amberMin, downMin: cfg.downMin, feeds };
+  // quiet sources (tools/health_lib.mjs updateSeen, quietSources): day-resolution memory in data/live/source-seen.json
+  const today = new Date().toISOString().slice(0, 10), SEEN = "data/live/source-seen.json";
+  let seen = {}; try { seen = JSON.parse(fs.readFileSync(SEEN, "utf8")).seen || {}; } catch (e) {}
+  const up = updateSeen(seen, srcLists, today);
+  if (up.changed) { fs.mkdirSync("data/live", { recursive: true }); fs.writeFileSync(SEEN, JSON.stringify({ about: "tools/health.mjs: per source, first listed, last listed, last ok answer, last day with items", seen: up.seen }) + "\n"); }
+  const quiet = quietSources(up.seen, today);
+  let prevHealth = null; try { prevHealth = JSON.parse(fs.readFileSync("data/live/health.json", "utf8")); } catch (e) {}
+  const jb = await jobs(prevHealth && prevHealth.jobs);
+  const out = { v: 1, asof: new Date().toISOString().slice(0, 19) + "Z", run, topic: TOPIC, amberMin: cfg.amberMin, downMin: cfg.downMin, feeds,
+    quiet: { n: quiet.length, list: quiet.slice(0, 60) }, ...(jb ? { jobs: { ...jb, late: lateJobs(jb.list) } } : {}) };
   fs.mkdirSync("data/live", { recursive: true });
   fs.writeFileSync("data/live/health.json", JSON.stringify(out) + "\n");
   const ev = evaluate(out, cfg);
   console.log(`health: ${ev.state}; ${feeds.length} feeds; ${ev.problems.length} problem(s)`);
   for (const p of ev.problems) console.log(`  ${p.key ? "KEY " : ""}${p.name}: ${p.why}`);
+  console.log(`health: ${quiet.length} quiet source(s)` + (quiet.length ? ": " + quiet.slice(0, 5).map((q) => q.name + " (" + q.why + ")").join("; ") : ""));
+  if (out.jobs) console.log(`health: ${out.jobs.late.length} of ${out.jobs.list.length} scheduled jobs late` + (out.jobs.late.length ? ": " + out.jobs.late.map((j) => j.name + " (" + j.why + ")").join("; ") : ""));
 }
 
 async function get(url, ms = 20000) {
