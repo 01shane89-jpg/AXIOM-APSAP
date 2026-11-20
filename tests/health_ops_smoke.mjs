@@ -34,10 +34,18 @@ ok(served === true, "the test health file is served (" + served + ")");
 await p.evaluate(() => window.OSAP_HEALTH_UI.reload());
 await p.waitForTimeout(1500);
 const badge = await p.evaluate(() => document.querySelector(".ohb").className + " " + document.querySelector(".ohb").textContent);
-// the Today page opens first on a phone: its own badge is the one a reader taps
+// the Today page opens first on a phone: its own badge is the one a reader taps. The panel can be redrawn or closed between a
+// wait and a later read (a refresh, a redraw on the page's own timers: 20 Nov 2026 the list was there for the wait and gone for
+// the read), so each poll opens it again if needed and takes the snapshot in the same step as the check.
 await p.click("#today .ohb");
-await p.waitForFunction(() => /Behind schedule/.test((document.querySelector(".ohp") || {}).innerText || ""), null, { timeout: 15000 }).catch(() => {});
-const r = await p.evaluate(() => { const e = document.querySelector(".ohp"); return { text: e ? e.innerText : "", items: e ? [...e.querySelectorAll(".ohops li")].map((l) => l.innerText) : [], wide: document.documentElement.scrollWidth > innerWidth + 1 }; });
+const r = await p.waitForFunction(() => {
+  let e = document.querySelector(".ohp");
+  if (!e) { const b = document.querySelector("#today .ohb"); if (b) b.click(); return false; }
+  const text = e.innerText || "", items = [...e.querySelectorAll(".ohops li")].map((l) => l.innerText);
+  if (!/Behind schedule/.test(text) || !items.length) return false;
+  return { text, items, wide: document.documentElement.scrollWidth > innerWidth + 1 };
+}, null, { timeout: 20000, polling: 250 }).then((h) => h.jsonValue()).catch(async () => ({ text: await p.evaluate(() => { const e = document.querySelector(".ohp"); return e ? e.innerText : "(no panel)"; }), items: [], wide: false }));
+if (!/Behind schedule/.test(r.text)) console.log("panel text seen: " + r.text.slice(0, 400).replace(/\n/g, " | "));
 ok(/Behind schedule/.test(r.text), "the panel has a Behind schedule list");
 ok(r.items.some((t) => /Refresh economic stress signals: last succeeded 4 days ago/.test(t)), "a late data job is named with its last success");
 ok(!r.items.some((t) => /Refresh risk/.test(t)), "a job within its schedule is not listed");
