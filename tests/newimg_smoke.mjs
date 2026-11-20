@@ -41,13 +41,22 @@ const OPC = { feed: { entry: [{ id: "G200-ASF", title: "OPERA_L2_RTC-S1_T036-075
 const DD = (d) => `<Domains><DimensionDomain><ows:Identifier>time</ows:Identifier><Domain>2026-10-01/${d}/P1D</Domain></DimensionDomain></Domains>`;
 const CMR = (k) => ({ feed: { entry: [{ id: "G100-LPCLOUD", title: "HLS." + k + "30.T36UUA.X.v2.0", time_start: iso(k === "L" ? 5 : 6), cloud_cover: "15" }] } });
 
+// Esri Wayback: three releases; the middle one carries the same picture as the oldest (tilemap select), so two pictures
+const WBT = (r) => `https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/${r}/{level}/{row}/{col}`;
+const WBM = (r) => `https://metadata.maptiles.arcgis.com/arcgis/rest/services/World_Imagery_Metadata_R${r}/MapServer`;
+const WBCFG = { "300": { itemTitle: "World Imagery (Wayback 2026-11-18)", itemURL: WBT(300), metadataLayerUrl: WBM(300) },
+  "200": { itemTitle: "World Imagery (Wayback 2024-05-01)", itemURL: WBT(200), metadataLayerUrl: WBM(200) },
+  "100": { itemTitle: "World Imagery (Wayback 2020-01-08)", itemURL: WBT(100), metadataLayerUrl: WBM(100) } };
+const WBSEL = { 300: 300, 200: 100, 100: 100 };
+const WBMETA = { 300: { SRC_DATE2: Date.parse("2025-04-16T00:00:00Z"), SRC_DESC: "WV03", NICE_DESC: "Vantor", SAMP_RES: 0.3, SRC_ACC: 5 },
+  100: { SRC_DATE2: Date.parse("2019-06-01T00:00:00Z"), SRC_DESC: "WV02<b>x</b>", NICE_DESC: "Maxar", SAMP_RES: 0.5, SRC_ACC: 8.47 } };
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 let log;
 const CORS = { "access-control-allow-origin": "*" };
 async function context(opts, cfg = {}) {
-  log = { es: [], pc: [], pct: [], cmr: [], gibs: [], dd: [], cog: 0 };
+  log = { es: [], pc: [], pct: [], cmr: [], gibs: [], dd: [], cog: 0, wb: [], wbt: [] };
   const ctx = await browser.newContext({ serviceWorkers: "block", timezoneId: "Europe/Kyiv", ...opts });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const q = r.request(), u = q.url();
@@ -58,6 +67,12 @@ async function context(opts, cfg = {}) {
     if (/^https:\/\/gibs\.earthdata\.nasa\.gov\/wmts\/epsg3857\/best\/1\.0\.0\/.*\.xml$/.test(u)) { log.dd.push(u); return r.fulfill({ status: 200, contentType: "text/xml", headers: CORS, body: DD(new Date(now - 3 * 864e5).toISOString().slice(0, 10)) }); }
     if (u.startsWith("https://cmr.earthdata.nasa.gov/search/granules.json?")) { log.cmr.push(u); const k = /short_name=HLS([LS])30/.exec(u)[1]; return r.fulfill({ status: 200, contentType: "application/json", headers: CORS, body: JSON.stringify(CMR(k)) }); }
     if (u.startsWith("https://gibs.earthdata.nasa.gov/")) { log.gibs.push(u); return r.fulfill({ status: 200, contentType: "image/png", headers: CORS, body: PNG }); }
+    if (u === "https://s3-us-west-2.amazonaws.com/config.maptiles.arcgis.com/waybackconfig.json") { log.wb.push(u); return cfg.wbDown ? r.fulfill({ status: 502, headers: CORS, body: "x" }) : r.fulfill({ status: 200, contentType: "application/json", headers: CORS, body: JSON.stringify(WBCFG) }); }
+    let m0 = /^https:\/\/wayback\.maptiles\.arcgis\.com\/arcgis\/rest\/services\/World_Imagery\/MapServer\/tilemap\/(\d+)\/(\d+)\/\d+\/\d+$/.exec(u);
+    if (m0) { log.wb.push(u); return r.fulfill({ status: 200, contentType: "application/json", headers: CORS, body: JSON.stringify({ data: [1], select: [WBSEL[m0[1]]], size: [1000] }) }); }
+    m0 = /^https:\/\/metadata\.maptiles\.arcgis\.com\/arcgis\/rest\/services\/World_Imagery_Metadata_R(\d+)\/MapServer\/(\d+)\/query\?/.exec(u);
+    if (m0) { log.wb.push(u); const a = WBMETA[m0[1]]; return r.fulfill({ status: 200, contentType: "application/json", headers: CORS, body: JSON.stringify({ features: a && m0[2] === "4" ? [{ attributes: a }] : [] }) }); }
+    if (u.startsWith("https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/")) { log.wbt.push(u); return r.fulfill({ status: 200, contentType: "image/png", headers: CORS, body: PNG }); }
     if (u.startsWith(S3)) {
       log.cog++;
       const m = /bytes=(\d+)-(\d*)/.exec(q.headers()["range"] || "");
@@ -80,7 +95,7 @@ async function open(ctx) {
   await p.evaluate(() => window.__asapMap.setView([50.45, 30.525], 11, { animate: false })); await p.waitForTimeout(300);
   return { p, errors };
 }
-const settled = (p) => p.waitForFunction(() => { const s = window.OSAP_NEWIMG.state().st; return ["s2", "ls", "hls", "s1"].every((k) => s[k] && !s[k].busy); }, null, { timeout: 20000 });
+const settled = (p) => p.waitForFunction(() => { const st = window.OSAP_NEWIMG.state(), s = st.st; return ["s2", "ls", "hls", "s1"].every((k) => s[k] && !s[k].busy) && !st.wb.busy; }, null, { timeout: 20000 });
 // ---------- desktop ----------
 {
   const ctx = await context({ viewport: { width: 1360, height: 860 } });
@@ -96,7 +111,7 @@ const settled = (p) => p.waitForFunction(() => { const s = window.OSAP_NEWIMG.st
   const srcs = [...new Set(L.map((r) => r.src))].sort().join(",");
   ok(srcs === "daily,hls,ls,night,s1,s2", "all sources listed (with Sentinel-1 radar and night lights): " + srcs);
   ok(L.every((r, i) => i === 0 || new Date(r.t).toISOString().slice(0, 10) <= new Date(L[i - 1].t).toISOString().slice(0, 10)), "newest first");
-  const rows = await p.$$eval("#nimg tbody tr", (t) => t.map((r) => r.textContent));
+  const rows = await p.$$eval("#nimg .cbox > table tbody tr", (t) => t.map((r) => r.textContent));
   ok(rows.length === L.filter((r) => r.src !== "daily" && r.src !== "night").length && rows.filter((r) => /Sentinel-2B|Landsat 9|HLS/.test(r)).every((r) => /\d{4}Z \/ \d{2}:\d{2} /.test(r) && /old/.test(r)), "scene rows show Zulu / local time and age: " + rows.find((r) => /Landsat 9/.test(r)));
   ok(await p.evaluate(() => [...document.querySelectorAll("#nimg tbody tr")].every((tr) => { const a = tr.querySelector("a.tag"); return a && /^https:\/\//.test(a.href) && a.textContent.trim(); })), "every row has a licence tag with a link");
   ok(await p.evaluate(() => document.querySelectorAll('#nimg button[data-nimg-show^="daily:"]').length) === 9, "NASA daily: 9 buttons (3 sensors, 3 days)");
@@ -153,6 +168,57 @@ const settled = (p) => p.waitForFunction(() => { const s = window.OSAP_NEWIMG.st
   await p.click('#nimg [data-nimg-show="night:VIIRS_Black_Marble"]'); await p.waitForTimeout(600);
   ok(/Black Marble 2016/.test(await p.textContent(".nimgbadge")) && /2016 annual composite \(before\)/.test(await p.textContent(".nimgbadge")), "baseline badge says it is the 2016 before picture");
   if (OUT) await p.screenshot({ path: OUT + "/newimg-night.png" });
+  // Esri Wayback: sharp pictures by date, Show, Compare with a swipe, remove
+  const WB = await p.evaluate(() => window.OSAP_NEWIMG.wb());
+  ok(WB.length === 2 && WB[0].id === "wb:300" && WB[0].day === "2025-04-16" && WB[1].id === "wb:100" && WB[1].day === "2019-06-01", "Wayback: two different pictures, newest capture first (release 200 = same picture as 100): " + JSON.stringify(WB.map((r) => r.id)));
+  const tms = log.wb.filter((u) => /tilemap/.test(u)).map((u) => /tilemap\/(\d+\/\d+)\//.exec(u)[1]);
+  ok(tms.join(",") === "300/11,200/11", "tilemap walk: newest release, then the one before; release 200 answers that its picture is 100's, so 100 is not asked again and the oldest ends the walk: " + tms.join(","));
+  const wbTxt = await p.textContent("#nimg-wb");
+  const wbRows = await p.$$eval("#nimg tbody tr", (t) => t.map((r) => r.textContent).filter((x) => /in Esri's map from/.test(x)));
+  ok(/Sharp pictures by date/.test(wbTxt) && wbRows.length === 2 && /2025-04-16/.test(wbRows[0]) && /WV03 Vantor/.test(wbRows[0]) && /0\.3 m, ±5 m/.test(wbRows[0]) && /in Esri's map from 2026-11-18/.test(wbRows[0]) && /Esri, free version only/.test(wbRows[0]) && /years old|months old/.test(wbRows[0]), "Wayback rows: capture date, age, sensor, provider, resolution, accuracy, release, licence: " + wbRows[0]);
+  ok(await p.evaluate(() => window.__xss === undefined && !document.querySelector("#nimg b b")), "Wayback metadata text escaped");
+  await p.click('#nimg [data-nimg-show="wb:300"]'); await p.waitForTimeout(1200);
+  ok(log.wbt.length > 0 && log.wbt.every((u) => /\/tile\/300\/\d+\/\d+\/\d+$/.test(u)) && await p.evaluate(() => document.querySelectorAll(".leaflet-nimgpane-pane > .leaflet-layer img.leaflet-tile").length > 0), "Wayback picture drawn from its release's tiles in the imagery pane");
+  const bw = await p.textContent(".nimgbadge");
+  ok(/WV03 \(Vantor\)/.test(bw) && /taken 2025-04-16/.test(bw) && /0\.3 m/.test(bw) && /Esri, free version only/.test(bw) && !/cloud/.test(bw), "Wayback badge gives the capture day, not the release: " + bw.trim());
+  ok(await p.evaluate(() => /Powered by Esri/.test(document.querySelector(".leaflet-control-attribution").innerHTML) && /Vantor/.test(document.querySelector(".leaflet-control-attribution").innerHTML)), "Esri and provider credited on the map");
+  ok(await p.evaluate(() => document.querySelectorAll('#nimg [data-nimg-cmp]').length) === 1, "Compare offered on the other picture");
+  log.wbt = [];
+  await p.click('#nimg [data-nimg-cmp="wb:100"]'); await p.waitForTimeout(1200);
+  ok(log.wbt.some((u) => /\/tile\/100\//.test(u)) && await p.evaluate(() => document.querySelectorAll(".leaflet-nimgcmp-pane img.leaflet-tile").length > 0 && window.OSAP_NEWIMG.state().cmp === "wb:100"), "Compare lays the second picture in its own pane");
+  const clip0 = await p.evaluate(() => document.querySelector(".leaflet-nimgcmp-pane").style.clip);
+  ok(/^rect\(/.test(clip0) && await p.evaluate(() => !!document.querySelector(".nimgsw b")), "swipe line on the map, second picture clipped to its left: " + clip0);
+  ok(/Left: .*WV02.*2019-06-01/.test(await p.textContent(".nimgbadge")) && /Right: .*WV03.*2025-04-16/.test(await p.textContent(".nimgbadge")), "badge names both dates (left and right)");
+  const hb = await p.evaluate(() => { const r = document.querySelector(".nimgsw b").getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
+  const c0 = await p.evaluate(() => window.__asapMap.getCenter());
+  const onHandle = () => p.evaluate(([x, y]) => { const e = document.elementFromPoint(x, y); return !!(e && e.closest && e.closest(".nimgsw")); }, hb);
+  if (!(await onHandle())) { await p.evaluate(() => { const x = document.querySelector("[data-om=x]"); if (x) x.click(); }); await p.waitForTimeout(300); } /* the Map overlays sheet this test left open */
+  ok(await onHandle(), "the swipe handle is on top at the middle of the map " + await p.evaluate(([x, y]) => { const e = document.elementFromPoint(x, y); return e && (e.id + "." + e.className + " < " + (e.parentElement && e.parentElement.id + "." + e.parentElement.className)); }, hb));
+  await p.mouse.move(hb[0], hb[1]); await p.mouse.down(); await p.mouse.move(hb[0] - 150, hb[1], { steps: 6 }); await p.mouse.up(); await p.waitForTimeout(200);
+  const clip1 = await p.evaluate(() => document.querySelector(".leaflet-nimgcmp-pane").style.clip);
+  const c1 = await p.evaluate(() => window.__asapMap.getCenter());
+  ok(clip1 !== clip0 && Math.abs(c0.lat - c1.lat) + Math.abs(c0.lng - c1.lng) < 1e-9, "dragging the handle moves the swipe line, not the map: " + clip1);
+  await p.evaluate(() => window.__asapMap.panBy([80, 40], { animate: false })); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => document.querySelector(".leaflet-nimgcmp-pane").style.clip) !== clip1, "swipe clip follows the map when it pans");
+  const fits = [];
+  for (const wd of [1100, 1360, 1600]) { await p.setViewportSize({ width: wd, height: 860 }); await p.waitForTimeout(250); fits.push(await p.evaluate(() => { const c = document.querySelector("#nimg .cbox"); return c.scrollWidth - c.clientWidth; })); }
+  await p.setViewportSize({ width: 1360, height: 860 }); await p.waitForTimeout(250);
+  ok(fits.every((d) => d <= 1), "with Wayback rows and Compare buttons the list fits the docked window at 1100, 1360 and 1600 px wide (overflow " + fits.join(", ") + ")");
+  ok(await p.evaluate(() => !/Maxar, Maxar/.test(document.querySelector(".leaflet-control-attribution").textContent)), "Maxar credited once");
+  if (OUT) await p.screenshot({ path: OUT + "/newimg-wayback-compare.png" });
+  await p.click('#nimg [data-nimg-show="' + L.find((r) => r.src === "hls").id + '"]'); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => !document.querySelector(".nimgsw") && !document.querySelector(".leaflet-nimgcmp-pane img") && window.OSAP_NEWIMG.state().cmp === null), "showing a non-Wayback picture ends the comparison");
+  await p.click('#nimg [data-nimg-show="wb:100"]'); await p.waitForTimeout(300);
+  await p.click('#nimg [data-nimg-cmp="wb:300"]'); await p.waitForTimeout(300);
+  await p.evaluate(() => document.querySelector('.nimgbadge [data-nimg="clear"]').click()); await p.waitForTimeout(300);
+  ok(await p.evaluate(() => !document.querySelector(".nimgsw") && !document.querySelector(".leaflet-nimgcmp-pane img") && !document.querySelector(".leaflet-nimgpane-pane img")), "× removes both Wayback pictures and the swipe line");
+  // zoomed out: no walk, a note
+  log.wb = [];
+  await p.evaluate(() => window.__asapMap.setView([50.45, 30.525], 6, { animate: false })); await p.waitForTimeout(200);
+  await p.click('#nimg [data-nimg="here"]'); await settled(p);
+  ok(log.wb.filter((u) => /tilemap/.test(u)).length === 0 && /Zoom in to a town or a site/.test(await p.textContent("#nimg-wb")), "zoomed out: Wayback asks nothing and says to zoom in: " + (await p.textContent("#nimg-wb")).slice(-90) + " " + log.wb.length);
+  await p.evaluate(() => window.__asapMap.setView([50.45, 30.525], 11, { animate: false })); await p.click('#nimg [data-nimg="here"]'); await settled(p);
+  await p.click('#nimg [data-nimg-show="night:VIIRS_Black_Marble"]'); await p.waitForTimeout(300);
   // cloud filter
   await p.selectOption('#nimg select[data-nimg="maxc"]', "20"); await p.waitForTimeout(200);
   ok(await p.evaluate(() => window.OSAP_NEWIMG.list().every((r) => r.cloud == null || r.cloud <= 20)), "cloud filter 20%");
@@ -182,6 +248,15 @@ const settled = (p) => p.waitForFunction(() => { const s = window.OSAP_NEWIMG.st
   ok(errors.length === 0, "no page errors " + errors.join(" | "));
   await ctx.close();
 }
+// ---------- Esri Wayback down ----------
+{
+  const ctx = await context({ viewport: { width: 1200, height: 800 } }, { wbDown: true });
+  const { p, errors } = await open(ctx);
+  await p.evaluate(() => window.OSAP_NEWIMG.open()); await settled(p);
+  ok(/Esri Wayback answered 502/.test(await p.textContent("#nimg-wb")) && await p.evaluate(() => window.OSAP_NEWIMG.list().some((r) => r.src === "s2")), "Wayback down: it says so and the other pictures still show");
+  ok(errors.length === 0, "no page errors " + errors.join(" | "));
+  await ctx.close();
+}
 // ---------- the Night lights button ----------
 {
   const ctx = await context({ viewport: { width: 1200, height: 800 } });
@@ -198,6 +273,7 @@ const settled = (p) => p.waitForFunction(() => { const s = window.OSAP_NEWIMG.st
   const { p, errors } = await open(ctx);
   await p.evaluate(() => window.OSAP_NEWIMG.open()); await settled(p);
   ok(log.pc.length === 0 && log.cmr.length === 3 && /not in this version/.test(await p.textContent("#nimg .srcs")), "sold version: no Planetary Computer, Landsat through HLS");
+  ok(log.wb.length === 0 && /Not in this version/.test(await p.textContent("#nimg-wb")) && !/Esri World Imagery Wayback/.test(await p.textContent("#nimg .attr")), "sold version: no Esri Wayback requests, says it is not in this version");
   ok(errors.length === 0, "no page errors " + errors.join(" | "));
   await ctx.close();
 }
@@ -210,6 +286,11 @@ const settled = (p) => p.waitForFunction(() => { const s = window.OSAP_NEWIMG.st
   ok(hgt >= 40, "phone: buttons at least 40 px (" + hgt + ")");
   ok(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "phone: no sideways scroll");
   if (OUT) await p.screenshot({ path: OUT + "/newimg-phone.png" });
+  await p.evaluate(() => { window.OSAP_NEWIMG.show("wb:300"); window.OSAP_NEWIMG.compare("wb:100"); window.OSAP_NEWIMG.close(); }); await p.waitForTimeout(600);
+  const sw = await p.evaluate(() => { const r = document.querySelector(".nimgsw b").getBoundingClientRect(), b = document.querySelector(".nimgbadge").getBoundingClientRect(); return [r.width, r.left >= 0 && r.right <= innerWidth, b.left >= 0 && b.right <= innerWidth, document.documentElement.scrollWidth <= innerWidth + 1]; });
+  ok(sw[0] >= 44 && sw[1] && sw[2] && sw[3], "phone: swipe handle 44 px and on screen, two-date badge fits, no sideways scroll " + JSON.stringify(sw));
+  if (OUT) await p.screenshot({ path: OUT + "/newimg-phone-wayback.png" });
+  await p.evaluate(() => { window.OSAP_NEWIMG.clear(); window.OSAP_NEWIMG.open(); }); await p.waitForTimeout(300);
   const id = await p.evaluate(() => window.OSAP_NEWIMG.list().find((r) => r.src === "hls").id);
   await p.evaluate((id) => { window.OSAP_NEWIMG.show(id); window.OSAP_NEWIMG.close(); }, id); await p.waitForTimeout(500);
   const bb = await p.evaluate(() => { const r = document.querySelector(".nimgbadge").getBoundingClientRect(); return [r.left, r.right, window.innerWidth]; });

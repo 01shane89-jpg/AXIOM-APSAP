@@ -1,6 +1,26 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta http-equiv="content-language" content="en"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="OSAP"><meta name="apple-mobile-web-app-status-bar-style" content="default"><script src="assets/osap-carry.js"></script><script>/* AXIOM OSAP: an account is needed to use OSAP (Shane 2026-10-18), and only the Netlify site can check it: the GitHub Pages copy sends people there at once. assets/osap-tier.js does the same for a page served from an old cache. Saved work stays with the old address, so assets/osap-carry.js (just above) carries it across first and makes the move itself (Shane 2026-11-04); this line moves the page when that file could not run. */if(/\.github\.io$/.test(location.hostname)&&!(window.OSAP_CARRY&&window.OSAP_CARRY.handled))location.replace("https://axiom-osap.netlify.app/"+(location.search?location.search+"&":"?")+"from=pages"+location.hash);</script><script src="assets/osap-protect.js"></script><script src="assets/osap-install.js"></script></head><body>
 <title>AXIOM OSAP</title>
+<!-- link previews (LinkedIn, X, Slack, WhatsApp, iMessage). Without these, LinkedIn titled the shared link with the first <h1>
+     on the page, the Flood view's "Flood" (20 Nov 2026). The card is assets/og-card.jpg, 1200x630; URLs must be absolute. -->
+<meta name="description" content="Open Source Awareness Platform. See beyond the headlines: follow the reporting trail for every country on one map, with source links for every report.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AXIOM OSAP">
+<meta property="og:title" content="AXIOM OSAP">
+<meta property="og:description" content="Open Source Awareness Platform. See beyond the headlines: follow the reporting trail for every country on one map, with source links for every report.">
+<meta property="og:url" content="https://osap.axiom-intelligence-systems.com/">
+<meta property="og:image" content="https://osap.axiom-intelligence-systems.com/assets/og-card.jpg">
+<meta property="og:image:secure_url" content="https://osap.axiom-intelligence-systems.com/assets/og-card.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AXIOM OSAP logo: a fox over an Asia-Pacific globe, with the words Open Source Awareness Platform">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AXIOM OSAP">
+<meta name="twitter:description" content="Open Source Awareness Platform. See beyond the headlines: follow the reporting trail for every country on one map, with source links for every report.">
+<meta name="twitter:image" content="https://osap.axiom-intelligence-systems.com/assets/og-card.jpg">
+<meta name="twitter:image:alt" content="AXIOM OSAP logo: a fox over an Asia-Pacific globe, with the words Open Source Awareness Platform">
 <style>
 /* loading screen: covers the page until the open country's map and lists are built, so no other country's map shows first.
    The official logo (unaltered, only animated) spins as a 3D coin: the logo on both faces, thin darker copies between them
@@ -9960,6 +9980,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-daily.js"></script>
 <script src="assets/osap-threads.js"></script>
 <script src="assets/osap-trail.js"></script>
+<script src="assets/osap-trailmap.js"></script>
 <script src="assets/osap-outletfacts.js"></script>
 <!-- in-app reader for open-licence articles (The Conversation, GOV.UK), data/live/fulltext/ from tools/refresh_fulltext.mjs -->
 <script src="assets/osap-reader.js"></script>
@@ -10105,6 +10126,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-milmap.js"></script>
 <!-- photo and video check: metadata, sun and shadow, reverse image search links, video frames, all on the device (My work, a point's popup) -->
 <script src="assets/osap-photocheck.js"></script>
+<script src="assets/osap-skyline.js"></script>
 <!-- the user guide: Settings (the gear) > User guide, offline and printable -->
 <script src="assets/osap-guide.js"></script>
 <script src="assets/osap-tips.js"></script>

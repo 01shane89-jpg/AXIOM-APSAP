@@ -61,6 +61,18 @@ ok(part.overall.missing.includes("Crime") && part.overall.missing.includes("Infr
 ok(L.deathsFrom([{ date: "2026-01-01", lat: 13.75, lon: 100.5, best: 3 }, { date: "2026-01-01", lat: 6.5, lon: 101.3, best: 7 }, { date: "2024-01-01", lat: 13.75, lon: 100.5, best: 50 }], "2025-10-24", { lat: 13.75, lon: 100.5 }, 50).n === 3,
   "city deaths: only events in the window and within 50 km");
 
+const near1 = (a, b) => Math.abs(a - b) < 0.01;
+// war damage in Infrastructure and services (the access figures alone are years old and cannot see a war: Sudan scored 2 Low)
+const sdI = { elec: { v: 66, y: "2024", src: "x" }, net: null, deaths: { n: 4969, popM: 51.6, window: "2025-11-20 to 2026-11-20", src: "https://ucdp.uu.se/" } };
+const sdInf = L.infra(sdI, null);
+ok(sdInf.level === undefined && L.levelOf(sdInf.score) >= 4 && sdInf.events.some((e) => e.k === "war" && e.pts > 40), "Sudan at war (4,969 deaths, 96 per million): infrastructure High or worse (" + sdInf.score + ", war " + (sdInf.events.find((e) => e.k === "war") || {}).pts + ")");
+ok(L.levelOf(L.infra({ elec: sdI.elec }, null).score) <= 2, "the same access figures with no war stay Low");
+ok(L.warDamagePts(2, 0.07) === 0 && L.warDamagePts(99, 0.5) === 0, "a handful of deaths in a very small country is not a war (under 100 deaths: 0)");
+ok(L.warDamagePts(2350, 132) < 10 && L.warDamagePts(74127, 39) === 100 && L.warDamagePts(0, 50) === 0 && L.warDamagePts(500, 0) === 0, "Mexico-scale violence adds under 10; Ukraine-scale war 100; no deaths or no population 0");
+ok(near1(L.warDamagePts(5000, 100), 2 * (L.perMillionPts(50) - 40)) && L.warDamagePts(1000, 100) === 0, "2 points for each point the per-million score passes 40; 10 per million adds nothing");
+const sdR = L.rate(sdI, { warDeaths: { n: 0, popM: 51.6 } });
+ok(!sdR.cats.infra.events.some((e) => e.k === "war"), "a city passes the national deaths for infrastructure (warDeaths), not its own");
+
 // the job, end to end, on the repository's own feeds with World Bank figures from a fixture
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "risk-"));
 const out = path.join(tmp, "out"); fs.mkdirSync(out);
@@ -76,6 +88,8 @@ ok(th.cats.security.parts[0].src === "https://data.worldbank.org/indicator/GOV_W
 ok(/^[0-9a-f]{64}$/.test(th.fp), "SHA-256 record fingerprint");
 ok(th.cities.length >= 1 && th.cities[0].n === "Bangkok" && th.cities[0].cap, "Thailand's cities start with the capital, Bangkok");
 ok(th.cities[0].cats.crime.national === true && th.cities[0].cats.security.parts, "city crime is marked national; city security has its own parts");
+ok(ua.cats.infra.events.some((e) => e.k === "war") && ua.cats.infra.level >= 4, "Ukraine's infrastructure counts the war's damage (" + ua.cats.infra.label + ")");
+ok(ua.cities.every((c) => c.cats.infra.score === ua.cats.infra.score && c.cats.infra.national), "a city's infrastructure is the national figure, war damage included");
 ok(ua.overall.level >= 4, "Ukraine (WGI -2.0, war) rates High or Extreme (" + ua.overall.label + ")");
 ok(sg.overall.level <= 2, "Singapore rates Minimal or Low (" + sg.overall.label + ")");
 ok(ua.cities.some((c) => c.cats.security.level >= th.cities[0].cats.security.level), "a Ukrainian city's security is no lower than Bangkok's");

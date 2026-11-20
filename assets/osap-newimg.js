@@ -28,7 +28,17 @@
      (the others still show). Nothing is stored or sent anywhere else; the choices kept in this browser are the cloud filter
      (localStorage "osap-nimg"). The shown picture is not kept between visits on purpose: an old picture should not come back
      looking current.
-   API: window.OSAP_NEWIMG { open(), close(), isOpen(), list(), show(id), clear(), shown(), state(), _t: pure helpers for tests } */
+     * Sharp pictures by date, about 0.3 to 1.2 m: Esri World Imagery Wayback (keyless, CORS "*"; checked 2026-11-20). Every
+       different picture Esri has published at the middle of the map since 2014, each with the capture date, sensor, provider,
+       resolution and accuracy from Esri's metadata layers. Show lays one on the map; Compare lays a second one on the left of a
+       swipe line. Licence: Esri's terms do not plainly cover a paid product, so like Planetary Computer it is left out of the
+       sold version (OSAP_SOLD), and it carries "Powered by Esri" and the provider credit on the map.
+   - What changed here (Shane 2026-11-20, "Do all of that"): under the sharp pictures, one button compares each dated Wayback
+     picture with the one before it over a small square at the listed point (rules chg-v1, see the pure helpers), lists each
+     pair as Large / Some / Little change with the share of the square, and Show where lays the two on the swipe with the
+     differing cells outlined. Read in this browser from the same tiles; a pointer to look, never a finding.
+   API: window.OSAP_NEWIMG { open(), close(), isOpen(), list(), show(id), clear(), shown(), state(), wb(), compare(id),
+     changes(), changed(), changeShow(k), changeRecord(k), _t: pure helpers for tests } */
 (function () {
   "use strict";
 
@@ -50,6 +60,7 @@
     cop: { tag: "Copernicus open", tip: "Copernicus Sentinel data: free and open, commercial use allowed with credit", url: "https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice" },
     usgs: { tag: "Public domain", tip: "Landsat data: USGS, public domain, no restriction on use", url: "https://www.usgs.gov/information-policies-and-instructions/crediting-usgs" },
     nasa: { tag: "Public domain", tip: "NASA Earth science data: no restriction on use (NASA Earthdata open data policy)", url: "https://www.earthdata.nasa.gov/engage/open-data-services-software/data-information-policy" },
+    esri: { tag: "Esri, free version only", tip: "Esri World Imagery Wayback (imagery from Vantor/Maxar, Airbus and others via Esri). Shown with Esri and provider credit while OSAP is free; Esri's terms do not plainly cover a paid product, so the sold version leaves it out", url: "https://www.esri.com/en-us/legal/terms/data-attributions" },
     opera: { tag: "Open (NASA + Copernicus)", tip: "NASA/JPL OPERA product, no restriction on use; made from Copernicus Sentinel-1 data (free and open, commercial use allowed with credit)", url: "https://www.jpl.nasa.gov/go/opera/products/rtc-product/" }
   };
   var DAILY = [["VIIRS_NOAA20_CorrectedReflectance_TrueColor", "VIIRS NOAA-20"], ["VIIRS_NOAA21_CorrectedReflectance_TrueColor", "VIIRS NOAA-21"],
@@ -192,8 +203,143 @@
     var d = Math.round(h / 24); return d + (d === 1 ? " day old" : " days old");
   }
   function cloudTxt(c) { return c == null ? "" : (c < 1 ? "<1" : Math.round(c)) + "% cloud"; }
+  /* ---------- Esri World Imagery Wayback: dated sharp archive imagery (about 0.3 to 1.2 m) ----------
+     Esri keeps every release of its World Imagery basemap since 2014 (about 200 releases). The tilemap service says, for one
+     tile, which release last changed it, so walking back from the newest release lists only the versions that changed at that
+     place (the method of Esri's own Wayback app, @esri/wayback-core, Apache-2.0). Each version's metadata layer gives the
+     capture date, sensor, provider, resolution and accuracy of the picture at the point. The capture date is what is shown,
+     never the release date (a 2026 release can carry a 2021 picture). */
+  var WB_CFG = "https://s3-us-west-2.amazonaws.com/config.maptiles.arcgis.com/waybackconfig.json";
+  var WB_MS = "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer";
+  var WB_MAX = 60; /* tilemap requests at most for one place */
+  function wbItems(cfg) {
+    var out = [];
+    Object.keys(cfg || {}).forEach(function (k) {
+      var v = cfg[k] || {}, r = +k, m = /(\d{4}-\d\d-\d\d)/.exec(String(v.itemTitle || "")), u = String(v.itemURL || ""), mu = String(v.metadataLayerUrl || "");
+      if (!(r > 0) || !m || !/^https:\/\/wayback\.maptiles\.arcgis\.com\/arcgis\/rest\/services\/World_Imagery\/WMTS\/1\.0\.0\/[^?#]*\{level\}\/\{row\}\/\{col\}$/.test(u)) return;
+      out.push({ r: r, day: m[1], tiles: u.replace("{level}", "{z}").replace("{row}", "{y}").replace("{col}", "{x}"),
+        meta: /^https:\/\/metadata\.maptiles\.arcgis\.com\/arcgis\/rest\/services\/[A-Za-z0-9_]+\/MapServer$/.test(mu) ? mu : "" });
+    });
+    return out.sort(function (a, b) { return a.day < b.day ? 1 : a.day > b.day ? -1 : b.r - a.r; });
+  }
+  function tileXY(lat, lon, z) {
+    var n = Math.pow(2, z), la = Math.max(-85.05, Math.min(85.05, lat)) * Math.PI / 180;
+    return [Math.min(n - 1, Math.floor((lon + 180) / 360 * n)), Math.min(n - 1, Math.floor((1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * n))];
+  }
+  function wbTilemapUrl(r, z, x, y) { return WB_MS + "/tilemap/" + r + "/" + z + "/" + y + "/" + x; }
+  /* metadata sub-layer for a zoom: 0 = zoom 23 ... 13 = zoom 10 and below */
+  function wbLayer(z) { return Math.max(0, Math.min(13, 23 - Math.round(z))); }
+  function wbMetaUrl(meta, layer, lat, lon) {
+    return meta + "/" + layer + "/query?f=json&where=1%3D1&outFields=SRC_DATE2,NICE_DESC,SRC_DESC,SAMP_RES,SRC_ACC&returnGeometry=false" +
+      "&geometryType=esriGeometryPoint&spatialRel=esriSpatialRelIntersects&geometry=" + encodeURIComponent(JSON.stringify({ spatialReference: { wkid: 4326 }, x: r5(lon), y: r5(lat) }));
+  }
+  /* the sharpest zoom worth asking for, from the picture's ground resolution in metres (19 = about 0.3 m) */
+  function wbNz(res) { var v = +res; if (!(v > 0)) return 17; return Math.max(10, Math.min(19, Math.round(Math.log(156543 / v) / Math.LN2))); }
+  /* one tilemap answer: { has: picture here in this release, sel: the release that last changed it, prev: the release to ask next } */
+  function wbStep(items, r, j) {
+    if (!j || !j.data || !j.data[0]) return { has: false, sel: null, prev: null };
+    var sel = j.select && +j.select[0] > 0 ? +j.select[0] : r, i = -1;
+    for (var k = 0; k < items.length; k++) if (items[k].r === sel) { i = k; break; }
+    return { has: true, sel: sel, size: j.size && +j.size[0] || 0, prev: i >= 0 && items[i + 1] ? items[i + 1].r : null };
+  }
+  function cleanTxt(s, n) { return String(s == null ? "" : s).replace(/[\u0000-\u001f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, n || 40); }
+  /* rows: one for each different picture, newest capture first. found = [{ r, size }] in walk order (newest release first),
+     metas = { r: attributes or null }. Releases that carry the same capture (same day and sensor) are one row (the newest release). */
+  function wbRows(found, items, metas) {
+    var byR = {}, seen = {}, out = [];
+    (items || []).forEach(function (it) { byR[it.r] = it; });
+    (found || []).forEach(function (f) {
+      var it = byR[f.r]; if (!it) return;
+      var a = (metas || {})[f.r] || null, t = a && isFinite(+a.SRC_DATE2) && +a.SRC_DATE2 > 0 ? +a.SRC_DATE2 : null;
+      var sensor = a ? cleanTxt(a.SRC_DESC, 24) : "", prov = a ? cleanTxt(a.NICE_DESC, 30) : "", res = a && +a.SAMP_RES > 0 ? +a.SAMP_RES : null;
+      var key = t != null ? isoDay(t) + "|" + sensor + "|" + prov : "r" + f.r;
+      if (seen[key]) return; seen[key] = 1;
+      out.push({ id: "wb:" + f.r, src: "wb", r: f.r, t: t, day: t != null ? isoDay(t) : "", added: it.day, sat: sensor || "Esri World Imagery", prov: prov,
+        res: res != null ? (Math.round(res * 100) / 100) + " m" : "", acc: a && +a.SRC_ACC > 0 ? Math.round(+a.SRC_ACC * 10) / 10 : null,
+        cloud: null, lic: "esri", tiles: it.tiles, nz: wbNz(res), via: "Esri World Imagery Wayback, release " + it.day });
+    });
+    return out.sort(function (a, b) { return (b.t == null ? -1 : b.t) - (a.t == null ? -1 : a.t) || (a.added < b.added ? 1 : -1); });
+  }
+  /* age for a picture dated by day only: months and years once it is old */
+  function ageDay(t, now) {
+    var d = Math.floor((now - t) / DAY);
+    if (d < 1) return "today";
+    if (d < 60) return d + (d === 1 ? " day old" : " days old");
+    var m = Math.round(d / 30.44); if (m < 24) return m + " months old";
+    var y = Math.floor(d / 365.25); return y + " years old";
+  }
+
+  /* ---------- What changed here: compare the dated Wayback pictures at one point (rules "chg-v1") ----------
+     (Shane 2026-11-20, "Do all of that": the third map feature.) A small square of ground around the point (CH_PX pixels at
+     zoom CH_Z, about 190 m across at the equator) is cut from each dated picture and compared with the picture before it, in
+     cells of CH_BS pixels (about 10 m). Each cell's brightness and its edge density (roads, walls, vehicles, craters) are
+     scaled to the whole square first, so a brighter or hazier picture, another sensor or another season does not count as
+     change by itself; a cell is only counted when it differs from every cell around it in the other picture (both ways), so
+     pictures a few metres out of line with each other do not count either. The result is a share of the square that looks
+     different and the cells to look at. It is a pointer for the analyst to look, never a finding: shadows, crops, cloud,
+     snow and building lean also change pixels. */
+  var CH_Z = 17, CH_PX = 160, CH_BS = 8, CH_TM = 1.1, CH_TE = 1.4, CH_RULES = "chg-v1";
+  function chGray(px, w, h) { var g = new Float32Array(w * h); for (var i = 0, j = 0; i < g.length; i++, j += 4) g[i] = 0.299 * px[j] + 0.587 * px[j + 1] + 0.114 * px[j + 2]; return g; }
+  /* per cell: mean brightness and mean edge strength (|dx| + |dy|), each scaled to the whole square (z-scores) */
+  function chCells(g, w, h, bs) {
+    var n = Math.floor(w / bs), m = Math.floor(h / bs), mean = new Float32Array(n * m), edge = new Float32Array(n * m), sd = 0, mu = 0;
+    for (var i = 0; i < w * h; i++) mu += g[i]; mu /= w * h;
+    for (i = 0; i < w * h; i++) sd += (g[i] - mu) * (g[i] - mu); sd = Math.sqrt(sd / (w * h));
+    for (var cy = 0; cy < m; cy++) for (var cx = 0; cx < n; cx++) {
+      var a = 0, e = 0, k = 0;
+      for (var y = cy * bs; y < cy * bs + bs; y++) for (var x = cx * bs; x < cx * bs + bs; x++) {
+        var v = g[y * w + x]; a += v; k++;
+        if (x + 1 < w && y + 1 < h) e += Math.abs(g[y * w + x + 1] - v) + Math.abs(g[(y + 1) * w + x] - v);
+      }
+      mean[cy * n + cx] = a / k; edge[cy * n + cx] = e / k;
+    }
+    /* robust scaling (median and spread of the middle half), so a large new structure does not shift every other cell */
+    function z(arr) {
+      var o = Array.prototype.slice.call(arr).sort(function (p, q) { return p - q; }), L = o.length, med = o[Math.floor(L / 2)];
+      var sc = (o[Math.floor(L * 0.75)] - o[Math.floor(L * 0.25)]) / 1.349 || 1;
+      for (var t = 0; t < L; t++) arr[t] = (arr[t] - med) / sc;
+    }
+    z(mean); z(edge);
+    return { n: n, m: m, mean: mean, edge: edge, sd: sd };
+  }
+  /* a cell of A differs from B when no cell of B within one cell of it is close in both brightness and edges */
+  function chOneWay(A, B, i) {
+    var n = A.n, x = i % n, y = (i - x) / n, best = Infinity;
+    for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) {
+      var xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= n || yy >= A.m) continue;
+      var j = yy * n + xx, d = Math.max(Math.abs(A.mean[i] - B.mean[j]) / CH_TM, Math.abs(A.edge[i] - B.edge[j]) / CH_TE);
+      if (d < best) best = d;
+    }
+    return best;
+  }
+  /* -> { frac, cells: [cell index], n, m, blank } ; blank: one of the squares is (nearly) one colour, e.g. no picture there */
+  function chDiff(A, B) {
+    if (!A || !B || A.n !== B.n || A.m !== B.m) return { frac: 0, cells: [], n: 0, m: 0, blank: true };
+    if (A.sd < 2 || B.sd < 2) return { frac: 0, cells: [], n: A.n, m: A.m, blank: true };
+    var cells = [];
+    for (var i = 0; i < A.n * A.m; i++) if (chOneWay(A, B, i) > 1 || chOneWay(B, A, i) > 1) cells.push(i);
+    return { frac: cells.length / (A.n * A.m), cells: cells, n: A.n, m: A.m, blank: false, cluster: chCluster(cells, A.n) };
+  }
+  /* the largest group of flagged cells touching each other (side or corner): a new building is a group, noise is scattered */
+  function chCluster(cells, n) {
+    var on = {}, seen = {}, best = 0; cells.forEach(function (i) { on[i] = 1; });
+    cells.forEach(function (i0) {
+      if (seen[i0]) return; var st = [i0], k = 0; seen[i0] = 1;
+      while (st.length) { var i = st.pop(), x = i % n; k++;
+        for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) { var xx = x + dx, j = i + dy * n + dx; if (xx < 0 || xx >= n || !on[j] || seen[j]) continue; seen[j] = 1; st.push(j); } }
+      if (k > best) best = k;
+    });
+    return best;
+  }
+  /* Large: a quarter of the square or more. Some: a tenth or more, or one group of at least CH_GROUP cells (about 30 m across).
+     Little: scattered cells only. */
+  var CH_GROUP = 9;
+  function chLevel(d) { return !d || d.blank ? "none" : d.frac >= 0.25 ? "big" : d.frac >= 0.1 || (d.cluster || 0) >= CH_GROUP ? "some" : "little"; }
+  var CH_WORD = { big: "Large change", some: "Some change", little: "Little change", none: "Could not compare" };
   var T = { searchBox: searchBox, s2Url: s2Url, lsUrl: lsUrl, hlsUrl: hlsUrl, pcTiles: pcTiles, lsRows: lsRows, s2Rows: s2Rows, hlsRows: hlsRows,
-    dailyRows: dailyRows, merge: merge, ageTxt: ageTxt, cloudTxt: cloudTxt, LIC: LIC, s1Url: s1Url, s1Rows: s1Rows, ddUrl: ddUrl, domainEnd: domainEnd, nightRows: nightRows, NIGHT: NIGHT };
+    dailyRows: dailyRows, merge: merge, ageTxt: ageTxt, cloudTxt: cloudTxt, LIC: LIC, s1Url: s1Url, s1Rows: s1Rows, ddUrl: ddUrl, domainEnd: domainEnd, nightRows: nightRows, NIGHT: NIGHT,
+    WB_CFG: WB_CFG, wbItems: wbItems, tileXY: tileXY, wbTilemapUrl: wbTilemapUrl, wbLayer: wbLayer, wbMetaUrl: wbMetaUrl, wbNz: wbNz, wbStep: wbStep, wbRows: wbRows, ageDay: ageDay,
+    chGray: chGray, chCells: chCells, chDiff: chDiff, chLevel: chLevel, CH_Z: CH_Z, CH_PX: CH_PX, CH_BS: CH_BS, CH_RULES: CH_RULES };
   if (typeof module === "object" && module.exports) module.exports = T;
   if (typeof window === "undefined") return;
 
@@ -211,9 +357,10 @@
   try { var v0 = JSON.parse(localStorage.getItem(KEY) || "null"); if (v0 && [20, 50, 100].indexOf(v0.maxc) >= 0) P.maxc = v0.maxc; } catch (e) {}
   function save() { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch (e) {} }
   function pcOn() { return !W.OSAP_SOLD; }
+  function wbOn() { return !W.OSAP_SOLD; }
 
   var SRC = [["s2", "Sentinel-2 (10 m)"], ["ls", "Landsat 8/9 (30 m)"], ["hls", "HLS (30 m)"], ["s1", "Sentinel-1 radar (30 m)"]];
-  var S = { box: null, run: 0, rows: [], st: {}, shown: null, newest: {} };
+  var S = { box: null, run: 0, rows: [], st: {}, shown: null, newest: {}, wb: { rows: [] }, cmp: null, sw: 0.5 };
   function fetchJson(url, sig) {
     return fetch(url, sig ? { signal: sig } : undefined).then(function (r) { if (!r.ok) throw new Error("answered " + r.status); return r.json(); });
   }
@@ -223,14 +370,16 @@
     if (ac) try { ac.abort(); } catch (e) {}
     ac = typeof AbortController === "function" ? new AbortController() : null; var sig = ac && ac.signal;
     S.rows = dailyRows(now).concat(nightRows(now, S.newest)); S.st = {};
+    if (chgAc) try { chgAc.abort(); } catch (e) {} chgOff(); S.chg = null;
     nightLoad(now);
-    if (!bb) { draw(); return; }
+    if (!bb) { S.wb = { rows: [], note: "Move the map to a place first." }; draw(); return; }
     function done(k, rows, err) {
       if (run !== S.run) return;
       if (err) S.st[k] = { err: err };
       else { S.st[k] = { n: rows.length }; S.rows = S.rows.concat(rows); }
       draw();
     }
+    wbLoad(run, sig);
     S.st.s2 = { busy: 1 };
     var sat = W.OSAP_SAT && W.OSAP_SAT._t;
     if (!sat || !W.OSAP_SAT.render) done("s2", [], "Satellite before/after is not loaded");
@@ -251,6 +400,53 @@
       .catch(function (e) { if (!(sig && sig.aborted)) done("s1", [], "NASA CMR (OPERA) " + (e && e.message || e)); });
     draw();
   }
+  /* Esri Wayback at the middle of the map: the release list once a page, then the tilemap walk and one metadata query per version */
+  var wbCfg = null;
+  function wbLoad(run, sig) {
+    if (!wbOn()) { S.wb = { rows: [], off: 1 }; return; }
+    var c = map.getCenter(), zm = map.getZoom();
+    if (zm < 10) { S.wb = { rows: [], note: "Zoom in to a town or a site (closer than about 40 km across) to list the sharp pictures there." }; return; }
+    var lat = c.lat, lon = c.lng, z = Math.max(10, Math.min(17, Math.round(zm))), xy = tileXY(lat, lon, z), items = null;
+    S.wb = { rows: [], busy: 1, at: [r5(lat), r5(lon)] };
+    function fail(e) { if (run !== S.run || (sig && sig.aborted)) return; S.wb = { rows: [], err: "Esri Wayback " + (e && e.message || e), at: S.wb.at }; draw(); }
+    (wbCfg ? Promise.resolve(wbCfg) : fetchJson(WB_CFG, sig).then(function (j) { var it = wbItems(j); if (!it.length) throw new Error("gave no releases"); wbCfg = it; return it; }))
+      .then(function (it) {
+        items = it;
+        var found = [], calls = 0;
+        function step(r) {
+          if (!r || calls >= WB_MAX) return Promise.resolve(found);
+          calls++;
+          return fetchJson(wbTilemapUrl(r, z, xy[0], xy[1]), sig).then(function (j) {
+            var o = wbStep(items, r, j); if (!o.has) return found;
+            found.push({ r: o.sel, size: o.size }); return step(o.prev);
+          });
+        }
+        return step(items[0].r);
+      })
+      .then(function (found) {
+        if (run !== S.run) return;
+        var byR = {}; items.forEach(function (it) { byR[it.r] = it; });
+        var metas = {}, zs = [19, 17, 15, 13].filter(function (v) { return v >= z || v === 13; });
+        /* the capture at the point: the sharpest metadata level that has one (at most 4 queries a version), 6 versions at a time */
+        function one(f) {
+          var it = byR[f.r]; if (!it || !it.meta) return Promise.resolve();
+          var k = 0;
+          function q() {
+            if (k >= zs.length) return Promise.resolve();
+            return fetchJson(wbMetaUrl(it.meta, wbLayer(zs[k++]), lat, lon), sig).then(function (j) {
+              var a = j && j.features && j.features[0] && j.features[0].attributes; if (a) metas[f.r] = a; else return q();
+            });
+          }
+          return q().catch(function () {});
+        }
+        var i = 0;
+        function worker() { if (i >= found.length) return Promise.resolve(); return one(found[i++]).then(worker); }
+        return Promise.all([worker(), worker(), worker(), worker(), worker(), worker()]).then(function () {
+          if (run !== S.run || (sig && sig.aborted)) return;
+          S.wb = { rows: wbRows(found, items, metas), at: S.wb.at, n: found.length }; draw();
+        });
+      }).catch(fail);
+  }
   /* the newest night of each night-light layer (GIBS DescribeDomains); once per page, the rows are rebuilt when they answer */
   function nightLoad(now) {
     if (S.nightAsked) return; S.nightAsked = true;
@@ -262,16 +458,24 @@
       S.rows = S.rows.filter(function (r) { return r.src !== "night"; }).concat(nightRows(Date.now(), S.newest)); draw();
     });
   }
-  function find(id) { return S.rows.filter(function (r) { return r.id === id; })[0] || null; }
+  function find(id) { return S.rows.concat(S.wb.rows || []).filter(function (r) { return r.id === id; })[0] || null; }
 
   /* ---------- the picture on the map ---------- */
   var lay = null, s2ac = null, badge = null, mvT = null;
   function attr(r) {
     var y = new Date(r.t).getUTCFullYear();
     return esc(r.sat) + " " + esc(r.day || isoDay(r.t)) + ": " + (r.lic === "cop" ? "Contains modified Copernicus Sentinel data " + y : r.lic === "usgs" ? "Landsat courtesy of the U.S. Geological Survey" :
-      r.lic === "opera" ? "NASA/JPL OPERA; contains modified Copernicus Sentinel data " + y : "NASA") + " (" + esc(r.via) + ")";
+      r.lic === "opera" ? "NASA/JPL OPERA; contains modified Copernicus Sentinel data " + y :
+      r.lic === "esri" ? "Powered by Esri. Source: Esri" + (r.prov && !/maxar/i.test(r.prov) ? ", " + esc(r.prov) : "") + ", Maxar, Earthstar Geographics, and the GIS User Community" : "NASA") + " (" + esc(r.via) + ")";
+  }
+  /* a sharp Wayback picture is worth zooming into: while one is on the map the map may zoom to 19 even when the base map stops
+     sooner (the base map's own limit comes back when the picture goes) */
+  function zoomFor(r) {
+    if (r && r.src === "wb") { if (S.zmax0 == null) S.zmax0 = map.getMaxZoom(); if (map.getMaxZoom() < 19) map.setMaxZoom(19); return; }
+    if (S.zmax0 != null) { var z0 = S.zmax0; S.zmax0 = null; map.setMaxZoom(z0); if (map.getZoom() > z0) map.setZoom(z0); }
   }
   function clear() {
+    cmpOff(); chgOff(); zoomFor(null);
     if (lay) { map.removeLayer(lay); lay = null; }
     if (s2ac) try { s2ac.abort(); } catch (e) {}
     if (S.s2url) { try { URL.revokeObjectURL(S.s2url); } catch (e) {} S.s2url = ""; }
@@ -279,13 +483,16 @@
   }
   function show(id) {
     var r = find(id); if (!r) return false;
+    chgOff();
     if (lay) { map.removeLayer(lay); lay = null; }
-    S.shown = r; S.s2err = "";
+    if (r.src !== "wb" || (S.cmp && S.cmp.id === r.id)) cmpOff();
+    S.shown = r; S.s2err = ""; zoomFor(r);
     if (r.src === "s2") s2Draw();
     else {
       var o = { pane: "nimgpane", maxNativeZoom: r.nz, maxZoom: 20, crossOrigin: "anonymous", className: "osap-nimg", attribution: attr(r) };
       if (r.bounds) o.bounds = Lf.latLngBounds([r.bounds[1], r.bounds[0]], [r.bounds[3], r.bounds[2]]);
       if (r.src === "ls") o.minZoom = 7; /* one Landsat scene drawn by Planetary Computer: far out it is slow and tiny */
+      if (r.src === "wb") o.maxZoom = 21;
       lay = Lf.tileLayer(r.tiles, o).addTo(map);
     }
     badgeDraw(); draw();
@@ -315,6 +522,153 @@
   }
   map.on("moveend", function () { if (!S.shown || S.shown.src !== "s2") return; clearTimeout(mvT); mvT = setTimeout(s2Draw, 450); });
 
+  /* ---------- compare two Wayback pictures: the second one on the left of a swipe line ---------- */
+  var cmpLay = null, swEl = null;
+  if (!map.getPane("nimgcmp")) { map.createPane("nimgcmp", map.getPane("nimgpane")); map.getPane("nimgcmp").style.pointerEvents = "none"; }
+  function clipUpd() {
+    var pn = map.getPane("nimgcmp"); if (!pn) return;
+    if (!cmpLay) { pn.style.clip = ""; return; }
+    var sz = map.getSize(), nw = map.containerPointToLayerPoint([0, 0]), se = map.containerPointToLayerPoint(sz), x = nw.x + Math.round(sz.x * S.sw);
+    pn.style.clip = "rect(" + nw.y + "px," + x + "px," + se.y + "px," + nw.x + "px)";
+    if (swEl) swEl.style.left = Math.round(sz.x * S.sw) + "px";
+  }
+  function cmpOff() {
+    if (cmpLay) { map.removeLayer(cmpLay); cmpLay = null; }
+    S.cmp = null; clipUpd();
+    if (swEl) { swEl.remove(); swEl = null; }
+  }
+  function compare(id) {
+    var r = find(id), b = S.shown; if (!r || r.src !== "wb" || !b || b.src !== "wb" || b.id === r.id) return false;
+    if (cmpLay) map.removeLayer(cmpLay);
+    S.cmp = r;
+    cmpLay = Lf.tileLayer(r.tiles, { pane: "nimgcmp", maxNativeZoom: r.nz, maxZoom: 21, crossOrigin: "anonymous", className: "osap-nimg", attribution: attr(r) }).addTo(map);
+    if (!swEl) {
+      swEl = D.createElement("div"); swEl.className = "nimgsw"; swEl.innerHTML = '<i></i><b role="slider" tabindex="0" aria-label="Swipe between the two pictures" aria-valuemin="0" aria-valuemax="100">⇔</b>';
+      map.getContainer().appendChild(swEl);
+      var hd = swEl.querySelector("b"), drag = false;
+      function at(e) { var rc = map.getContainer().getBoundingClientRect(); S.sw = Math.max(0.02, Math.min(0.98, (e.clientX - rc.left) / rc.width)); hd.setAttribute("aria-valuenow", Math.round(S.sw * 100)); clipUpd(); }
+      hd.addEventListener("pointerdown", function (e) { drag = true; try { hd.setPointerCapture(e.pointerId); } catch (x) {} e.preventDefault(); e.stopPropagation(); });
+      hd.addEventListener("pointermove", function (e) { if (drag) { at(e); e.stopPropagation(); } });
+      hd.addEventListener("pointerup", function (e) { drag = false; e.stopPropagation(); });
+      hd.addEventListener("keydown", function (e) { var d = e.key === "ArrowLeft" ? -0.05 : e.key === "ArrowRight" ? 0.05 : 0; if (d) { S.sw = Math.max(0.02, Math.min(0.98, S.sw + d)); clipUpd(); e.preventDefault(); } });
+      ["mousedown", "touchstart", "dblclick", "click", "wheel"].forEach(function (t) { hd.addEventListener(t, function (e) { e.stopPropagation(); }, { passive: t !== "click" }); });
+    }
+    clipUpd(); badgeDraw(); draw();
+    return true;
+  }
+  map.on("move zoomend resize viewreset", clipUpd);
+
+  /* ---------- What changed here (rules chg-v1, pure helpers above): every dated Wayback picture at the listed point compared
+     with the one before it. The pictures are read as pixels in this browser (Wayback tiles are CORS "*"); nothing is sent
+     anywhere. A flag is a pointer to look, never a finding. ---------- */
+  var CH_MAX = 12, chgLay = null;
+  if (!map.getPane("nimgchg")) { map.createPane("nimgchg"); map.getPane("nimgchg").style.zIndex = 615; map.getPane("nimgchg").style.pointerEvents = "none"; }
+  function chgOff() { if (chgLay) { map.removeLayer(chgLay); chgLay = null; } if (S.chg) S.chg.on = null; }
+  /* the square of ground: global pixel x/y of its north-west corner at CH_Z */
+  function chgBox(at) { var p = map.project(Lf.latLng(at[0], at[1]), CH_Z); return { x0: Math.round(p.x) - CH_PX / 2, y0: Math.round(p.y) - CH_PX / 2 }; }
+  function chgLL(bx, x, y) { return map.unproject([bx.x0 + x, bx.y0 + y], CH_Z); }
+  function img(url, sig) {
+    return new Promise(function (res, rej) {
+      var im = new Image(), t = setTimeout(function () { im.src = ""; rej(new Error("timed out")); }, 20000);
+      im.crossOrigin = "anonymous";
+      im.onload = function () { clearTimeout(t); res(im); }; im.onerror = function () { clearTimeout(t); rej(new Error("tile did not load")); };
+      if (sig) sig.addEventListener("abort", function () { clearTimeout(t); rej(new Error("stopped")); });
+      im.src = url;
+    });
+  }
+  /* one picture's square as cells: the 1 to 4 tiles under it drawn on a canvas, then read */
+  function chgCells(r, bx, sig) {
+    var c = D.createElement("canvas"); c.width = CH_PX; c.height = CH_PX; var g = c.getContext("2d", { willReadFrequently: true });
+    var tx0 = Math.floor(bx.x0 / 256), ty0 = Math.floor(bx.y0 / 256), tx1 = Math.floor((bx.x0 + CH_PX - 1) / 256), ty1 = Math.floor((bx.y0 + CH_PX - 1) / 256), jobs = [];
+    for (var ty = ty0; ty <= ty1; ty++) for (var tx = tx0; tx <= tx1; tx++) (function (tx, ty) {
+      jobs.push(img(r.tiles.replace("{z}", CH_Z).replace("{x}", tx).replace("{y}", ty), sig).then(function (im) { g.drawImage(im, tx * 256 - bx.x0, ty * 256 - bx.y0); }));
+    })(tx, ty);
+    return Promise.all(jobs).then(function () { return chCells(chGray(g.getImageData(0, 0, CH_PX, CH_PX).data, CH_PX, CH_PX), CH_PX, CH_PX, CH_BS); });
+  }
+  var chgAc = null;
+  function chgRun() {
+    var at = S.wb && S.wb.at, rs = (S.wb.rows || []).filter(function (r) { return r.t != null; }).sort(function (a, b) { return a.t - b.t; });
+    if (!at || rs.length < 2) return false;
+    if (chgAc) try { chgAc.abort(); } catch (e) {}
+    chgAc = typeof AbortController === "function" ? new AbortController() : null; var sig = chgAc && chgAc.signal;
+    chgOff();
+    var left = Math.max(0, rs.length - CH_MAX); rs = rs.slice(-CH_MAX);
+    var bx = chgBox(at), run = S.run, cells = {}, bad = {}, i = 0;
+    S.chg = { busy: 1, at: at, n: rs.length, left: left, done: 0, pairs: [], on: null };
+    wbPaint();
+    function worker() {
+      if (i >= rs.length) return Promise.resolve();
+      var r = rs[i++];
+      return chgCells(r, bx, sig).then(function (c) { cells[r.id] = c; }, function (e) { bad[r.id] = (e && e.message) || "did not load"; })
+        .then(function () { if (S.chg && S.chg.busy) { S.chg.done++; wbPaint(); } return worker(); });
+    }
+    Promise.all([worker(), worker(), worker(), worker()]).then(function () {
+      if (run !== S.run || (sig && sig.aborted) || !S.chg) return;
+      var ok = rs.filter(function (r) { return cells[r.id]; }), pairs = [];
+      for (var k = 1; k < ok.length; k++) {
+        var a = ok[k - 1], b = ok[k], d = chDiff(cells[a.id], cells[b.id]);
+        pairs.push({ a: a.id, b: b.id, ad: a.day, bd: b.day, frac: d.frac, level: chLevel(d), cells: d.cells, n: d.n, m: d.m });
+      }
+      S.chg = { at: at, n: rs.length, left: left, bad: Object.keys(bad).length, pairs: pairs.reverse(), on: null, box: bx, made: new Date().toISOString() };
+      wbPaint();
+    });
+    return true;
+  }
+  /* Show where: the two pictures on the swipe (older on the left), the square, and the cells that look different */
+  function chgShow(k) {
+    var c = S.chg, pr = c && c.pairs && c.pairs[k]; if (!pr) return false;
+    show(pr.b); compare(pr.a);
+    if (chgLay) map.removeLayer(chgLay);
+    var bx = c.box, g = Lf.layerGroup();
+    Lf.rectangle(Lf.latLngBounds(chgLL(bx, 0, 0), chgLL(bx, CH_PX, CH_PX)), { pane: "nimgchg", color: "#fff", weight: 2, dashArray: "6 4", fill: false, interactive: false }).addTo(g);
+    pr.cells.forEach(function (i) {
+      var x = (i % pr.n) * CH_BS, y = Math.floor(i / pr.n) * CH_BS;
+      Lf.rectangle(Lf.latLngBounds(chgLL(bx, x, y), chgLL(bx, x + CH_BS, y + CH_BS)), { pane: "nimgchg", color: "#ffd43b", weight: 1.5, fillColor: "#ffd43b", fillOpacity: 0.18, interactive: false }).addTo(g);
+    });
+    chgLay = g.addTo(map); c.on = k;
+    try { map.fitBounds(Lf.latLngBounds(chgLL(bx, -CH_PX / 2, -CH_PX / 2), chgLL(bx, CH_PX * 1.5, CH_PX * 1.5)), { animate: false, maxZoom: 18 }); } catch (e) {}
+    wbPaint();
+    return true;
+  }
+  /* a plain-text record of one comparison, for a note or a report (what was compared, how, and what it is not) */
+  function chgRecord(k) {
+    var c = S.chg, pr = c && c.pairs && c.pairs[k]; if (!pr) return "";
+    var a = find(pr.a) || {}, b = find(pr.b) || {};
+    return "What changed here (OSAP, rules " + CH_RULES + ", " + c.made + ")\n" +
+      "Point: " + c.at[0] + ", " + c.at[1] + " (a square of about " + chgM(c.at[0], CH_PX) + " m)\n" +
+      "Before: " + (a.sat || "") + " " + (a.prov || "") + ", taken " + pr.ad + " (" + (a.via || "") + ")\n" +
+      "After: " + (b.sat || "") + " " + (b.prov || "") + ", taken " + pr.bd + " (" + (b.via || "") + ")\n" +
+      "Result: " + CH_WORD[pr.level] + ", " + Math.round(pr.frac * 100) + "% of the square looks different (" + pr.cells.length + " cells of about " + chgM(c.at[0], CH_BS) + " m).\n" +
+      "This is a pixel comparison to point an analyst at what to look at, not a finding. Light, season, shadows, cloud and building lean also change pixels. Check it on the pictures.\n" +
+      "Imagery: powered by Esri; providers as named above.";
+  }
+  function wbPaint() { var b = el && D.getElementById("nimg-wb"); if (b) b.innerHTML = wbInner(Date.now()); }
+  /* the square's side and a cell's side in metres at a latitude */
+  function chgM(lat, px) { return Math.round(px * 156543.03 * Math.cos(lat * Math.PI / 180) / Math.pow(2, CH_Z)); }
+  function chgHtml() {
+    var c = S.chg, rs = (S.wb.rows || []).filter(function (r) { return r.t != null; }), lat = S.wb.at ? S.wb.at[0] : 0;
+    var h = '<div class="row" style="margin-top:8px"><b>What changed here?</b> <span class="mut">Compares each dated picture with the one before it over a square of about ' + chgM(lat, CH_PX) + " m at the middle of the map, " +
+      "and flags the " + chgM(lat, CH_BS) + " m cells that look different. A pointer to look at, not a finding: light, season, shadows and cloud change pixels too.</span></div>";
+    if (rs.length < 2) return h + '<p class="mut">It needs at least two dated pictures here.</p>';
+    if (!c || !c.at || c.at[0] !== S.wb.at[0] || c.at[1] !== S.wb.at[1]) return h + '<div class="row"><button type="button" data-nimg-chg="run">Compare the ' + Math.min(rs.length, CH_MAX) + " dated pictures</button></div>";
+    if (c.busy) return h + '<p class="mut" role="status">Reading the pictures… ' + c.done + " of " + c.n + "</p>";
+    if (!c.pairs.length) return h + '<p class="err">The pictures could not be read' + (c.bad ? " (" + c.bad + " did not load)" : "") + '.</p><div class="row"><button type="button" data-nimg-chg="run">Try again</button></div>';
+    var ord = { big: 0, some: 1, little: 2, none: 3 };
+    h += '<table class="wbt chgt" style="table-layout:fixed"><colgroup><col style="width:42%"><col><col style="width:7.5em"></colgroup><thead><tr><th>Between</th><th>Result</th><th></th></tr></thead><tbody>' + c.pairs.map(function (p, k) {
+      var on = c.on === k;
+      return "<tr" + (on ? ' class="on"' : "") + "><td>" + esc(p.ad) + " →<br>" + esc(p.bd) + "</td>" +
+        '<td><b class="chg-' + p.level + '">' + esc(CH_WORD[p.level]) + "</b>" + (p.level !== "none" ? '<br><span class="mut">' + Math.round(p.frac * 100) + "% of the square</span>" : '<br><span class="mut">one picture is blank here</span>') + "</td>" +
+        '<td><button type="button" data-nimg-chg="' + k + '" aria-pressed="' + on + '"' + (p.level === "none" ? " disabled" : "") + ">" + (on ? "Shown" : "Show where") + "</button>" +
+        '<button type="button" data-nimg-chgrec="' + k + '" style="display:block;margin-top:4px">Copy record</button></td></tr>';
+    }).join("") + "</tbody></table>";
+    var top = c.pairs.slice().sort(function (x, y) { return ord[x.level] - ord[y.level] || y.frac - x.frac; })[0];
+    h += '<p class="mut" style="font-size:12px">' + (top && top.level !== "little" && top.level !== "none" ? "Biggest: " + esc(top.ad) + " → " + esc(top.bd) + ". " : "No large change between these pictures. ") +
+      (c.left ? "The " + c.left + " oldest pictures were left out (the newest " + CH_MAX + " are compared). " : "") + (c.bad ? c.bad + " picture" + (c.bad === 1 ? "" : "s") + " did not load and were skipped. " : "") +
+      "Rules " + CH_RULES + ": brightness and edges per cell, scaled to the square; a cell counts only when nothing next to it in the other picture matches it.</p>";
+    return h;
+  }
+
+
   /* the date badge: always on the map while a picture is shown */
   function badgeDraw() {
     var r = S.shown;
@@ -326,6 +680,12 @@
       badge.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-nimg]"); if (!b) return; var k = b.getAttribute("data-nimg"); if (k === "clear") clear(); else if (k === "open") open(); });
     }
     var L2 = LIC[r.lic] || {};
+    if (r.src === "wb") {
+      var c = S.cmp, one = function (x) { return "<b>" + esc(x.sat) + "</b>" + (x.prov ? " (" + esc(x.prov) + ")" : "") + " · " + (x.t != null ? "taken " + esc(x.day) + " · <b>" + esc(ageDay(x.t, Date.now())) + "</b>" : "capture date not given, in Esri's map from " + esc(x.added)) + (x.res ? " · " + esc(x.res) : ""); };
+      badge.innerHTML = (c ? "Left: " + one(c) + "<br>Right: " + one(r) : one(r)) + ' · <span title="' + esc(L2.tip) + '">' + esc(L2.tag) + "</span>" +
+        ' <button type="button" data-nimg="open" aria-label="Pick another picture">Pick</button><button type="button" data-nimg="clear" aria-label="Remove the satellite picture">×</button>';
+      return;
+    }
     badge.innerHTML = '<b>' + esc(r.sat) + "</b> · " + (r.kind === "base" ? esc(r.day) + " annual composite (before)" : r.src === "night" ? esc(r.day) + " (UTC night)" :
       r.src === "daily" ? esc(r.day) + " (UTC day" + (r.partial ? ", still filling in" : "") + ")" : esc(dual(r.t)) + " · <b>" + esc(ageTxt(r.t, Date.now())) + "</b>") +
       (r.src === "s1" ? " · radar, all passes that UTC day" : "") +
@@ -345,12 +705,16 @@
     "#nimg .srcs{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px}#nimg table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:auto}#nimg td:last-child{width:1%}#nimg th{white-space:normal}" +
     "#nimg th,#nimg td{text-align:left;padding:3px 4px;border-bottom:1px solid var(--line,#e3e3e3);vertical-align:middle}#nimg tr.on td{background:var(--accent-soft,#e3f2f4)}" +
     "#nimg td button{min-width:64px;font-size:12px;padding:2px 8px}#nimg .tag{font-size:10.5px;border:1px solid var(--line,#bbb);border-radius:3px;padding:0 4px;color:var(--muted,#555);white-space:nowrap}" +
+    "#nimg .wbt td{overflow-wrap:anywhere}#nimg .wbt .tag{white-space:normal}#nimg .wbt td button{width:100%;min-width:0}" +
+    "#nimg .chg-big{color:#c92a2a}#nimg .chg-some{color:#e67700}#nimg .chg-little{color:var(--muted,#555);font-weight:600}#nimg .chg-none{color:var(--muted,#555)}#nimg button[disabled]{opacity:.5;cursor:default}" +
     "#nimg .sid{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;word-break:break-all;color:var(--muted,#555)}" +
     "#nimg .attr{font-size:11.5px;color:var(--muted,#555);border-top:1px solid var(--line,#ddd);margin-top:10px;padding-top:6px}" +
     "@media (max-width:700px){#nimg{padding:6px}#nimg button,#nimg select{font-size:16px}#nimg td{font-size:12px}}" +
     ".nimgbadge{position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:640;width:max-content;max-width:calc(100% - 160px);box-sizing:border-box;background:rgba(16,24,32,.86);color:#fff;font:12px/1.35 system-ui,-apple-system,sans-serif;" +
     "padding:4px 6px 4px 10px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.4);text-align:center}.nimgbadge .e{color:#ffcdd2}" +
     ".nimgbadge button{font:inherit;min-height:28px;min-width:28px;margin-left:4px;border:1px solid rgba(255,255,255,.45);background:transparent;color:#fff;border-radius:4px;cursor:pointer;padding:0 6px}" +
+    ".nimgsw{position:absolute;top:0;bottom:0;width:0;z-index:630;pointer-events:none}.nimgsw i{position:absolute;top:0;bottom:0;left:-2px;width:4px;background:#fff;box-shadow:0 0 3px rgba(0,0,0,.6)}" +
+    ".nimgsw b{position:absolute;top:50%;left:-22px;width:44px;height:44px;margin-top:-22px;border-radius:50%;background:#fff;border:2px solid #0b7285;box-shadow:0 1px 4px rgba(0,0,0,.4);pointer-events:auto;cursor:ew-resize;touch-action:none;display:flex;align-items:center;justify-content:center;font:700 16px/1 system-ui,sans-serif;color:#0b7285}" +
     "@media (max-width:700px){.nimgbadge{left:8px;transform:none;max-width:calc(100% - 124px);text-align:left}}@media print{.nimgbadge button{display:none}}";
   function ensure() {
     if (el) return el;
@@ -360,7 +724,10 @@
     D.body.appendChild(el);
     el.addEventListener("click", function (e) {
       if (e.target === el) return close();
-      var t = e.target.closest && e.target.closest("[data-nimg],[data-nimg-show]"); if (!t) return;
+      var t = e.target.closest && e.target.closest("[data-nimg],[data-nimg-show],[data-nimg-cmp],[data-nimg-chg],[data-nimg-chgrec]"); if (!t) return;
+      var ch = t.getAttribute("data-nimg-chg"); if (ch != null) { if (ch === "run") chgRun(); else if (S.chg && S.chg.on === +ch) { chgOff(); wbPaint(); } else chgShow(+ch); return; }
+      var cr = t.getAttribute("data-nimg-chgrec"); if (cr != null) { var tx = chgRecord(+cr); if (tx && navigator.clipboard) navigator.clipboard.writeText(tx).then(function () { t.textContent = "Copied"; }, function () { t.textContent = "Copy failed"; }); return; }
+      var cp = t.getAttribute("data-nimg-cmp"); if (cp) { if (S.cmp && S.cmp.id === cp) { cmpOff(); badgeDraw(); draw(); } else compare(cp); return; }
       var s = t.getAttribute("data-nimg-show"); if (s) { if (S.shown && S.shown.id === s) clear(); else show(s); return; }
       var k = t.getAttribute("data-nimg");
       if (k === "close") close(); else if (k === "here") { S.box = searchBox(viewBox()); load(); } else if (k === "clear") clear();
@@ -407,12 +774,38 @@
           DL.filter(function (r) { return r.day === d; }).map(function (r) { var on = S.shown && S.shown.id === r.id; return '<button type="button" data-nimg-show="' + esc(r.id) + '" aria-pressed="' + !!on + '">' + esc(r.sat.replace(/ daily$/, "")) + "</button>"; }).join("") + "</div>";
       }).join("");
     if (L.some(function (r) { return r.src === "s1"; })) h += '<p class="mut" style="font-size:12px">Sentinel-1 radar is not a photo: it shows how the ground sends the radar back. Buildings, ships and metal are bright; calm water and smooth surfaces are dark. It sees through cloud, smoke and night.</p>';
+    h += wbHtml(now);
     h += nightHtml(NL);
     h += '<div class="attr">Sentinel-2: Contains modified Copernicus Sentinel data ' + new Date(now).getUTCFullYear() + ', via Element 84 Earth Search and AWS Open Data. ' +
       (pcOn() ? "Landsat 8/9: courtesy of the U.S. Geological Survey, drawn by Microsoft Planetary Computer. " : "") +
       "HLS and daily true color: NASA (CMR, GIBS / LANCE), public domain. Sentinel-1 radar: NASA/JPL OPERA, contains modified Copernicus Sentinel data " + new Date(now).getUTCFullYear() + ". " +
-      "Night lights: NASA Black Marble and VIIRS Day/Night Band (GIBS), public domain. Each picture is shown as the provider made it; nothing here is interpreted or approved.</div>";
+      "Night lights: NASA Black Marble and VIIRS Day/Night Band (GIBS), public domain. " +
+      (wbOn() ? "Sharp pictures by date: Esri World Imagery Wayback, powered by Esri; imagery from the providers named on each row (Vantor/Maxar, Airbus, Earthstar Geographics and others). " : "") + "Each picture is shown as the provider made it; nothing here is interpreted or approved.</div>";
     el.firstElementChild.innerHTML = h;
+  }
+
+  /* the Esri Wayback block: one row a different picture at the middle of the map, newest capture first */
+  function wbHtml(now) { return '<div id="nimg-wb">' + wbInner(now) + "</div>"; }
+  function wbInner(now) {
+    var w = S.wb || {}, rs = w.rows || [];
+    var h = '<div class="row" style="border-top:1px solid var(--line,#ddd);padding-top:8px;margin-top:10px"><b>Sharp pictures by date (Esri Wayback)</b> <span class="mut">about 0.3 to 1.2 m, ' +
+      "every different picture Esri has published of the middle of the map since 2014, with the day it was taken. Older and sharper than the satellites above: use them to see what a site looked like before. " +
+      "Show one, then Compare another to swipe between the two dates.</span></div>";
+    if (w.off) return h + '<p class="mut">Not in this version (Esri\'s terms do not plainly cover a paid product).</p>';
+    if (w.note) return h + '<p class="mut">' + esc(w.note) + "</p>";
+    if (w.busy) return h + '<p class="mut">Looking through Esri\'s releases…</p>';
+    if (w.err) return h + '<p class="err">' + esc(w.err) + "</p>";
+    if (!rs.length) return h + '<p class="mut">No sharp pictures listed here.</p>';
+    var L2 = LIC.esri, sh = S.shown && S.shown.src === "wb";
+    h += '<table class="wbt" style="table-layout:fixed"><colgroup><col style="width:30%"><col><col style="width:7.5em"></colgroup><thead><tr><th>Taken and age</th><th>Satellite and source</th><th></th></tr></thead><tbody>' + rs.map(function (r) {
+      var on = S.shown && S.shown.id === r.id, cm = S.cmp && S.cmp.id === r.id;
+      return "<tr" + (on || cm ? ' class="on"' : "") + "><td>" + (r.t != null ? esc(r.day) + "<br><b>" + esc(ageDay(r.t, now)) + "</b>" : '<span class="mut">capture date not given</span>') + "</td>" +
+        "<td><b>" + esc(r.sat) + "</b>" + (r.prov ? " " + esc(r.prov) : "") + ' <span class="mut">' + esc(r.res) + (r.acc != null ? ", ±" + esc(r.acc) + " m" : "") + "</span><br>" +
+        '<a class="tag" href="' + esc(L2.url) + '" target="_blank" rel="noopener noreferrer" title="' + esc(L2.tip) + '">' + esc(L2.tag) + '</a> <span class="mut">in Esri\'s map from ' + esc(r.added) + "</span></td>" +
+        '<td><button type="button" data-nimg-show="' + esc(r.id) + '" aria-pressed="' + !!on + '">' + (on ? "Shown" : "Show") + "</button>" +
+        (sh && !on ? '<button type="button" data-nimg-cmp="' + esc(r.id) + '" aria-pressed="' + !!cm + '" style="display:block;margin-top:4px">' + (cm ? "Comparing" : "Compare") + "</button>" : "") + "</td></tr>";
+    }).join("") + "</tbody></table>";
+    return h + '<div id="nimg-chg">' + chgHtml() + "</div>";
   }
 
   /* the night-lights block: newest nights per layer, then the before baselines */
@@ -435,7 +828,7 @@
     if (D.getElementById("ml-nimg")) return true;
     var d = D.createElement("div"); d.id = "ml-nimg"; d.className = "mlrow"; d.style.cursor = "default";
     var bs = "margin-top:4px;margin-right:6px;min-height:40px;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:inherit;padding:4px 10px;cursor:pointer";
-    d.innerHTML = '<span><b>Newest imagery here</b><i>The newest Sentinel-2, Landsat, HLS, Sentinel-1 radar (sees through cloud) and NASA daily pictures of where the map is, plus VIIRS night lights, each with its date, age, cloud % and licence. Pick one to lay it on the map with its date.</i>' +
+    d.innerHTML = '<span><b>Newest imagery here</b><i>The newest Sentinel-2, Landsat, HLS, Sentinel-1 radar (sees through cloud) and NASA daily pictures of where the map is, plus VIIRS night lights and sharp Esri pictures back to 2014, each with its date, age and licence. Pick one to lay it on the map with its date.</i>' +
       '<button type="button" data-nimg-open="1" style="' + bs + '">Find newest imagery</button><button type="button" data-nimg-open="night" style="' + bs + '">Night lights</button></span>';
     var h = sec.querySelector(".mlh"); sec.insertBefore(d, h ? h.nextSibling : sec.firstChild);
     d.querySelector('[data-nimg-open="1"]').addEventListener("click", function () { open(); });
@@ -448,5 +841,12 @@
   W.OSAP_NEWIMG = { open: open, close: close, isOpen: isOpen, show: show, clear: clear,
     list: function () { return merge(S.rows, P.maxc).map(function (r) { return { id: r.id, src: r.src, t: r.t, sat: r.sat, cloud: r.cloud, lic: r.lic }; }); },
     shown: function () { return S.shown ? { id: S.shown.id, src: S.shown.src, t: S.shown.t, sat: S.shown.sat } : null; },
-    state: function () { return { box: S.box, st: JSON.parse(JSON.stringify(S.st)), rows: S.rows.length, shown: S.shown && S.shown.id, maxc: P.maxc, s2err: S.s2err || "" }; }, _t: T };
+    state: function () { return { box: S.box, st: JSON.parse(JSON.stringify(S.st)), rows: S.rows.length, shown: S.shown && S.shown.id, maxc: P.maxc, s2err: S.s2err || "",
+      wb: { busy: !!S.wb.busy, err: S.wb.err || "", note: S.wb.note || "", off: !!S.wb.off, n: (S.wb.rows || []).length }, cmp: S.cmp && S.cmp.id }; },
+    wb: function () { return (S.wb.rows || []).map(function (r) { return { id: r.id, t: r.t, day: r.day, sat: r.sat, prov: r.prov, res: r.res, added: r.added, nz: r.nz }; }); },
+    compare: compare,
+    /* What changed here: changes() runs it at the listed point; changed() its result; changeShow(k) / changeRecord(k) for one pair */
+    changes: chgRun, changeShow: chgShow, changeRecord: chgRecord,
+    changed: function () { var c = S.chg; return c ? { busy: !!c.busy, done: c.done || 0, n: c.n, left: c.left, bad: c.bad || 0, on: c.on, pairs: (c.pairs || []).map(function (p) { return { a: p.a, b: p.b, ad: p.ad, bd: p.bd, frac: p.frac, level: p.level, cells: p.cells.length }; }) } : null; },
+    _t: T };
 })();

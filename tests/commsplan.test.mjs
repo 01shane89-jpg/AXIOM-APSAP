@@ -108,5 +108,23 @@ ok(R.terrainLink(flat(10000, 100, 0, i => i > 10 && i < 45), { f_mhz: 155, hA_m:
 ok(R.terrainLink(flat(10000, 100, i => (i === 50 ? 500 : 0), i => i > 10 && i < 45), { f_mhz: 155, hA_m: 10, hB_m: 10 }).verdict === "blocked", "known ground above the line still blocks it when other ground is unknown");
 ok(R.terrainLink({ samples: [] }, { f_mhz: 155 }).verdict === "unknown" && R.terrainLink(flat(1000, 10, 0), { f_mhz: 0 }).verdict === "unknown", "no profile or no frequency: unknown");
 
+// effective antenna heights (coverage from a raised site): a 2 m mast on a hill 1,300 m above a flat plain, path 15 km at 155 MHz
+const hill = flat(15000, 300, i => (i * 50 < 3000 ? 1600 - 1300 * (i * 50) / 3000 : 300));
+const eh = R.effHeights(hill, 2, 2);
+ok(near(eh.hA_m, 1302, 5) && near(eh.hB_m, 2, 0.5), "hilltop 1,300 m above the plain: transmitter " + eh.hA_m.toFixed(0) + " m above the ground the path crosses, receiver on the plain " + eh.hB_m.toFixed(1) + " m");
+ok(near(R.effHeights(flat(10000, 100, 50), 2, 2).hA_m, 2, 1e-6) && near(R.effHeights(flat(10000, 100, 50), 10, 2).hB_m, 2, 1e-6), "flat ground: effective heights are the masts themselves");
+const valley = flat(10000, 100, i => (i < 5 ? 0 : 400));
+ok(R.effHeights(valley, 2, 2).hA_m === 2, "an antenna in a hollow never counts lower than its own mast");
+ok(R.effHeights({ samples: [] }, 3, 4).hA_m === 3 && R.effHeights(flat(1000, 10, 0, i => i === 0), 3, 4).hA_m === 3, "no ground at an end: the masts as given");
+const gHill = R.groundPathLoss(hill, { f_mhz: 155, hA_m: 2, hB_m: 2, k: 4 / 3 }), pe2 = R.planeEarth_db(15, 2, 2);
+ok(gHill.verdict === "clear" && near(gHill.loss_db, R.fspl(15, 155), 0.01) && pe2 > gHill.loss_db + 50, "hilltop to the plain 15 km out: free-space loss " + gHill.loss_db.toFixed(1) + " dB, not the flat-ground two-ray " + pe2.toFixed(1) + " dB");
+const mHill = R.linkBudget({ ptx_w: 20, gtx_dbi: 2, ltx_db: 1, grx_dbi: 2, lrx_db: 1, sens_dbm: -110, d_km: 15, f_mhz: 155, extra_db: gHill.loss_db - gHill.fs_db }).margin_db;
+ok(R.marginClass(mHill) === "likely", "20 W VHF from the hilltop is likely heard 15 km out on the plain (margin " + mHill.toFixed(1) + " dB)");
+const gFlat = R.groundPathLoss(flat(15000, 300, 300), { f_mhz: 155, hA_m: 2, hB_m: 2, k: 4 / 3 });
+ok(near(gFlat.pe_db, pe2, 0.01) && gFlat.loss_db >= pe2, "the same 15 km over flat ground keeps the two-ray loss (" + gFlat.loss_db.toFixed(1) + " dB)");
+const gRidge = R.groundPathLoss(flat(10000, 100, i => (i === 50 ? 150 : 50)), { f_mhz: 155, hA_m: 10, hB_m: 10, k: 4 / 3 });
+ok(gRidge.verdict === "blocked" && near(gRidge.knife_db, 18.5, 0.1) && near(gRidge.loss_db, Math.max(gRidge.fs_db, gRidge.pe_db) + gRidge.knife_db, 1e-9), "a ridge in the way still adds its knife-edge loss");
+ok(R.groundPathLoss(flat(10000, 100, 0, i => i === 0), { f_mhz: 155 }).verdict === "unknown", "no ground at an end: unknown, no loss figure");
+
 console.log(fails ? fails + " failed" : "all passed");
 process.exit(fails ? 1 : 0);

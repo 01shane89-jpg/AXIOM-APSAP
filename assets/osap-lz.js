@@ -584,7 +584,12 @@
   function place() {
     if (!card) return;
     if (split()) {
-      if (!dock) { dock = D.createElement("div"); dock.id = "lz-dock"; dock.className = "osplit"; dock.hidden = true; D.body.appendChild(dock); }
+      if (!dock) {
+        dock = D.createElement("div"); dock.id = "lz-dock"; dock.className = "osplit"; dock.hidden = true; D.body.appendChild(dock);
+        /* the same Map / Half / Full handle bar as the other docked windows; its title is set here, as the card's heading
+           also holds the Open data tag and the buttons */
+        if (W.OSAP_SPLIT.sheet) W.OSAP_SPLIT.sheet(dock, { close: '[data-lz="close"]', title: function () { return "Landing zones"; } });
+      }
       if (card.parentNode !== dock) dock.appendChild(card);
       card.classList.remove("lzdock"); syncDock(); return;
     }

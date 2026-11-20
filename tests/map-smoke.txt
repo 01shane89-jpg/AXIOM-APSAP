@@ -51,12 +51,15 @@ tests/points_declutter_smoke.mjs
 tests/photo_map_smoke.mjs
 tests/places_smoke.mjs
 tests/places_all_smoke.mjs
+# My places layer tree: one item in several folders, 20 deep, folder colours, KML/JSON tree out and in (assets/osap-places.js)
+tests/places_tree_smoke.mjs
 # My work side panel on the left of the map, holding My places and saved reports (assets/osap-work.js #mywk)
 tests/mywork_panel_smoke.mjs
 # Map overlays find box, section chips and folding headings; Settings headings (assets/osap-mlfold.js, assets/osap-tidy.js)
 tests/mlfold_smoke.mjs
 tests/map_display_smoke.mjs
 tests/photocheck_smoke.mjs
+tests/skyline_smoke.mjs
 tests/3d_smoke.mjs
 # the map compass behind the north arrow and the shared phone-compass reader (assets/osap-compass.js, assets/osap-heading.js)
 tests/compass_smoke.mjs
@@ -85,6 +88,8 @@ tests/pop_smoke.mjs
 tests/warngeo_smoke.mjs
 tests/sat_smoke.mjs
 tests/newimg_smoke.mjs
+# What changed here: dated Wayback pictures compared at one point (assets/osap-newimg.js, rules chg-v1)
+tests/whatchanged_smoke.mjs
 tests/plumes_smoke.mjs
 tests/keydates_smoke.mjs
 tests/coverage_smoke.mjs
@@ -94,6 +99,7 @@ tests/asiasec_smoke.mjs
 tests/threads_smoke.mjs
 # Share this trail: the reporting trail of a Go deeper story as a 1080 x 1920 picture, and its ?trail= link (assets/osap-trail.js)
 tests/trail_smoke.mjs
+tests/trailmap_smoke.mjs
 tests/spikes_smoke.mjs
 tests/maploading_smoke.mjs
 tests/streets_english_smoke.mjs

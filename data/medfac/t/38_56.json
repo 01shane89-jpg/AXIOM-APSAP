@@ -20,7 +20,7 @@
 ["w622172314",39.05784,56.39551,"tm",{"aeroway":"helipad"}],
 ["w622172315",39.05716,56.39576,"tm",{"aeroway":"helipad"}],
 ["w627796055",38.30035,56.74348,"tm",{"name":"Saglyk Öýi Duzlydepe","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:city":"Duzlydepe"}],
-["w627806226",38.38336,56.96156,"tm",{"name":"Saglyk Öýi Könegümmez","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:city":"Könegümmez"}],
+["w627806226",38.38335,56.96155,"tm",{"name":"Saglyk Öýi Könegümmez","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","addr:district":"Bäherden etraby","addr:city":"Könegümmez"}],
 ["w667871301",38.12208,57.94993,"tm",{"name":"Ýangala Geňeşligiň Saglyk Merkezi","amenity":"clinic","healthcare":"clinic","addr:city":"Ýangala daýhan birleşigi"}],
 ["w669328707",38.16218,57.9424,"tm",{"name":"Gökdepe Etrap Köpugurly Hassahanasy","name:en":"Gokdepe District General Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","emergency":"yes","phone":"(+993-132) 4-70-01;4-70-02","addr:housenumber":"55","addr:street":"Magtymguly şaýoly","addr:city":"Gökdepe"}],
 ["w669328708",38.16245,57.94145,"tm",{"name":"Ene Mähri Merkezi","name:en":"Ene Mahri Centre","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"maternity;paediatrics","addr:housenumber":"57","addr:street":"Magtymguly şaýoly","addr:city":"Gökdepe"}],
@@ -28,4 +28,4 @@
 ["w677419826",38.23567,57.96849,"tm",{"name":"Gökdepe Oba Saglyk Merkezi","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Gökdepe Etrap Köpugurly Hassahanasy","addr:city":"Tagan Baýramdurdyýew adyndaky geňeşligi"}],
 ["w764599348",38.18262,56.30954,"tm",{"aeroway":"helipad"}],
 ["w764601372",38.14083,56.11559,"tm",{"aeroway":"helipad"}],
-["w794209303",38.98526,56.28586,"tm",{"name":"Serdar Şäher Merkezi Hassahanasy","name:en":"Serdar Municipal Central Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:city":"Serdar"}]]
+["w794209303",38.98526,56.28586,"tm",{"name":"Gyzylarbat Şäher Merkezi Hassahanasy","name:en":"Gyzylarbat Municipal Central Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:city":"Gyzylarbat"}]]
