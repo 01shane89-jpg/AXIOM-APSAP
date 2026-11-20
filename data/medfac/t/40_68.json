@@ -713,7 +713,7 @@
 ["w33203734",41.33916,69.33404,"uz",{"name":"Детская больница №5","amenity":"hospital","healthcare":"hospital","addr:housenumber":"38","addr:street":"Ziyolilar ko'chasi","addr:city":"Tashkent","addr:postcode":"100170"}],
 ["w348129836",41.28097,69.24163,"uz",{"amenity":"clinic","addr:housenumber":"44 a","addr:street":"Muqimiy ko'chasi"}],
 ["w349826845",41.33707,69.35926,"uz",{"amenity":"hospital","healthcare":"hospital"}],
-["w351588061",40.27397,69.64391,"tj",{"name":"Беморхонаи шахри","amenity":"hospital","healthcare":"hospital"}],
+["w351588061",40.27385,69.64397,"tj",{"name":"Беморхонаи шахри","amenity":"hospital","healthcare":"hospital"}],
 ["w352262036",40.27441,69.60267,"tj",{"name":"таваллудхонаи вилояти","amenity":"hospital"}],
 ["w365454243",41.46094,69.55673,"uz",{"name":"Chirchiq Markaziy shifoxonasi","name:en":"Chirchik Central Hospital","amenity":"hospital","healthcare":"hospital","operator":"Chirchiq shahar tibbiy birlashmasi","addr:street":"8-kichik nohiyasi","addr:city":"Chirchiq"}],
 ["w369837438",41.18167,69.68598,"uz",{"name":"Ambulance","amenity":"hospital","emergency":"yes","operator":"Goverment ambulance"}],

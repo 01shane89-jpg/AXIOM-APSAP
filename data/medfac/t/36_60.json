@@ -3,7 +3,7 @@
 ["n11998719219",36.29636,60.4242,"ir",{"name":"مرکز خدمات جامع سلامت بزنگان","amenity":"clinic","healthcare":"clinic"}],
 ["n13234569555",36.5511,61.16003,"ir",{"aeroway":"helipad"}],
 ["n13234569556",36.55092,61.16001,"ir",{"aeroway":"helipad"}],
-["n14145133603",37.49776,60.35146,"tm",{"name":"\"Täze oba\" oba hassahanasy","amenity":"hospital","addr:street":"Magtymguly"}],
+["n14145133603",37.49776,60.35146,"tm",{"name":"Täzeoba oba hassahanasy","amenity":"hospital","healthcare":"hospital","addr:street":"Magtymguly","addr:city":"Täzeoba geňeşligi"}],
 ["n3846738732",36.53696,61.16172,"ir",{"amenity":"clinic","healthcare":"clinic"}],
 ["n5154554122",37.59783,61.8539,"tm",{"name":"Göz Keseller Merkezi","name:en":"Eye Disease Center","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"opthalmic_surgery","addr:street":"Güljemal Han köçesi","addr:city":"Mary"}],
 ["n5608732453",37.58309,61.86976,"tm",{"name:en":"Blood Bank","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"clinic","addr:city":"Mary"}],

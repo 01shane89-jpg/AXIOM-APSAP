@@ -2,6 +2,7 @@
 ["n13465439701",38.01281,58.43679,"tm",{"amenity":"hospital"}],
 ["n14209583201",38.07522,58.15806,"tm",{"name":"17 S/ Ö","amenity":"clinic"}],
 ["n14252763102",38.0372,58.1921,"tm",{"name:en":"Çaga dogrulýan hassahana","amenity":"hospital"}],
+["n14318339701",38.03719,58.19207,"tm",{"amenity":"hospital","opening_hours":"24/7"}],
 ["n4358198200",38.05929,58.15285,"tm",{"name":"Clinic No. 12","name:en":"Clinic No. 12","amenity":"clinic","addr:street":"S. Kornew","addr:city":"Ashgabat"}],
 ["n4687376389",38.04996,58.03172,"tm",{"name":"Saglyk Öýi","amenity":"clinic","healthcare":"clinic","addr:city":"Aba Annaýew"}],
 ["n6326831085",38.1581,58.38113,"tm",{"emergency":"ambulance_station","addr:street":"Aşgabat-Daşoguz awtomobil ýoly","addr:city":"Nazarly"}],
