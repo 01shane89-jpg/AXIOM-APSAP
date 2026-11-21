@@ -1106,6 +1106,9 @@
 
   /* ---------- the plan ---------- */
   var CSS =
+    /* the edit card on a hospital's map mark (a Leaflet popup, outside the plan panel) */
+    ".mppop .mpedit{display:grid;gap:3px;font:13px/1.35 system-ui,sans-serif}.mppop .mpedit .sub{display:block;color:#56626F;font-size:12px}.mppop .mpeb{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}" +
+    ".mppop .mpeb button{min-height:36px;padding:2px 10px;font-size:13px}.mppop .mpeb button[aria-pressed=true]{background:#8b0010;color:#fff;border-color:#8b0010;opacity:1}" +
     /* the flow (2026-11-21): folded sections and the At a glance card */
     "#medplan details.mpsec{border-top:1px solid var(--line-soft,#e3e7eb)}#medplan details.mpsec>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;min-height:44px}" +
     "#medplan details.mpsec>summary::-webkit-details-marker{display:none}#medplan details.mpsec>summary::before{content:'';flex:none;width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);margin:0 4px 0 2px;transition:transform .15s}" +
@@ -2884,13 +2887,13 @@
      able to easily turn on/off the objects on the map"). What is hidden is a view choice kept on this device; the road and
      air reach rings keep their section 1 settings (the same switch). Only the live map follows the chips: the printed plan
      and the PDF always carry every object. */
-  var MAP_GROUPS = [["poi", "Point of injury"], ["mtf", "Planned hospitals"], ["alt", "Alternates"], ["rt", "Routes"], ["gr", "Road reach"], ["ar", "Air reach"],
+  var MAP_GROUPS = [["poi", "Point of injury"], ["mtf", "Planned hospitals"], ["alt", "Alternates"], ["oh", "Other hospitals"], ["rt", "Routes"], ["gr", "Road reach"], ["ar", "Air reach"],
     ["air", "Air: pads, airfields, rescue"], ["cp", "Unit points"], ["bl", "Blood"], ["dc", "Chambers"], ["cl", "Clinics"], ["em", "Ambulance"], ["ev", "Evacuation out"]];
   /* the map starts with only the point of injury, the planned hospitals, the routes and the unit's own points: clinics,
      landing sites, ambulance, blood, chambers, alternates and the evacuation out are turned on when wanted (Shane 2026-11-21:
      "Clinics should not be automatically turned on, and the airfields and helicopter LZs shouldn't be automatically turned on
      either"). A new key, so a choice saved under the old everything-on default does not carry over. */
-  var HIDE_KEY = KEY + "layers", HIDE_DEFAULT = ["alt", "air", "bl", "dc", "cl", "em", "ev"];
+  var HIDE_KEY = KEY + "layers", HIDE_DEFAULT = ["alt", "oh", "air", "bl", "dc", "cl", "em", "ev"];
   function hiddenGroups() { var h = lsGet(HIDE_KEY); return Array.isArray(h) ? h : HIDE_DEFAULT.slice(); }
   function groupOn(g) { return g === "gr" || g === "ar" ? ringsOn(g) : hiddenGroups().indexOf(g) < 0; }
   function setGroup(g, on) {
@@ -2935,8 +2938,11 @@
       s.fac.AF.forEach(function (l, i) { add("air", ["mk", [l.lat, l.lon], "A" + (i + 1), "air", l.name]); });
       /* only the hospitals the plan uses (Shane 2026-10-06): its picks, stabilization stops and documented alternates; the
          rest stay listed in section 2 for reference but are not drawn */
-      s.fac.H.forEach(function (f, i) { if (isOff(f)) return; var r = pk(f), a = !r && AM[f.id]; if (!r && !a) return;
-        add(r ? "mtf" : "alt", ["mk", [f.lat, f.lon], r ? PK_TXT[r] : a ? a.t : "H" + (i + 1), r === "Stabilization" ? "stb" : r ? "pk" : a ? "alt" : "", (r ? r + ": " : a ? a.tip + ": " : "") + "H" + (i + 1) + " " + f.name + " · " + tierLabel(f) + (r || a ? "" : " · reference only, not a planned MTF"), !!(r || a)]); });
+      s.fac.H.forEach(function (f, i) { var off = isOff(f), r = !off && pk(f), a = !off && !r && AM[f.id];
+        /* the other hospitals (and those turned off) are their own map object, off to start, so a planner can find one on the
+           map and make it Primary, Secondary or Tertiary there (Shane 2026-11-21: "being able to make the edits on the map") */
+        if (!r && !a) { if (f.lat != null) add("oh", ["mk", [f.lat, f.lon], "H" + (i + 1), off ? "off" : "", "H" + (i + 1) + " " + f.name + " · " + tierLabel(f) + (off ? " · turned off" : " · reference only, not a planned MTF"), false, f.id]); return; }
+        add(r ? "mtf" : "alt", ["mk", [f.lat, f.lon], r ? PK_TXT[r] : a.t, r === "Stabilization" ? "stb" : r ? "pk" : "alt", (r ? r + ": " : a.tip + ": ") + "H" + (i + 1) + " " + f.name + " · " + tierLabel(f), true, f.id]); });
       /* a stabilization stop from the hospitals with no details listed */
       P.forEach(function (p) { if (s.fac.H.indexOf(p.f) < 0) add("mtf", ["mk", [p.f.lat, p.f.lon], PK_TXT[p.role] || "H", p.role === "Stabilization" ? "stb" : "pk", p.role + ": " + facTag(s, p.f) + " " + p.f.name, true]); });
     }
@@ -2965,7 +2971,8 @@
     var RL = { PRI: ["Primary MTF", "Quickest hospital giving a real step up in care"], SEC: ["Secondary MTF", "Surgery, blood, CT and ICU documented"], TER: ["Tertiary MTF", "Definitive specialty care documented"] };
     ["PRI", "SEC", "TER"].forEach(function (t) { if (roles.indexOf(t) >= 0) o.push(["mk", "#8b0010", t, RL[t][0], RL[t][1] + " (major trauma)"]); });
     if (has("alt")) o.push(["mka", "#8a4b00", "ALT", "Alternate MTF", "Also qualifies on documented care, if the planned one cannot take the casualty"]);
-    if (has("", /^H\d/)) o.push(["mk", "#D7141A", "H", "Other hospital", "Reference only: not eligible without credible documentation"]);
+    if (has("", /^H\d/)) o.push(["mk", "#D7141A", "H", "Other hospital", "Reference only: not eligible without credible documentation. Tap one to make it part of the plan"]);
+    if (has("off")) o.push(["mk", "#7a8590", "H", "Hospital turned off", "Left out of the plan; tap it to turn it back on"]);
     if (has("", /^C\d/)) o.push(["mk", "#D7141A", "C", "Clinic or first-aid post", ""]);
     if (has("e")) o.push(["mk", "#b35c00", "E", "Ambulance station", ""]);
     if (has("pt")) o.push(["mk", "#0b4f8a", "PORT", "Landing port", "Where the casualty is landed from the sea; the dotted line is the boat leg, straight, not a navigation route"]);
@@ -3000,7 +3007,7 @@
   }
   /* each plan mark as its NATO (2525D) symbol with its label: hospitals, clinics and chambers keep the red cross; landing zones,
      unit points, ports and airfields their control-measure or installation symbol; the role colour is the dot */
-  var MPCOL = { "": "#D7141A", e: "#b35c00", pt: "#0b4f8a", air: "#1d5fa8", o: "#111", bl: "#a4005b", dc: "#00727a", pk: "#8b0010", stb: "#b34700", alt: "#8a4b00", cp: "#1e7a3a", sw: "#7a1fa2", se: "#0b6e4f" };
+  var MPCOL = { off: "#7a8590", "": "#D7141A", e: "#b35c00", pt: "#0b4f8a", air: "#1d5fa8", o: "#111", bl: "#a4005b", dc: "#00727a", pk: "#8b0010", stb: "#b34700", alt: "#8a4b00", cp: "#1e7a3a", sw: "#7a1fa2", se: "#0b6e4f" };
   function mpKey(t, c) {
     t = String(t || "");
     if (c === "air") return /^L/.test(t) ? "g_medevac" : /^M/.test(t) ? "i_heli" : "i_air";
@@ -3019,9 +3026,44 @@
       html: '<span style="position:absolute;left:-9px;top:-9px;width:18px;height:18px;display:block">' + W.OSAP_REDCROSS(18) + '</span><b class="msym-l" style="left:11px;top:0' + (c && MPCOL[c] && c !== "" ? ";box-shadow:0 0 0 2px " + MPCOL[c] : "") + '">' + esc(t) + "</b>" });
     return L.divIcon({ className: "mpicon " + c, html: t, iconSize: [w, 20], iconAnchor: [w / 2, 10] });
   }
+  /* ---------- edit the plan on the map (Shane 2026-11-21) ----------
+     A hospital's mark opens a small card: its facts and buttons to make it the Primary, Secondary or Tertiary for major trauma,
+     go back to the computed pick, or turn it off or on. Each press is the same analyst decision the "Choose your own" list
+     records (setSel: who replaced what, when; the computed pick kept beside it), never a change to the evidence. A hospital
+     the role's capabilities are not documented for can still be chosen; the card and the plan say what is not documented. */
+  function editPop(id) {
+    var s = ST, f = s && s.fac && find(id); if (!f) return "<p>Not in this plan any more.</p>";
+    var R = planRoles(s).filter(function (r) { return r.casualty_category === "cat.major_trauma" && r.role !== "stabilization"; }), st0 = CATS[0].stages, off = isOff(f);
+    var mine = R.filter(function (r) { return r.choice && r.choice.f === f; }).map(function (r) { return ROLE_NAME[r.role] + (r.analyst ? " (your choice)" : ""); });
+    var h = '<div class="mpedit" data-keep-pop="1" data-mpe-id="' + esc(id) + '"><b>' + esc(facTag(s, f) + " " + f.name) + "</b>" +
+      '<span class="sub">' + esc(clip(tierLabel(f), 80)) + "</span>" + (f.s != null ? '<span class="sub">' + esc(km(f.rm != null ? f.rm : f.m)) + " · " + esc(mins(f.s)) + " drive</span>" : "") +
+      '<span class="sub">' + (off ? "Turned off" : mine.length ? "Now: " + esc(mine.join(", ")) : "Not in the plan") + "</span>";
+    if (!off) h += '<span class="mpeb">' + R.map(function (r) {
+      var fit = stageFit(f, st0[r.role]), nd = fit.byDesig ? [] : st0[r.role].required.filter(function (k) { return fit.met.indexOf(k) < 0; }), cur = r.choice && r.choice.f === f;
+      return '<button type="button" class="refresh" data-mpe="' + r.role + '"' + (cur ? ' aria-pressed="true" disabled' : "") + ' title="' + esc(nd.length ? "Not documented for " + ROLE_NAME[r.role] + ": " + andList(capNames(nd)) : "Documented for " + ROLE_NAME[r.role]) + '">' +
+        esc(ROLE_NAME[r.role]) + (nd.length ? " *" : "") + "</button>"; }).join("") + "</span>";
+    var sel = selOf(), back = Object.keys(sel).filter(function (k) { return sel[k] && sel[k].id === id; });
+    h += '<span class="mpeb">' + (back.length ? '<button type="button" class="refresh" data-mpe="reset">Back to computed</button>' : "") +
+      '<button type="button" class="refresh" data-mpe="' + (off ? "on" : "off") + '">' + (off ? "Turn on" : "Turn off") + "</button></span>";
+    if (!off && R.some(function (r) { var fit = stageFit(f, st0[r.role]); return !fit.byDesig && st0[r.role].required.some(function (k) { return fit.met.indexOf(k) < 0; }); })) h += '<span class="sub">* What that role needs is not all documented by a credible source here. You can still choose it; the plan says so.</span>';
+    return h + "</div>";
+  }
+  function editClick(e) {
+    var b = e.target.closest && e.target.closest(".mpedit [data-mpe]"); if (!b || !ST || !ST.fac) return;
+    var id = b.closest(".mpedit").getAttribute("data-mpe-id"), k = b.getAttribute("data-mpe");
+    if (k === "off" || k === "on") setOff(id, k === "off");
+    else if (k === "reset") { var sel = selOf(); Object.keys(sel).forEach(function (r) { if (sel[r] && sel[r].id === id) setSel(r, ""); }); }
+    else { var row = planRoles(ST).filter(function (r) { return r.casualty_category === "cat.major_trauma" && r.role === k; })[0], cp = row && (row.analyst ? row.computed : row.choice);
+      setSel(k, id, null, cp ? { id: cp.f.id, name: cp.f.name } : null); }
+    if (W.__asapMap) W.__asapMap.closePopup();
+    offChanged();
+  }
+  D.addEventListener("click", editClick);
   function mapShow() {
     var map = W.__asapMap; if (!map || !W.L || !ST) return;
     var el0 = D.getElementById("medplan"); if (W.OSAP_LEGEND && el0 && !el0.hidden) W.OSAP_LEGEND.set("medplan", legendHtml(true), el0);
+    /* a hospital's edit card open on the map stays open when the plan redraws (routes and times arrive after a change) */
+    var keep = null; if (layer) layer.eachLayer(function (l) { if (l._mpId && l.isPopupOpen && l.isPopupOpen()) keep = l._mpId; });
     if (layer) layer.remove();
     /* the plan draws in its own panes, so a view that hides the page's other layers (a conflict tab such as Deep South,
        assets/osap-conflicts.js) still shows it (Shane 2026-10-20: a plan from the Deep South tab drew nothing) */
@@ -3033,9 +3075,12 @@
       if (it[0] === "iso") L.polygon(it[1], Object.assign({ color: it[2], weight: 2, dashArray: "6 4", fillOpacity: 0.04, interactive: false }, vp)).addTo(layer);
       else if (it[0] === "ring") L.circle(it[1], Object.assign({ radius: it[2], color: it[3], weight: 2, dashArray: it[4] < GOLDEN_MIN ? "4 6" : null, fill: false, interactive: false }, vp)).addTo(layer);
       else if (it[0] === "line") L.polyline(it[1], Object.assign({ opacity: 0.85, interactive: false }, it[2], vp)).addTo(layer);
-      else L.marker(it[1], { pane: "mpmkpane", icon: mpIcon(it[2], it[3], it[2].length > 4 ? it[2].length * 7 + 6 : it[2].length > 2 ? 32 : 26), keyboard: false, zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(esc(it[4])).addTo(layer); /* names come from OpenStreetMap and Wikidata: text, never markup */
+      else { var mk = L.marker(it[1], { pane: "mpmkpane", icon: mpIcon(it[2], it[3], it[2].length > 4 ? it[2].length * 7 + 6 : it[2].length > 2 ? 32 : 26), keyboard: !!it[6], zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(esc(it[4]));
+        if (it[6]) { mk._mpId = it[6]; mk.bindPopup(function () { return editPop(it[6]); }, { className: "mppop", minWidth: 220, maxWidth: 300, autoPan: !keep, noCenter: true }); }
+        mk.addTo(layer); } /* names come from OpenStreetMap and Wikidata: text, never markup */
     });
     layer.addTo(map);
+    if (keep) layer.eachLayer(function (l) { if (l._mpId === keep) l.openPopup(); });
   }
 
   /* ---------- the printed map: OpenStreetMap tiles and the plan drawn on a canvas, so it prints on every device ---------- */

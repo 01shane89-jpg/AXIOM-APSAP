@@ -197,7 +197,7 @@ async function open(opts, o) {
      (o.flow) keeps the plan's own defaults: two sections open, clinics and landing sites off the map */
   await ctx.addInitScript((flow) => { try { localStorage.setItem("osap-home", "map"); if (localStorage.getItem("osap.split") === null) localStorage.setItem("osap.split", "0");
     if (!flow && localStorage.getItem("osap-medplan-open") === null) localStorage.setItem("osap-medplan-open", JSON.stringify({ conop: 1, pic: 1, val: 1, pst: 1, pstmore: 1, gh: 1, fac: 1, rt: 1, ems: 1, air: 1, oc: 1, thr: 1, wx: 1, unit: 1, src: 1 }));
-    if (!flow && localStorage.getItem("osap-medplan-layers") === null) localStorage.setItem("osap-medplan-layers", "[]"); } catch (e) {} }, !!o.flow);
+    if (!flow && localStorage.getItem("osap-medplan-layers") === null) localStorage.setItem("osap-medplan-layers", "[\"oh\"]"); } catch (e) {} }, !!o.flow);
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.TSAP.areaApi && document.getElementById("atk-tools"), null, { timeout: 60000 });
   await p.waitForTimeout(3000);
@@ -361,7 +361,8 @@ async function openPlan(p) {
   ok(await p.evaluate(() => !document.querySelector('#medplan [data-mp-opt="gr"]').checked), "layers: the Road reach chip and the section 1 ground rings switch are the same setting");
   await p.click('#mp-layers [data-mp-lyr="*on"]'); await p.waitForTimeout(150);
   const ly4 = await lyr();
-  ok(ly4.mk.length === ly0.mk.length && ly4.n === ly0.n && ly4.hide === "[]", "layers: All on puts every object back " + ly4.mk.length + "/" + ly0.mk.length + " marks, " + ly4.paths + "/" + ly0.paths + " lines");
+  ok(ly4.mk.length > ly0.mk.length && ly4.mk.filter((t) => !/^H\d+$/.test(t)).length === ly0.mk.length && ly4.hide === "[]", "layers: All on puts every object back " + ly4.mk.length + "/" + ly0.mk.length + " marks, " + ly4.paths + "/" + ly0.paths + " lines");
+  await p.click('#mp-layers [data-mp-lyr="oh"]'); await p.waitForTimeout(150); /* back to the plan's hospitals only for the checks below */
   const ghs = await p.textContent("#mp-gh");
   ok(/60 minutes from injury/.test(ghs) && /10 minutes to treat and load/.test(ghs) && /green 30 minutes/.test(ghs) && /light blue ring/.test(ghs), "desktop: golden-hour section states its thresholds, the road reach and the air rings");
   const ems = await p.textContent("#mp-ems");
@@ -1163,6 +1164,32 @@ for (const dev of [{ name: "desktop", opts: { viewport: { width: 1400, height: 9
     await p.evaluate(() => document.getElementById("mp-quick").scrollIntoView()); await p.screenshot({ path: OUT + "/" + dev.name + "-flow.png" });
     await p.evaluate(() => document.documentElement.setAttribute("data-map", "dark")); await p.waitForTimeout(200); await p.screenshot({ path: OUT + "/" + dev.name + "-flow-dark.png" });
     await p.evaluate(() => document.documentElement.removeAttribute("data-map"));
+  }
+  /* edit on the map (Shane 2026-11-21): a hospital's mark opens a card to make it Primary, Secondary or Tertiary, or turn it off */
+  if (dev.name === "desktop") {
+    await p.click('#mp-layers [data-mp-lyr="oh"]'); await p.waitForTimeout(300);
+    const nearMk = await p.evaluate(() => { const m = [...document.querySelectorAll(".mpicon")].find((x) => /^H\d+$/.test(x.textContent) && /Near Hospital/.test(x.closest(".leaflet-marker-icon") ? "" : "") || false); return [...document.querySelectorAll(".mpicon")].filter((x) => /^H\d+$/.test(x.textContent.trim())).length; });
+    ok(nearMk >= 1, "map edit: Other hospitals puts the hospitals outside the plan on the map (" + nearMk + ")");
+    const opened = await p.evaluate(() => { const L = window.__asapMap; let hit = null; L.eachLayer((l) => { if (!hit && l.getPopup && l.getPopup() && l.getTooltip && /Near Hospital/.test(String(l.getTooltip().getContent()))) hit = l; }); if (hit) hit.openPopup(); return !!hit; });
+    await p.waitForTimeout(200);
+    const pop = await p.evaluate(() => { const c = document.querySelector(".mppop .mpedit"); return c ? { t: c.textContent, b: [...c.querySelectorAll("[data-mpe]")].map((b) => b.dataset.mpe) } : null; });
+    ok(opened && pop && /Near Hospital/.test(pop.t) && /Not in the plan/.test(pop.t) && ["primary", "secondary", "tertiary", "off"].every((k) => pop.b.includes(k)), "map edit: the hospital's card offers Primary, Secondary, Tertiary and Turn off " + JSON.stringify(pop));
+    await p.evaluate(() => document.querySelector('.mppop [data-mpe="primary"]').click()); /* the undocked plan covers the map on a desktop; docked or folded it is pressed by hand */ await p.waitForTimeout(800);
+    const ed = await p.evaluate(() => ({ sel: (JSON.parse(localStorage.getItem("osap-medplan-sites-th") || "[]").map((x) => x.v && x.v.mtfsel).filter(Boolean)[0]) || JSON.parse(localStorage.getItem("osap-medplan-th") || "{}").mtfsel || null, q: document.querySelector('#mp-quick [data-mp-q="Primary"]').textContent, pop: !!document.querySelector(".mppop .mpedit") }));
+    ok(ed.sel && ed.sel.primary && /Near Hospital/.test(ed.sel.primary.name) && ed.sel.primary.computed && /Far North/.test(ed.sel.primary.computed.name) && /Your choice/.test(ed.q) && /Near Hospital/.test(ed.q) && !ed.pop, "map edit: Primary makes it your Primary, recorded with the computed pick it replaced " + JSON.stringify(ed.sel && ed.sel.primary));
+    await p.evaluate(() => { let hit = null; window.__asapMap.eachLayer((l) => { if (!hit && l.getPopup && l.getPopup() && l.getTooltip && /Primary: .*Near Hospital/.test(String(l.getTooltip().getContent()))) hit = l; }); if (hit) hit.openPopup(); }); await p.waitForTimeout(200);
+    ok(await p.evaluate(() => { const c = document.querySelector(".mppop .mpedit"); return !!c && /Primary \(your choice\)/.test(c.textContent) && !!c.querySelector('[data-mpe="reset"]'); }), "map edit: the card shows it is your choice and offers Back to computed");
+    await p.evaluate(() => document.querySelector('.mppop [data-mpe="reset"]').click()); /* the undocked plan covers the map on a desktop; docked or folded it is pressed by hand */ await p.waitForTimeout(800);
+    ok(await p.evaluate(() => /Far North Hospital/.test(document.querySelector('#mp-quick [data-mp-q="Primary"]').textContent) && !/Your choice/.test(document.querySelector('#mp-quick [data-mp-q="Primary"]').textContent)), "map edit: Back to computed restores the computed Primary");
+    await p.evaluate(() => { let hit = null; window.__asapMap.eachLayer((l) => { if (!hit && l.getPopup && l.getPopup() && l.getTooltip && /^Primary: .*Far North/.test(String(l.getTooltip().getContent()))) hit = l; }); if (hit) hit.openPopup(); }); await p.waitForTimeout(200);
+    await p.evaluate(() => document.querySelector('.mppop [data-mpe="off"]').click()); /* the undocked plan covers the map on a desktop; docked or folded it is pressed by hand */ await p.waitForTimeout(800);
+    ok(await p.evaluate(() => !/Far North Hospital/.test(document.querySelector('#mp-quick [data-mp-q="Primary"]') ? document.querySelector('#mp-quick [data-mp-q="Primary"]').textContent : "") && (JSON.parse(localStorage.getItem("osap-medplan-off-th") || "[]")).length === 1), "map edit: Turn off leaves the hospital out and the next one is picked");
+    await p.evaluate(() => { let hit = null; window.__asapMap.eachLayer((l) => { if (!hit && l.getPopup && l.getPopup() && l.getTooltip && /Far North.*turned off/.test(String(l.getTooltip().getContent()))) hit = l; }); if (hit) hit.openPopup(); });
+    await p.waitForTimeout(1500);
+    ok(await p.evaluate(() => !!document.querySelector('.mppop [data-mpe="on"]')), "map edit: the card stays open while the plan redraws");
+    await p.evaluate(() => document.querySelector('.mppop [data-mpe="on"]').click()); /* the undocked plan covers the map on a desktop; docked or folded it is pressed by hand */ await p.waitForTimeout(800);
+    ok(await p.evaluate(() => /Far North Hospital/.test(document.querySelector('#mp-quick [data-mp-q="Primary"]').textContent) && JSON.parse(localStorage.getItem("osap-medplan-off-th") || "[]").length === 0), "map edit: a turned-off hospital stays on the map (Other hospitals) and Turn on brings it back");
+    if (OUT) { await p.evaluate(() => document.querySelector('#medplan [data-mp="dock"]').click()); await p.waitForTimeout(600); await p.evaluate(() => { let hit = null; window.__asapMap.eachLayer((l) => { if (!hit && l.getPopup && l.getPopup() && l.getTooltip && /Near Hospital/.test(String(l.getTooltip().getContent()))) hit = l; }); if (hit) hit.openPopup(); }); await p.waitForTimeout(300); await p.screenshot({ path: OUT + "/desktop-map-edit.png" }); await p.evaluate(() => { window.__asapMap.closePopup(); document.querySelector('#medplan [data-mp="dock"]').click(); }); await p.waitForTimeout(300); }
   }
   /* print still carries every section, unfolded, with its heading */
   const pv = await p.evaluate(() => { document.querySelector('#medplan [data-mp="print"]').click(); const b = document.getElementById("brief"); return { det: b.querySelectorAll("details.mpsec").length, quick: !!b.querySelector(".mpq"), h3: [...b.querySelectorAll("h3")].map((h) => h.textContent) }; });

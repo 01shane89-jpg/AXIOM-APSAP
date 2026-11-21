@@ -46,7 +46,7 @@ async function open(flags = {}) {
     }
     return r.abort();
   });
-  await ctx.addInitScript(() => { try { if (localStorage.getItem("osap-medplan-open") === null) localStorage.setItem("osap-medplan-open", JSON.stringify({ conop: 1, pic: 1, val: 1, pst: 1, pstmore: 1, gh: 1, fac: 1, rt: 1, ems: 1, air: 1, oc: 1, thr: 1, wx: 1, unit: 1, src: 1 })); if (localStorage.getItem("osap-medplan-layers") === null) localStorage.setItem("osap-medplan-layers", "[]"); localStorage.setItem("osap-home", "map"); } catch (e) {} });
+  await ctx.addInitScript(() => { try { if (localStorage.getItem("osap-medplan-open") === null) localStorage.setItem("osap-medplan-open", JSON.stringify({ conop: 1, pic: 1, val: 1, pst: 1, pstmore: 1, gh: 1, fac: 1, rt: 1, ems: 1, air: 1, oc: 1, thr: 1, wx: 1, unit: 1, src: 1 })); if (localStorage.getItem("osap-medplan-layers") === null) localStorage.setItem("osap-medplan-layers", "[\"oh\"]"); localStorage.setItem("osap-home", "map"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + "#th", { waitUntil: "domcontentloaded" });
   await p.waitForFunction(() => window.TSAP && window.OSAP_DZSO_GO && window.OSAP_MEDPLAN && window.__asapMap, null, { timeout: 60000 }); await p.waitForTimeout(2500);
