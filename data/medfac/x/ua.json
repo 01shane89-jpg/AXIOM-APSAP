@@ -7,6 +7,7 @@
 ["n13725191386",49.83644,24.04675,"ua",{"name":"Львівський обласний центр служби крові","healthcare":"blood_donation","addr:housenumber":"65","addr:street":"Пекарська вулиця","addr:postcode":"79010","opening_hours":"Mo-Fr 08:30-13:00"}],
 ["n3190952933",50.45093,30.47949,"ua",{"name":"Відділення заготівлі крові","healthcare":"blood_donation","operator":"Охматдит"}],
 ["n3384710298",50.4657,24.28647,"ua",{"name":"Станція переливання крові","healthcare":"blood_donation"}],
+["n4121729390",44.60234,33.51765,"ua",{"name":"Центр Крови","amenity":"clinic","healthcare":"blood_donation","operator":"ГБУЗС \"Центр Крови\"","opening_hours":"Mo-Fr 08:00-12:00"}],
 ["n4152851842",50.47399,30.46732,"ua",{"name":"Станція переливання крові","healthcare":"blood_bank"}],
 ["n4553871791",48.51457,34.5925,"ua",{"name":"Biopharma","healthcare":"blood_donation","phone":"+380800600003","website":"https://biopharmaplasma.ua/","opening_hours":"Невідомо"}],
 ["n4564737238",47.58035,34.33698,"ua",{"name":"Нікопольський центр переливання крові","healthcare":"blood_donation"}],

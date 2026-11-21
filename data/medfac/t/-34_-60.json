@@ -25,7 +25,7 @@
 ["n2353864067",-33.15109,-59.30994,"ar",{"name":"Sur Centro Médico","amenity":"hospital","healthcare":"hospital","addr:housenumber":"134","addr:street":"Gregorio Morán","addr:city":"Gualeguay","addr:postcode":"2840"}],
 ["n2434694290",-32.32612,-58.07938,"uy",{"aeroway":"helipad"}],
 ["n2506254502",-33.53435,-58.2129,"uy",{"amenity":"hospital","healthcare":"hospital"}],
-["n2601261888",-33.25158,-58.03201,"uy",{"name":"Sanatorio CAMS","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
+["n2601261888",-33.25158,-58.03201,"uy",{"name":"Sanatorio CAMS","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"623","addr:street":"Florencio Sánchez","addr:city":"Mercedes"}],
 ["n2715656523",-32.99478,-58.52643,"ar",{"name":"Sala de primeros auxilos Barrio San Isidro","amenity":"clinic","healthcare":"clinic","addr:street":"Schachtel","addr:city":"Gualeguaychú","addr:postcode":"2820"}],
 ["n2815617867",-33.14455,-59.31284,"ar",{"name":"Las Catenarias Salud","amenity":"hospital","healthcare":"hospital","phone":"+54 3444 42 9323; +54 3444 42 3338","addr:housenumber":"152","addr:street":"San Antonio Norte","addr:city":"Gualeguay","addr:postcode":"2840"}],
 ["n2900151222",-33.03064,-59.00407,"ar",{"name":"Hospital San Isidro Labrador","amenity":"hospital","healthcare":"hospital","addr:street":"Avenida Antártida Argentina","addr:city":"Larroque","wikidata":"Q94691230"}],
