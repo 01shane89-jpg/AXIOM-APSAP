@@ -41,15 +41,23 @@ await p.click("#today .ohb");
 const r = await p.waitForFunction(() => {
   let e = document.querySelector(".ohp");
   if (!e) { const b = document.querySelector("#today .ohb"); if (b) b.click(); return false; }
-  const text = e.innerText || "", items = [...e.querySelectorAll(".ohops li")].map((l) => l.innerText);
+  const text = e.innerText || "", items = [...e.querySelectorAll(".ohops li")].map((l) => l.textContent); // textContent: the quiet list is folded (not rendered)
   if (!/Behind schedule/.test(text) || !items.length) return false;
-  return { text, items, wide: document.documentElement.scrollWidth > innerWidth + 1 };
+  const lateItems = [...e.querySelectorAll(".ohlate li")].map((l) => l.textContent), sum = e.querySelector("details.ohq summary");
+  return { text, items, lateItems, summary: sum ? sum.textContent : "", wide: document.documentElement.scrollWidth > innerWidth + 1 };
 }, null, { timeout: 20000, polling: 250 }).then((h) => h.jsonValue()).catch(async () => ({ text: await p.evaluate(() => { const e = document.querySelector(".ohp"); return e ? e.innerText : "(no panel)"; }), items: [], wide: false }));
 if (!/Behind schedule/.test(r.text)) console.log("panel text seen: " + r.text.slice(0, 400).replace(/\n/g, " | "));
 ok(/Behind schedule/.test(r.text), "the panel has a Behind schedule list");
 ok(r.items.some((t) => /Refresh economic stress signals: last succeeded 4 days ago/.test(t)), "a late data job is named with its last success");
 ok(!r.items.some((t) => /Refresh risk/.test(t)), "a job within its schedule is not listed");
 ok(r.items.some((t) => /NHK World \(old feed\) \(JP\): answers, but its newest item is from 2026-08-08/.test(t)), "a quiet source is named with its newest item");
+// 21 Nov 2026: quiet sources are not "behind schedule"; they sit in their own folded list that stays open across redraws
+ok(r.lateItems && !r.lateItems.some((t) => /NHK World/.test(t)), "a quiet source is not listed as behind schedule");
+ok(/^1 quiet source\b/.test(r.summary || ""), "quiet sources are a folded list with their count (" + r.summary + ")");
+await p.evaluate(() => { const d = document.querySelector("details.ohq"); if (d) d.open = true; });
+await p.evaluate(() => window.OSAP_HEALTH_UI.reload());
+await p.waitForTimeout(1500);
+ok(await p.evaluate(() => { const d = document.querySelector("details.ohq"); return !!(d && d.open); }), "the quiet sources fold stays open when the panel redraws");
 ok(/\bamber\b/.test(badge) && /Economic stress signals late/.test(badge), "a late job turns the badge amber and names it (" + badge.trim() + ")");
 ok(!/\bdown\b/.test(badge), "a late job alone never turns the badge red");
 ok(!r.wide, "nothing scrolls sideways");
