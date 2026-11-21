@@ -56,13 +56,13 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Philippines.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "https://en.wikipedia.org/wiki/Embassy_of_the_United_States,_Manila",
-   "fp": "0de9179c714b855aa1ce84675e91f9ba9132bf883da4aa8d563b484be60c0875",
+   "fp": "4c0fbd07f5c6284e528c90792ecd66ec32d26f9657745d3f4a7c599a6790be53",
    "web": "https://ph.usembassy.gov/",
    "phone": "(+63) 2 5301-2000",
    "phone_after_hours": "(+63) 2 5301-2000",
    "phone_src": "https://ph.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-09"
+   "phone_asof": "2026-11-21"
   },
   {
    "id": "sof:ph:post:u-s-consular-agency-cebu",
@@ -77,12 +77,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Philippines.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "OpenStreetMap node/1595957563",
-   "fp": "275e09124e179a36b9cae377ab663a9d32304c2f12d1a6e215ed77ab2ee49c64",
+   "fp": "4f2780210ae7cf190e58bf5799d7059d4835d68c95e3563777de135177b12f0b",
    "web": "https://ph.usembassy.gov/u-s-citizen-services/citizenship-services/consular-agency-cebu/",
    "phone": "+63 32 231 1261",
    "phone_src": "https://www.openstreetmap.org/node/1595957563",
    "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
-   "phone_asof": "2026-11-09"
+   "phone_asof": "2026-11-21"
   }
  ],
  "airports": [
@@ -1077,8 +1077,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/11738060472",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "8189d8092f8506327d0c4cb4e22780b4fa1e35c6b2103c57a85698802975b21d"
+   "asof": "2026-11-21",
+   "fp": "913c3be68e77d254cc77c87bb67aa1fee1836d270672faf55e2375a7eec83bac"
   },
   {
    "id": "sof:ph:xing:node-13539000665",
@@ -1094,8 +1094,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/13539000665",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "be64aad91034f0cdd8418fd160d4704041e804f47e23dec1dfb811c4592b9bed"
+   "asof": "2026-11-21",
+   "fp": "d0b10c55bb2865ddd6a073484b2cfde17f2b72237cbc580a446bc1e781a87d57"
   },
   {
    "id": "sof:ph:xing:node-6814493976",
@@ -1111,8 +1111,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/6814493976",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "81829b3175b3d0b1284fe6d949160c5b8ce99d6bd02fdde1145f26fef2de03a2"
+   "asof": "2026-11-21",
+   "fp": "74461e8576c349e54998592bc7c577499a55501814714d93f3c1dd1d804c86d0"
   },
   {
    "id": "sof:ph:xing:node-9634943156",
@@ -1128,8 +1128,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/9634943156",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "466027a40fac484a5c67130898ca406ae9afd6357f0462742cc5a7cfa57b9a2c"
+   "asof": "2026-11-21",
+   "fp": "5f5c8c125cd738c43292bb4d063f023493f28a11239b3970685d9ca4830fbcfc"
   },
   {
    "id": "sof:ph:xing:way-896362056",
@@ -1145,13 +1145,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/896362056",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "f405bfe0180d54a8ca8da0601bcd59bbc13640d165106c2c2cc77415d06972a1"
+   "asof": "2026-11-21",
+   "fp": "01cc495c25547997a7d1a3b98d6bfa9965dd754547f80980d22127d034f9ba9d"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-21"
 }

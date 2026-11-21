@@ -24,18 +24,19 @@
    "city": "Apia",
    "address": null,
    "services_note": "Provides U.S. citizen services; address not retrieved",
-   "lat": -13.833,
-   "lon": -171.765,
-   "prec": "approx",
+   "lat": -13.831109,
+   "lon": -171.769797,
+   "prec": "exact",
    "src": "https://ws.usembassy.gov/services/",
    "srcname": "U.S. Embassy in Samoa",
-   "coord_basis": "Apia centre estimate; verify",
-   "fp": "a7248d986037e6dfd7c9fe009f1c3c235943aa1684fc4b7fd21490649663384b",
+   "coord_basis": "OpenStreetMap node/8443803033",
+   "fp": "888c87fbce899edaa81214ddffa760416a35b3fee322ed8a647b6ea3f1945fd2",
    "phone": "+685 21436",
    "phone_after_hours": "(685) 21631",
    "phone_src": "https://ws.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-09"
+   "phone_asof": "2026-11-21",
+   "web": "https://ws.usembassy.gov"
   }
  ],
  "airports": [
@@ -183,13 +184,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/1456108623",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "f336f59d99c1c58bfcebe0532a200d9dfdf46f57416f940abe25c73aaf95a652"
+   "asof": "2026-11-21",
+   "fp": "0f618b3075f3e9400abea38b3b06da9bf20ea77c0c68ab892de52f9fc9dd426e"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-21"
 }

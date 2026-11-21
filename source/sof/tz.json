@@ -42,8 +42,8 @@
    "phone_after_hours": "+255 22 229-4000",
    "phone_src": "https://tz.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-09",
-   "fp": "9f90c8fa1cc48c4da3e9e882cf823a612c77ac0be2a88b260cfaac409bdbe0c7"
+   "phone_asof": "2026-11-21",
+   "fp": "d302bef1304cf1ff952d0abf2538b0c571e8c3ac6912786102ffaa35a8ee6fc6"
   }
  ],
  "airports": [
@@ -522,8 +522,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/10738220091",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "bcc05101f4a9a612b32a6e1a0feb83e82f4a0288119d87c6f5766188626aa5e2"
+   "asof": "2026-11-21",
+   "fp": "70049f82427f4362bb8cd2e344a6a2bc0663af3a9c2aff70d023a82f985eacd3"
   },
   {
    "id": "sof:tz:xing:node-10973800162",
@@ -539,8 +539,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/10973800162",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "20cac45960d871cd990a22a056231da3d78a9b77218fdd8aad68bac58f932ae5"
+   "asof": "2026-11-21",
+   "fp": "74308483af77a8f1667eb297a0014f30a653928efb497b01c040b637625d6981"
   },
   {
    "id": "sof:tz:xing:node-11874086575",
@@ -556,8 +556,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/11874086575",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "6f32555a2818990bf8323347bdf376c4ba17f7e01a5cd17dd5c3aeb08c88a653"
+   "asof": "2026-11-21",
+   "fp": "9b3e806b513f46377b3baf8425bb5995474ae51bb7b106f9c3c6ed1091ca4cad"
   },
   {
    "id": "sof:tz:xing:node-2194517438",
@@ -573,8 +573,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/2194517438",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "8372782456452da886cf88cc930d8ea6d2cf48b357a3e26f2617a7d854e3b140"
+   "asof": "2026-11-21",
+   "fp": "1d732beb994ac8247804506373d8e0601389038336f2aa4c7f9527c002b47546"
   },
   {
    "id": "sof:tz:xing:node-2312128980",
@@ -595,8 +595,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/2312128980",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "b28ee6f8fade13c2a4c96dfb2f04a450e18ce2f7cc96a9dd01aaa779cbc17745"
+   "asof": "2026-11-21",
+   "fp": "08da310ad80871b2dfe852ec5f4a9a13a3bf5541e1e1d4a5a21898b2d7cebe72"
   },
   {
    "id": "sof:tz:xing:node-3417473902",
@@ -612,8 +612,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/3417473902",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "a8b346290c35def5080970b010a70bc5314dc2aaf177ce1ceba8377300e0cb5a"
+   "asof": "2026-11-21",
+   "fp": "85594cd0c301ede9527f84cbae114e1704a80f0b30663d5b704e89a9bf0b36b0"
   },
   {
    "id": "sof:tz:xing:node-4443028084",
@@ -629,8 +629,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/4443028084",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "67b23ac47b45607ac240e95acc22f6a73e3c3ba614ae5880cb0141237609c555"
+   "asof": "2026-11-21",
+   "fp": "d1a7283a6e17480d97d49a90ecd723737e2544dd3d42b64c469b4d8bc992c6ee"
   },
   {
    "id": "sof:tz:xing:node-4443028652",
@@ -646,13 +646,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/4443028652",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "1f12c8413195fd2b50038a2383478af5584464218346ecb238cf9eb3cfcba4d0"
+   "asof": "2026-11-21",
+   "fp": "11965f91f037b74a7c2cfb296a05b0458a73c252fc47e7690901c6155923e96b"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-21"
 }
