@@ -150,11 +150,24 @@ const done = (p) => p.waitForFunction(() => { const s = window.OSAP_COMMSPLAN.ra
 }
 // ---------- phone ----------
 {
-  const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+  const { ctx, p, errors } = await open({ viewport: { width: 400, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   await p.evaluate((c) => window.OSAP_COMMSPLAN.radioFrom(c[0], c[1]), A);
   await done(p);
   await p.evaluate(() => document.documentElement.setAttribute("data-sheet", "full")); await p.waitForTimeout(400);
   ok(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "phone: no sideways scroll");
+  /* the results table fits the panel: every cell, the percentages and the Model row, ends inside it (21 Nov: at 400 px the
+     percent column ran off the right edge, so only the badges showed) */
+  const fit = await p.evaluate(() => {
+    const out = document.getElementById("cp-rcout"), t = out && out.querySelector(".rttab"); if (!t) return null;
+    let box = out; while (box && box !== document.body && getComputedStyle(box).overflowX === "visible") box = box.parentElement;
+    const R = (box || out).getBoundingClientRect(), O = out.getBoundingClientRect();
+    const right = Math.min(R.right, O.right), cells = [...t.querySelectorAll("td, th")];
+    const over = cells.filter((c) => c.getBoundingClientRect().right > right + 1 || c.scrollWidth > c.clientWidth + 1).map((c) => c.textContent.slice(0, 30));
+    const pct = [...t.querySelectorAll("td")].filter((c) => /% of the ground/.test(c.textContent)).length;
+    return { over, pct, w: Math.round(t.getBoundingClientRect().width), room: Math.round(right - O.left) };
+  });
+  if (OUT) { await p.evaluate(() => document.querySelector("#cp-rcout .rttab").scrollIntoView({ block: "center" })); await p.screenshot({ path: OUT + "/commsradio-phone.png" }); }
+  ok(fit && fit.pct === 4 && fit.over.length === 0, "phone: the results table fits, percentages and model in view (" + JSON.stringify(fit) + ")");
   ok(!errors.length, "phone: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }

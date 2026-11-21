@@ -24,10 +24,19 @@ const CC = process.env.CC || "ua";
 const file = await readFile(join(root, `data/live/threads/${CC}.js`), "utf8").then((t) => { const w = {}; new Function("window", t)(w); return w.OSAP_THREADS; }).catch(() => null);
 if (!file || !file.threads || !file.threads.length) { console.log("SKIP: no stored story threads for " + CC); server.close(); process.exit(0); }
 const TH = file.threads.slice().sort((a, b) => (b.rows || []).length - (a.rows || []).length)[0];
+const T = (await import("node:module")).createRequire(import.meta.url)("../assets/osap-trailmap.js");
+const FIRSTS = T.playModel(TH, {}, null, file).firsts;
+// the tie case (two outlets in the story's first minute, as in the live data on 21 Nov 2026), run whatever the live data holds:
+// the same file with one more report in the first minute of the story, served only to the tie pass below
+const dated = (TH.rows || []).filter((r) => Array.isArray(r) && isFinite(Date.parse(String(r[4] || "").slice(0, 16) + "Z"))).sort((a, b) => Date.parse(String(a[4]).slice(0, 16) + "Z") - Date.parse(String(b[4]).slice(0, 16) + "Z"));
+const TIEFILE = { ...file, threads: file.threads.map((t) => t.id !== TH.id || !dated.length ? t : { ...t, rows: t.rows.concat([["OSAP Tie Test Outlet", "other", "out", dated[0][3] === "gb" ? "fr" : "gb", String(dated[0][4]).slice(0, 16), "https://tie.example/1", "Same-minute report (test)", 0, 0]]) }) };
+const TIEFIRSTS = T.playModel(TIEFILE.threads.filter((t) => t.id === TH.id)[0], {}, null, TIEFILE).firsts;
+let s0reports = -1;
 const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
-async function start(opts) {
+async function start(opts, threadsFile) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+  if (threadsFile) await ctx.route(new RegExp("/data/live/threads/" + CC + "\\.js(\\?|$)"), (r) => r.fulfill({ contentType: "text/javascript", body: "window.OSAP_THREADS = " + JSON.stringify(threadsFile) + ";" }));
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
   const p = await ctx.newPage(); const errors = []; p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + "#" + CC + "/timeline", { waitUntil: "domcontentloaded" });
@@ -42,10 +51,11 @@ async function start(opts) {
   ok(await p.evaluate(() => !!document.querySelector("#thv [data-thmap]")), "Go deeper has a Play on the map button");
   await p.click("#thv [data-thmap]");
   await p.waitForFunction(() => window.OSAP_TRAILMAP.isOpen(), null, { timeout: 20000 });
-  const s0 = await p.evaluate(() => window.OSAP_TRAILMAP.state());
+  const s0 = await p.evaluate(() => window.OSAP_TRAILMAP.state()); s0reports = s0.reports;
   ok(await p.evaluate(() => !window.OSAP_THREADSQ.isOpen() && !!document.querySelector("#trm") && !document.querySelector("#trm").hidden), "Go deeper closes and the player opens on the map");
-  ok(s0.reports > 1 && s0.placed > 0 && s0.frame.reports === 1 && s0.drawn === 1, "at the start only the first report is out (" + JSON.stringify(s0) + ")");
-  ok(await p.evaluate(() => /First report OSAP holds/.test(document.querySelector(".leaflet-tooltip") ? document.querySelector(".leaflet-tooltip").textContent : "")), "the first report is labeled on the map");
+  ok(s0.reports > 1 && s0.placed > 0 && FIRSTS >= 1 && s0.frame.reports === FIRSTS && s0.drawn === FIRSTS, "at the start only the report(s) of the first minute are out (" + FIRSTS + "; " + JSON.stringify(s0) + ")");
+  const tips = await p.evaluate(() => [...document.querySelectorAll(".leaflet-tooltip")].map((t) => t.textContent));
+  ok(tips.length === 1 && (FIRSTS > 1 ? tips[0] === "First report OSAP holds: " + FIRSTS + " outlets, same minute" : tips[0] === "First report OSAP holds"), "the first report is labeled on the map, once, and a same-minute tie says so " + JSON.stringify(tips));
   await p.evaluate(() => window.OSAP_TRAILMAP.seek(1)); await p.waitForTimeout(300);
   const s1 = await p.evaluate(() => window.OSAP_TRAILMAP.state());
   const dots = s1.dots;
@@ -59,7 +69,7 @@ async function start(opts) {
   ok(fitr[0] === fitr[1] || fitr[2] <= fitr[3], "the map fits every dot, or is zoomed out as far as it goes " + JSON.stringify(fitr));
   if (OUT) await p.screenshot({ path: OUT + "/trailmap-end.png" });
   await p.evaluate(() => window.OSAP_TRAILMAP.seek(0)); await p.waitForTimeout(100);
-  ok(await p.evaluate(() => window.OSAP_TRAILMAP.state().drawn) === 1, "stepping back redraws only what was out then");
+  ok(await p.evaluate(() => window.OSAP_TRAILMAP.state().drawn) === FIRSTS, "stepping back redraws only what was out then");
   await p.selectOption('#trm [data-trm="speed"]', "4");
   await p.click('#trm [data-trm="play"]'); await p.waitForTimeout(1500);
   const s2 = await p.evaluate(() => window.OSAP_TRAILMAP.state());
@@ -85,6 +95,24 @@ async function start(opts) {
   ok(fit[0] && fit[1] && fit[2] >= 40 && fit[3], "phone: player on screen, buttons at least 40 px, no sideways scroll " + JSON.stringify(fit));
   if (OUT) await p.screenshot({ path: OUT + "/trailmap-phone.png" });
   ok(!errors.length, "phone: no page errors " + JSON.stringify(errors.slice(0, 3)));
+  await ctx.close();
+}
+{
+  // same-minute first reports: both are out at the start, both are first-report gold, one label says it is a tie
+  const { ctx, p, errors } = await start({ viewport: { width: 1300, height: 900 } }, TIEFILE);
+  await p.evaluate(([cc, id]) => window.OSAP_TRAILMAP.open(cc, id), [CC, TH.id]);
+  await p.waitForFunction(() => window.OSAP_TRAILMAP.isOpen(), null, { timeout: 20000 });
+  const t0 = await p.evaluate(() => window.OSAP_TRAILMAP.state());
+  ok(TIEFIRSTS >= 2 && t0.reports === s0reports + 1 && t0.frame.reports === TIEFIRSTS && t0.drawn === TIEFIRSTS, "tie: every report of the first minute is out at the start (" + TIEFIRSTS + "; " + JSON.stringify(t0) + ")");
+  const tips = await p.evaluate(() => [...document.querySelectorAll(".leaflet-tooltip")].map((t) => t.textContent));
+  ok(tips.length === 1 && tips[0] === "First report OSAP holds: " + TIEFIRSTS + " outlets, same minute", "tie: one label, and it says the first minute has " + TIEFIRSTS + " outlets " + JSON.stringify(tips));
+  // expected gold dots: the page's own model for the tie file (first reports with a home country, not colored as a dispute)
+  const gold = await p.evaluate((id) => { let n = 0; window.__asapMap.eachLayer((l) => { if (l instanceof window.L.CircleMarker && l.options.fillColor === "#f59e0b") n++; }); return n; });
+  const want = await p.evaluate(([th, f]) => window.OSAP_TRAILMAP._t.playModel(th, window.OSAP_CAPITALS.caps, window.OSAP_TRAIL.DISPUTE, f).reports.filter((r) => r.role === "first" && r.ll && !r.dispute).length, [TIEFILE.threads.filter((t) => t.id === TH.id)[0], TIEFILE]);
+  ok(want >= 1 && gold === want, "tie: the same-minute reports are drawn as first reports (" + gold + " of " + want + ")");
+  await p.evaluate(() => window.OSAP_TRAILMAP.seek(1)); await p.waitForTimeout(200); await p.evaluate(() => window.OSAP_TRAILMAP.seek(0)); await p.waitForTimeout(100);
+  ok(await p.evaluate(() => window.OSAP_TRAILMAP.state().drawn) === TIEFIRSTS, "tie: stepping back to the start redraws both first reports");
+  ok(!errors.length, "tie: no page errors " + JSON.stringify(errors.slice(0, 3)));
   await ctx.close();
 }
 await browser.close(); server.close();
