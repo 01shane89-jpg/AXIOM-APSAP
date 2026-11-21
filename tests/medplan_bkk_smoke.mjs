@@ -32,7 +32,7 @@ await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
   if (/\/route\/v1\//.test(u)) { const P = pts(), d = sec(P[0], P[1]); return J(r, { code: "Ok", routes: [{ duration: d, distance: d * 8, geometry: { type: "LineString", coordinates: [P[0].slice().reverse(), P[1].slice().reverse()] }, legs: [{ steps: [] }] }] }); }
   return r.abort();
 });
-await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("osap.split", "0"); } catch (e) {} });
+await ctx.addInitScript(() => { try { if (localStorage.getItem("osap-medplan-open") === null) localStorage.setItem("osap-medplan-open", JSON.stringify({ conop: 1, pic: 1, val: 1, pst: 1, pstmore: 1, gh: 1, fac: 1, rt: 1, ems: 1, air: 1, oc: 1, thr: 1, wx: 1, unit: 1, src: 1 })); if (localStorage.getItem("osap-medplan-layers") === null) localStorage.setItem("osap-medplan-layers", "[]"); localStorage.setItem("osap-home", "map"); localStorage.setItem("osap.split", "0"); } catch (e) {} });
 const p = await ctx.newPage(), errors = []; p.on("pageerror", (e) => errors.push(e.message));
 await p.goto(base, { waitUntil: "domcontentloaded" });
 await p.waitForFunction(() => window.OSAP_MEDPLAN && window.TSAP && window.TSAP.areaApi, null, { timeout: 90000 });
