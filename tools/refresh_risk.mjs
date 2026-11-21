@@ -16,7 +16,7 @@ import fs from "node:fs";
 import vm from "node:vm";
 import crypto from "node:crypto";
 import { COUNTRIES, ccsAt } from "./geo_cc.mjs";
-import { RULE, LEVELS, CATS, rate, km, latest, deathsFrom, outbreakEvents, hazardEvents } from "./risk_lib.mjs";
+import { RULE, LEVELS, CATS, rate, km, latest, deathsFrom, outbreakEvents, hazardEvents, wbRows } from "./risk_lib.mjs";
 
 const OUT = process.env.RISK_OUT || "data/live/risk";
 const LIVE = process.env.RISK_LIVE || "data/live";
@@ -49,9 +49,11 @@ const WB = [
 ];
 let wb = null;
 try { wb = JSON.parse(fs.readFileSync(OUT + "/_wb.json", "utf8")); } catch (e) {}
-const wbOld = !wb || !wb.read || NOW - Date.parse(wb.read) > 7 * DAY || WB.some((d) => !(wb.series || {})[d.k]) || process.env.RISK_WB === "1";
+// schema 2 (21 Nov 2026): rows read through wbRows; a schema 1 file may hold mislabeled rows, so it is read again
+const WB_SCHEMA = "osap-risk-wb/2";
+const wbOld = !wb || wb.schema !== WB_SCHEMA || !wb.read || NOW - Date.parse(wb.read) > 7 * DAY || WB.some((d) => !(wb.series || {})[d.k]) || process.env.RISK_WB === "1";
 if (wbOld && process.env.RISK_WB !== "0") {
-  const next = { schema: "osap-risk-wb/1", read: STAMP, series: {}, ids: {}, errors: {} };
+  const next = { schema: WB_SCHEMA, read: STAMP, series: {}, ids: {}, errors: {}, conflicts: {}, renamed: {} };
   for (const d of WB) {
     for (const id of d.ids) {
       // the latest value of each country first (small and quick); the Governance Indicators do not take mrnev, so a year range next
@@ -60,10 +62,12 @@ if (wbOld && process.env.RISK_WB !== "0") {
         if (/source=3/.test(extra) && !/WGI|\.EST$/.test(id)) continue;
         for (let attempt = 0; attempt < 2 && !next.series[d.k]; attempt++) try {
           const j = await getJson("https://api.worldbank.org/v2/country/all/indicator/" + id + "?format=json&per_page=20000" + extra);
-          const rows = (Array.isArray(j) && j[1]) || [], o = {};
-          for (const r of rows) if (r && r.value != null && isFinite(r.value) && /^[A-Z]{3}$/.test(r.countryiso3code || "")) (o[r.countryiso3code] = o[r.countryiso3code] || []).push([String(r.date), +r.value]);
-          for (const a in o) o[a].sort((x, y) => x[0].localeCompare(y[0]));
-          if (Object.keys(o).length >= 50) { next.series[d.k] = o; next.ids[d.k] = id; log("World Bank", d.k, id + extra, Object.keys(o).length, "countries"); }
+          const rows = (Array.isArray(j) && j[1]) || [], W = wbRows(rows), o = W.series;
+          if (Object.keys(o).length >= 50) {
+            next.series[d.k] = o; next.ids[d.k] = id; log("World Bank", d.k, id + extra, Object.keys(o).length, "countries");
+            if (W.conflicts.length) { next.conflicts[d.k] = W.conflicts; log("World Bank", d.k, "conflicting values dropped:", W.conflicts.join("; ")); }
+            if (W.renamed.length) { next.renamed[d.k] = W.renamed; log("World Bank", d.k, "rows relabeled by name:", W.renamed.join("; ")); }
+          }
           else next.errors[d.k] = id + extra + ": " + Object.keys(o).length + " countries" + (j && j[0] && j[0].message ? " " + JSON.stringify(j[0].message).slice(0, 200) : "");
         } catch (e) { next.errors[d.k] = id + extra + ": " + e.message; }
       }
