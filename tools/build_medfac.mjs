@@ -5,7 +5,7 @@
 // For each country (the 28 hand-researched first, then every other in data/basemap/world-countries.js) one Overpass query by
 // the country's ISO 3166-1 boundary reads hospitals, clinics, helipads, heliports, airfields and ambulance and air rescue
 // stations, keeping only the tags the plan reads. A country too big for one answer is asked in bounding-box parts (still
-// clipped to its boundary). Elements are written into 2-degree tiles shared by all countries:
+// clipped to its boundary); the United States is asked state by state (SUBAREAS). Elements are written into 2-degree tiles shared by all countries:
 //   data/medfac/t/<lat>_<lon>.json   [["n123", lat, lon, "th", {tags}], ...]   (lat, lon: the tile's south-west corner)
 //   data/medfac/index.json          { v, tile, countries: { th: { at, base, n: {h,c,l,e}, x: {b,d,r}, tiles: [...] } }, tiles: { key: count } }
 // The same query also reads blood banks and donation centres, hyperbaric (dive decompression) chambers and air rescue bases;
@@ -78,10 +78,18 @@ async function overpass(q) {
   }
   throw new Error(errs.join("; "));
 }
+/* A country too big for Overpass even in bounding-box parts is asked one first-level subdivision (ISO 3166-2) at a time.
+   The United States timed out on every daily run (whole country and every split), so it was never stored. Every part
+   must answer, or nothing for the country is written, so a stored country is still a whole one. */
+const SUBAREAS = {
+  us: ("AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI " +
+    "SC SD TN TX UT VT VA WA WV WI WY").split(" ").map((s) => "US-" + s)
+};
 /* a smaller declared timeout and memory size: a busy Overpass server turns away big declared queries (HTTP 504 or 429) */
-function query(cc, bbox) {
+function query(cc, bbox, sub) {
   const f = bbox ? `(${bbox.flat().map((x) => (+x).toFixed(4)).join(",")})` : "";
-  return `[out:json][timeout:${bbox ? 120 : 180}][maxsize:536870912];area["ISO3166-1"="${cc.toUpperCase()}"][admin_level=2]->.a;.a out ids;(` +
+  const area = sub ? `area["ISO3166-2"="${sub}"]` : `area["ISO3166-1"="${cc.toUpperCase()}"][admin_level=2]`;
+  return `[out:json][timeout:${bbox || sub ? 120 : 180}][maxsize:536870912];${area}->.a;.a out ids;(` +
     `nwr(area.a)${f}["amenity"~"^(hospital|clinic)$"];nwr(area.a)${f}["healthcare"~"^(hospital|clinic)$"];` +
     `nwr(area.a)${f}["aeroway"~"^(helipad|heliport|aerodrome)$"];nwr(area.a)${f}["emergency"~"^(ambulance_station|air_rescue_service)$"];` +
     `nwr(area.a)${f}["healthcare"~"^blood_(bank|donation)$"];nwr(area.a)${f}["amenity"="blood_bank"];` +
@@ -109,7 +117,25 @@ async function fetchCountry(c) {
     }
   }
   /* Overpass bbox filters are (south,west,north,east) */
-  return part(null, 0);
+  if (!SUBAREAS[c.id]) return part(null, 0);
+  /* one subdivision at a time; a part that fails is asked once more at the end; up to 40 minutes for the whole country */
+  const subUntil = Date.now() + 40 * 60000, out = { els: [], base: null }, retry = [];
+  async function sub(code) {
+    const j = await overpass(query(c.id, null, code));
+    if (!(j.elements || []).some((e) => e.type === "area")) throw new Error("no boundary for " + code + " in OpenStreetMap");
+    out.els.push(...j.elements.filter((e) => e.type !== "area")); out.base = out.base || (j.osm3s && j.osm3s.timestamp_osm_base);
+  }
+  for (const code of SUBAREAS[c.id]) {
+    if (Date.now() > subUntil) throw new Error("subdivisions not all answered in 40 minutes");
+    try { await sub(code); if (DEBUG) log("   ", code, out.els.length); } catch (e) { log("  part", code, "failed, asked again later (" + e.message.slice(0, 80) + ")"); retry.push(code); }
+    await sleep(4000);
+  }
+  for (const code of retry) {
+    if (Date.now() > subUntil) throw new Error("subdivisions not all answered in 40 minutes");
+    await sleep(20000);
+    try { await sub(code); } catch (e) { throw new Error(code + " failed twice: " + e.message); }
+  }
+  return out;
 }
 
 /* ---------- slimming ---------- */
@@ -157,10 +183,14 @@ async function main() {
   const all = countries(), byId = Object.fromEntries(all.map((c) => [c.id, c]));
   const idx = readJSON(join(OUT, "index.json"), null) || { v: 1, tile: TILE, countries: {}, tiles: {} };
   const asked = process.argv.slice(2).map((x) => x.toLowerCase()).filter((x) => byId[x]);
+  /* a country asked by subdivision takes up to 40 minutes, so when it is due it goes first, inside the run's budget */
+  const due = (c) => !idx.countries[c.id] || !idx.countries[c.id].x || Date.now() - Date.parse(idx.countries[c.id].at) > MAX_AGE;
+  const big = all.filter((c) => SUBAREAS[c.id] && due(c)), rest = all.filter((c) => !SUBAREAS[c.id]);
   const todo = asked.length ? asked.map((x) => byId[x]) : [
-    ...all.filter((c) => !idx.countries[c.id]),
-    ...all.filter((c) => idx.countries[c.id] && !idx.countries[c.id].x),
-    ...all.filter((c) => idx.countries[c.id] && idx.countries[c.id].x && Date.now() - Date.parse(idx.countries[c.id].at) > MAX_AGE).sort((a, b) => Date.parse(idx.countries[a.id].at) - Date.parse(idx.countries[b.id].at))
+    ...big,
+    ...rest.filter((c) => !idx.countries[c.id]),
+    ...rest.filter((c) => idx.countries[c.id] && !idx.countries[c.id].x),
+    ...rest.filter((c) => idx.countries[c.id] && idx.countries[c.id].x && Date.now() - Date.parse(idx.countries[c.id].at) > MAX_AGE).sort((a, b) => Date.parse(idx.countries[a.id].at) - Date.parse(idx.countries[b.id].at))
   ];
   log(`medfac: ${todo.length} countries to build, budget ${Math.round(BUDGET / 60000)} min`);
   let done = 0, failed = [];
