@@ -79,6 +79,11 @@ const hc = (s) => String(s || "").replace(/\D/g, "").replace(/^0+/, "");
 /* ---------- names ---------- */
 /* a Thai hospital name for matching: "โรงพยาบาล"/"รพ." and spaces and punctuation left out */
 export function key(s) { return String(s || "").replace(/^คณะแพทยศาสตร์(?=โรงพยาบาล)/, "").replace(/โรงพยาบาล|รพ\.|ร\.พ\./g, "").replace(/\([^)]*\)/g, "").replace(/[\s.\-–,'"]/g, "").toLowerCase(); }
+/* a private hospital's registered name carries its licence class ("โรงพยาบาลทั่วไปขนาดกลางกรุงเทพหัวหิน", "โรงพยาบาลกรุงเทพ
+   เมืองราช โรงพยาบาลทั่วไปขนาดใหญ่", "สถานพยาบาลรวมแพทย์ทุ่งสง"), which no map name has: the name without it is one more short key */
+export function lic(s) {
+  return String(s || "").replace(/(โรงพยาบาล)?(ทั่วไป|รักษาโรคทั่วไป|เฉพาะทาง\S*?|เฉพาะประเภท\S*?)?ขนาด(เล็ก|กลาง|ใหญ่)/g, " ").replace(/^สถานพยาบาล/, "").replace(/\s+/g, " ").trim();
+}
 /* an English name for matching: letters and digits only ("Bangkok 8" is not "Bangkok"), generic words left out */
 export function ekey(s) { return String(s || "").toLowerCase().replace(/\b(hospital|the|of|faculty|medicine|university|medical|center|centre)\b/g, "").replace(/[^a-z0-9]/g, ""); }
 const prov = (s) => String(s || "").replace(/^(จังหวัด|จ\.)/, "").replace(/\s+/g, "").replace(/^กทม\.?$/, "กรุงเทพมหานคร");
@@ -114,10 +119,13 @@ function canon(o) {
 const sha = (o) => crypto.createHash("sha256").update(canon(o)).digest("hex");
 const hav = (a, b) => { const R = Math.PI / 180, x = Math.sin((b[0] - a[0]) * R / 2) ** 2 + Math.cos(a[0] * R) * Math.cos(b[0] * R) * Math.sin((b[1] - a[1]) * R / 2) ** 2; return 12742017.6 * Math.asin(Math.sqrt(x)); };
 
+/* a mapped province in Thai script; one in English ("Chonburi", "Songkhla") never equals the registry's Thai province and so
+   used to rule the entry out, so it counts as not given and is taken from the nearest MOPH-listed facility instead */
+const thaiProv = (s) => (/[\u0e00-\u0e7f]/.test(s) ? prov(s) : "");
 /* one OpenStreetMap hospital with its name keys (Thai, also without a leading "ศูนย์", "ทั่วไป" or "อำเภอ"; English) */
 export function osmEntry(id, lat, lon, g) {
   return { id, lat, lon, keys: [g.name, g["name:th"], g.official_name, g.alt_name].filter(Boolean).map(key).flatMap((k) => [k, k.replace(/^(ศูนย์|ทั่วไป|อำเภอ)(?=..)/, "")])
-    .concat([g["name:en"], /[a-z]/i.test(g.name || "") ? g.name : ""].filter(Boolean).map(ekey)), prov: prov(g["addr:province"] || g["is_in:province"] || "") };
+    .concat([g["name:en"], /[a-z]/i.test(g.name || "") ? g.name : ""].filter(Boolean).map(ekey)), prov: thaiProv(g["addr:province"] || g["is_in:province"] || "") };
 }
 /* OpenStreetMap hospitals in Thailand from OSAP's stored copy */
 function osmHospitals() {
@@ -208,7 +216,7 @@ export async function build(raw, opt = {}) {
        city); "โรงพยาบาลธนบุรี 2" or "สมิติเวช ศรีราชา" are other branches of a group */
     const parts = h.name_th.split(/\s+/), first = parts[0], rest = parts.slice(1).join(" ");
     const descr = !rest || DESCR.test(rest);
-    const ks = [[key(h.name_th), true], [descr ? key(first) : "", false], [ekey(h.name_en), false]].filter((x, i, A) => x[0] && x[0].length >= 3 && A.findIndex((y) => y[0] === x[0]) === i);
+    const ks = [[key(h.name_th), true], [descr ? key(first) : "", false], [key(lic(h.name_th)), false], [ekey(h.name_en), false]].filter((x, i, A) => x[0] && x[0].length >= 3 && A.findIndex((y) => y[0] === x[0]) === i);
     let placed = null, om = [];
     for (const [k, strong] of ks) {
       const omk = (odm.get(k) || []).filter((x) => x.addr.replace(/\s+/g, "").includes(h.province));
