@@ -191,9 +191,9 @@ for (const cc of list) {
   let same = false;
   try { const old = JSON.parse(fs.readFileSync(file, "utf8")); same = old.fp === rec.fp; if (same) rec.asof = old.asof; } catch (e) {}
   if (!same) fs.writeFileSync(file, body);
-  index.items[cc] = { level: R.overall.level, label: R.overall.label, score: R.overall.score, cities: cityOut.length, worst_city: cityOut.reduce((m, c) => Math.max(m, c.overall.level || 0), 0) };
+  index.items[cc] = { level: R.overall.level, label: R.overall.label, score: R.overall.score, partial: R.overall.partial || undefined, cities: cityOut.length, worst_city: cityOut.reduce((m, c) => Math.max(m, c.overall.level || 0), 0) };
   n++;
 }
 if (!ONLY.length) fs.writeFileSync(OUT + "/index.json", JSON.stringify(index) + "\n");
 const dist = [1, 2, 3, 4, 5].map((l) => LEVELS[l] + " " + Object.values(index.items).filter((x) => x.level === l).length).join(", ");
-log("risk ratings:", n, "countries;", dist, "; none", Object.values(index.items).filter((x) => !x.level).length, "; categories", CATS.map((c) => c.k).join(" "));
+log("risk ratings:", n, "countries;", dist, "; partial", Object.values(index.items).filter((x) => x.partial).length, "; none", Object.values(index.items).filter((x) => !x.level && !x.partial).length, "; categories", CATS.map((c) => c.k).join(" "));
