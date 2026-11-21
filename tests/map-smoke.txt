@@ -237,6 +237,8 @@ tests/reports_smoke.mjs
 tests/feeds_status_smoke.mjs
 # every report exported as a PDF on A4 and Letter: nothing cut off, header, page numbers, live source links (assets/osap-pdf.js)
 tests/pdf_export_smoke.mjs  group=pdf needs=poppler
+# Export PDF prints inside the tap (iPhone Safari ignores a later print) and says so when no print dialog opens (Shane 2026-11-21)
+tests/pdf_print_open_smoke.mjs  group=pdf
 # the medical plan as one landscape briefing slide: facilities, PACE, satellite maps, table, contacts; PDF and PowerPoint (assets/osap-medslide.js)
 tests/medslide_smoke.mjs  group=pdf needs=poppler
 # Drop zone edited on the map (move, resize, turn the run-in, phone touch), aircraft drop-down, hazards after a Refresh,

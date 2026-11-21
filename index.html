@@ -6109,6 +6109,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* entities decoded (twice for double-escaped feeds) and markup left in older stored summaries removed: shown as plain text */
   function unent(t) {
     if (!t) return t;
+    /* the warning records are read before the line that makes ENT runs (function hoisting), so make it on first use */
+    if (!ENT) ENT = document.createElement("textarea");
     for (var k = 0; k < 2 && /&(#x?[0-9a-f]+|[a-z]+);/i.test(t); k++) { ENT.innerHTML = t; t = ENT.value; }
     return t.indexOf("<") < 0 ? t : t.replace(/<\/?[a-z][^>]*>/gi, " ").replace(/\s{2,}/g, " ").trim();
   }
