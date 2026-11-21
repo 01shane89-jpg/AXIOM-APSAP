@@ -28,7 +28,7 @@ const IDS = ["brief", "report", "intelbrief", "osir", "daily", "dailybrief", "wx
 async function open(hash, opts) {
   const ctx = await browser.newContext({ serviceWorkers: "block", ...opts });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
-  await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-rv-mode", "split"); localStorage.setItem("asap-period", "30d"); } catch (e) {} });
+  await ctx.addInitScript(() => { try { if (localStorage.getItem("osap-medplan-open") === null) localStorage.setItem("osap-medplan-open", JSON.stringify({ conop: 1, pic: 1, val: 1, pst: 1, pstmore: 1, gh: 1, fac: 1, rt: 1, ems: 1, air: 1, oc: 1, thr: 1, wx: 1, unit: 1, src: 1 })); if (localStorage.getItem("osap-medplan-layers") === null) localStorage.setItem("osap-medplan-layers", "[]"); localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-rv-mode", "split"); localStorage.setItem("asap-period", "30d"); } catch (e) {} });
   const p = await ctx.newPage(); const errors = []; p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + hash, { waitUntil: "domcontentloaded" });
   await p.waitForFunction(() => window.TSAP && window.OSAP_REPORTS && document.getElementById("tidy-rep") && document.getElementById("atk-tools"), null, { timeout: 60000 });
