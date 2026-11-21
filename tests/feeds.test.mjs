@@ -71,6 +71,11 @@ assert.equal(parseFeed("<rss><item><title>&#xD55C;&#44397; test</title><link>htt
   assert.equal(d.title, "Taiwan MND: 3 PLA aircraft (1 into the ADIZ or across the median line), 5 PLAN ships, 4 official ships detected around Taiwan");
   assert.deepEqual(d.counts, { aircraft: 3, adiz: 1, ships: 5, official: 4, balloons: 0 });
   assert.ok(d.summary.startsWith("6 a.m. Sep. 27 (Sun.) to 6 a.m. Sep. 28 (Mon.) (UTC+8). 3 sorties"));
+  // one official ship (MND report 88313, 21 Nov) was read as none
+  const one = `<p>二、 PLA activities： 15 sorties of PLA aircraft, 7 PLAN ships and 1 official ship operating around Taiwan were detected as of 6 a.m. (UTC+8) today.</p><p>Keywords： Taiwan</p>`;
+  const o = ADAPTERS["mnd-pla"](one);
+  assert.equal(o.counts.official, 1); assert.match(o.title, /7 PLAN ships, 1 official ship detected/);
+  assert.equal(ADAPTERS["mnd-pla"]("<p>二、 PLA activities： 2 sorties of PLA aircraft and 1 PLAN ship operating around Taiwan were detected today.</p><p>Share</p>").counts.ships, 1);
   assert.equal(ADAPTERS["mnd-pla"]("<p>Page not found</p>"), null);
 }
 
