@@ -175,9 +175,34 @@ export function km(lat1, lon1, lat2, lon2) {
   const r = Math.PI / 180, h = Math.sin((lat2 - lat1) * r / 2) ** 2 + Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin((lon2 - lon1) * r / 2) ** 2;
   return 12742 * Math.asin(Math.sqrt(Math.min(1, h)));
 }
-// the latest World Bank value of a series [[year, value], ...] no older than maxAge years
+// World Bank API rows into {iso3: [[year, value], ...]}. The bulk API mislabels some rows (Nov 2026: "Taiwan, China" came with
+// countryiso3code SYR, so Syria had two 2025 Rule of Law values and Taiwan none; Netherlands Antilles came as NLD): a row is trusted
+// only with the economy's own two-letter id, the few economies the API lists with no id are mapped by name, and a year with two
+// different values for one country is dropped as a conflict rather than guessed
+export const WB_NAME_A3 = { "Taiwan, China": "TWN" };
+export function wbRows(rows) {
+  const o = {}, conflicts = [], renamed = [];
+  for (const r of rows || []) {
+    if (!r || r.value == null || !isFinite(r.value)) continue;
+    const name = (r.country && r.country.value) || "", id = (r.country && r.country.id) || "";
+    let a3 = r.countryiso3code || "";
+    if (!id) { if (!WB_NAME_A3[name]) continue; if (a3 !== WB_NAME_A3[name]) renamed.push(name + " " + (a3 || "-") + " -> " + WB_NAME_A3[name]); a3 = WB_NAME_A3[name]; }
+    if (!/^[A-Z]{3}$/.test(a3)) continue;
+    (o[a3] = o[a3] || []).push([String(r.date), +r.value]);
+  }
+  for (const a in o) {
+    const by = {};
+    for (const [y, v] of o[a]) (by[y] = by[y] || []).push(v);
+    o[a] = Object.keys(by).sort().filter((y) => { const ok = by[y].every((v) => v === by[y][0]); if (!ok) conflicts.push(a + " " + y + " " + by[y].join(" / ")); return ok; }).map((y) => [y, by[y][0]]);
+    if (!o[a].length) delete o[a];
+  }
+  return { series: o, conflicts, renamed };
+}
+// the latest World Bank value of a series [[year, value], ...] no older than maxAge years; a year with two different values is a
+// conflict and is skipped
 export function latest(series, nowYear, maxAge = 8) {
-  const s = (series || []).filter((x) => x && x[1] != null && isFinite(x[1]));
+  const all = (series || []).filter((x) => x && x[1] != null && isFinite(x[1]));
+  const s = all.filter((x) => all.every((z) => z[0] !== x[0] || z[1] === x[1]));
   if (!s.length) return null;
   const [y, v] = s[s.length - 1];
   return nowYear - +y > maxAge ? null : { y: String(y), v: +v };
