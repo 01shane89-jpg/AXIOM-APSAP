@@ -45,12 +45,15 @@
     var re = dispute instanceof RegExp ? dispute : null, placed = 0, ctry = {};
     rows.forEach(function (o, n) {
       var key = host(o.link) || o.outlet;
-      o.role = n === 0 ? "first" : seenOut[key] ? "again" : "repeat"; seenOut[key] = 1;
+      /* every report in the first minute OSAP holds is a first report: times are kept to the minute, so OSAP cannot say which
+         of two outlets that published in the same minute was first (often two outlets running one agency's copy) */
+      o.role = o.t === rows[0].t ? "first" : seenOut[key] ? "again" : "repeat"; seenOut[key] = 1;
       o.dispute = !!(re && re.test(o.head));
       o.ll = place(o.cc, o.outlet, caps); if (o.ll) placed++;
       if (o.cc) ctry[o.cc] = 1;
     });
-    return { id: String(t.id || ""), title: txt(t.t), total: +t.r > rows.length ? +t.r : rows.length, fp: /^[0-9a-f]{64}$/.test(String(t.fp || "")) ? String(t.fp) : "", asof: file && file.asof ? String(file.asof) : "",
+    var firsts = rows.filter(function (o) { return o.role === "first"; }).length;
+    return { id: String(t.id || ""), firsts: firsts, title: txt(t.t), total: +t.r > rows.length ? +t.r : rows.length, fp: /^[0-9a-f]{64}$/.test(String(t.fp || "")) ? String(t.fp) : "", asof: file && file.asof ? String(file.asof) : "",
       method: file && file.method ? txt(file.method) : "", reports: rows, placed: placed, unplaced: rows.length - placed, countries: Object.keys(ctry).length,
       t0: rows.length ? rows[0].t : NaN, t1: rows.length ? rows[rows.length - 1].t : NaN };
   }
@@ -169,7 +172,9 @@
     var m = S.m; if (!m) return;
     var rs = m.reports, n = 0; while (n < rs.length && rs[n].t <= S.at) n++;
     if (n < S.drawn) { lay.clearLayers(); S.drawn = 0; }
-    var first = rs[0] && rs[0].ll;
+    /* the labeled first dot (and where the lines start): the first of the first reports that has a home country on file */
+    var lab = -1; for (var j = 0; j < rs.length && rs[j].role === "first"; j++) if (rs[j].ll) { lab = j; break; }
+    var first = lab >= 0 ? rs[lab].ll : null;
     for (var i = S.drawn; i < n; i++) {
       var r = rs[i]; if (!r.ll) continue;
       var col = r.dispute ? COL.dispute : COL[r.role], fresh = S.playing;
@@ -177,12 +182,12 @@
       var mk = Lf.circleMarker(r.ll, { radius: r.role === "first" ? 10 : r.role === "again" ? 4 : 6, color: r.kind === "state" ? COL.state : "#fff", weight: r.kind === "state" ? 3 : 2,
         dashArray: r.kind === "state" ? "3 2" : null, fillColor: col, fillOpacity: 0.92, className: fresh ? "trm-new" : "" });
       mk.bindPopup("<b>" + esc(r.outlet) + "</b> · based in " + esc(cName(r.cc)) + (r.kind === "state" ? " · <b>state media</b>" : r.kind === "public" ? " · public broadcaster" : "") +
-        "<br>" + esc(zulu(r.t)) + (r.role === "first" ? " · <b>first report OSAP holds</b>" : "") +
+        "<br>" + esc(zulu(r.t)) + (r.role === "first" ? (m.firsts > 1 ? " · <b>one of " + m.firsts + " first reports OSAP holds</b> (same minute, order not known)" : " · <b>first report OSAP holds</b>") : "") +
         "<br>" + (r.link ? '<a href="' + esc(r.link) + '" target="_blank" rel="noopener noreferrer">' + esc(r.head) + "</a>" : esc(r.head)) + (r.mt ? ' <span class="mut">(machine translated)</span>' : "") +
         (r.dispute ? '<br><span style="color:#b71c1c">Headline denies or disputes (word match)</span>' : "") +
         '<br><span style="font-size:11px;color:#666">Dot = where the outlet is based, not where the event happened. A source\'s claim.</span>', { maxWidth: 300 });
       mk.addTo(lay);
-      if (r.role === "first") mk.bindTooltip("First report OSAP holds", { permanent: true, direction: "top", offset: [0, -8] });
+      if (i === lab) mk.bindTooltip(m.firsts > 1 ? "First report OSAP holds: " + m.firsts + " outlets, same minute" : "First report OSAP holds", { permanent: true, direction: "top", offset: [0, -8] });
     }
     S.drawn = n;
     paintNow();
