@@ -10,6 +10,9 @@
      (tests/pdf_export_smoke.mjs renders every report on both and fails on anything wider than the page);
    - folded sections (<details>) print open;
    - the document title becomes the report's file name, which "Save as PDF" offers;
+   - print() runs inside the tap itself (Safari on iPhone and iPad ignores one started later), and when no print dialog opens
+     at all (an app opened from the iPhone Home Screen, a browser inside another app) a message says so and how to get the
+     PDF, so the button never seems dead (tests/pdf_print_open_smoke.mjs);
    - it waits for the browser's afterprint before tidying up (a phone's print sheet returns at once; the print-only rules
      change nothing on screen, so they stay until the next export or until the page reloads).
    Browsers that do not print page-margin boxes (Firefox, Safari at the time of writing) get the same header once, at the top of
@@ -126,6 +129,48 @@
     return r || doc.body;
   }
 
+  /* ---------- when the device opens no print dialog ----------
+     Some places give a web page no print dialog at all, and print() then does nothing: an app opened from the iPhone or iPad
+     Home Screen, and the browsers inside other apps (Instagram, Gmail, LinkedIn). The page then says so and how to get the
+     PDF, instead of leaving a button that seems dead. */
+  var NOT_OPENED_MS = 1500;
+  function ios(win) { var n = win.navigator || {}, ua = n.userAgent || ""; return /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && (n.maxTouchPoints || 0) > 1); }
+  function homeScreen(win) {
+    var n = win.navigator || {};
+    try { return n.standalone === true || !!(win.matchMedia && (win.matchMedia("(display-mode: standalone)").matches || win.matchMedia("(display-mode: fullscreen)").matches)); } catch (e) { return false; }
+  }
+  function advice(win) {
+    if (ios(win) && homeScreen(win)) return "The iPhone and iPad do not open a print sheet for apps on the Home Screen. Open OSAP in Safari " +
+      "(osap.axiom-intelligence-systems.com), open the same report and press Export PDF there. In the print sheet, tap the share button and pick Save to Files, or pinch out on the preview to get the PDF.";
+    if (ios(win)) return "In Safari: tap the share button at the bottom of the screen, pick Print, then tap the share button in the print sheet and pick Save to Files. " +
+      "If you opened OSAP from a link inside another app, open it in Safari first.";
+    if (homeScreen(win)) return "This installed app did not open a print dialog. Open OSAP in your browser and press Export PDF there, or use the browser menu: Print, then Save as PDF.";
+    return "Your browser did not open a print dialog. Try once more, or use the browser menu (Ctrl+P on Windows, Cmd+P on a Mac) and pick Save as PDF. " +
+      "If you opened OSAP from a link inside another app, open it in your browser first.";
+  }
+  function notOpened(win, o) {
+    var doc = win.document, box = doc.getElementById("pdfx-noprint");
+    if (!box) {
+      box = doc.createElement("div"); box.id = "pdfx-noprint"; box.setAttribute("role", "alertdialog"); box.setAttribute("aria-live", "assertive");
+      box.className = "noprint";
+      box.style.cssText = "position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom));z-index:2147483000;width:min(520px,calc(100vw - 32px));" +
+        "box-sizing:border-box;background:#fff;color:#111;border:1px solid #c9d0d6;border-left:4px solid #b45309;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.25);" +
+        "padding:12px 14px;font:14px/1.45 system-ui,-apple-system,'Segoe UI',sans-serif";
+      (doc.body || doc.documentElement).appendChild(box);
+      box.addEventListener("click", function (e) {
+        var b = e.target.closest && e.target.closest("[data-pdfx]"); if (!b) return;
+        box.hidden = true;
+        if (b.getAttribute("data-pdfx") === "again" && box.__o) print(box.__o);
+      });
+    }
+    box.__o = o;
+    box.innerHTML = "<b>No print dialog opened.</b><p style=\"margin:6px 0 10px\">" + esc(advice(win)) + "</p>" +
+      '<button type="button" class="refresh primary" data-pdfx="again" style="min-height:40px;margin-right:6px">Try again</button>' +
+      '<button type="button" class="refresh" data-pdfx="close" style="min-height:40px">Close</button>';
+    box.hidden = false;
+    W.__pdfNoSheet = (W.__pdfNoSheet || 0) + 1;
+  }
+
   /* o: { title, root (element or selector), file, ai (true/false; found from .aitag when left out), footer, landscape, margin,
          bare (no header or footer: a slide deck that sets its own page), win (another window, e.g. a package page) }
      returns a promise that settles once the print dialog is done with (afterprint) */
@@ -166,16 +211,32 @@
     };
     cur = me;
     /* a held export (tests) renders PDFs itself, and each of those sends afterprint */
-    if (typeof W.__pdfHold !== "function") win.addEventListener("afterprint", me.done);
-    setTimeout(function () {
+    if (typeof W.__pdfHold === "function") {
       /* tests hold the export open here to render it (tests/pdf_export_smoke.mjs) */
-      if (typeof W.__pdfHold === "function") { Promise.resolve(W.__pdfHold(info)).then(me.done, me.done); return; }
-      var t = Date.now();
-      try { win.focus(); win.print(); } catch (e) { me.done(); return; }
-      /* print() returned straight away (a phone's print sheet): put the page title back after a pause; afterprint, the next
-         export or a reload clears the rest */
-      if (Date.now() - t < 400) setTimeout(function () { if (!finished && doc.title === info.file) doc.title = t0; }, 4000);
-    }, 60);
+      setTimeout(function () { Promise.resolve(W.__pdfHold(info)).then(me.done, me.done); }, 60);
+      return p;
+    }
+    win.addEventListener("afterprint", me.done);
+    /* print() runs inside the tap itself, never after a timer: Safari on iPhone and iPad drops a print() that is not part of
+       the tap, so the button looked dead (Shane 2026-11-21: "Export to pdf in the weather brief is not responding"). The
+       print rules above are plain style changes, which the browser applies when it lays the page out for printing. */
+    var opened = false, onBefore = function () { opened = true; };
+    win.addEventListener("beforeprint", onBefore); win.addEventListener("afterprint", onBefore);
+    var t = Date.now();
+    try { win.focus(); win.print(); } catch (e) { win.removeEventListener("beforeprint", onBefore); me.done(); notOpened(win, o); return p; }
+    if (Date.now() - t >= 400) opened = true;   /* print() held the page while its dialog was open: it opened */
+    /* print() returned straight away (a phone's print sheet): put the page title back after a pause; afterprint, the next
+       export or a reload clears the rest */
+    if (Date.now() - t < 400) setTimeout(function () { if (!finished && doc.title === info.file) doc.title = t0; }, 4000);
+    /* a print dialog that never opened (an iPhone Home Screen app, an in-app browser) says so instead of doing nothing */
+    setTimeout(function () {
+      win.removeEventListener("beforeprint", onBefore); win.removeEventListener("afterprint", onBefore);
+      if (opened || finished) return;   /* a dialog opened, or a newer export took over */
+      /* a stand-in print() (another test's) is not a device without a print dialog; tests/pdf_print_open_smoke.mjs opts in */
+      if (!W.__pdfCheckDialog && !/\[native code\]/.test(String(win.print))) return;
+      if (cur === me) me.done();
+      notOpened(win, o);
+    }, NOT_OPENED_MS);
     return p;
   }
   function print(o) {
@@ -184,7 +245,8 @@
     catch (e) {
       /* never block an export: a page this cannot prepare still prints as it is */
       var win = o.win || W;
-      return new Promise(function (r) { setTimeout(function () { try { win.focus(); win.print(); } catch (x) {} r({ fallback: true }); }, 60); });
+      try { win.focus(); win.print(); } catch (x) {}
+      return Promise.resolve({ fallback: true });
     }
   }
 
