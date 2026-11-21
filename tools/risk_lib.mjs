@@ -6,7 +6,7 @@
 // Crisis24 publish (Minimal, Low, Moderate, High, Extreme), per category and overall.
 // Every category is a score from 0 (no risk seen) to 100, made of indicators that each keep their raw value, year or window,
 // the points they gave and their source link, so anyone can redo the sum.
-export const RULE = "osap.risk/0.3";
+export const RULE = "osap.risk/0.4";
 export const LEVELS = ["", "Minimal", "Low", "Moderate", "High", "Extreme"];
 // score -> level: 0-19 Minimal, 20-39 Low, 40-59 Moderate, 60-79 High, 80-100 Extreme
 export function levelOf(score) { return score == null || !isFinite(score) ? 0 : score >= 80 ? 5 : score >= 60 ? 4 : score >= 40 ? 3 : score >= 20 ? 2 : 1; }
@@ -67,6 +67,11 @@ export function security(I) {
   // a war is a war whatever the governance estimate says: the conflict-deaths score alone counts when it is higher
   const d = m.parts[1].pts;
   if (d != null && m.score != null && d > m.score) { m.score = d; m.by_deaths = true; }
+  // no input measures military pressure short of combat deaths (air and sea incursions, blockades, drills): say so on every record
+  m.unmeasured = "Military pressure without combat deaths (air and sea incursions, blockades, drills)";
+  // without the governance estimate the score rests on conflict deaths alone, and no deaths reads as 0 even under sustained military
+  // pressure (Taiwan, 21 Nov): that is a gap, not calm, so the category is Partial with no level of its own
+  if (m.score != null && m.parts[0].pts == null) { m.partial = true; m.rests_on = "conflict deaths only"; }
   return m;
 }
 // Crime: intentional homicide rate 60%, World Bank "Rule of Law" 40%
@@ -156,17 +161,19 @@ export function overall(cats) {
   const level = Math.max(levelOf(score), sec, other);
   const floor = level > levelOf(score) ? (level === sec ? "security" : "category") : undefined;
   const missing = CATS.filter((c) => !have.includes(c)).map((c) => c.name);
+  // a Partial category (security without the governance estimate) is in the mean but cannot set a level: the overall is Partial too
+  const thin = have.filter((c) => cats[c.k].partial).map((c) => c.name + " rests on " + (cats[c.k].rests_on || "part of its data"));
   // a category with no data is unknown, not calm: with any missing there is no overall level (a mean of what is left would read
   // as a confident "Minimal"), only "Partial"; the categories that have data keep their own levels and the score stays as the
   // mean of those, labelled partial
-  if (missing.length) return { score, level: 0, label: "Partial", partial: true, missing, of: CATS.length };
+  if (missing.length || thin.length) return Object.assign({ score, level: 0, label: "Partial", partial: true, missing, of: CATS.length }, thin.length ? { thin } : {});
   return { score, level, label: LEVELS[level], floor, missing };
 }
 // all categories for one place; ev.warDeaths (optional) gives the conflict deaths infrastructure uses, so a city keeps the
 // national figure
 export function rate(I, ev) {
   const cats = { security: security(I), crime: crime(I), health: health(I, ev.health || []), hazards: hazards(ev.hazards || [], ev.hazardsOk !== false), infra: infra(I, ev.outage, ev.warDeaths) };
-  for (const k in cats) { cats[k].level = levelOf(cats[k].score); cats[k].label = LEVELS[cats[k].level]; }
+  for (const k in cats) { const p = cats[k].partial; cats[k].level = p ? 0 : levelOf(cats[k].score); cats[k].label = p ? "Partial" : LEVELS[cats[k].level]; }
   return { overall: overall(cats), cats };
 }
 

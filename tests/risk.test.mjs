@@ -65,8 +65,18 @@ ok(tw.overall.partial && tw.overall.level === 0 && tw.overall.missing.join("|") 
 const one = L.rate({ pv: { v: -2.5 }, deaths: { n: 20000, popM: 20 }, homicide: { v: 1 }, rl: { v: 1.5 }, elec: { v: 100 }, net: { v: 95 } }, { hazards: [] });
 ok(one.overall.partial && one.overall.missing.join() === "Health and medical" && one.cats.security.level === 5, "even one category missing gives Partial; the categories with data keep their levels (security " + one.cats.security.label + ")");
 ok(!calm.overall.partial && !war.overall.partial, "with all five categories in, the overall level stands");
+// Taiwan (21 Nov): no governance estimate (the World Bank publishes none for Taiwan) and no conflict deaths read security "1 Minimal"
+// at 0 under sustained PLA air and sea pressure. Without the estimate the score rests on deaths alone: security is Partial, not Minimal
+const twSec = L.rate({ deaths: { n: 0, popM: 23 }, homicide: { v: 0.8 }, rl: { v: 1.2 }, u5: { v: 4 }, elec: { v: 100 }, net: { v: 90 } }, { hazards: [] });
+ok(twSec.cats.security.partial && twSec.cats.security.level === 0 && twSec.cats.security.label === "Partial" && twSec.cats.security.rests_on === "conflict deaths only", "security without the governance estimate is Partial, not Minimal (" + twSec.cats.security.label + ")");
+ok(twSec.overall.partial && twSec.overall.level === 0 && !twSec.overall.missing.length && /Security and conflict rests on conflict deaths only/.test(twSec.overall.thin.join()), "a Partial security category makes the overall Partial even with every category in");
+ok(/military pressure without combat deaths/i.test(twSec.cats.security.unmeasured) && /military pressure/i.test(calm.cats.security.unmeasured), "every record says military pressure without deaths is not counted");
+ok(!calm.cats.security.partial && calm.cats.security.level === 1 && !war.cats.security.partial, "with the governance estimate in, security keeps its level");
+const twWar = L.rate({ deaths: { n: 5000, popM: 23 } }, { hazards: [] });
+ok(twWar.cats.security.partial && twWar.cats.security.score >= 80, "deaths alone still give the score when the estimate is missing (" + twWar.cats.security.score + ")");
 const R0 = C;
 ok(R0.isPartial({ level: 1, label: "Minimal", missing: ["Crime", "Health and medical", "Infrastructure and services"] }) && R0.partialText({ missing: ["Crime"], of: 5 }) === "Partial: 1 of 5 categories have no data (Crime)" && /Partial/.test(R0.obadge({ partial: true, missing: ["Crime"] })) && !/Minimal/.test(R0.obadge({ level: 1, missing: ["Crime"] })), "the page shows Partial with the count and list, also for records written before this rule");
+ok(R0.partialText({ missing: ["Crime"], thin: ["Security and conflict rests on conflict deaths only"], of: 5 }) === "Partial: 1 of 5 categories have no data (Crime); Security and conflict rests on conflict deaths only" && R0.partialText({ missing: [], thin: ["Security and conflict rests on conflict deaths only"] }) === "Partial: Security and conflict rests on conflict deaths only", "the Partial text names a category that rests on part of its data");
 ok(!R0.isPartial({ level: 2, missing: [] }) && /2 Low/.test(R0.obadge({ level: 2, missing: [] })), "a full record keeps its level badge");
 ok(L.deathsFrom([{ date: "2026-01-01", lat: 13.75, lon: 100.5, best: 3 }, { date: "2026-01-01", lat: 6.5, lon: 101.3, best: 7 }, { date: "2024-01-01", lat: 13.75, lon: 100.5, best: 50 }], "2025-10-24", { lat: 13.75, lon: 100.5 }, 50).n === 3,
   "city deaths: only events in the window and within 50 km");
