@@ -6,7 +6,7 @@
 // Crisis24 publish (Minimal, Low, Moderate, High, Extreme), per category and overall.
 // Every category is a score from 0 (no risk seen) to 100, made of indicators that each keep their raw value, year or window,
 // the points they gave and their source link, so anyone can redo the sum.
-export const RULE = "osap.risk/0.2";
+export const RULE = "osap.risk/0.3";
 export const LEVELS = ["", "Minimal", "Low", "Moderate", "High", "Extreme"];
 // score -> level: 0-19 Minimal, 20-39 Low, 40-59 Moderate, 60-79 High, 80-100 Extreme
 export function levelOf(score) { return score == null || !isFinite(score) ? 0 : score >= 80 ? 5 : score >= 60 ? 4 : score >= 40 ? 3 : score >= 20 ? 2 : 1; }
@@ -145,7 +145,7 @@ function capEvents(ev, cap) {
 }
 
 // ---------- the overall rating ----------
-// the weighted mean of the category scores that have data; the overall level is never below the security level (security sets
+// the weighted mean of the category scores; with every category in, the overall level is never below the security level (security sets
 // the floor, as it does in commercial travel-risk ratings) and never more than one below any other category's level
 export function overall(cats) {
   const have = CATS.filter((c) => cats[c.k] && cats[c.k].score != null);
@@ -155,7 +155,12 @@ export function overall(cats) {
   const other = Math.max(0, ...have.filter((c) => c.k !== "security").map((c) => levelOf(cats[c.k].score) - 1));
   const level = Math.max(levelOf(score), sec, other);
   const floor = level > levelOf(score) ? (level === sec ? "security" : "category") : undefined;
-  return { score, level, label: LEVELS[level], floor, missing: CATS.filter((c) => !have.includes(c)).map((c) => c.name) };
+  const missing = CATS.filter((c) => !have.includes(c)).map((c) => c.name);
+  // a category with no data is unknown, not calm: with any missing there is no overall level (a mean of what is left would read
+  // as a confident "Minimal"), only "Partial"; the categories that have data keep their own levels and the score stays as the
+  // mean of those, labelled partial
+  if (missing.length) return { score, level: 0, label: "Partial", partial: true, missing, of: CATS.length };
+  return { score, level, label: LEVELS[level], floor, missing };
 }
 // all categories for one place; ev.warDeaths (optional) gives the conflict deaths infrastructure uses, so a city keeps the
 // national figure

@@ -28,9 +28,15 @@
     var l = +level || 0;
     return '<span class="rkb rkb' + l + (small ? " rkbs" : "") + '">' + (l ? esc(l + " " + LEVELS[l]) : "No rating") + "</span>";
   }
+  /* the overall badge: a category with no data means no overall level, only "Partial" (osap.risk/0.3; older records too) */
+  function isPartial(O) { return !!(O && (O.partial || (O.level && O.missing && O.missing.length))); }
+  function partialText(O) { var m = (O && O.missing) || []; return "Partial: " + m.length + " of " + ((O && O.of) || CATS.length) + " categories have no data (" + m.join(", ") + ")"; }
+  function obadge(O, small) { return isPartial(O) ? '<span class="rkb rkb0' + (small ? " rkbs" : "") + '" title="' + esc(partialText(O)) + '">Partial</span>' : badge(O && O.level, small); }
+  /* a category's badge: one with no score has no data, which is not the same as no risk */
+  function cbadge(x) { return x && x.score == null && !x.level ? '<span class="rkb rkb0 rkbs">No data</span>' : badge(x && x.level, true); }
   function num(v) { return v == null || !isFinite(v) ? "n/a" : String(Math.round(v * 10) / 10); }
   var TAG_TIP = "OSAP risk equivalent: derived by OSAP from open data with a fixed, published formula. Not an official travel advisory and not an analyst assessment.";
-  var core = { esc: esc, safeUrl: safeUrl, LEVELS: LEVELS, CATS: CATS, fileOf: fileOf, badge: badge, num: num };
+  var core = { esc: esc, safeUrl: safeUrl, LEVELS: LEVELS, CATS: CATS, fileOf: fileOf, badge: badge, num: num, isPartial: isPartial, partialText: partialText, obadge: obadge };
   if (!D) return { core: core };
 
   /* ================= browser ================= */
@@ -65,10 +71,11 @@
     var R = c.data;
     if (!R) return h + '</div><p class="tdobs">No risk rating is held for this country yet (the 6-hourly refresh writes them).</p></section>';
     h += tag() + '<span class="tdcount">computed ' + esc(T().asofT(R.asof)) + (W.OSAP_EMPTY ? W.OSAP_EMPTY.ageNote(R.asof, 1440) : "") + "</span></div>";
-    h += '<div class="rkhead">' + badge(R.overall.level) + '<span class="tdt"> overall, score ' + esc(num(R.overall.score)) + " of 100</span></div>";
-    h += '<div class="rkchips">' + CATS.map(function (k) { var x = (R.cats || {})[k[0]] || {}; return '<span class="rkchip">' + esc(k[1]) + " " + badge(x.level, true) + "</span>"; }).join("") + "</div>";
-    var cities = (R.cities || []).filter(function (x) { return x.overall && x.overall.level; });
-    if (cities.length) h += '<p class="rkcities">' + cities.slice(0, 6).map(function (x) { return esc(x.n) + " " + badge(x.overall.level, true); }).join(" · ") + "</p>";
+    h += isPartial(R.overall) ? '<div class="rkhead">' + obadge(R.overall) + '<span class="tdt"> ' + esc(partialText(R.overall).replace(/^Partial: /, "")) + ", so no overall level</span></div>"
+      : '<div class="rkhead">' + badge(R.overall.level) + '<span class="tdt"> overall, score ' + esc(num(R.overall.score)) + " of 100</span></div>";
+    h += '<div class="rkchips">' + CATS.map(function (k) { var x = (R.cats || {})[k[0]] || {}; return '<span class="rkchip">' + esc(k[1]) + " " + cbadge(x) + "</span>"; }).join("") + "</div>";
+    var cities = (R.cities || []).filter(function (x) { return x.overall && (x.overall.level || isPartial(x.overall)); });
+    if (cities.length) h += '<p class="rkcities">' + cities.slice(0, 6).map(function (x) { return esc(x.n) + " " + obadge(x.overall, true); }).join(" · ") + "</p>";
     h += '<p class="tdsrc">' + esc(NOTE) + "</p>";
     h += '<div class="tdlinks"><button type="button" class="tdlink" data-go="@brief">How it is worked out, in the country brief</button></div></section>';
     return h;
@@ -91,12 +98,13 @@
     var z = T().asofT(R.asof), O = R.overall || {};
     var h = '<article class="bpage brisk" id="risk"><header><div><b>AXIOM OSAP</b> · Risk rating equivalent</div><h2>' + esc(name || R.name) + "</h2><div>Computed " + esc(z) + "</div></header>" +
       '<p class="bwarn">' + tag() + " " + esc(NOTE) + "</p>" +
-      '<div class="rkhead rkbig">' + badge(O.level) + '<span> overall · score ' + esc(num(O.score)) + " of 100" +
-      (O.floor === "security" ? " · raised to the security level" : O.floor ? " · raised to one below the worst category" : "") + "</span></div>" +
-      (O.missing && O.missing.length ? '<p class="bm">Partial: no data for ' + esc(O.missing.join(", ")) + "; the overall score is the weighted mean of the categories that have data.</p>" : "");
+      (isPartial(O) ? '<div class="rkhead rkbig">' + obadge(O) + "<span> " + esc(partialText(O).replace(/^Partial: /, "")) + "</span></div>" +
+        '<p class="bm">No overall level: a category with no data is unknown, not calm, so a mean of the others would understate the risk. The categories that have data keep their own levels below (their weighted mean is ' + esc(num(O.score)) + " of 100, partial).</p>"
+      : '<div class="rkhead rkbig">' + badge(O.level) + '<span> overall · score ' + esc(num(O.score)) + " of 100" +
+        (O.floor === "security" ? " · raised to the security level" : O.floor ? " · raised to one below the worst category" : "") + "</span></div>");
     h += '<table class="btwo rkcats"><tr><th style="width:36%">Category</th><th style="width:20%">Level</th><th>Score</th><th>Weight</th></tr>' + CATS.map(function (k, i) {
       var x = (R.cats || {})[k[0]] || {};
-      return "<tr><td>" + esc(k[1]) + "</td><td>" + badge(x.level, true) + "</td><td>" + esc(num(x.score)) + '</td><td class="bm">' + [35, 20, 15, 15, 15][i] + "%</td></tr>";
+      return "<tr><td>" + esc(k[1]) + "</td><td>" + cbadge(x) + "</td><td>" + esc(num(x.score)) + '</td><td class="bm">' + [35, 20, 15, 15, 15][i] + "%</td></tr>";
     }).join("") + "</table>";
     h += "<h3>What each score is made of</h3>";
     CATS.forEach(function (k) {
@@ -110,7 +118,7 @@
     if (cities.length) {
       h += "<h3>Major cities</h3>" + '<table class="btwo rkcity"><tr><th style="width:30%">City</th><th>Overall</th><th>Security</th><th>Hazards now</th><th>Why</th></tr>' + cities.map(function (c) {
         var s = (c.cats || {}).security || {}, hz = (c.cats || {}).hazards || {}, d = (s.parts || []).filter(function (p) { return p.k === "deaths"; })[0];
-        return "<tr><td>" + esc(c.n) + (c.cap ? '<span class="bm"> · capital</span>' : "") + (c.pop > 0 ? '<div class="bm">' + esc(Number(c.pop).toLocaleString("en-US")) + " people</div>" : "") + "</td><td>" + badge(c.overall && c.overall.level, true) +
+        return "<tr><td>" + esc(c.n) + (c.cap ? '<span class="bm"> · capital</span>' : "") + (c.pop > 0 ? '<div class="bm">' + esc(Number(c.pop).toLocaleString("en-US")) + " people</div>" : "") + "</td><td>" + obadge(c.overall, true) +
           "</td><td>" + badge(s.level, true) + "</td><td>" + badge(hz.level, true) + '</td><td class="w bm">' + (d && d.v != null ? esc(d.v) + " conflict deaths within 50 km in the past year" : "No conflict data") +
           ((hz.events || []).length ? "; " + esc(hz.events.length) + " hazard event" + (hz.events.length === 1 ? "" : "s") + " nearby" : "") + "</td></tr>";
       }).join("") + "</table>" +
@@ -123,14 +131,14 @@
       "Health: 70% of the under-5 mortality score (UN IGME deaths before age 5 per 1,000 live births, log scale: 3 or fewer scores 0, 10 scores 33, 30 scores 62, 120 or more 100), plus WHO outbreak notices in the past 90 days (15 each) and CDC travel health notices (level 3: 30, level 2: 15, level 1: 5), notices at most 45. " +
       "Natural hazards now: events in force only: GDACS red 60, orange 35, green 5 (green at most 15); earthquakes M7+ 50, M6+ 25 (past 7 days); official warnings extreme 30, severe 15 (at most 45); a tropical cyclone within 300 km in the next 72 hours 40 (hurricane force) or 15; a volcanic ash advisory 15. " +
       "Infrastructure: 80% of the share of people without electricity (half) and not using the internet (half), plus a large IODA internet outage signal in the past week (40, or 20), plus war damage where 100 or more people died in armed conflict in the past year: 2 points for each point the deaths per million score passes 40 (50 per million adds 34, 100 per million 53, 250 per million 80). " +
-      "Overall: weighted mean (security 35%, crime 20%, health, hazards and infrastructure 15% each) of the categories with data, never below the security level and never more than one level below any other category. Rule " + esc(R.rule || "") + ".</p>" +
+      "Overall: weighted mean (security 35%, crime 20%, health, hazards and infrastructure 15% each), never below the security level and never more than one level below any other category. With any category missing there is no overall level, only Partial. Rule " + esc(R.rule || "") + ".</p>" +
       '<footer>Sources: World Bank WDI and Worldwide Governance Indicators (CC BY 4.0); UCDP (CC BY 4.0); UN IGME and UNODC via the World Bank; WHO; U.S. CDC; GDACS; USGS; national warning agencies; IODA; GeoNames (CC BY 4.0). ' +
       (R.fp ? "Record fingerprint SHA-256 " + esc(R.fp) + "." : "") + "</footer></article>";
     return h;
   }
   /* one line under the official advisory in the country report, so the derived and the official rating sit side by side */
   function advLine(R) {
-    return '<p class="rkadv">' + tag() + " OSAP risk equivalent: " + badge(R.overall.level, true) + ' <a href="#risk" data-rkgo="1">How it is worked out</a>. Derived by OSAP, not an official level.</p>';
+    return '<p class="rkadv">' + tag() + " OSAP risk equivalent: " + obadge(R.overall, true) + (isPartial(R.overall) ? " (" + esc(partialText(R.overall).replace(/^Partial: /, "")) + ")" : "") + ' <a href="#risk" data-rkgo="1">How it is worked out</a>. Derived by OSAP, not an official level.</p>';
   }
   function intoBrief(el, cc, name) {
     if (!el) return;
