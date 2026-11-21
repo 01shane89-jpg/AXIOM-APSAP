@@ -1,6 +1,6 @@
 {
  "schema": "osap-keydates-state/1",
- "checked": "2026-11-18 10:24Z",
+ "checked": "2026-11-21 09:59Z",
  "years": [
   2026,
   2027
@@ -23,6 +23,8 @@
     "Cook Islands",
     "South Ossetia",
     "Isle of Man",
+    "Alderney",
+    "Sark",
     "Transnistria"
    ]
   },
