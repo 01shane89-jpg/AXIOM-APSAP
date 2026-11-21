@@ -30,13 +30,13 @@
    "src": "https://www.wikidata.org/entity/Q105605792",
    "srcname": "Wikidata",
    "coord_basis": "OpenStreetMap node/8069721862",
-   "fp": "d20ea96ae2bb05aa0e26dda0c902aca1f7ba14357f6d010f017e2d6c63028cfc",
+   "fp": "4c5e569af54c5fd5ef5e95eaacd44d45bdf4c0a4aecbb4ace8026f19d8818a4f",
    "web": "https://is.usembassy.gov/",
    "phone": "(354) 595 2200",
    "phone_after_hours": "+354 595 2248",
    "phone_src": "https://is.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-09"
+   "phone_asof": "2026-11-21"
   }
  ],
  "airports": [
@@ -621,8 +621,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/331269260",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "6846558c89f3115463bef6329453b546e8de018f74b7eccb9b30cea0b8468c1a"
+   "asof": "2026-11-21",
+   "fp": "5f3dfd95f22ebd84f49b36529daff2f65c1036a24a6171b00f833f6cb8aa1f8f"
   },
   {
    "id": "sof:is:xing:node-8933371965",
@@ -638,8 +638,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/8933371965",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "886a8ebdbf243536db54a6d42cdde5ec2c7878dce80b10c22201bad3963a0fab"
+   "asof": "2026-11-21",
+   "fp": "440325019fb9c089f09b18761b2967c030814c2dff468c7f131aa8c0e7e8cbca"
   },
   {
    "id": "sof:is:xing:way-1420034817",
@@ -655,13 +655,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/1420034817",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "bf8874ea00f030f1edd0b02a693099cf21657a73fa503c3347a703209a3c6596"
+   "asof": "2026-11-21",
+   "fp": "5a614e87a6b248eb08872fa918e4bb715572aa1b5b31ea79838ce07e895227dc"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-21"
 }

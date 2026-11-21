@@ -30,13 +30,13 @@
    "src": "https://www.wikidata.org/entity/Q53564198",
    "srcname": "Wikidata",
    "coord_basis": "OpenStreetMap way/138152397",
-   "fp": "aead98012fbf44c18a05d8566e337b1940c782b5abdc138a5ef348537fa34bdf",
+   "fp": "b825a2bdfdda7f9336bd0d09f573158404e7ece8c7c93bb93e0405155c8b0a0e",
    "web": "https://mt.usembassy.gov",
    "phone": "(+356) 2561-4000",
    "phone_after_hours": "(+356) 2561-4000",
    "phone_src": "https://mt.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-09"
+   "phone_asof": "2026-11-21"
   }
  ],
  "airports": [
@@ -244,5 +244,5 @@
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-21"
 }

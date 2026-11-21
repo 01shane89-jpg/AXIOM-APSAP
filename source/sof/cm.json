@@ -47,8 +47,8 @@
    "phone_after_hours": "(237) 22251-4000 / (237) 22",
    "phone_src": "https://cm.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-09",
-   "fp": "e18b8a35a7620c72fca731ae71c040b7ee891a14621e5aae4e58884890e03d77"
+   "phone_asof": "2026-11-21",
+   "fp": "646a4ba756eb192c1b10aaee7383a8bb4c8167d24c02b8dbc585a22cedc8df14"
   }
  ],
  "airports": [
@@ -453,8 +453,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/3426459443",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "99dd3d58c095fc27246f4702f42054c4ff1cbff3895d8e3c3cf39bc09c3f44bc"
+   "asof": "2026-11-21",
+   "fp": "e79ebe1569dda85726cdec8ef2d7b4c891f00e154d9b816d5c6f8a3d6685f3ed"
   },
   {
    "id": "sof:cm:xing:node-5684595569",
@@ -470,13 +470,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/5684595569",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "29850c20afea77968f87aee1189bef2de004e521767d52c797554ed416d98722"
+   "asof": "2026-11-21",
+   "fp": "560fd561139a45cb59d74434ac367759de862e4898e2fa81843aafbd1de0e6b1"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-21"
 }

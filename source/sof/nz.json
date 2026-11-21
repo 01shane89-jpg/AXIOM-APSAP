@@ -30,13 +30,13 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/NewZealand.html",
    "srcname": "travel.state.gov New Zealand country information",
    "coord_basis": "https://en.wikipedia.org/wiki/Embassy_of_the_United_States,_Wellington",
-   "fp": "407401dcdbac63a1023dd2e340a0969bb3afefd1e78cd10b2b6460f5b3ed892f",
+   "fp": "ec6dcf35b66abcec1f08980adcc3f4be7f0e3dc9ef07d999f657e87edb50d724",
    "web": "https://nz.usembassy.gov",
    "phone": "64 4 462 6000",
    "phone_after_hours": "(64) (9) 303 2724",
    "phone_src": "https://nz.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-09"
+   "phone_asof": "2026-11-21"
   },
   {
    "id": "sof:nz:post:u-s-consulate-general-auckland",
@@ -51,12 +51,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/NewZealand.html",
    "srcname": "travel.state.gov New Zealand country information",
    "coord_basis": "OpenStreetMap node/6620337465",
-   "fp": "ffca9504870ae82f9857743edd7c70ad81bdb530e4308535365758f5a3ab1c09",
+   "fp": "68b156535685272226526778f09079c1188080dc93c9e9b3b3ea96dd1f47b2dc",
    "web": "https://nz.usembassy.gov/",
    "phone": "+64 9 303 2724",
    "phone_src": "https://www.openstreetmap.org/node/6620337465",
    "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
-   "phone_asof": "2026-11-09"
+   "phone_asof": "2026-11-21"
   }
  ],
  "airports": [
@@ -385,8 +385,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/101956052",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "46e87f515fad15611d385b14def30f69c214d661ca7adfd8fbc91e49fb265e95"
+   "asof": "2026-11-21",
+   "fp": "bb821a40d3824fddf46cf1ab79b0303cceeabcda028bfa46ca46b1b1503f48a9"
   },
   {
    "id": "sof:nz:xing:way-156937968",
@@ -402,8 +402,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/156937968",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "857e24a542250cac4f510b37d8624d4c3e778845c2d3bb4997283041784991ec"
+   "asof": "2026-11-21",
+   "fp": "71d13748194d8f9744fd2db510261a079b2357006b9069972e986699e7b4c8c5"
   },
   {
    "id": "sof:nz:xing:way-362034053",
@@ -419,8 +419,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/362034053",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "4b5305a0a28d7f7f7e8d08a2c90f7f3a7c2377f032ec1ca9c7ed4184ce67e29e"
+   "asof": "2026-11-21",
+   "fp": "ea0b39ae8e2baf6f5b6990be03663f7f7f4e648171fb500d2879f72ffd793b1b"
   },
   {
    "id": "sof:nz:xing:way-366071763",
@@ -436,8 +436,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/366071763",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "e2717de204d1c35d2090aaec252faa424531d0cf2516f8dbfd729e760fa6c111"
+   "asof": "2026-11-21",
+   "fp": "ba1fd8dc4be9b499acbc03a049fd92298d2ed524179cd3d0151a3c4d9fa08be1"
   },
   {
    "id": "sof:nz:xing:way-531457296",
@@ -453,8 +453,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/531457296",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "01f467fe0fd8afb3b8035f90dde7b7c9048cec5db31cfbe41295e561cbb19f95"
+   "asof": "2026-11-21",
+   "fp": "9740ac5187355a17ca38e821f56b9e6cf84c15df3e8502c38f97447117f84444"
   },
   {
    "id": "sof:nz:xing:way-908338680",
@@ -470,13 +470,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/908338680",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "944f4672df2694de1de8e29435defdf22b98a8be08b02d720d73f3bcb29a401c"
+   "asof": "2026-11-21",
+   "fp": "8cbe20bcb08dc03d450e8d3ccf9a1441e4e138c2a3e08738c30273a73099895b"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-21"
 }

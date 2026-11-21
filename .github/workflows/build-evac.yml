@@ -8,7 +8,7 @@ on:
     - cron: "41 3 9 * *"
   workflow_dispatch:
   push:
-    branches: [claude/embassies-evac]
+    branches: [claude/embassies-evac, claude/evac-post-*]
     paths: [tools/build_evac.mjs, tools/apply_evac.py, .github/workflows/build-evac.yml]
 permissions:
   contents: write

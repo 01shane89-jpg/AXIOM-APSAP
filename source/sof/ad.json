@@ -66,13 +66,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/5292726211",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "26f5e29d9403667c797dfab6f07018bc272e67b7ca38d52d65bb0586dc50fcd0"
+   "asof": "2026-11-21",
+   "fp": "4bee20461a1d4518b62adeefbbcfc18387ceee2b7ee1ba71a3fca2fd822fdcff"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-21"
 }

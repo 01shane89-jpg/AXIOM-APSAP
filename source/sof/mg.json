@@ -43,8 +43,8 @@
    "phone_after_hours": "(+261) 33 44 320 00",
    "phone_src": "https://mg.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-09",
-   "fp": "85ba401eac391d51506572dbef5618a7d910d5c59ea9883f033f45140fa08fca"
+   "phone_asof": "2026-11-21",
+   "fp": "d59ad53c2ebb0adaa8f591179c7ebd44bc3733f8aabd3107c4b2b7b349f4e6e3"
   }
  ],
  "airports": [
@@ -539,13 +539,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/8937953430",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "2ffa6123fca02883e9c29aed4482ace7796865cf8ee5419c0477c1ffc0c493a8"
+   "asof": "2026-11-21",
+   "fp": "32b28b7d0165de9171155b5b8d231db897f5f2bd9ce0fd3909ce3bc1504b5320"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-21"
 }

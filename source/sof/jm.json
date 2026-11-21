@@ -36,13 +36,13 @@
    "src": "https://www.wikidata.org/entity/Q105607157",
    "srcname": "Wikidata",
    "coord_basis": "OpenStreetMap way/362095345",
-   "fp": "18ff95b6af335d2a4c4fbec08a4998c152e573a00e48deb000a241f223d8de9e",
+   "fp": "cb66ba76a66db5f0b1a895a55f635ad72b2cfd889d65f1ea254465b9e6699c95",
    "web": "https://jm.usembassy.gov",
    "phone": "876-702-6000",
    "phone_after_hours": "1 (876) 702-6000",
    "phone_src": "https://jm.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-09"
+   "phone_asof": "2026-11-21"
   },
   {
    "id": "sof:jm:post:u-s-consulate-montego-bay",
@@ -60,8 +60,8 @@
    "phone": "8769530620",
    "phone_src": "https://www.openstreetmap.org/node/3810123434",
    "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
-   "phone_asof": "2026-11-09",
-   "fp": "480115dd2cfd786cd6d2d7fa13a76d98f6bce7c57127b5d9f11f2711d06d0d40"
+   "phone_asof": "2026-11-21",
+   "fp": "6a2b088709a11bfef5e0e221b935bce623acf4ae1f3b0915b796000e933a74c4"
   }
  ],
  "airports": [
@@ -618,13 +618,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/688035634",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "5cf464a4c9f9d8b3cbe0548d23e457457521e91d4de04e6f10739fda8a07cbe4"
+   "asof": "2026-11-21",
+   "fp": "2af82a805593bc26890a156e6f9c07d672c3a3f004f14bab4a5c1370f6192457"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-21"
 }
