@@ -58,6 +58,16 @@ const calm = L.rate({ pv: { v: 1.6 }, deaths: { n: 0 }, homicide: { v: 0.5 }, rl
 ok(calm.overall.level === 1, "a calm, well-served country is Minimal (" + calm.overall.score + ")");
 const part = L.rate({ deaths: { n: 0 } }, { hazards: [], hazardsOk: true });
 ok(part.overall.missing.includes("Crime") && part.overall.missing.includes("Infrastructure and services"), "categories without data are named as missing");
+ok(part.overall.partial === true && part.overall.level === 0 && part.overall.label === "Partial" && part.overall.of === 5, "categories missing: no overall level, only Partial (" + part.overall.missing.length + " of 5 missing)");
+// Taiwan (20 Nov): security and hazards only, both 0, read "1 Minimal" with crime, health and infrastructure missing
+const tw = L.rate({ pv: { v: 0.9 }, deaths: { n: 0, popM: 23 } }, { hazards: [] });
+ok(tw.overall.partial && tw.overall.level === 0 && tw.overall.missing.join("|") === "Crime|Health and medical|Infrastructure and services", "Taiwan-like gaps: Partial, not Minimal; the three missing categories listed");
+const one = L.rate({ pv: { v: -2.5 }, deaths: { n: 20000, popM: 20 }, homicide: { v: 1 }, rl: { v: 1.5 }, elec: { v: 100 }, net: { v: 95 } }, { hazards: [] });
+ok(one.overall.partial && one.overall.missing.join() === "Health and medical" && one.cats.security.level === 5, "even one category missing gives Partial; the categories with data keep their levels (security " + one.cats.security.label + ")");
+ok(!calm.overall.partial && !war.overall.partial, "with all five categories in, the overall level stands");
+const R0 = C;
+ok(R0.isPartial({ level: 1, label: "Minimal", missing: ["Crime", "Health and medical", "Infrastructure and services"] }) && R0.partialText({ missing: ["Crime"], of: 5 }) === "Partial: 1 of 5 categories have no data (Crime)" && /Partial/.test(R0.obadge({ partial: true, missing: ["Crime"] })) && !/Minimal/.test(R0.obadge({ level: 1, missing: ["Crime"] })), "the page shows Partial with the count and list, also for records written before this rule");
+ok(!R0.isPartial({ level: 2, missing: [] }) && /2 Low/.test(R0.obadge({ level: 2, missing: [] })), "a full record keeps its level badge");
 ok(L.deathsFrom([{ date: "2026-01-01", lat: 13.75, lon: 100.5, best: 3 }, { date: "2026-01-01", lat: 6.5, lon: 101.3, best: 7 }, { date: "2024-01-01", lat: 13.75, lon: 100.5, best: 50 }], "2025-10-24", { lat: 13.75, lon: 100.5 }, 50).n === 3,
   "city deaths: only events in the window and within 50 km");
 
@@ -77,8 +87,8 @@ ok(!sdR.cats.infra.events.some((e) => e.k === "war"), "a city passes the nationa
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "risk-"));
 const out = path.join(tmp, "out"); fs.mkdirSync(out);
 const wbFix = { schema: "osap-risk-wb/1", read: new Date().toISOString().slice(0, 16) + "Z", ids: { pv: "GOV_WGI_PV.EST" },
-  series: { pop: { THA: [["2024", 71.7e6]], UKR: [["2024", 37e6]], SGP: [["2024", 5.9e6]] }, pv: { THA: [["2023", -0.6]], UKR: [["2023", -2.0]], SGP: [["2023", 1.5]] }, rl: { THA: [["2023", 0]], SGP: [["2023", 1.8]] }, homicide: { THA: [["2021", 4.4]], SGP: [["2021", 0.1]] },
-    u5: { THA: [["2023", 8.5]], SGP: [["2023", 2.1]] }, elec: { THA: [["2022", 100]], SGP: [["2022", 100]] }, net: { THA: [["2023", 88]], SGP: [["2023", 96]] } } };
+  series: { pop: { THA: [["2024", 71.7e6]], UKR: [["2024", 37e6]], SGP: [["2024", 5.9e6]] }, pv: { THA: [["2023", -0.6]], UKR: [["2023", -2.0]], SGP: [["2023", 1.5]] }, rl: { THA: [["2023", 0]], UKR: [["2023", -0.9]], SGP: [["2023", 1.8]] }, homicide: { THA: [["2021", 4.4]], UKR: [["2021", 4.1]], SGP: [["2021", 0.1]] },
+    u5: { THA: [["2023", 8.5]], UKR: [["2023", 8.6]], SGP: [["2023", 2.1]] }, elec: { THA: [["2022", 100]], SGP: [["2022", 100]] }, net: { THA: [["2023", 88]], SGP: [["2023", 96]] } } };
 fs.writeFileSync(path.join(out, "_wb.json"), JSON.stringify(wbFix));
 const run = (live) => execFileSync(process.execPath, ["tools/refresh_risk.mjs"], { env: Object.assign({}, process.env, { RISK_OUT: out, RISK_WB: "0", RISK_ONLY: "th,ua,sg", RISK_LIVE: live }), encoding: "utf8" });
 console.log(run("data/live").trim());
