@@ -1,0 +1,1 @@
+{"schema":"osap-avwx/1","built":"2026-11-21T21:48:22.087Z","cell":"70_-90","st":[{"id":"CWEU","n":"Eureka","c":"CA","la":79.989,"lo":-85.934,"el":2,"m":{"raw":"METAR CWEU 212100Z VRB04KT 15SM SKC M25/M28 A2999 RMK SLP172","t":1795294800000,"cat":"VFR","wd":0,"ws":4,"wg":null,"vis":15,"visp":null,"cig":null,"sky":null,"tc":-25,"dc":-28,"alt":29.99,"wx":null},"f":null}]}

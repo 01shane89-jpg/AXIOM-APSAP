@@ -1,0 +1,1 @@
+{"schema":"osap-avwx/1","built":"2026-11-21T21:48:22.087Z","cell":"0_80","st":[{"id":"VCRI","n":"Mattala/Rajapaksa Intl","c":"LK","la":6.287,"lo":81.125,"el":50,"m":{"raw":"METAR VCRI 212110Z 36002KT 4000 HZ NSC 24/24 Q1012","t":1795295400000,"cat":"IFR","wd":360,"ws":2,"wg":null,"vis":2.49,"visp":null,"cig":null,"sky":null,"tc":24,"dc":24,"alt":29.88,"wx":"HZ"},"f":null}]}
