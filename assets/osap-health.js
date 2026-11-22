@@ -58,7 +58,8 @@
   /* scheduled data jobs with no success within their limit; one with none on record counts once it has existed that long */
   function lateJobs(h, now) {
     return ((h && h.jobs && h.jobs.list) || []).filter(function (j) {
-      return j && j.maxMin && (j.last ? now - Date.parse(j.last) > j.maxMin * 60000 : !(j.since && now - Date.parse(j.since) <= j.maxMin * 60000));
+      return j && j.maxMin && !(j.running && now - Date.parse(j.running) < 360 * 60000) &&
+        (j.last ? now - Date.parse(j.last) > j.maxMin * 60000 : !(j.since && now - Date.parse(j.since) <= j.maxMin * 60000));
     });
   }
   function when(ms) { var T = window.OSAP_TIME; return T && T.dualT ? T.dualT(ms) : new Date(ms).toISOString().slice(11, 16) + "Z"; }
