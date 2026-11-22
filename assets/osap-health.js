@@ -26,7 +26,7 @@
 
   /* one badge in the map header (after the OSAP name) and one on the Today screen (after its date line); Today is drawn by
      assets/osap-today.js and can be redrawn, so mount() runs again on every redraw of the badge */
-  var panel = null, H = null, EV = null, readAt = 0, qOpen = false;
+  var panel = null, panelOf = "", H = null, EV = null, readAt = 0, qOpen = false;
   function makeBadge(id) {
     var w = document.createElement("span"); w.className = "ohw"; w.id = id;
     w.innerHTML = '<button type="button" class="ohb" aria-expanded="false" aria-haspopup="dialog"><i aria-hidden="true"></i><span>Data …</span></button>';
@@ -37,7 +37,12 @@
     var hdr = document.querySelector("header"), brand = hdr && hdr.querySelector(".brand");
     if (hdr && !document.getElementById("osap-health")) { var a = makeBadge("osap-health"); if (brand && brand.nextSibling) hdr.insertBefore(a, brand.nextSibling); else hdr.appendChild(a); }
     var tb = document.querySelector("#today .tdbrand");
-    if (tb && !tb.querySelector(".ohw")) { var b = makeBadge("osap-health-today"); b.style.marginTop = "4px"; b.style.alignSelf = "flex-start"; tb.appendChild(b); }
+    if (tb && !tb.querySelector(".ohw")) {
+      var b = makeBadge("osap-health-today"); b.style.marginTop = "4px"; b.style.alignSelf = "flex-start"; tb.appendChild(b);
+      /* 22 Nov 2026: Today redraws its header (and this badge with it) while the panel may be open; the open panel was left
+         detached, so it vanished, and a fold opened in it was lost. It moves to the new badge instead. */
+      if (panel && panelOf === b.id && !document.documentElement.contains(panel)) { b.appendChild(panel); b.firstChild.setAttribute("aria-expanded", "true"); }
+    }
   }
   function badges() { return Array.prototype.slice.call(document.querySelectorAll(".ohw > .ohb")); }
 
@@ -171,10 +176,10 @@
   function toggle(w, open) {
     var cur = panel && panel.parentNode;
     if (open === undefined) open = !(panel && cur === w);
-    if (panel) { if (cur && cur.firstChild) cur.firstChild.setAttribute("aria-expanded", "false"); panel.remove(); panel = null; }
+    if (panel) { if (cur && cur.firstChild) cur.firstChild.setAttribute("aria-expanded", "false"); panel.remove(); panel = null; panelOf = ""; }
     if (open && w) {
       panel = document.createElement("div"); panel.className = "ohp"; panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "Data health");
-      w.appendChild(panel); w.firstChild.setAttribute("aria-expanded", "true"); fillPanel();
+      w.appendChild(panel); panelOf = w.id; w.firstChild.setAttribute("aria-expanded", "true"); fillPanel();
       /* keep the panel on screen: shift it left when the badge sits near the right edge */
       var r = panel.getBoundingClientRect(), over = r.right - (window.innerWidth - 8);
       if (over > 0) panel.style.left = -Math.min(over, r.left - 8) + "px";
