@@ -255,6 +255,22 @@ console.log("health tests passed");
   const monthly = jobLimitMin(["41 4 7 * *"]);
   assert.deepEqual(lateJobs([{ file: "o.yml", name: "Outlet facts", maxMin: monthly, last: null, since: "2026-11-14T08:16:00Z" }], N), [], "a new job before its first run is not late");
   assert.equal(lateJobs([{ file: "o.yml", name: "Outlet facts", maxMin: monthly, last: null, since: "2026-07-01T00:00:00Z" }], N).length, 1, "an old job that never succeeded is late");
+  // a job with a run going on main is not late (refresh-keeper.yml: 5 h 20 min runs on an hourly schedule, 20 Nov 2026);
+  // one "in progress" for 6 h or more is stuck, and late
+  const keeper = { file: "refresh-keeper.yml", name: "Keep the 15-minute refresh running", maxMin: 300, last: new Date(N - 319 * 60000).toISOString() };
+  assert.equal(lateJobs([keeper], N).length, 1, "past its limit with nothing running: late");
+  assert.deepEqual(lateJobs([{ ...keeper, running: new Date(N - 319 * 60000).toISOString() }], N), [], "a run going for 5 h 19 min: working, not late");
+  assert.equal(lateJobs([{ ...keeper, running: new Date(N - 400 * 60000).toISOString() }], N).length, 1, "a run 'in progress' for 6 h 40 min: stuck");
+  // a job that writes a watched feed is late no later than that feed is stale (refresh-factchecks.yml, 20 Nov 2026)
+  {
+    const { jobLimitFor } = await import("../tools/health_lib.mjs");
+    const feeds = [{ id: "factchecks", file: "data/live/factchecks.js", maxMin: 420 }, { id: "news", file: "data/live/news.js", maxMin: 90 }];
+    assert.equal(jobLimitFor(["17 */3 * * *"], "git add data/live/factchecks.js", feeds), 420, "3-hourly job (540) writing a 420-min feed: 420");
+    assert.equal(jobLimitFor(["17 */3 * * *"], "git add data/other.js", feeds), 540, "writes no watched feed: its own schedule");
+    assert.equal(jobLimitFor(["7,22,37,52 * * * *"], "data/live/news.js", feeds), 90, "15-min job writing a 90-min feed: 90");
+    assert.equal(jobLimitFor(["17 3 * * *"], "data/live/news.js", feeds), 1500, "never under one gap of its own schedule + 60");
+    assert.equal(jobLimitFor([], "data/live/news.js", feeds), null);
+  }
   // quiet sources are listed as ops only: never part of the badge or the phone alerts
   const fresh1 = { asof: new Date(N - 5 * 60000).toISOString(), feeds: [{ id: "quakes", name: "Earthquakes", key: true, maxMin: 90, asof: new Date(N - 10 * 60000).toISOString() }] };
   const evq = evaluate({ ...fresh1, quiet: { n: 2, list: [] } }, cfg, N);
@@ -275,7 +291,8 @@ console.log("health tests passed");
     const helpers = /(function parseStamp[\s\S]*?)\n  function when/.exec(src)[1];
     const appEval = new Function(helpers + "\n" + m[1] + "\nreturn evaluate;")();
     const jobs = { list: [{ file: "a.yml", name: "Refresh economic stress signals", maxMin: 3060, last: "2026-11-17T03:30:00Z" }, { file: "b.yml", name: "Refresh airfield weather", maxMin: 220, last: new Date(N - 266 * 60000).toISOString() }, { file: "c.yml", name: "On time", maxMin: 220, last: new Date(N - 30 * 60000).toISOString() }] };
-    for (const h of [{ ...fresh1, jobs }, { ...fresh1, jobs: { list: jobs.list.slice(1) } }, { ...fresh1, feeds: fresh1.feeds.concat({ id: "news", name: "News", key: true, maxMin: 90, asof: new Date(N - 300 * 60000).toISOString() }), jobs }]) {
+    const runJobs = { list: [{ file: "refresh-keeper.yml", name: "Keep the 15-minute refresh running", maxMin: 300, last: new Date(N - 319 * 60000).toISOString(), running: new Date(N - 319 * 60000).toISOString() }] };
+    for (const h of [{ ...fresh1, jobs: runJobs }, { ...fresh1, jobs }, { ...fresh1, jobs: { list: jobs.list.slice(1) } }, { ...fresh1, feeds: fresh1.feeds.concat({ id: "news", name: "News", key: true, maxMin: 90, asof: new Date(N - 300 * 60000).toISOString() }), jobs }]) {
       const a = appEval(Object.assign({ amberMin: 40, downMin: 60 }, h), N), b = evaluate(h, cfg, N).ui;
       assert.equal(a.state, b.state); assert.equal(a.line, b.line); assert.equal(a.short, b.short);
     }
