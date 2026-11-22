@@ -58,6 +58,10 @@ await p.evaluate(() => { const d = document.querySelector("details.ohq"); if (d)
 await p.evaluate(() => window.OSAP_HEALTH_UI.reload());
 await p.waitForTimeout(1500);
 ok(await p.evaluate(() => { const d = document.querySelector("details.ohq"); return !!(d && d.open); }), "the quiet sources fold stays open when the panel redraws");
+// 22 Nov 2026: Today redraws its header (and the badge in it) on its own timer; the open panel and its fold must survive that
+await p.evaluate(() => { const t = document.querySelector("#today .tdbrand"); if (t) t.innerHTML = "<b>Today</b>"; window.OSAP_HEALTH_UI.reload(); });
+await p.waitForTimeout(1500);
+ok(await p.evaluate(() => { const d = document.querySelector("#today .ohp details.ohq"); return !!(d && d.open); }), "the panel and its open fold survive a Today redraw");
 ok(/\bamber\b/.test(badge) && /Economic stress signals late/.test(badge), "a late job turns the badge amber and names it (" + badge.trim() + ")");
 ok(!/\bdown\b/.test(badge), "a late job alone never turns the badge red");
 ok(!r.wide, "nothing scrolls sideways");
