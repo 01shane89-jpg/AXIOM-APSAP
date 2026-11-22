@@ -57,8 +57,11 @@
   }
   /* scheduled data jobs with no success within their limit; one with none on record counts once it has existed that long */
   function lateJobs(h, now) {
+    /* a run seen going is judged as of the job list's own time (asked hourly; trusted for 2 h), as tools/health_lib.mjs runRef:
+       read 39 min after it was asked, a keeper run seen at 5 h 21 min counted as 6 h "stuck" and turned the badge amber (22 Nov 2026) */
+    var at = Date.parse((h && h.jobs && h.jobs.at) || ""), ref = at && at <= now && now - at < 120 * 60000 ? at : now;
     return ((h && h.jobs && h.jobs.list) || []).filter(function (j) {
-      return j && j.maxMin && !(j.running && now - Date.parse(j.running) < 360 * 60000) &&
+      return j && j.maxMin && !(j.running && ref - Date.parse(j.running) < 360 * 60000) &&
         (j.last ? now - Date.parse(j.last) > j.maxMin * 60000 : !(j.since && now - Date.parse(j.since) <= j.maxMin * 60000));
     });
   }
@@ -79,7 +82,7 @@
     });
     /* a scheduled data job past its limit (health_lib lateJobs) is named like a late minor feed: amber, never a phone alert */
     lateJobs(h, now).forEach(function (j) {
-      var nm = String(j.name || j.file).replace(/^Refresh\s+/i, "");
+      var nm = String(j.name || j.file).replace(/^Refresh\s+/i, "").replace(/^Keep the (.+) running$/i, "$1 keeper");
       probs.push({ name: nm.charAt(0).toUpperCase() + nm.slice(1), why: j.last ? "last updated " + ago(now - Date.parse(j.last)) + " ago" : "no successful run", key: false, job: true });
     });
     /* what the reader sees (tools/health_lib.mjs userView): red only when nothing has refreshed for downMin or most key feeds

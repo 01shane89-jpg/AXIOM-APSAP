@@ -261,6 +261,21 @@ console.log("health tests passed");
   assert.equal(lateJobs([keeper], N).length, 1, "past its limit with nothing running: late");
   assert.deepEqual(lateJobs([{ ...keeper, running: new Date(N - 319 * 60000).toISOString() }], N), [], "a run going for 5 h 19 min: working, not late");
   assert.equal(lateJobs([{ ...keeper, running: new Date(N - 400 * 60000).toISOString() }], N).length, 1, "a run 'in progress' for 6 h 40 min: stuck");
+  // the job list is asked hourly: a run is judged as of the list's own time, not the reader's clock (22 Nov 2026: a keeper run seen
+  // at 5 h 21 min, read 39 min later, counted as 6 h "stuck" and the Today badge said "Keep the 15-minute refresh running late")
+  {
+    const seen = { ...keeper, running: new Date(N - 360 * 60000).toISOString() }, listAt = new Date(N - 39 * 60000).toISOString();
+    assert.equal(lateJobs([seen], N).length, 1, "no list time: judged on the reader's clock, as before");
+    assert.deepEqual(lateJobs([seen], N, listAt), [], "seen going 5 h 21 min when the list was asked 39 min ago: working, not late");
+    assert.equal(lateJobs([{ ...keeper, running: new Date(N - 400 * 60000).toISOString() }], N, listAt).length, 1, "seen going 6 h 1 min when asked: stuck");
+    assert.equal(lateJobs([seen], N, new Date(N - 150 * 60000).toISOString()).length, 1, "a list over 2 h old is not trusted for runs: the reader's clock");
+    assert.equal(lateJobs([seen], N, new Date(N + 10 * 60000).toISOString()).length, 1, "a list time in the future is ignored");
+    assert.equal(lateJobs([{ ...keeper, last: new Date(N - 400 * 60000).toISOString() }], N, listAt).length, 1, "the list time never excuses a job with no run going");
+    const { jobLabel } = await import("../tools/health_lib.mjs");
+    assert.equal(jobLabel("Keep the 15-minute refresh running"), "15-minute refresh keeper");
+    assert.equal(jobLabel("Refresh airfield weather (METAR/TAF)"), "Airfield weather (METAR/TAF)");
+    assert.equal(jobLabel("Flash alerts loop"), "Flash alerts loop");
+  }
   // a job that writes a watched feed is late no later than that feed is stale (refresh-factchecks.yml, 20 Nov 2026)
   {
     const { jobLimitFor } = await import("../tools/health_lib.mjs");
@@ -292,7 +307,15 @@ console.log("health tests passed");
     const appEval = new Function(helpers + "\n" + m[1] + "\nreturn evaluate;")();
     const jobs = { list: [{ file: "a.yml", name: "Refresh economic stress signals", maxMin: 3060, last: "2026-11-17T03:30:00Z" }, { file: "b.yml", name: "Refresh airfield weather", maxMin: 220, last: new Date(N - 266 * 60000).toISOString() }, { file: "c.yml", name: "On time", maxMin: 220, last: new Date(N - 30 * 60000).toISOString() }] };
     const runJobs = { list: [{ file: "refresh-keeper.yml", name: "Keep the 15-minute refresh running", maxMin: 300, last: new Date(N - 319 * 60000).toISOString(), running: new Date(N - 319 * 60000).toISOString() }] };
-    for (const h of [{ ...fresh1, jobs: runJobs }, { ...fresh1, jobs }, { ...fresh1, jobs: { list: jobs.list.slice(1) } }, { ...fresh1, feeds: fresh1.feeds.concat({ id: "news", name: "News", key: true, maxMin: 90, asof: new Date(N - 300 * 60000).toISOString() }), jobs }]) {
+    const seenJobs = { at: new Date(N - 39 * 60000).toISOString(), list: [{ file: "refresh-keeper.yml", name: "Keep the 15-minute refresh running", maxMin: 300, last: new Date(N - 370 * 60000).toISOString(), running: new Date(N - 360 * 60000).toISOString() }] };
+    const oldList = { ...seenJobs, at: new Date(N - 150 * 60000).toISOString() };
+    {
+      const a = appEval(Object.assign({ amberMin: 40, downMin: 60 }, { ...fresh1, jobs: seenJobs }), N);
+      assert.equal(a.state, "ok", "app: a keeper run seen going when the list was asked is not late (" + a.line + ")");
+      const b = appEval(Object.assign({ amberMin: 40, downMin: 60 }, { ...fresh1, jobs: oldList }), N);
+      assert.equal(b.short, "15-minute refresh keeper late", "app: a job named 'Keep the ... running' reads as a keeper on the badge");
+    }
+    for (const h of [{ ...fresh1, jobs: seenJobs }, { ...fresh1, jobs: oldList }, { ...fresh1, jobs: runJobs }, { ...fresh1, jobs }, { ...fresh1, jobs: { list: jobs.list.slice(1) } }, { ...fresh1, feeds: fresh1.feeds.concat({ id: "news", name: "News", key: true, maxMin: 90, asof: new Date(N - 300 * 60000).toISOString() }), jobs }]) {
       const a = appEval(Object.assign({ amberMin: 40, downMin: 60 }, h), N), b = evaluate(h, cfg, N).ui;
       assert.equal(a.state, b.state); assert.equal(a.line, b.line); assert.equal(a.short, b.short);
     }
