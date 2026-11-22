@@ -60,7 +60,7 @@ const ctx = await browser.newContext({ acceptDownloads: true, viewport: { width:
 await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
 const p = await ctx.newPage();
 const errs = []; p.on("pageerror", (e) => errs.push(e.message));
-await p.addInitScript((S) => { if (!sessionStorage.getItem("seeded")) { sessionStorage.setItem("seeded", "1"); localStorage.setItem("osap-home", "map"); sessionStorage.setItem("osap-today", "0"); for (const k in S) localStorage.setItem(k, S[k]); } }, SEED);
+await p.addInitScript((S) => { if (!sessionStorage.getItem("seeded")) { sessionStorage.setItem("seeded", "1"); if (localStorage.getItem("osap-medplan-open") === null) localStorage.setItem("osap-medplan-open", JSON.stringify({ conop: 1, pic: 1, val: 1, pst: 1, pstmore: 1, gh: 1, fac: 1, rt: 1, ems: 1, air: 1, oc: 1, thr: 1, wx: 1, unit: 1, src: 1 })); if (localStorage.getItem("osap-medplan-layers") === null) localStorage.setItem("osap-medplan-layers", "[\"oh\"]"); localStorage.setItem("osap-home", "map"); sessionStorage.setItem("osap-today", "0"); for (const k in S) localStorage.setItem(k, S[k]); } }, SEED);
 await p.goto(base + "#th/timeline", { waitUntil: "domcontentloaded" });
 await p.waitForFunction(() => window.OSAP_WS && window.OSAP_TAK && window.OSAP_WORK && window.__asapMap, null, { timeout: 60000 }); await p.waitForTimeout(800);
 

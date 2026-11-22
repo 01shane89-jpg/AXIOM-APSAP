@@ -9,7 +9,7 @@ import { updateHistory, storedTranslations } from "./history.mjs";
 import { parseFeed, parseList } from "./feedparse.mjs";
 import { loadPics, savePics, fillPics, readPage } from "./news_pics.mjs";
 import { loadDates, saveDates, fillPageDates, indexSearchRows } from "./news_pagedate.mjs";
-import { ADAPTERS } from "./news_adapters.mjs";
+import { ADAPTERS, ADAPTER_V } from "./news_adapters.mjs";
 import { getFeed, robotsAllow, unwrap } from "./news_fetch.mjs";
 import { loadRelevance, itemRelevance, kept, preTranslation } from "./topics_lib.mjs";
 import { loadGazetteer, placeIn } from "./gazetteer.mjs";
@@ -124,10 +124,11 @@ async function readFeed(f) {
     if (f.detail && ADAPTERS[f.detail]) {
       let reads = 0;
       for (const o of list) {
+        // read again when the page reader changed since (ADAPTER_V: MND's "1 official ship" was read as 0 until 21 Nov)
         const was = seenDetail.get(o.link);
-        if (was) { o.title = was.title; o.summary = was.summary; o.detail = was.detail; continue; }
+        if (was && (ADAPTER_V[f.detail] || 1) === ((was.detail && was.detail.v) || 1)) { o.title = was.title; o.summary = was.summary; o.detail = was.detail; continue; }
         if (reads++ >= 6) continue;
-        try { const d = ADAPTERS[f.detail](await getFeed(o.link)); if (d) { o.title = d.title; o.summary = d.summary.slice(0, 400); o.detail = d.counts || true; } } catch (e) {}
+        try { const d = ADAPTERS[f.detail](await getFeed(o.link)); if (d) { o.title = d.title; o.summary = d.summary.slice(0, 400); o.detail = d.counts ? { ...d.counts, v: ADAPTER_V[f.detail] || 1 } : true; } } catch (e) {}
       }
     }
     // an outlet's own date older than MAX_AGE_DAYS is an archive hit (search fallbacks, front-page feeds that stopped updating),

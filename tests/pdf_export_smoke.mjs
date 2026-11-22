@@ -64,7 +64,7 @@ async function open(hash, init) {
     if (/(^|\.)open-meteo\.com$/.test(h) && !/geocoding|marine/.test(h)) return r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(forecast(r.request().url())) });
     return r.abort();
   });
-  await ctx.addInitScript((init) => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-period", JSON.stringify({ p: "30" })); for (const k in init || {}) localStorage.setItem(k, init[k]); } catch (e) {} }, init || {});
+  await ctx.addInitScript((init) => { try { if (localStorage.getItem("osap-medplan-open") === null) localStorage.setItem("osap-medplan-open", JSON.stringify({ conop: 1, pic: 1, val: 1, pst: 1, pstmore: 1, gh: 1, fac: 1, rt: 1, ems: 1, air: 1, oc: 1, thr: 1, wx: 1, unit: 1, src: 1 })); if (localStorage.getItem("osap-medplan-layers") === null) localStorage.setItem("osap-medplan-layers", "[\"oh\"]"); localStorage.setItem("osap-home", "map"); localStorage.setItem("asap-period", JSON.stringify({ p: "30" })); for (const k in init || {}) localStorage.setItem(k, init[k]); } catch (e) {} }, init || {});
   const p = await ctx.newPage(); const errors = []; p.on("pageerror", (e) => errors.push(e.message)); p.on("dialog", (d) => d.accept());
   await p.goto(base + hash, { waitUntil: "domcontentloaded" });
   await p.waitForFunction(() => window.TSAP && window.OSAP_REPORTS && window.OSAP_PDF && window.__asapMap, null, { timeout: 60000 });

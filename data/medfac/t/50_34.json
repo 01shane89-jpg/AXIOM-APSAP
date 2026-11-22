@@ -11,6 +11,7 @@
 ["n12556173678",50.47511,34.92216,"ua",{"name":"Реєстратура","name:en":"Reception","amenity":"hospital","healthcare":"hospital","addr:housenumber":"7","addr:street":"Нескучанська вулиця"}],
 ["n12556183950",50.4744,34.92264,"ua",{"name":"Реєстратура","name:en":"Reception","amenity":"hospital","healthcare":"hospital"}],
 ["n14014988403",50.93271,34.79023,"ua",{"name":"Міра","amenity":"clinic"}],
+["n14323546671",50.89058,34.80237,"ua",{"name":"Медея","amenity":"clinic"}],
 ["n1667427453",51.61039,35.2415,"ru",{"name":"Арсеньевский фельдшерский пункт","amenity":"hospital"}],
 ["n1686030610",51.41659,34.89077,"ru",{"name":"Кореневская центральная районная больница","amenity":"hospital","phone":"+7 (47147) 2-15-33","website":"http://kor-crb.narod.ru/","addr:housenumber":"1","addr:street":"Комсомольская улица","addr:city":"Коренево"}],
 ["n1843166065",51.72833,35.18524,"ru",{"name":"Кудинцевский фельдшерско-акушерский медицинский пункт","amenity":"hospital"}],

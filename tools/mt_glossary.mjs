@@ -54,6 +54,15 @@ const KEEP = [
   [/\batase\b/gi, "attaché", ATTACHE_EN, "attaché"],
   [/စစ်သံမှူး/g, "military attaché", ATTACHE_EN, "attaché"],
   [/武官/g, "military attaché", ATTACHE_EN, "attaché"],
+  // 2026-11-21, Taiwan (IG Post 45): the model read 共機 (PLA aircraft) and 共艦 (PLA warships) as "joint aircraft" or "joint
+  // flights", 國軍 (Taiwan's armed forces) as "Japan's army" (30 of 98 stored lines), and the Mainland Affairs Council (陸委會) as
+  // "the National People's Congress", "Land Commission" or "National Committee" (123 of 123 stored lines: Taiwan's
+  // China-policy body written as Beijing's). Each changes who acts. 公共機関 is Japanese for "public institutions", not 共機, and
+  // 共機艦 is a combined count of aircraft and warships (tools/mt_zh.mjs).
+  [/(?<![公])共(?:機|机)(?![艦舰船])/g, "PLA aircraft", /\b(?:Chinese|China|PLA|Communist|CCP|CPC)\b/i, "PLA aircraft (共機)"],
+  [/(?<![公])共(?:艦|舰)/g, "PLA warships", /\b(?:Chinese|China|PLA|PLAN|Communist|CCP|CPC)\b/i, "PLA warships (共艦)"],
+  [/國軍/g, "Taiwan's armed forces", /^(?![\s\S]*\bJapan)[\s\S]*\b(?:Taiwan(?:ese)?|ROC|armed forces|military|army|troops|soldiers|defen[cs]e|forces)\b/i, "Taiwan's armed forces (國軍)"],
+  [/陸委會|陆委会/g, "Mainland Affairs Council", /Mainland Affairs Council|\bMAC\b/, "Mainland Affairs Council (陸委會)"],
 ];
 // Iraq and Syria named in the English when the original names neither (Newtalk's 伊, Iran, read as "Iraqi forces" and
 // "Syria"; Korean 이란 as "Iraq"; a Croatian "Russians fired on a school" as "a Syrian attack"). Measured on the stored

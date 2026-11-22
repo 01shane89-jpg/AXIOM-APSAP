@@ -3,7 +3,7 @@
 // with the overall level, the five categories, the cities and a "Derived equivalent" tag that says it is not an official
 // advisory; the Country brief gets its own page before the country report with every indicator's points and source link, the
 // cities table and the method, and one line under the official advisory. External text is escaped. On a 390 px phone nothing
-// scrolls sideways. A country with no file says so. External hosts are blocked.
+// scrolls sideways. A country with categories missing shows Partial with the list, not an overall level. A country with no file says so. External hosts are blocked.
 // Run from the repo root: node tests/risk_smoke.mjs   (needs playwright and Chromium)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -12,6 +12,7 @@ import fs from "node:fs";
 import os from "node:os";
 import { extname, join, normalize } from "node:path";
 import { chromium } from "playwright";
+import * as L from "../tools/risk_lib.mjs";
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
 const root = process.cwd();
 
@@ -22,6 +23,20 @@ fs.writeFileSync(join(tmp, "_wb.json"), JSON.stringify({ read: new Date().toISOS
 execFileSync(process.execPath, ["tools/refresh_risk.mjs"], { env: Object.assign({}, process.env, { RISK_OUT: tmp, RISK_WB: "0", RISK_ONLY: "th" }), stdio: "inherit" });
 const TH = JSON.parse(fs.readFileSync(join(tmp, "th.json"), "utf8"));
 fs.rmSync(tmp, { recursive: true, force: true });
+/* Taiwan as the 20 Nov 2026 record had it (rule osap.risk/0.2): security and hazards only, overall "1 Minimal", three categories
+   missing. The page must say Partial, not Minimal, for such older records too */
+const TW = { schema: "osap-risk/1", cc: "tw", name: "Taiwan", asof: "2026-11-20T07:41Z", rule: "osap.risk/0.2", kind: "derived-equivalent", note: "x",
+  overall: { score: 0, level: 1, label: "Minimal", missing: ["Crime", "Health and medical", "Infrastructure and services"] },
+  cats: { security: { score: 0, parts: [], missing: [], level: 1, label: "Minimal" }, crime: { score: null, parts: [], missing: [], level: 0, label: "" },
+    health: { score: null, parts: [], missing: [], events: [], level: 0, label: "" }, hazards: { score: 0, parts: [], missing: [], events: [], level: 1, label: "Minimal" },
+    infra: { score: null, parts: [], missing: [], events: [], level: 0, label: "" } },
+  cities: [{ n: "Taipei", lat: 25.03, lon: 121.56, pop: 2.6e6, cap: true, overall: { score: 0, level: 1, label: "Minimal", missing: ["Crime", "Health and medical", "Infrastructure and services"] }, cats: {} }], inputs: {}, sources: {} };
+/* Taiwan under the 0.4 rule (21 Nov): no governance estimate and no conflict deaths. Security must read Partial (rests on conflict
+   deaths only), not "1 Minimal" at 0, and the page must say military pressure without deaths is not counted */
+const TW4R = L.rate({ deaths: { n: 0, popM: 23, window: "2025-11-21 to 2026-11-21", src: "https://ucdp.uu.se/" }, homicide: { v: 0.8 }, rl: { v: 1.2 }, u5: { v: 4 }, elec: { v: 100 }, net: { v: 90 } }, { hazards: [] });
+const TW4 = { schema: "osap-risk/1", cc: "tw", name: "Taiwan", asof: "2026-11-21T09:00Z", rule: L.RULE, kind: "derived-equivalent", note: "x", overall: TW4R.overall, cats: TW4R.cats,
+  cities: [{ n: "Taipei", lat: 25.03, lon: 121.56, pop: 2.6e6, cap: true, overall: TW4R.overall, cats: {} }], inputs: {}, sources: {} };
+let twRec = TW;
 TH.cities.push(Object.assign({}, TH.cities[0], { n: '<img src=x onerror="window.__xss=1">', cap: false }));
 TH.cats.hazards.events = [{ k: "gdacs", text: '<img src=x onerror="window.__xss=1">', link: "javascript:alert(1)", pts: 5 }];
 
@@ -41,6 +56,7 @@ async function open(cc, opts) {
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   await ctx.route(/\/data\/live\/risk\//, (r) => r.fulfill({ status: 404, body: "" }));
   await ctx.route(/\/data\/live\/risk\/th\.json/, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(TH) }));
+  await ctx.route(/\/data\/live\/risk\/tw\.json/, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(twRec) }));
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "today"); } catch (e) {} });
   const p = await ctx.newPage(); const errors = []; p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + "#" + cc + "/timeline", { waitUntil: "domcontentloaded" });
@@ -88,6 +104,32 @@ async function open(cc, opts) {
   if (process.env.SHOTS) { await p.evaluate(() => document.querySelector("#today .rkcard").scrollIntoView()); await p.screenshot({ path: process.env.SHOTS + "/risk-phone.png" }); }
   ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
+}
+{
+  const { p, ctx, errors } = await open("tw", { viewport: { width: 1200, height: 800 } });
+  const t = await p.evaluate(() => { const c = document.querySelector("#today .rkcard"); return { chips: c.querySelector(".rkchips").textContent, head: c.querySelector(".rkhead").textContent, cities: (c.querySelector(".rkcities") || {}).textContent || "" }; });
+  ok(/^\s*Partial 3 of 5 categories have no data \(Crime, Health and medical, Infrastructure and services\), so no overall level/.test(t.head) && !/Minimal/.test(t.head), "Taiwan with three categories missing shows Partial with the list, not an overall Minimal (" + t.head.trim() + ")");
+  ok(/Crime No data/.test(t.chips) && /Infrastructure and services No data/.test(t.chips), "a category with no data says No data (" + t.chips + ")");
+  ok(/Taipei Partial/.test(t.cities) && !/Minimal/.test(t.cities), "its city shows Partial too (" + t.cities.trim() + ")");
+  if (process.env.SHOTS) { await p.evaluate(() => document.querySelector("#today .rkcard").scrollIntoView()); await p.screenshot({ path: process.env.SHOTS + "/risk-partial.png" }); }
+  ok(errors.length === 0, "Taiwan: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
+  await ctx.close();
+}
+{
+  twRec = TW4;
+  const { p, ctx, errors } = await open("tw", { viewport: { width: 1200, height: 800 } });
+  const t = await p.evaluate(() => { const c = document.querySelector("#today .rkcard"); return { chips: c.querySelector(".rkchips").textContent, head: c.querySelector(".rkhead").textContent }; });
+  ok(/Security and conflict Partial/.test(t.chips) && !/Security and conflict \d/.test(t.chips), "Taiwan with no governance estimate: security chip says Partial, not 1 Minimal (" + t.chips + ")");
+  ok(/^\s*Partial Security and conflict rests on conflict deaths only, so no overall level/.test(t.head) && !/Minimal/.test(t.head), "the head says security rests on conflict deaths only (" + t.head.trim() + ")");
+  await p.click("#today .rkcard [data-go='@brief']");
+  await p.waitForSelector("#brief #risk", { timeout: 10000 });
+  const b = await p.evaluate(() => document.getElementById("risk").textContent);
+  ok(/Partial: rests on conflict deaths only/.test(b) && /not a reading of calm/.test(b), "the risk page explains the Partial security score");
+  ok(/Not counted: Military pressure without combat deaths \(air and sea incursions, blockades, drills\)/.test(b), "the risk page says military pressure without deaths is not counted");
+  if (process.env.SHOTS) { await p.evaluate(() => document.getElementById("risk").scrollIntoView()); await p.screenshot({ path: process.env.SHOTS + "/risk-tw-security.png" }); }
+  ok(errors.length === 0, "Taiwan 0.4: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
+  await ctx.close();
+  twRec = TW;
 }
 {
   const { p, ctx, errors } = await open("ke", { viewport: { width: 1200, height: 800 } });

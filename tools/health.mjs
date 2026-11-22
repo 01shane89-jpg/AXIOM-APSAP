@@ -103,7 +103,8 @@ async function build() {
   let prevHealth = null; try { prevHealth = JSON.parse(fs.readFileSync("data/live/health.json", "utf8")); } catch (e) {}
   const jb = await jobs(prevHealth && prevHealth.jobs);
   const out = { v: 1, asof: new Date().toISOString().slice(0, 19) + "Z", run, topic: TOPIC, amberMin: cfg.amberMin, downMin: cfg.downMin, feeds,
-    quiet: { n: quiet.length, list: quiet.slice(0, 60) }, ...(jb ? { jobs: { ...jb, late: lateJobs(jb.list) } } : {}) };
+    // over 60, keep the most recent silences (the panel lists those first; years-quiet pages are the least worth a look)
+    quiet: { n: quiet.length, list: quiet.length > 60 ? quiet.slice(-60) : quiet }, ...(jb ? { jobs: { ...jb, late: lateJobs(jb.list) } } : {}) };
   fs.mkdirSync("data/live", { recursive: true });
   fs.writeFileSync("data/live/health.json", JSON.stringify(out) + "\n");
   const ev = evaluate(out, cfg);
