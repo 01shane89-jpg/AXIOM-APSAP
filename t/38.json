@@ -1,0 +1,1 @@
+{"schema":"osap-air-tracks/2","built":"2026-11-22T00:43:32.988Z","keep_s":72000,"f":["t","lat","lon","alt","gnd"],"df":["ident","name","nm","t"],"tr":{"388740":[[1795307822,49.017,2.496,null,1]]},"dep":{"388740":["LFPG","Charles de Gaulle International Airport",2.3,1795307822]}}
