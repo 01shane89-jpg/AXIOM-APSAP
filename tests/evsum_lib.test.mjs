@@ -1,6 +1,6 @@
 // Unit test of the figure, name and death checks on event-summary drafts (tools/evsum_lib.mjs): a draft may only give figures its reports give.
 // Run: node tests/evsum_lib.test.mjs
-import { unsupportedFigures, unsupportedNames, unsupportedDeaths, normCites, figureContext } from "../tools/evsum_lib.mjs";
+import { unsupportedFigures, unsupportedNames, unsupportedDeaths, normCites, figureContext, flashpointTerms, termsRegex, countryWord } from "../tools/evsum_lib.mjs";
 let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 const input = [
@@ -36,5 +36,31 @@ ok(/7 were killed/.test(figureContext(draft("Police said 7 were killed [1]."), "
 ok(!unsupportedFigures(draft("At 4:53 on 17 October police said four were killed [2]. Outlets reported at 17:00 [1]."), [{ n: 1, time: "2026-10-09T07:00", headline: "x" }, ...input]).length, "dates and times read from a report's ISO time pass without their leading zeros");
 ok(!unsupportedFigures(draft("Outlets reported on October 9 at 7:00 [1]."), [{ n: 1, time: "2026-10-09T07:00", headline: "x" }]).length, "October 9 and 7:00 from 2026-10-09T07:00 pass");
 ok(unsupportedFigures(draft("Outlets reported on October 8 [1]."), [{ n: 1, time: "2026-10-09T07:00", headline: "x" }]).join() === "8", "a day no report gives is still caught");
+
+// ---------- flashpoint name terms (plain watch lists) ----------
+// 22 Nov 2026: the Thai daily summary said the Northern drug corridor was elevated "due to mentions of 'chiang'": "Chiang", "Golden"
+// and "Triangle" were matched one word at a time, so any Chiang Rai or Chiang Mai story counted for the Golden Triangle flashpoint
+{
+  const eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const gt = flashpointTerms("Golden Triangle and Mekong (Chiang Saen–Chiang Khong)");
+  ok(eq(gt, ["Golden Triangle", "Mekong", "Chiang Saen", "Chiang Khong"]), "Golden Triangle flashpoint: whole place names, no lone 'Chiang' (" + gt + ")");
+  const re = termsRegex(gt), hit = (t) => re.test(t);
+  ok(!hit("Tourist police guard the Surin Elephant Festival; Mae Sai, Chiang Rai water meeting"), "a Chiang Rai story is not a Golden Triangle report");
+  ok(!hit("Golden Globe nominee visits; triangle of trade talks"), "'golden' or 'triangle' alone is not a match");
+  ok(hit("Meth seized in the Golden Triangle") && hit("Clash near Chiang Saen port") && hit("Boats seized on the Mekong") && hit("golden-triangle smuggling"), "the real places still match (any case, space or hyphen)");
+  ok(eq(flashpointTerms("Northern drug corridor and UWSA posts (Chiang Mai–Chiang Rai)"), ["drug", "UWSA", "Chiang Mai", "Chiang Rai"]), "drug corridor: no lone 'chiang'");
+  ok(eq(flashpointTerms("Strait of Hormuz"), ["Hormuz"]), "Strait of Hormuz still matches 'Hormuz' alone");
+  ok(eq(flashpointTerms("Mae Sot–Myawaddy"), ["Mae Sot", "Myawaddy"]), "a prefix binds to its name: Mae Sot");
+  ok(eq(flashpointTerms("Pattani coast (Nong Chik to Sai Buri)"), ["Pattani", "Nong Chik", "Sai Buri"]), "'to' splits places; Sai Buri whole, not 'Buri' (Prachin Buri)");
+  ok(eq(flashpointTerms("Government–SDF line (Aleppo to Deir ez-Zor)"), ["Aleppo", "Deir ez-Zor"]), "Deir ez-Zor whole; 'Government' is not a place");
+  ok(eq(flashpointTerms("Venezuela after the US strike"), []), "'after' is not a place word (it matched any report with 'after')");
+  ok(eq(flashpointTerms("Gulf of Thailand"), []), "a sea named for a country gives no term");
+  ok(eq(flashpointTerms("Iranian nuclear sites (Natanz, Fordow)"), ["nuclear", "Natanz", "Fordow"]), "'Iranian' is a country word (matched every Iran story in Jordan and Oman)");
+  ok(countryWord("Iranian") && countryWord("Chinese") && countryWord("Afghan") && countryWord("Thai") && !countryWord("Ta") && !countryWord("Myawaddy") && !countryWord("Hormuz"), "country words and demonyms; short and place words are not");
+  ok(eq(flashpointTerms("Drone and missile incursions (Poland, Baltics, Romania)"), ["Drone", "missile", "incursions", "Baltics"]), "a topic flashpoint keeps its topic words");
+  ok(termsRegex([]) === null, "no terms: no regex");
+  ok(eq(flashpointTerms("Gaza Strip"), ["Gaza"]) && termsRegex(["Gaza"]).test("IDF strike in Gaza City"), "Gaza Strip still matches 'Gaza' alone ('Strip' is generic)");
+  ok(termsRegex(flashpointTerms("Government–SDF line (Aleppo to Deir ez-Zor)")).test("Gas pipeline explosion in Deir Ezzor"), "a name's inner hyphen is optional: Deir Ezzor");
+}
 if (fails) { console.log(fails + " failed"); process.exit(1); }
 console.log("all passed");
