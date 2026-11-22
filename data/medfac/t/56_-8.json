@@ -17,7 +17,7 @@
 ["w432451569",57.4731,-7.37877,"gb",{"name":"Clionaig Slàinte Bhaile a' Mhanaich","name:en":"Balivanich Health Clinic","amenity":"clinic","operator":"Bòrd Slàinte nan Eilean Siar","addr:city":"Baile a' Mhanaich"}],
 ["w60185369",57.16688,-7.36596,"gb",{"emergency":"ambulance_station"}],
 ["w685977027",57.29864,-7.19403,"gb",{"aeroway":"helipad"}],
-["w688646920",56.95193,-7.49706,"gb",{"name":"Ospadal Naomh Brianain","name:en":"St Brendan's Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","beds":"5","operator":"Bòrd SSN nan Eilean Siar","website":"https://www.wihb.scot.nhs.uk/st-brendan-s-hospital-barra","addr:city":"Isle of Barra","addr:postcode":"HS9 5XE","wikidata":"Q7587351"}],
+["w688646920",56.95193,-7.49706,"gb",{"name":"Ospadal Naomh Brianain","name:en":"St Brendan's Hospital","amenity":"hospital","healthcare":"hospital","beds":"5","operator":"Bòrd SSN nan Eilean Siar","website":"https://www.wihb.scot.nhs.uk/about-us/our-hospitals-and-healthcare-premises/hospitals/","addr:city":"Isle of Barra","addr:postcode":"HS9 5XE","wikidata":"Q7587351"}],
 ["w892080619",57.2891,-6.1782,"gb",{"aeroway":"helipad"}],
 ["w95224453",57.41045,-6.19323,"gb",{"name":"Portree Community Hospital","amenity":"hospital","healthcare":"hospital","website":"https://www.nhshighland.scot.nhs.uk/Services/Pages/PortreeCommunityHospital.aspx","addr:street":"Fancy Hill","addr:city":"Portree","addr:postcode":"IV51 9BZ","wikidata":"Q85794089"}],
 ["w956162861",57.36131,-7.38593,"gb",{"aeroway":"helipad"}],

@@ -19,7 +19,7 @@
 ["n934710253",39.00595,70.29698,"tj",{"name":"Gharm Airport","aeroway":"aerodrome"}],
 ["r3411747",39.93914,71.3417,"kg",{"name":"Перинаталдык борбор","amenity":"hospital","healthcare":"centre","healthcare:speciality":"gynaecology"}],
 ["w1007123140",39.98795,71.12489,"uz",{"name":"So'x Mahalliy Aeroporti","name:en":"Sokh Regional Airport","aeroway":"aerodrome","aerodrome:type":"public"}],
-["w1036624769",39.97461,71.13263,"uz",{"name":"So'x tumani bosh kasalxonasi","amenity":"hospital","healthcare":"hospital"}],
+["w1036624769",39.97461,71.13263,"uz",{"name":"So'x tumani bosh kasalxonasi","name:en":"Sokh District Multidisciplinary Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w1036624770",39.93326,71.17639,"uz",{"name":"Dimersant Shifo","amenity":"clinic"}],
 ["w1115183960",39.89888,71.07664,"kg",{"name":"ФАП","amenity":"clinic","healthcare":"clinic"}],
 ["w1115420297",39.89966,71.10333,"kg",{"name":"Больница Таян","amenity":"hospital","healthcare":"hospital"}],
