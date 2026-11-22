@@ -14,7 +14,10 @@ const dir = fs.mkdtempSync(path.join(os.tmpdir(), "newsix-fut-"));
 fs.symlinkSync(path.join(repo, "tools"), path.join(dir, "tools"));
 fs.mkdirSync(path.join(dir, "data/history"), { recursive: true });
 fs.mkdirSync(path.join(dir, "data/live/news-index"), { recursive: true });
-const at = (h) => new Date(Date.now() + h * 36e5).toISOString().slice(0, 16);
+// one clock for the whole test: at(-2) was read again after the tool ran, so a minute rollover in between made the expected first-seen
+// time differ from the fixture's by one minute (red required-lines on PR #896, 22 Nov 2026 15:21Z)
+const NOW = Date.now();
+const at = (h) => new Date(NOW + h * 36e5).toISOString().slice(0, 16);
 // an earlier run's index already holds a misdated row (carried: its history copy has rolled off)
 const fut = at(23 * 24).slice(0, 10);
 fs.writeFileSync(path.join(dir, "data/live/news-index", fut + ".js"), "window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY[" + JSON.stringify(fut) + "]=" +
