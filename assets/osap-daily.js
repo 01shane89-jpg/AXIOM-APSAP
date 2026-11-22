@@ -75,6 +75,9 @@
     ".dlev,.dlw{list-style:none;margin:0;padding:0}.dlev li,.dlw li{padding:6px 0;border-top:1px solid var(--line-soft,var(--line));font-size:13.5px;line-height:1.4;overflow-wrap:anywhere}" +
     ".dlev li:first-child,.dlw li:first-child{border-top:0}.dlev b{font-weight:600}.dldg{display:block;font-size:12.5px;margin-top:2px}.dlmeta{display:block;font-size:12px;color:var(--muted)}" +
     ".dlref{font-size:11px;font-weight:600;text-decoration:none;margin-left:2px;vertical-align:1px}.dlref:hover{text-decoration:underline}" +
+    /* on a touch screen the [1] [2] source links were 14 x 15 px tap targets (UI review 22 Nov 2026): padding makes each at least
+       24 x 24 px (WCAG 2.2 target size) without changing the line height; the gap between neighbours grows a little */
+    "@media (pointer:coarse){a.dlref{display:inline-block;min-width:24px;min-height:24px;padding:4px 1px;margin:-4px 0;box-sizing:border-box;text-align:center;line-height:16px;vertical-align:baseline}}" +
     ".dlwbtn{all:unset;box-sizing:border-box;display:block;width:100%;cursor:pointer;border-radius:4px;padding:2px 22px 2px 2px;margin:-2px;position:relative}.dlwbtn:hover{background:var(--surface2,rgba(127,127,127,.09))}" +
     ".dlwbtn:focus-visible{outline:2px solid var(--accent,#1f5f99);outline-offset:1px}.dlwarr{position:absolute;right:4px;top:2px;color:var(--accent,#1f5f99);font-weight:700}" +
     ".dlwrep{list-style:none;margin:6px 0 2px;padding:0 0 0 10px;border-left:2px solid var(--line)}.dlwrep li{padding:4px 0;font-size:13px}.dlwrep a{font-weight:600}" +

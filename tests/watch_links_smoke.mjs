@@ -89,6 +89,12 @@ const btnOf = (p, re) => p.evaluateHandle((src) => [...document.querySelectorAll
   const w = await p.evaluate(() => { const d = document.getElementById("td-daily"); return { sw: d.scrollWidth, cw: d.clientWidth, open: !!d.querySelector(".dlwgo.open .dlwrep") }; });
   if (hasFp) ok(w.open && w.sw <= w.cw + 1, `phone: a tap unfolds the reports and nothing runs off the screen (${w.sw}/${w.cw})`);
   else ok(w.sw <= w.cw + 1, `phone: nothing runs off the screen (${w.sw}/${w.cw}; no Flashpoint line today to unfold)`);
+  // the [1] [2] source links were 14 x 15 px tap targets on a phone (UI review 22 Nov 2026): at least 24 x 24, neighbours never overlap
+  // (a mouse keeps the small links)
+  const t = await p.evaluate(() => { const a = [...document.querySelectorAll("#td-daily a.dlref")].filter((e) => e.getClientRects().length), b = a.map((e) => e.getBoundingClientRect());
+    let lap = 0; for (let i = 1; i < b.length; i++) if (Math.abs(b[i].top - b[i - 1].top) < 2 && b[i].left < b[i - 1].right - 0.5) lap++;
+    return { n: a.length, w: Math.min(...b.map((x) => x.width)), h: Math.min(...b.map((x) => x.height)), lap, lh: a[0] && getComputedStyle(a[0].parentElement).lineHeight }; });
+  ok(t.n > 0 && t.w >= 24 && t.h >= 24 && !t.lap, `phone: source links are at least 24 x 24 px tap targets and never overlap (${JSON.stringify(t)})`);
   ok(!errors.length, "phone: no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 }
