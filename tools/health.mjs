@@ -104,7 +104,7 @@ async function build() {
   const jb = await jobs(prevHealth && prevHealth.jobs);
   const out = { v: 1, asof: new Date().toISOString().slice(0, 19) + "Z", run, topic: TOPIC, amberMin: cfg.amberMin, downMin: cfg.downMin, feeds,
     // over 60, keep the most recent silences (the panel lists those first; years-quiet pages are the least worth a look)
-    quiet: { n: quiet.length, list: quiet.length > 60 ? quiet.slice(-60) : quiet }, ...(jb ? { jobs: { ...jb, late: lateJobs(jb.list) } } : {}) };
+    quiet: { n: quiet.length, list: quiet.length > 60 ? quiet.slice(-60) : quiet }, ...(jb ? { jobs: { ...jb, late: lateJobs(jb.list, Date.now(), jb.at) } } : {}) };
   fs.mkdirSync("data/live", { recursive: true });
   fs.writeFileSync("data/live/health.json", JSON.stringify(out) + "\n");
   const ev = evaluate(out, cfg);
