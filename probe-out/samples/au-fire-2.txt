@@ -1,0 +1,112 @@
+https://publiccontent-gis-psba-qld-gov-au.s3.amazonaws.com/content/Feeds/BushfireCurrentIncidents/bushfireAlert.json
+{
+	"type" : "FeatureCollection",
+	"name" : "QFDWarnings",
+	"features" : [
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Polygon",
+				"coordinates" : [
+					[
+						[ 142.4351102401, -11.5037192326 ],
+						[ 142.3666488518, -11.179862027 ],
+						[ 142.1926986286, -11.1843527539 ],
+						[ 142.2268277415, -11.5022239974 ],
+						[ 142.4351102401, -11.5037192326 ]
+					]
+				]
+			},
+			"properties" : {
+				"OBJECTID" : 4037,
+				"UniqueID" : "WARN-14114",
+				"WarningTitle" : "AVOID SMOKE - Mapoon - fire as at 2:59pm Friday, 20 November 2026",
+				"WarningLevel" : "Advice",
+				"CallToAction" : "Avoid Smoke",
+				"WarningText" : "Thick smoke is affecting Mapoon and surrounding areas. This is from a large fire burning along Bamaga Road.\r\n\r\nThis fire could burn for days. Protect yourself from the impacts of smoke.\r\n\r\nWhat you should do:\r\n\r\n- If the smoke is thick where you are, stay inside and close windows and doors.\r\n\r\n- If you need medication to help you breathe keep it close.\r\n\r\n- If you are worried about your health call your doctor or 13 HEALTH (13 432 584). If it is an emergency, call Triple Zero (000) now.\r\n\r\n- If you are affected by the smoke you may need to leave the area.\r\n\r\n- Check for warning updates often.\r\n\r\n- Do not fly drones around the fire as they affect firefighting.\r\n\r\nImpacts:\r\n\r\n- No properties are at risk.\r\n\r\n- Smoke could make it hard for some people to breathe and can cause health issues.\r\n\r\n- Some roads may be closed or impacted by smoke. It could be hard to see. You may need to drive a different way.\r\n\r\nMore information:\r\n\r\n- For all fire warnings, visit the Qld Fire website.\r\n\r\n- Follow Queensland Fire Department on Facebook.\r\n\r\n- For road closures, visit the QLD Traffic website or call 13 19 40.\r\n\r\n- For local information visit your Council’s Local Disaster Dashboard.\r\n\r\n- If you need translation, call TIS National on 131 450.\r\n\r\n- Learn how to get ready for a bushfire on the Qld Fire website - Prepare - Bushfire.\r\n\r\nUpdates will be issued if the situation changes.\r\n\r\nThis warning is from the Queensland Fire Department.",
+				"Header" : "Thick smoke is affecting Mapoon and surrounding areas. This is from a large fire burning along Bamaga Road.\r\n\r\nThis fire could burn for days. Protect yourself from the impacts of smoke.",
+				"Impacts" : "- No properties are at risk.\r\n\r\n- Smoke could make it hard for some people to breathe and can cause health issues.\r\n\r\n- Some roads may be closed or impacted by smoke. It could be hard to see. You may need to drive a different way.",
+				"LeaveSafely" : null,
+				"FurtherInformation" : "- For all fire warnings, visit the Qld Fire website.\r\n\r\n- Follow Queensland Fire Department on Facebook.\r\n\r\n- For road closures, visit the QLD Traffic website or call 13 19 40.\r\n\r\n- For local information visit your Council’s Local Disaster Dashboard.\r\n\r\n- If you need translation, call TIS National on 131 450.\r\n\r\n- Learn how to get ready for a bushfire on the Qld Fire website - Prepare - Bushfire.\r\n\r\nUpdates will be issued if the situation changes.\r\n\r\nThis warning is from the Queensland Fire Department.",
+				"WarningLevelSort" : 7,
+				"ShouldDo" : "- If the smoke is thick where you are, stay inside and close windows and doors.\r\n\r\n- If you need medication to help you breathe keep it close.\r\n\r\n- If you are worried about your health call your doctor or 13 HEALTH (13 432 584). If it is an emergency, call Triple Zero (000) now.\r\n\r\n- If you are affected by the smoke you may need to leave the area.\r\n\r\n- Check for warning updates often.\r\n\r\n- Do not fly drones around the fire as they affect firefighting.",
+				"WarningArea" : "Mapoon and surrounding areas",
+				"Latitude" : -11.347200700776781,
+				"Longitude" : 142.30637700520845,
+				"GroupedType" : "FIRE VEGETATION",
+				"ItemDateTimeUTM" : "20261120050011.797000",
+				"ItemDateTimeLocal_ISO" : "2026-11-20T15:00:11+10:00",
+				"PublishDateLocal_ISO" : "2026-11-23T11:30:56+10:00",
+				"ItemExpiryDateTimeLocal_ISO" : "2026-11-21T15:00:11.797+10:00",
+				"MultipleWarnings" : null,
+				"MessageSent" : null,
+				"SendEmailSubscription" : null,
+				"WarningType_Level" : "Advice Fire",
+				"EventType" : "Fire",
+				"CreationDate" : null,
+				"Creator" : null,
+				"EditDate" : null,
+				"Editor" : null,
+				"CreationDate_1" : "20261120050033.851000",
+				"Creator_1" : "qfes_FIMS",
+				"EditDate_1" : "20261120050033.851000",
+				"Editor_1" : "qfes_FIMS"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 144.50556, -14.3409 ]
+			},
+			"properties" : {
+				"OBJECTID" : 45381,
+				"UniqueID" : "QF7-26-148662",
+				"WarningTitle" : "Information - CAPE MELVILLE",
+				"WarningLevel" : "Information",
+				"CallToAction" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"WarningText" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"Header" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"WarningLevelSort" : 100,
+				"WarningArea" : "CAPE MELVILLE",
+				"CurrentStatus" : "Going",
+				"Location" : "Unknown",
+				"Jurisdiction" : "7 Far Northern Region",
+				"Latitude" : -14.3409,
+				"Longitude" : 144.50556,
+				"VehiclesAssigned" : 0,
+				"VehiclesOnRoute" : 0,
+				"VehiclesOnScene" : 0,
+				"GroupedType" : "FIRE VEGETATION",
+				"Locality" : "CAPE MELVILLE",
+				"ItemDateTimeUTM" : "20261031215538",
+				"ItemDateTimeLocal_ISO" : "2026-11-01T07:55:38+10:00",
+				"PublishDateLocal_ISO" : "2026-11-23T11:30:56+10:00",
+				"ItemExpiryDateTimeLocal_ISO" : "2026-11-02T07:55:38+10:00",
+				"EventType" : "Fire",
+				"MIN_ID" : "13672036",
+				"Incident_Type" : "FIRE BUSHFIRE",
+				"MIN_Details" : "MONITORING HOTSPOTS",
+				"Location_Name" : "SR 20/11 QPWS CAPE MELVILLE",
+				"Cross_Street" : null,
+				"LGA" : null,
+				"Command_Channel" : null,
+				"Primary_TAC_Channel" : null,
+				"SubType" : "VEGETATION",
+				"MajorType" : "FIRE",
+				"IsPubliclyShared" : "YES"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 144.59521, -14.73301 ]
+			},
+			"properties" : {
+				"OBJECTID" : 45383,
+				"UniqueID" : "QF7-26-148666",
+				"WarningTitle" : "Information - SADDLE HILL",
+				"WarningLevel" : "Information",
+				"CallToAction" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close by if suffering from a respiratory condition. Motorists should use caution and drive to conditions. If you believe your property is under threat, you should call Triple Zero (000) immediately.",
+				"WarningText" : "There is a vegetation fire at this location. Smoke may affect residents and motorists in the area. Residents should close their doors and windows and keep medication close 

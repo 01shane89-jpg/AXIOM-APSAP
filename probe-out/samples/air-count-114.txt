@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-air/a/-20_130.json
+{"schema":"osap-air-cell/1","built":"2026-11-23T01:31:42.795Z","cell":"-20_130","ac":[["7c4798","JST082","VH-OFE","A21N","AIRBUS A-321neo",-12.4477,131.0123,2325,174,247,1795397344,0,"4102","A3",0],["7c4e7d","PSF","VH-PSF","C206","CESSNA  206 Stationair",-12.3781,130.8435,1325,95,25,1795397343,0,"4614","A1",0],["7c74bd","CFH29","VH-XCF","BE20","BEECH 200 Super King Air",-12.7645,130.5719,15450,194,214,1795397343,0,"4465","A1",0]]}

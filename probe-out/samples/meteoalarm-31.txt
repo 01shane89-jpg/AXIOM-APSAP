@@ -1,0 +1,81 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovenia
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-slovenia"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:SI</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-23T01:05:38.825625Z</updated>
+  <entry>
+    <cap:polygon>46.050,15.717 46.042,15.667 46.007,15.610 46.021,15.559 46.063,15.523 46.075,15.318 46.085,15.263 46.080,15.183 46.093,15.158 46.091,15.111 46.061,15.070 46.023,15.096 46.004,15.029 45.981,15.035 45.966,14.998 45.964,14.920 45.998,14.886 46.008,14.804 45.998,14.748 45.966,14.716 45.947,14.736 45.881,14.750 45.888,14.682 45.878,14.637 45.906,14.611 45.866,14.572 45.884,14.500 45.850,14.505 45.812,14.553 45.743,14.577 45.742,14.547 45.673,14.571 45.657,14.612 45.627,14.598 45.564,14.703 45.528,14.685 45.534,14.724 45.499,14.803 45.460,14.820 45.477,14.908 45.529,14.930 45.497,14.989 45.483,15.089 45.467,15.093 45.423,15.166 45.425,15.219 45.466,15.272 45.453,15.334 45.489,15.389 45.533,15.302 45.585,15.299 45.604,15.280 45.631,15.309 45.646,15.407 45.713,15.362 45.692,15.292 45.726,15.265 45.744,15.288 45.792,15.404 45.798,15.480 45.828,15.483 45.822,15.528 45.850,15.581 45.820,15.646 45.846,15.700 45.900,15.686 45.920,15.710 46.050,15.717</cap:polygon>
+    <link title="Slovenia / South-East" href="https://meteoalarm.org?polygon=06ab3d86-639e-4990-bd5d-b0004b706e41,1,0,0" hreflang="en"/>
+    <cap:areaDesc>Slovenia / South-East</cap:areaDesc>
+    <cap:event>Moderate Snow Warning</cap:event>
+    <cap:sent>2026-11-22T08:40:49+00:00</cap:sent>
+    <cap:expires>2026-11-23T02:59:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T05:56:00+00:00</cap:effective>
+    <cap:onset>2026-11-22T20:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.705.0.SI.261122094049.0100201</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovenia/06ab3d86-639e-4990-bd5d-b0004b706e41"/>
+    <link title="Slovenia" rel="related" href="https://meteoalarm.org?region=SI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T08:40:49Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovenia/06ab3d86-639e-4990-bd5d-b0004b706e41?index_info=1&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Snow-ice Warning issued for Slovenia - Slovenia / South-East</title>
+    <updated>2026-11-22T08:40:49Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>46.050,15.717 46.087,15.652 46.090,15.624 46.161,15.607 46.192,15.653 46.218,15.657 46.222,15.745 46.209,15.772 46.237,15.802 46.259,15.795 46.308,16.012 46.337,16.040 46.344,16.079 46.394,16.062 46.405,16.145 46.382,16.192 46.378,16.306 46.499,16.246 46.513,16.309 46.549,16.371 46.519,16.470 46.485,16.521 46.475,16.586 46.505,16.528 46.532,16.536 46.611,16.450 46.649,16.390 46.690,16.430 46.703,16.381 46.754,16.323 46.799,16.319 46.804,16.344 46.841,16.352 46.868,16.299 46.877,16.238 46.857,16.165 46.869,16.114 46.839,16.062 46.833,15.994 46.742,15.987 46.686,16.046 46.656,16.042 46.685,15.987 46.692,15.944 46.720,15.883 46.722,15.839 46.700,15.775 46.696,15.726 46.706,15.654 46.680,15.624 46.690,15.599 46.669,15.556 46.621,15.523 46.615,15.473 46.641,15.448 46.652,15.398 46.652,15.297 46.639,15.240 46.656,15.187 46.660,15.114 46.641,15.020 46.602,14.983 46.633,14.960 46.603,14.927 46.613,14.891 46.543,14.827 46.509,14.817 46.500,14.719 46.445,14.664 46.430,14.590 46.396,14.592 46.373,14.566 46.357,14.594 46.364,14.642 46.333,14.643 46.312,14.676 46.264,14.706 46.251,14.760 46.251,14.852 46.218,14.926 46.203,14.912 46.186,14.949 46.196,15.010 46.189,15.107 46.138,15.173 46.113,15.189 46.093,15.158 46.080,15.183 46.085,15.263 46.075,15.318 46.063,15.523 46.021,15.559 46.007,15.610 46.042,15.667 46.050,15.717</cap:polygon>
+    <link title="Slovenia / North-East" href="https://meteoalarm.org?polygon=3bfe3e4c-b46f-4508-a36e-92dd5ee5121e,1,0,0" hreflang="en"/>
+    <cap:areaDesc>Slovenia / North-East</cap:areaDesc>
+    <cap:event>Moderate Wind Warning</cap:event>
+    <cap:sent>2026-11-22T08:40:49+00:00</cap:sent>
+    <cap:expires>2026-11-23T03:59:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T05:56:00+00:00</cap:effective>
+    <cap:onset>2026-11-22T18:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.705.0.SI.261122094049.0060101</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovenia/3bfe3e4c-b46f-4508-a36e-92dd5ee5121e"/>
+    <link title="Slovenia" rel="related" href="https://meteoalarm.org?region=SI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T08:40:49Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-slovenia/3bfe3e4c-b46f-4508-a36e-92dd5ee5121e?index_info=1&amp;index_area=0&amp;index_polygon=0</id>
+    <title>Yellow Wind Warning issued for Slovenia - Slovenia / North-East</title>
+    <updated>2026-11-22T08:40:49Z</updated>
+  </entry>
+  <entry>
+    <cap:polygon>46.038,14.198 46.013,14.153 45.926,14.104 45.879,14.123 45.886,14.052 45.901,14.038 45.949,13.930 45.976,13.886 46.050,13.812 46.077,13.823 46.107,13.805 46.100,13.776 46.142,13.692 46.172,13.665 46.137,13.645 46.060,13.508 46.059,13.497 46.041,13.510 46.006,13.480 45.981,13.499 45.965,13.543 45.969,13.572 45.988,13.589 45.985,13.640 45.936,13.638 45.891,13.595 45.844,13.573 45.817,13.601 45.808,13.596 45.790,13.691 45.755,13.750 45.740,13.801 45.664,13.858 45.634,13.923 45.610,13.873 45.582,13.843 45.584,13.782 45.597,13.749 45.595,13.719 45.544,13.719 45.546,13.679 45.532,13.643 45.539,13.616 45.526,13.595 45.529,13.565 45.514,13.574 45.506,13.597 45.499,13.584 45.478,13.586 45.468,13.601 45.456,13.645 45.451,13.661 45.442,13.675 45.455,13.707 45.462,13.746 45.463,13.802 45.438,13.818 45.426,13.891 45.453,13.919 45.448,13.975 45.477,13.998 45.501,13.968 45.518,14.009 45.485,14.077 45.469,14.212 45.505,14.249 45.473,14.328 45.513,14.443 45.550,14.504 45.608,14.505 45.615,14.539 45.673,14.571 45.742,14.547 45.743,14.577 45.812,14.553 45.850,14.505 45.884,14.500 45.862,14.398 45.891,14.333 45.891,14.302 45.936,14.261 45.955,14.217 45.996,14.229 46.008,14.195 46.038,14.198</cap:polygon>
+    <link title="Slovenia / South-West" href="https://meteoalarm.org?polygon=2ecf11c1-2424-49a4-96b1-8db3793f1fe4,1,0,0" hreflang="en"/>
+    <cap:areaDesc>Slovenia / South-West</cap:areaDesc>
+    <cap:event>Moderate Rain Warning</cap:event>
+    <cap:sent>2026-11-22T08:40:49+00:00</cap:sent>
+    <cap:expires>2026-11-22T22:59:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T05:56:00+00:00</cap:effective>
+    <cap:onset>2026-11-22T10:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</

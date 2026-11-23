@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-air/a/-50_140.json
+{"schema":"osap-air-cell/1","built":"2026-11-23T01:31:42.795Z","cell":"-50_140","ac":[["7c52f8","QLK61D","VH-QOA","DH8D","DE HAVILLAND DHC-8-400 Dash 8",-42.6577,147.7643,6650,231,193,1795397368,0,"3733","A2",0],["7c6b3c","JST737","VH-VGU","A320","AIRBUS A-320",-41.3813,146.912,11100,363,152,1795397368,0,"3621","A0",0],["7c78ac","QLK1532","VH-X4E","BCS1","AIRBUS A220-100",-40.5619,147.8767,36000,399,12,1795397367,0,"3750","A3",0]]}

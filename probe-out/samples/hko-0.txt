@@ -1,0 +1,2 @@
+https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en
+{"WMSGNL":{"name":"Strong Monsoon Signal","code":"WMSGNL","actionCode":"ISSUE","issueTime":"2026-11-23T09:15:00+08:00","updateTime":"2026-11-23T09:15:00+08:00"}}

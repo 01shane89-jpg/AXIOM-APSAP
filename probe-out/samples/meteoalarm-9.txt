@@ -1,0 +1,144 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-finland
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-finland"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:FI</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-23T01:05:58.096598Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI802</value>
+    </cap:geocode>
+    <link title="Ahvenanmeri, Selkämeren eteläosa, Selkämeren pohjoisosa" href="https://meteoalarm.org?geocode=EMMA_ID:FI802" hreflang="en"/>
+    <cap:areaDesc>Ahvenanmeri, Selkämeren eteläosa, Selkämeren pohjoisosa</cap:areaDesc>
+    <cap:event>Wave height warning</cap:event>
+    <cap:sent>2026-11-22T22:09:04+00:00</cap:sent>
+    <cap:expires>2026-11-23T12:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T22:09:04+00:00</cap:effective>
+    <cap:onset>2026-11-22T22:09:04+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.246.0.FI.261122220904.oH6nNggm6CKNNYyCSuof</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/23360f7b-865e-4694-abe8-48dac2d66b6f"/>
+    <link title="Finland" rel="related" href="https://meteoalarm.org?region=FI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T22:09:04Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/23360f7b-865e-4694-abe8-48dac2d66b6f?index_info=2&amp;index_area=0&amp;index_geocode=2</id>
+    <title>Orange Coastalevent Warning issued for Finland - Ahvenanmeri, Selkämeren eteläosa, Selkämeren pohjoisosa</title>
+    <updated>2026-11-22T22:09:04Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI807</value>
+    </cap:geocode>
+    <link title="Ahvenanmeri, Selkämeren eteläosa, Selkämeren pohjoisosa" href="https://meteoalarm.org?geocode=EMMA_ID:FI807" hreflang="en"/>
+    <cap:areaDesc>Ahvenanmeri, Selkämeren eteläosa, Selkämeren pohjoisosa</cap:areaDesc>
+    <cap:event>Wave height warning</cap:event>
+    <cap:sent>2026-11-22T22:09:04+00:00</cap:sent>
+    <cap:expires>2026-11-23T12:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T22:09:04+00:00</cap:effective>
+    <cap:onset>2026-11-22T22:09:04+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.246.0.FI.261122220904.oH6nNggm6CKNNYyCSuof</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/23360f7b-865e-4694-abe8-48dac2d66b6f"/>
+    <link title="Finland" rel="related" href="https://meteoalarm.org?region=FI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T22:09:04Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/23360f7b-865e-4694-abe8-48dac2d66b6f?index_info=2&amp;index_area=0&amp;index_geocode=1</id>
+    <title>Orange Coastalevent Warning issued for Finland - Ahvenanmeri, Selkämeren eteläosa, Selkämeren pohjoisosa</title>
+    <updated>2026-11-22T22:09:04Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI813</value>
+    </cap:geocode>
+    <link title="Ahvenanmeri, Selkämeren eteläosa, Selkämeren pohjoisosa" href="https://meteoalarm.org?geocode=EMMA_ID:FI813" hreflang="en"/>
+    <cap:areaDesc>Ahvenanmeri, Selkämeren eteläosa, Selkämeren pohjoisosa</cap:areaDesc>
+    <cap:event>Wave height warning</cap:event>
+    <cap:sent>2026-11-22T22:09:04+00:00</cap:sent>
+    <cap:expires>2026-11-23T12:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T22:09:04+00:00</cap:effective>
+    <cap:onset>2026-11-22T22:09:04+00:00</cap:onset>
+    <cap:certainty>Possible</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.246.0.FI.261122220904.oH6nNggm6CKNNYyCSuof</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/23360f7b-865e-4694-abe8-48dac2d66b6f"/>
+    <link title="Finland" rel="related" href="https://meteoalarm.org?region=FI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T22:09:04Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/23360f7b-865e-4694-abe8-48dac2d66b6f?index_info=2&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Coastalevent Warning issued for Finland - Ahvenanmeri, Selkämeren eteläosa, Selkämeren pohjoisosa</title>
+    <updated>2026-11-22T22:09:04Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI809</value>
+    </cap:geocode>
+    <link title="Pohjois-Itämeren länsiosa, Saaristomeri, Perämeren pohjoisosa" href="https://meteoalarm.org?geocode=EMMA_ID:FI809" hreflang="en"/>
+    <cap:areaDesc>Pohjois-Itämeren länsiosa, Saaristomeri, Perämeren pohjoisosa</cap:areaDesc>
+    <cap:event>Warning for gale-force winds</cap:event>
+    <cap:sent>2026-11-22T22:09:04+00:00</cap:sent>
+    <cap:expires>2026-11-23T18:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T22:09:04+00:00</cap:effective>
+    <cap:onset>2026-11-22T22:09:04+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.246.0.FI.261122220904.j77af7pqU5HxI5J325uf</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/8a6a28e3-e486-43df-bfd7-d788076ca546"/>
+    <link title="Finland" rel="related" href="https://meteoalarm.org?region=FI" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T22:09:04Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-finland/8a6a28e3-e486-43df-bfd7-d788076ca546?index_info=2&amp;index_area=0&amp;index_geocode=2</id>
+    <title>Yellow Wind Warning issued for Finland - Pohjois-Itämeren länsiosa, Saaristomeri, Perämeren pohjoisosa</title>
+    <updated>2026-11-22T22:09:04Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>FI811</value>
+    </cap:geocode>
+    <link title="Pohjois-Itämeren länsiosa, Saaristomeri, Perämeren pohjoisosa" href="https://meteoalarm.org?geocode=EMMA_ID:FI811" hreflang="en"/>
+    <cap:areaDesc>Pohjois-Itämeren länsiosa, Saaristomeri, Perämeren pohjoisosa</cap

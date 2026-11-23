@@ -1,0 +1,118 @@
+https://www.iaea.org/feeds/topnews
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="http://www.iaea.org/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>IAEA Top News</title>
+    <link>http://www.iaea.org/</link>
+    <description><![CDATA[Top stories from the International Atomic Energy Agency]]></description>
+    <language>en</language>
+        <pubDate>Thu, 19 Nov 26 19:02:00 +0100</pubDate>
+<item>
+  <title>Update 376 – IAEA Director General Statement on Situation in Ukraine</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/update-376-iaea-director-general-statement-on-situation-in-ukraine</link>
+  <description></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/situation_in_ukraine_banner.jpg?itok=z6Fwwzx6" type="image/jpeg" length="21888" /><guid isPermaLink="false">290560</guid>
+          <pubDate>
+26-11-19  19:02
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA and Global Partnership of Nuclear Communities Strengthen Cooperation on Local Engagement</title>
+  <link>http://www.iaea.org/newscenter/news/iaea-and-global-partnership-of-nuclear-communities-strengthen-cooperation-on-local-engagement</link>
+  <description></description>
+  <newsauthor>Jeffrey Donovan|IAEA Department of Nuclear Energy</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/iaea-and-global-partnership-of-nuclear-communities-strengthen-cooperation-on-local-engagement-hero.jpeg?itok=N22keIhV" type="image/jpeg" length="19786" /><guid isPermaLink="false">290557</guid>
+          <pubDate>
+26-11-19  13:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA and Global Partnership of Nuclear Communities Strengthen Cooperation on Local Engagement</title>
+  <link>http://www.iaea.org/newscenter/news/iaea-and-global-partnership-of-nuclear-communities-strengthen-cooperation-on-local-engagement</link>
+  <description></description>
+  <newsauthor>Jeffrey Donovan|IAEA Department of Nuclear Energy</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/iaea-and-global-partnership-of-nuclear-communities-strengthen-cooperation-on-local-engagement-hero.jpeg?itok=N22keIhV" type="image/jpeg" length="19786" /><guid isPermaLink="false">290557</guid>
+          <pubDate>
+26-11-19  13:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Reviews Bangladesh’s Nuclear and Radiological Emergency Preparedness and Response</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/iaea-reviews-bangladeshs-nuclear-and-radiological-emergency-preparedness-and-response</link>
+  <description></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/whatsapp-image-2026-11-17-at-8.42.16-am.jpg?itok=s0jtdSB0" type="image/jpeg" length="28763" /><guid isPermaLink="false">290551</guid>
+          <pubDate>
+26-11-18  14:45
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Director General&#039;s Introductory Statement to the Board of Governors</title>
+  <link>http://www.iaea.org/newscenter/statements/iaea-director-generals-introductory-statement-to-the-board-of-governors-18-november-2026</link>
+  <description>(As prepared for delivery)
+Just a few weeks ago, I was in New York presenting the IAEA’s annual report – your annual report – to the United Nations General Assembly.&nbsp;</description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/whatsapp-image-2026-11-18-at-12.19.46.jpeg?itok=7wTB6xB6" type="image/jpeg" length="17872" /><guid isPermaLink="false">290542</guid>
+          <pubDate>
+26-11-18  09:45
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Mission to United Republic of Tanzania Finds Commitment to Strengthening Nuclear Security</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/iaea-mission-to-united-republic-of-tanzania-finds-commitment-to-strengthening-nuclear-security</link>
+  <description></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/photo3.jpg?itok=8dpXjtQQ" type="image/jpeg" length="39628" /><guid isPermaLink="false">290547</guid>
+          <pubDate>
+26-11-18  08:34
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Reviews Progress of Zambia’s Infrastructure Development for Nuclear Power</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/iaea-reviews-progress-of-zambias-infrastructure-development-for-nuclear-power</link>
+  <description></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/whatsapp-image-2026-11-09-at-3.18.49-pm-1.jpeg?itok=ScmFPL0L" type="image/jpeg" length="20116" /><guid isPermaLink="false">290497</guid>
+          <pubDate>
+26-11-17  16:54
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>Update 375 – IAEA Director General Statement on Situation in Ukraine</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/update-375-iaea-director-general-statement-on-situation-in-ukraine</link>
+  <description></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/situation_in_ukraine_banner.jpg?itok=z6Fwwzx6" type="image/jpeg" length="21888" /><guid isPermaLink="false">290525</guid>
+          <pubDate>
+26-11-14  09:30
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Concludes Long Term Operation Safety Review at Japan’s Mihama Nuclear Power Plant</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/iaea-concludes-long-term-operation-safety-review-at-japans-mihama-nuclear-power-plant</link>
+  <description></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/review-session-e1.jpeg?itok=qDwTkV8e" type="image/jpeg" length="25681" /><guid isPermaLink="false">290521</guid>
+          <pubDate>
+26-11-13  15:00
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>IAEA Sees Commitment to Operational Safety at Unit 2 of Kori Nuclear Power Plant in Republic of Korea</title>
+  <link>http://www.iaea.org/newscenter/pressreleases/iaea-sees-commitment-to-operational-safety-at-unit-2-of-kori-nuclear-power-plant-in-republic-of-korea</link>
+  <description></description>
+  <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/flag-of-korea.jpeg?itok=zMUYd1m1" type="image/jpeg" length="17222" /><guid isPermaLink="false">290518</guid>
+          <pubDate>
+26-11-12  13:44
+</pubDate>
+          <source url="http://www.iaea.org/feeds/topnews">IAEA Top News</source>
+          </item>
+<item>
+  <title>World Fusion Outlook 2026:  AI, the US $80 Billion Financing Challenge and Future Deployment Scenarios</title>
+  <link>http://www.iaea.org/newscenter/news/world-fusion-outlook-2026-ai-the-us-80-billion-financing-challenge-and-future-deployment-scenarios</link>
+  <description></description>
+  <newsauthor>Matteo Barbarino|Department of Nuclear Sciences and Applications</newsauthor>
+          <enclosure url="http://www.iaea.org/sites/default/files/styles/width_555px_6_units_16_9/public/2026-11/banner-world-fusion-outlook-2026-square-1140-

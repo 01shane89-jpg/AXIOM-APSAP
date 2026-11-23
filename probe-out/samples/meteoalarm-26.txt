@@ -1,0 +1,157 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-poland
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-poland"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:PL</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-23T01:05:57.408263Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL805</value>
+    </cap:geocode>
+    <link title="Eastern coastal zone" href="https://meteoalarm.org?geocode=EMMA_ID:PL805" hreflang="en"/>
+    <cap:areaDesc>Eastern coastal zone</cap:areaDesc>
+    <cap:event>Yellow Wind warning</cap:event>
+    <cap:sent>2026-11-22T23:25:03+00:00</cap:sent>
+    <cap:expires>2026-11-23T05:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T23:24:00+00:00</cap:effective>
+    <cap:onset>2026-11-22T23:30:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.261122232503.PL805_01281</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/a14d74bf-b329-4728-9503-3cea188c834b"/>
+    <link title="Poland" rel="related" href="https://meteoalarm.org?region=PL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T23:25:03Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/a14d74bf-b329-4728-9503-3cea188c834b?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Poland - Eastern coastal zone</title>
+    <updated>2026-11-22T23:25:03Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL804</value>
+    </cap:geocode>
+    <link title="Central coastal zone" href="https://meteoalarm.org?geocode=EMMA_ID:PL804" hreflang="en"/>
+    <cap:areaDesc>Central coastal zone</cap:areaDesc>
+    <cap:event>Orange Wind warning</cap:event>
+    <cap:sent>2026-11-22T23:19:03+00:00</cap:sent>
+    <cap:expires>2026-11-23T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T23:18:00+00:00</cap:effective>
+    <cap:onset>2026-11-22T23:30:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.261122231903.PL804_01571</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/fed291ff-7466-4703-8b31-acc22588a000"/>
+    <link title="Poland" rel="related" href="https://meteoalarm.org?region=PL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T23:19:03Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/fed291ff-7466-4703-8b31-acc22588a000?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Wind Warning issued for Poland - Central coastal zone</title>
+    <updated>2026-11-22T23:19:03Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL803</value>
+    </cap:geocode>
+    <link title="Western coastal zone" href="https://meteoalarm.org?geocode=EMMA_ID:PL803" hreflang="en"/>
+    <cap:areaDesc>Western coastal zone</cap:areaDesc>
+    <cap:event>Yellow Wind warning</cap:event>
+    <cap:sent>2026-11-22T21:05:57+00:00</cap:sent>
+    <cap:expires>2026-11-23T23:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T21:05:00+00:00</cap:effective>
+    <cap:onset>2026-11-22T21:30:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.261122210557.PL803_01651</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/7959c0ec-c72e-4e7b-abe4-263c58d8e0c1"/>
+    <link title="Poland" rel="related" href="https://meteoalarm.org?region=PL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T21:05:57Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/7959c0ec-c72e-4e7b-abe4-263c58d8e0c1?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Poland - Western coastal zone</title>
+    <updated>2026-11-22T21:05:57Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL804</value>
+    </cap:geocode>
+    <link title="Central coastal zone" href="https://meteoalarm.org?geocode=EMMA_ID:PL804" hreflang="en"/>
+    <cap:areaDesc>Central coastal zone</cap:areaDesc>
+    <cap:event>Orange Wind warning</cap:event>
+    <cap:sent>2026-11-22T05:34:17+00:00</cap:sent>
+    <cap:expires>2026-11-22T19:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T05:34:00+00:00</cap:effective>
+    <cap:onset>2026-11-22T06:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Severe</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.261122053417.PL804_01561</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/173a8000-54b8-474e-9dbc-3f20c05cbb85"/>
+    <link title="Poland" rel="related" href="https://meteoalarm.org?region=PL" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T05:34:17Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-poland/173a8000-54b8-474e-9dbc-3f20c05cbb85?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Orange Wind Warning issued for Poland - Central coastal zone</title>
+    <updated>2026-11-22T05:34:17Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>PL805</value>
+    </cap:geocode>
+    <link title="Eastern coastal zone" href="https://meteoalarm.org?geocode=EMMA_ID:PL805" hreflang="en"/>
+    <cap:areaDesc>Eastern coastal zone</cap:areaDesc>
+    <cap:event>Yellow Wind warning</cap:event>
+    <cap:sent>2026-11-21T16:38:31+00:00</cap:sent>
+    <cap:expires>2026-11-22T06:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-21T16:38:00+00:00</cap:effective>
+    <cap:onset>2026-11-21T17:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Expected</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.616.0.PL.261121163831.PL805_01271</cap:identifier>
+   

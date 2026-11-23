@@ -1,0 +1,154 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-iceland
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-iceland"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:IS</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-23T01:05:40.433818Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IS011</value>
+    </cap:geocode>
+    <link title="Central highlands - Uninhabited part of Iceland" href="https://meteoalarm.org?geocode=EMMA_ID:IS011" hreflang="en"/>
+    <cap:areaDesc>Central highlands - Uninhabited part of Iceland</cap:areaDesc>
+    <cap:event>Weather Warning: Wind</cap:event>
+    <cap:sent>2026-11-22T08:29:52+00:00</cap:sent>
+    <cap:expires>2026-11-22T18:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T08:29:52+00:00</cap:effective>
+    <cap:onset>2026-11-22T08:00:00+00:00</cap:onset>
+    <cap:certainty>Observed</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.352.0.IS.261122082952.11142</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/4e8c3ac9-5dca-478d-90fb-88652b34d95f"/>
+    <link title="Iceland" rel="related" href="https://meteoalarm.org?region=IS" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T08:29:52Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/4e8c3ac9-5dca-478d-90fb-88652b34d95f?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Iceland - Central highlands - Uninhabited part of Iceland</title>
+    <updated>2026-11-22T08:29:52Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IS004</value>
+    </cap:geocode>
+    <link title="Breidafjordur - Westnorthwest Iceland" href="https://meteoalarm.org?geocode=EMMA_ID:IS004" hreflang="en"/>
+    <cap:areaDesc>Breidafjordur - Westnorthwest Iceland</cap:areaDesc>
+    <cap:event>Weather Warning: Wind</cap:event>
+    <cap:sent>2026-11-22T08:28:34+00:00</cap:sent>
+    <cap:expires>2026-11-22T14:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T08:28:34+00:00</cap:effective>
+    <cap:onset>2026-11-22T08:00:00+00:00</cap:onset>
+    <cap:certainty>Observed</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.352.0.IS.261122082834.11141</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/ba1e8327-5d6a-4cd0-bbbb-656b41896091"/>
+    <link title="Iceland" rel="related" href="https://meteoalarm.org?region=IS" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T08:28:34Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/ba1e8327-5d6a-4cd0-bbbb-656b41896091?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Iceland - Breidafjordur - Westnorthwest Iceland</title>
+    <updated>2026-11-22T08:28:34Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IS003</value>
+    </cap:geocode>
+    <link title="Faxafloi - Southwest Iceland" href="https://meteoalarm.org?geocode=EMMA_ID:IS003" hreflang="en"/>
+    <cap:areaDesc>Faxafloi - Southwest Iceland</cap:areaDesc>
+    <cap:event>Weather Warning: Wind</cap:event>
+    <cap:sent>2026-11-22T08:27:46+00:00</cap:sent>
+    <cap:expires>2026-11-22T13:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T08:27:46+00:00</cap:effective>
+    <cap:onset>2026-11-21T08:00:00+00:00</cap:onset>
+    <cap:certainty>Observed</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.352.0.IS.261122082746.11140</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/68ab72e5-7ee7-4ace-9c00-0cc453525eb7"/>
+    <link title="Iceland" rel="related" href="https://meteoalarm.org?region=IS" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T08:27:46Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/68ab72e5-7ee7-4ace-9c00-0cc453525eb7?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Iceland - Faxafloi - Southwest Iceland</title>
+    <updated>2026-11-22T08:27:46Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IS002</value>
+    </cap:geocode>
+    <link title="South Iceland" href="https://meteoalarm.org?geocode=EMMA_ID:IS002" hreflang="en"/>
+    <cap:areaDesc>South Iceland</cap:areaDesc>
+    <cap:event>Weather Warning: Wind</cap:event>
+    <cap:sent>2026-11-22T08:27:15+00:00</cap:sent>
+    <cap:expires>2026-11-22T11:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T08:27:15+00:00</cap:effective>
+    <cap:onset>2026-11-22T08:00:00+00:00</cap:onset>
+    <cap:certainty>Observed</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.352.0.IS.261122082715.11139</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/816c01c5-9f1e-4ca7-bcd5-b73233a6b252"/>
+    <link title="Iceland" rel="related" href="https://meteoalarm.org?region=IS" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T08:27:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-iceland/816c01c5-9f1e-4ca7-bcd5-b73233a6b252?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Iceland - South Iceland</title>
+    <updated>2026-11-22T08:27:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IS001</value>
+    </cap:geocode>
+    <link title="Reykjavik - Capital Region" href="https://meteoalarm.org?geocode=EMMA_ID:IS001" hreflang="en"/>
+    <cap:areaDesc>Reykjavik - Capital Region</cap:areaDesc>
+    <cap:event>Weather Warning: Wind</cap:event>
+    <cap:sent>2026-11-22T08:26:31+00:00</cap:sent>
+    <cap:expires>2026-11-22T13:00:00+00:00</cap:expires>
+    <cap:effective>2026-11-22T08:26:31+00:00</cap:effective>
+    <cap:onset>2026-11-22T08:00:00+00:00</cap:onset>
+    <cap:certainty>Observed</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:m

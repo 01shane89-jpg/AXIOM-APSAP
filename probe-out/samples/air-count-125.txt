@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/01shane89-jpg/axiom-apsap/live-air/a/-30_130.json
+{"schema":"osap-air-cell/1","built":"2026-11-23T01:31:42.795Z","cell":"-30_130","ac":[["7c1b0f","FD807","VH-FMP","PC24","PILATUS PC-24",-27.0934,135.7778,41000,435,154,1795397373,0,"7171","A2",0],["7c68a5","QLK1954","VH-UYF","E190","EMBRAER ERJ-190-100",-27.1024,135.2462,36000,421,339,1795397380,0,"7234","A3",0]]}

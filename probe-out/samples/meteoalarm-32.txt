@@ -1,0 +1,154 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-spain
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-spain"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:ES</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-23T01:05:50.582292Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES145</value>
+    </cap:geocode>
+    <link title="Cordillera Cantábrica de León" href="https://meteoalarm.org?geocode=EMMA_ID:ES145" hreflang="en"/>
+    <cap:areaDesc>Cordillera Cantábrica de León</cap:areaDesc>
+    <cap:event>Moderate snow warning</cap:event>
+    <cap:sent>2026-11-22T18:02:09+00:00</cap:sent>
+    <cap:expires>2026-11-24T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-22T18:00:28+00:00</cap:effective>
+    <cap:onset>2026-11-24T11:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261122180209.672401NENV242370529</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/ecb0c105-884e-4092-9da6-44b684272159"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T18:02:09Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/ecb0c105-884e-4092-9da6-44b684272159?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Snow-ice Warning issued for Spain - Cordillera Cantábrica de León</title>
+    <updated>2026-11-22T18:02:09Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES191</value>
+    </cap:geocode>
+    <link title="Litoral norte de Tarragona" href="https://meteoalarm.org?geocode=EMMA_ID:ES191" hreflang="en"/>
+    <cap:areaDesc>Litoral norte de Tarragona</cap:areaDesc>
+    <cap:event>Moderate wind warning</cap:event>
+    <cap:sent>2026-11-22T17:24:08+00:00</cap:sent>
+    <cap:expires>2026-11-23T10:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-22T17:22:16+00:00</cap:effective>
+    <cap:onset>2026-11-22T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261122172408.694303VIRM231168248</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/428f1989-3fdc-4a26-a97b-5639ffe15e7b"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T17:24:08Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/428f1989-3fdc-4a26-a97b-5639ffe15e7b?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Spain - Litoral norte de Tarragona</title>
+    <updated>2026-11-22T17:24:08Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES192</value>
+    </cap:geocode>
+    <link title="Litoral sur de Tarragona" href="https://meteoalarm.org?geocode=EMMA_ID:ES192" hreflang="en"/>
+    <cap:areaDesc>Litoral sur de Tarragona</cap:areaDesc>
+    <cap:event>Moderate wind warning</cap:event>
+    <cap:sent>2026-11-22T17:12:09+00:00</cap:sent>
+    <cap:expires>2026-11-23T10:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-22T17:09:33+00:00</cap:effective>
+    <cap:onset>2026-11-22T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261122171209.694304VIRM231167529</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/7d8bc431-bccb-4fee-a639-1e7db74d1a0c"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T17:12:09Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/7d8bc431-bccb-4fee-a639-1e7db74d1a0c?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Spain - Litoral sur de Tarragona</title>
+    <updated>2026-11-22T17:12:09Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES890</value>
+    </cap:geocode>
+    <link title="Costa - Ampurdán" href="https://meteoalarm.org?geocode=EMMA_ID:ES890" hreflang="en"/>
+    <cap:areaDesc>Costa - Ampurdán</cap:areaDesc>
+    <cap:event>Moderate coastalevent warning</cap:event>
+    <cap:sent>2026-11-22T17:04:09+00:00</cap:sent>
+    <cap:expires>2026-11-23T10:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-22T17:00:52+00:00</cap:effective>
+    <cap:onset>2026-11-22T17:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.724.0.ES.261122170409.691703COCO231167049</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/4651fe2b-8a95-4356-90a8-150e35ba6f95"/>
+    <link title="Spain" rel="related" href="https://meteoalarm.org?region=ES" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T17:04:09Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-spain/4651fe2b-8a95-4356-90a8-150e35ba6f95?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Coastalevent Warning issued for Spain - Costa - Ampurdán</title>
+    <updated>2026-11-22T17:04:09Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>ES868</value>
+    </cap:geocode>
+    <link title="Costa - Litoral norte de Tarragona" href="https://meteoalarm.org?geocode=EMMA_ID:ES868" hreflang="en"/>
+    <cap:areaDesc>Costa - Litoral norte de Tarragona</cap:areaDesc>
+    <cap:event>Moderate coastalevent warning</cap:event>
+    <cap:sent>2026-11-22T17:04:09+00:00</cap:sent>
+    <cap:expires>2026-11-23T05:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-22T17:00:52+00:00</cap:effective>
+    <cap:onset>2026-11-22T17:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Immediate</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message

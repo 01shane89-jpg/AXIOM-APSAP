@@ -1,0 +1,117 @@
+https://carnegieendowment.org/sitemaps/posts-2.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/09/reforming-the-worlds-voice-of-reason</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/reforming-the-worlds-voice-of-reason" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/reforming-the-worlds-voice-of-reason" />
+    <lastmod>2015-09-15</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/09/judy-asks-should-the-west-work-with-russia-on-syria</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/judy-asks-should-the-west-work-with-russia-on-syria" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/judy-asks-should-the-west-work-with-russia-on-syria" />
+    <lastmod>2015-09-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/09/scrap-natos-2-percent-target-and-go-bold</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/scrap-natos-2-percent-target-and-go-bold" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/scrap-natos-2-percent-target-and-go-bold" />
+    <lastmod>2015-09-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/09/camerons-silence-and-the-fallout-of-brexit</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/camerons-silence-and-the-fallout-of-brexit" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/camerons-silence-and-the-fallout-of-brexit" />
+    <lastmod>2015-09-18</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/09/central-europeans-speak-out-for-refugees</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/central-europeans-speak-out-for-refugees" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/central-europeans-speak-out-for-refugees" />
+    <lastmod>2015-09-21</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/09/alexis-tsipras-to-the-rescueagain</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/alexis-tsipras-to-the-rescueagain" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/alexis-tsipras-to-the-rescueagain" />
+    <lastmod>2015-09-22</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/09/judy-asks-will-the-refugee-crisis-destroy-the-eu</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/judy-asks-will-the-refugee-crisis-destroy-the-eu" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/judy-asks-will-the-refugee-crisis-destroy-the-eu" />
+    <lastmod>2015-09-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/09/refugees-could-break-europes-comfort-zone</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/refugees-could-break-europes-comfort-zone" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/refugees-could-break-europes-comfort-zone" />
+    <lastmod>2015-09-24</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/09/understanding-central-europes-opposition-to-refugees</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/understanding-central-europes-opposition-to-refugees" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/understanding-central-europes-opposition-to-refugees" />
+    <lastmod>2015-09-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/09/erdogans-delicate-visit-to-brussels</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/erdogans-delicate-visit-to-brussels" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/erdogans-delicate-visit-to-brussels" />
+    <lastmod>2015-09-29</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/09/judy-asks-is-russia-back-on-the-world-stage</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/judy-asks-is-russia-back-on-the-world-stage" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/09/judy-asks-is-russia-back-on-the-world-stage" />
+    <lastmod>2015-09-30</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/10/europes-powerlessness-in-the-middle-east</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/10/europes-powerlessness-in-the-middle-east" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/10/europes-powerlessness-in-the-middle-east" />
+    <lastmod>2015-10-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/10/german-reunification-a-job-still-unfinished</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/10/german-reunification-a-job-still-unfinished" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/10/german-reunification-a-job-still-unfinished" />
+    <lastmod>2015-10-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/europe/strategic-europe/2015/10/merkels-syria-trap</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/europe/strategic-europe/2015/10/merkels-syria-trap" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/europe/strategic-europe/2015/10/merkels-syria-trap" />
+    <lastmod>2015-10-05</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://

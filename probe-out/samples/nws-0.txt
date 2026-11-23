@@ -1,0 +1,193 @@
+https://api.weather.gov/alerts/active?status=actual&message_type=alert,update
+{
+    "@context": [
+        "https://geojson.org/geojson-ld/geojson-context.jsonld",
+        {
+            "@version": "1.1",
+            "wx": "https://api.weather.gov/ontology#",
+            "@vocab": "https://api.weather.gov/ontology#"
+        }
+    ],
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f2e29d376b40fb3b7bad39d27317bf76db4fa6a0.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -96.99,
+                            27.22
+                        ],
+                        [
+                            -96.97,
+                            27.21
+                        ],
+                        [
+                            -96.97,
+                            27.2
+                        ],
+                        [
+                            -97.18,
+                            26.96
+                        ],
+                        [
+                            -97.33,
+                            27.17
+                        ],
+                        [
+                            -97.22,
+                            27.24
+                        ],
+                        [
+                            -96.99,
+                            27.22
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f2e29d376b40fb3b7bad39d27317bf76db4fa6a0.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.f2e29d376b40fb3b7bad39d27317bf76db4fa6a0.001.1",
+                "areaDesc": "Coastal waters from Baffin Bay to Port Mansfield TX out 20 NM",
+                "geocode": {
+                    "SAME": [
+                        "077155"
+                    ],
+                    "UGC": [
+                        "GMZ155"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/GMZ155"
+                ],
+                "references": [],
+                "sent": "2026-11-22T19:23:00-06:00",
+                "effective": "2026-11-22T19:23:00-06:00",
+                "onset": "2026-11-22T19:23:00-06:00",
+                "expires": "2026-11-22T20:15:00-06:00",
+                "ends": "2026-11-22T20:15:00-06:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Immediate",
+                "event": "Special Marine Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Brownsville TX",
+                "headline": "Special Marine Warning issued November 22 at 7:23PM CST until November 22 at 8:15PM CST by NWS Brownsville TX",
+                "description": "SMWBRO\n\nThe National Weather Service in Brownsville has issued a\n\n* Special Marine Warning for...\nCoastal waters from Baffin Bay to Port Mansfield TX out 20 NM...\n\n* Until 815 PM CST.\n\n* At 722 PM CST, a severe thunderstorm capable of producing\nwaterspouts was located 17 nm south of Malaquite Beach, or 35 nm\nnorth of Laguna Madre, moving southeast at 20 knots.\n\nHAZARD...Waterspouts and wind gusts to nearly 50 knots.\n\nSOURCE...Radar.\n\nIMPACT...Waterspouts can easily overturn boats and create locally\nhazardous seas. Small craft could be damaged in briefly\nhigher winds and suddenly higher waves.\n\n* The severe thunderstorm will remain over mainly open waters.",
+                "instruction": "Move to safe harbor until hazardous weather passes.\n\nMove to safe harbor immediately as gusty winds and high waves are\nexpected.\n\nThunderstorms can produce sudden waterspouts. Waterspouts can easily\noverturn boats and create locally hazardous seas. Seek safe harbor\nimmediately.\n\nFrequent lightning is occurring with this storm. If caught on the\nopen water stay below deck if possible, keep away from ungrounded\nmetal objects.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "SMWBRO"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS54 KBRO 230123"
+                    ],
+                    "eventMotionDescription": [
+                        "2026-11-23T01:22:00-00:00...storm...331DEG...19KT...27.15,-97.23"
+                    ],
+                    "waterspoutDetection": [
+                        "POSSIBLE"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KBRO.MA.W.0060.261123T0123Z-261123T0215Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-22T20:15:00-06:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "SMW"
+                    ],
+                    "NationalWeatherService": [
+                        "MAW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9b46255d71bec3ca1c54365a9e0727e63f7826bd.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -120.65,
+                            34.89
+                        ],
+                        [
+                            -120.62,
+                            34.87
+                        ],
+                        [
+                            -120.61,
+                            34.83
+                        ],
+                        [
+                            -120.62,
+                            34.79
+                        ],
+                        [
+                            -120.63,
+                            34.8
+                        ],
+                        [
+                            -120.62,
+                            34.83
+                        ],
+                        [
+                            -120.65,
+                            34.88
+                        ],
+                        [
+                            -120.66,
+                            34.9
+                        ],
+                        [
+                            -120.65,
+                            34.9
+                        ],
+                        [
+                            -120.65,
+                            34.89
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9b46255d71bec3ca1c54365a9e0727e63f7826bd.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.9b46255d71bec3ca1c54365a9e0727e63f7826bd.001.1",
+                "areaDesc": "Waters from Pt. Sal to Santa Cruz Island CA and westward 60 nm including San Miguel and Santa Rosa Islands",
+                "geocode": {
+                    "SAME": [
+                        "057673"
+                    ],
+                    "UGC": [
+                        "PZZ673"
+                    ]
+                },
+                "affectedZones": [
+                    "

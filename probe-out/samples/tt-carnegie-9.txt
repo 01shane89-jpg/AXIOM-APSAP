@@ -1,0 +1,134 @@
+https://carnegieendowment.org/sitemaps/posts-3.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/09/valdai-voodoo</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/09/valdai-voodoo" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/09/valdai-voodoo" />
+    <lastmod>2008-09-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/09/thoughts-on-a-truly-national-dialogue</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/09/thoughts-on-a-truly-national-dialogue" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/09/thoughts-on-a-truly-national-dialogue" />
+    <lastmod>2008-09-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/09/monsters-ball</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/09/monsters-ball" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/09/monsters-ball" />
+    <lastmod>2008-09-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/09/a-solution-to-detaining-foreign-nationals</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/09/a-solution-to-detaining-foreign-nationals" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/09/a-solution-to-detaining-foreign-nationals" />
+    <lastmod>2008-09-24</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/09/if-iran-stone-walls-stop-trying-to-negotiate</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/09/if-iran-stone-walls-stop-trying-to-negotiate" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/09/if-iran-stone-walls-stop-trying-to-negotiate" />
+    <lastmod>2008-09-24</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/09/a-time-for-restraint-and-reflection</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/09/a-time-for-restraint-and-reflection" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/09/a-time-for-restraint-and-reflection" />
+    <lastmod>2008-09-29</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/09/flight-of-the-diplomats</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/09/flight-of-the-diplomats" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/09/flight-of-the-diplomats" />
+    <lastmod>2008-09-29</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/09/the-arab-worlds-cold-war-patron-seems-to-be-back</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/09/the-arab-worlds-cold-war-patron-seems-to-be-back" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/09/the-arab-worlds-cold-war-patron-seems-to-be-back" />
+    <lastmod>2008-09-29</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/09/de-facto-not-de-jure-india-is-worlds-sixth-nuclear-power</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/09/de-facto-not-de-jure-india-is-worlds-sixth-nuclear-power" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/09/de-facto-not-de-jure-india-is-worlds-sixth-nuclear-power" />
+    <lastmod>2008-09-30</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/09/medvedevs-cure-for-the-far-east</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/09/medvedevs-cure-for-the-far-east" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/09/medvedevs-cure-for-the-far-east" />
+    <lastmod>2008-09-30</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/09/american-giver</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/09/american-giver" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/09/american-giver" />
+    <lastmod>2008-09-30</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/10/a-task-of-monumental-importance-for-putin</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/10/a-task-of-monumental-importance-for-putin" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/10/a-task-of-monumental-importance-for-putin" />
+    <lastmod>2008-10-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/10/us-troop-withdrawal-missing-a-political-strategy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/10/us-troop-withdrawal-missing-a-political-strategy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/10/us-troop-withdrawal-missing-a-political-strategy" />
+    <lastmod>2008-10-03</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/10/a-rational-russia-policy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/10/a-rational-russia-policy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/10/a-rational-russia-policy" />
+    <lastmod>2008-10-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/10/even-the-smart-guys-dont-understand-the-meltdown</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/10/even-the-smart-guys-dont-understand-the-meltdown" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/10/even-the-smart-guys-dont-understand-the-meltdown" />
+    <lastmod>2008-10-07</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/10/death-defying</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carnegieendowment.org/posts/2008/10/death-defying" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carnegieendowment.org/posts/2008/10/death-defying" />
+    <lastmod>2008-10-08</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://carnegieendowment.org/posts/2008/10/moscows-domestic-policy-russian-roulette</loc>
+  

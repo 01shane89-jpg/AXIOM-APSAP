@@ -1,0 +1,2 @@
+https://www.fire.ca.gov/umbraco/api/IncidentApi/List?inactive=false
+[]

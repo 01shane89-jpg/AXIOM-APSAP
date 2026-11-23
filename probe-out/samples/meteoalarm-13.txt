@@ -1,0 +1,108 @@
+https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-hungary
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-hungary"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:HU</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-11-23T01:05:30.153273Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS2</valueName>
+      <value>HU21</value>
+    </cap:geocode>
+    <link title="Central Transdanubia" href="https://meteoalarm.org?geocode=EMMA_ID:HU003" hreflang="en"/>
+    <cap:areaDesc>Central Transdanubia</cap:areaDesc>
+    <cap:event>yellow wind warning</cap:event>
+    <cap:sent>2026-11-22T11:17:11+00:00</cap:sent>
+    <cap:expires>2026-11-23T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-22T11:17:11+00:00</cap:effective>
+    <cap:onset>2026-11-22T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.348.0.HU.261122111711.211_9513_109893</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-hungary/2a7d5dd1-f903-45d8-9cc2-56bc7ec2c798"/>
+    <link title="Hungary" rel="related" href="https://meteoalarm.org?region=HU" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T11:17:11Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-hungary/2a7d5dd1-f903-45d8-9cc2-56bc7ec2c798?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Hungary - Central Transdanubia</title>
+    <updated>2026-11-22T11:17:11Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS2</valueName>
+      <value>HU22</value>
+    </cap:geocode>
+    <link title="Western Transdanubia" href="https://meteoalarm.org?geocode=EMMA_ID:HU002" hreflang="en"/>
+    <cap:areaDesc>Western Transdanubia</cap:areaDesc>
+    <cap:event>yellow wind warning</cap:event>
+    <cap:sent>2026-11-22T11:17:11+00:00</cap:sent>
+    <cap:expires>2026-11-23T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-22T11:17:11+00:00</cap:effective>
+    <cap:onset>2026-11-22T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.348.0.HU.261122111711.311_9513_109893</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-hungary/31a4b3ce-28e1-41cd-8fb2-409451e72713"/>
+    <link title="Hungary" rel="related" href="https://meteoalarm.org?region=HU" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-22T11:17:11Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-hungary/31a4b3ce-28e1-41cd-8fb2-409451e72713?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Hungary - Western Transdanubia</title>
+    <updated>2026-11-22T11:17:11Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>NUTS2</valueName>
+      <value>HU23</value>
+    </cap:geocode>
+    <link title="Southern Transdanubia" href="https://meteoalarm.org?geocode=EMMA_ID:HU004" hreflang="en"/>
+    <cap:areaDesc>Southern Transdanubia</cap:areaDesc>
+    <cap:event>yellow rain warning</cap:event>
+    <cap:sent>2026-11-21T00:00:02+00:00</cap:sent>
+    <cap:expires>2026-11-22T22:59:59+00:00</cap:expires>
+    <cap:effective>2026-11-21T00:00:02+00:00</cap:effective>
+    <cap:onset>2026-11-21T23:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.348.0.HU.261121000002.412_9513_109865</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-hungary/138c5ab4-004c-4001-9fdf-2e7f9a7b7053"/>
+    <link title="Hungary" rel="related" href="https://meteoalarm.org?region=HU" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-11-21T00:00:02Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-hungary/138c5ab4-004c-4001-9fdf-2e7f9a7b7053?index_info=1&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Hungary - Southern Transdanubia</title>
+    <updated>2026-11-21T00:00:02Z</updated>
+  </entry>
+</feed>

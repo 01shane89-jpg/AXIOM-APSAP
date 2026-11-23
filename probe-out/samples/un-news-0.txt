@@ -1,0 +1,74 @@
+https://news.un.org/feed/subscribe/en/news/all/rss.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://news.un.org/en/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:yandex="http://news.yandex.ru" xmlns:media="http://search.yahoo.com/mrss/" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  <channel>
+    <title>UN News - Global perspective Human stories</title>
+    <link>https://news.un.org/en/</link>
+    <description><![CDATA[Global perspective Human stories]]></description>
+    <language>en</language>
+        <atom:link rel="self" href="https://news.un.org/feed/subscribe/en/news/all/rss.xml"></atom:link>
+<image><url>https://news.un.org/en/themes/custom/un_base_theme/images/un-emblem-for-rss.png</url>
+<title>UN News</title>
+<link>https://news.un.org/en/</link>
+<description>Global perspective Human stories</description>
+</image>
+<generator>United Nations</generator>
+<lastBuildDate>Sun, 22 Nov 2026 17:11:41 -0500</lastBuildDate>
+<pubDate>Sun, 22 Nov 2026 07:00:00 -0500</pubDate>
+<item>
+  <title>‘I had a better life in Iran’: Afghan women forced home struggle to rebuild</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168852</link>
+  <description>For five years, Zahra cared for an elderly woman in Iran and earned enough to get by. Now back in Herat, western Afghanistan, the 28-year-old trained midwife is unemployed. She lives with her parents and siblings, apart from her six-year-old son, who lives with her ex-husband.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Production%20Library/2026/11/18-11-2026_UNHCR_Ukraine-01.jpg/image560x340cropped.jpg" length="35183" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/11/1168852</guid>
+                                              <pubDate>Sun, 22 Nov 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>COP31 ends without climate pact as UN chief warns there is ‘no ambiguity in the science’</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168855</link>
+  <description>COP31 ended on Sunday without a climate pact after negotiators failed to overcome divisions over fossil fuels, bringing two weeks of talks and two days of overtime to a close that UN Secretary-General António Guterres described as a “deeply disappointing” setback.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Production%20Library/2026/11/22-11-2026_COP31-Close1.jpg/image560x340cropped.jpg" length="33107" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/11/1168855</guid>
+                                              <pubDate>Sun, 22 Nov 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>‘We escaped with only our lives’: Fighting to give birth in war-torn Yemen</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168851</link>
+  <description>When fighting suddenly escalated around Taiz, in southwestern Yemen two months ago, midwife Anisa Fadhl had no time to pack a bag before she fled, leaving behind her home and her clinic. Both were later looted and destroyed.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Production%20Library/2026/11/19-11-2026_UNFPA_Yemen-01.jpg/image560x340cropped.jpg" length="33379" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/11/1168851</guid>
+                                              <pubDate>Sat, 21 Nov 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>Homes abandoned, harvests failing: Haiti’s farmers rebuild amid violence, hunger and El Niño</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168834</link>
+  <description>Years of insecurity, violence perpetrated by murderous armed gangs and economic instability, combined with displacement, poor agricultural performance and climate shocks, have left millions of Haitians struggling to meet their food needs.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Embargoed/20-05-2024-UNICEF-Haiti-12.jpg/image560x340cropped.jpg" length="48538" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/11/1168834</guid>
+                                              <pubDate>Sat, 21 Nov 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>Bridgetown AI summit to tackle safety as risks outpace capacity to respond</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168854</link>
+  <description>UN Secretary-General&amp;nbsp;António Guterres is heading to Barbados to co-host a special summit on artificial intelligence (AI) safety on Monday, aimed at closing the gap between accelerating risks and many countries’ capacity to deal with the pace of development.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Libraries/Production%20Library/18-07-2023-UN-Photo-Guterres.jpg/image560x340cropped.jpg" length="32716" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/11/1168854</guid>
+                                              <pubDate>Fri, 20 Nov 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>‘You will not be alone’: General Assembly President tells Rohingya refugees after genocide ruling</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168853</link>
+  <description>A day after the UN’s highest court&amp;nbsp;found that Myanmar had committed genocide against the Rohingya, the President of the General Assembly visited the refugee camps in Cox’s Bazar, Bangladesh, urging the world to turn the landmark judgement into action.</description>
+        <enclosure url="https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Collections/Production%20Library/2026/11/20-11-2026_Rahman_Rohingya_visit.jpg/image560x340cropped.jpg" length="28678" type="image/jpeg" />
+                <guid isPermaLink="true">https://news.un.org/en/story/2026/11/1168853</guid>
+                                              <pubDate>Fri, 20 Nov 2026 12:00:00 +0000</pubDate>
+                                              <source url="https://news.un.org/feed/subscribe/en/news/all/rss.xml">UN News - Global perspective Human stories</source>
+                                        </item>
+<item>
+  <title>West Bank: Record settler attacks mar olive harvest as UN urges Israel to protect farmers</title>
+  <link>https://news.un.org/feed/view/en/story/2026/11/1168849</link>

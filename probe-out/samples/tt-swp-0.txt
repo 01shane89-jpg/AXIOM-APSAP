@@ -1,0 +1,57 @@
+https://www.swp-berlin.org/en/rss.xml
+<?xml version="1.0" encoding="utf-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+<title>Stiftung Wissenschaft und Politik</title>
+<link>https://www.swp-berlin.org/en/</link>
+<description><![CDATA[Stiftung Wissenschaft und Politik]]></description>
+<language>en</language>
+<lastBuildDate>Sun, 22 Nov 2026 12:04:39 +0100</lastBuildDate>
+<atom:link href="https://www.swp-berlin.org/en/rss.xml" rel="self" type="application/rss+xml"></atom:link>
+<item>
+<title>Ukraine-Verhandlungen: Europa kann mehr als zuschauen</title>
+<link>https://www.swp-berlin.org/en/publication/ukraine-verhandlungen-europa-kann-mehr-als-zuschauen</link>
+<description><![CDATA[]]></description>
+<content:encoded><![CDATA[<p>Dass Wladimir Putin an diesem Donnerstag mit Chinas Staats- und Parteichef Xi Jinping und US-Präsident Donald Trump zusammenkam, konnte der russische Präsident als Erfolg verbuchen. Das Treffen am Rande des APEC-Gipfels im chinesischen Shenzhen ging auf seine Initiative zurück. Trump und Xi zeigten sich mit ihm auf der Weltbühne, ohne dass er kritische Fragen zu seinem Krieg gegen die Ukraine fürchten musste. Beim G20-Gipfel in Miami Mitte Dezember, zu dem Trump ihn eingeladen hat, wäre das anders gewesen. Das dürfte Putin bewogen haben, Shenzhen vorzuschlagen.&nbsp;</p>
+<p>Es ist sein zweiter Punktsieg binnen zehn Tagen. Den ersten errang er in Abu Dhabi, wo Delegationen aus den USA, der Ukraine und Russland am 10. und 11. November über ein Ende des Krieges sprachen. Die Kriegsparteien einigten sich auf einen Gefangenenaustausch. Jeder aus den Schrecken der russischen Gefangenschaft befreite ukrainische Soldat ist ein Grund zur Freude. Nur sollte dabei nicht in Vergessenheit geraten, dass die Ukraine und Russland seit Februar 2022 mehr als siebzig Gefangenenaustausche vereinbart haben, meist ohne amerikanische Vermittlung.&nbsp;</p>
+<p>Schwerer wiegt etwas anderes. Abu Dhabi hat eine Debatte über die Zukunft der europäischen Sicherheit entfacht. Trumps Unterhändler, Steve Witkoff und Jared Kushner, öffneten sich für das russische Propagandanarrativ von den »Ursprüngen des Krieges«, die angeblich in der russlandfeindlichen Politik der USA und der NATO lägen und deshalb vor allem anderen behoben werden müssten. Das russische Non-Paper, das nach Abu Dhabi durchgestochen wurde, geht über den Forderungskatalog vom Dezember 2021 noch hinaus. So fordert Russland, dass Frankreich und Großbritannien den Einsatz ihrer Atomwaffen zum Schutz anderer europäischer Staaten ausschließen oder dass die Ukraine nach einem EU-Beitritt der gemeinsamen Verteidigungspolitik fernbleibt.</p>
+<h2><strong>Der Geist von Anchorage</strong></h2>
+<p>Neu ist das alles nicht. Die amerikanischen »Friedensinitiativen« folgen seit 20 Monaten demselben Muster. Im Februar 2025 führten Trump und sein Vize J. D. Vance den ukrainischen Präsidenten Wolodymyr Selenskyj im Oval Office vor. Die Botschaft: Auf amerikanische Unterstützung konnte die Ukraine nicht mehr zählen. Kurz darauf unterbrachen die USA erstmals die Waffenlieferung und die Versorgung Kyjiws mit Aufklärungs- und Zieldaten. Monate hektischer ukrainisch-europäischer Diplomatie brachten den PURL-Mechanismus hervor, über den Europa von nun an Waffen für die Ukraine in den USA einkaufte.&nbsp;</p>
+<p>Am 15. August 2025 empfing Trump Putin mit großer Geste in Anchorage. Im November 2025 legte Washington einen 28-Punkte-Friedensplan vor, der direkt aus der Feder der Kreml-Administration zu stammen schien. Wieder gelang es der ukrainisch-europäischen Diplomatie, den in Russland gefeierten »Geist von Anchorage« halbwegs zurück in die Flasche zu drücken: Die unverschämtesten Punkte verschwanden aus dem Papier.&nbsp;&nbsp;</p>
+<p>Vom Diesel-Deal zwischen Trump und Putin am 9. Oktober über Abu Dhabi bis Shenzhen wiederholte sich dieses Muster nun zum dritten Mal. Wieder reagiert Europa mit der Entsendung von Vertreter:innen an die jeweiligen Verhandlungsorte und symbolischen Gegengewichten: Am Donnerstag treffen sich die Koalition der Willigen und Präsident Selenskyj in Berlin. Seit Anfang 2025 ließ sich so viel Schlimmes verhindern. Doch die europäische Politik bleibt taktisch und reaktiv, wo sie proaktiv und strategisch sein müsste.&nbsp;</p>
+<h2><strong>Neue Chancen zur Gestaltung&nbsp;</strong></h2>
+<p>Dabei hat sich die Lage verschoben. Die Ukraine hat in diesem Jahr bewiesen, dass sie Russland militärisch unter Druck setzen kann. Der nächste US-Kongress wird ab Januar den außenpolitischen Handlungsspielraum der Trump-Administration einschränken. Das eröffnet der Ukraine und Europa die Chance, Krieg und Verhandlungen selbst zu prägen.</p>
+<p>Europa muss dafür drei Dinge klären: Erstens seine Rolle. Europa vermittelt nicht in diesem Krieg. Es steht auf der Seite der angegriffenen Ukraine, es ist selbst zunehmend russischen hybriden Angriffen ausgesetzt. Das nicht anzuerkennen, sendet falsche Signale an alle Beteiligten.&nbsp;</p>
+<p>Zweitens seine Ziele. Als Partei muss Europa seine Ziele für das Kriegsende und die Zeit danach klar definieren. Ziel ist eine Ukraine, die ihre Unabhängigkeit erfolgreich gegen den russischen Aggressor verteidigt hat, und eine europäisch-ukrainische Abschreckung, die Moskau von weiteren Angriffskriegen abhält. Auf dem Weg dahin muss es erst um einen stabilen Waffenstillstand in der Ukraine gehen, bevor die großen Fragen der europäischen Sicherheit auf den Tisch kommen.</p>
+<p>Drittens seine Strategie. Sie leitet sich aus diesen Zielen ab, und ihr dringlichstes Element bleibt die Stärkung der Ukraine auf dem Schlachtfeld. Putin simuliert Verhandlungen, um Zeit für seinen Krieg zu gewinnen. Erst wenn dieses Kalkül nicht mehr aufgeht, kann es Verhandlungen geben, die diesen Namen verdienen. Dann muss Europa sie federführend gestalten, die Ukraine eingeschlossen.&nbsp;</p>]]></content:encoded>
+<dc:creator>Sabine Fischer</dc:creator>
+<category>Kurz gesagt</category>
+<dc:subject>EU foreign policy</dc:subject>
+<dc:subject>Common Foreign and Security Policy (CFSP)</dc:subject>
+<dc:subject>Common Security and Defence Policy (CSDP)</dc:subject>
+<dc:subject>Strategic partnerships</dc:subject>
+<dc:subject>Nato</dc:subject>
+<dc:subject>German defence and security policy</dc:subject>
+<dc:subject>Regional and interstate conflicts</dc:subject>
+<dc:subject>Defence and security policy / Armed forces</dc:subject>
+<dc:subject>Russian Federation</dc:subject>
+<dc:subject>Ukraine</dc:subject>
+<pubDate>Thu, 19 Nov 2026 15:17:10 +0100</pubDate>
+</item>
+<item>
+<title>Wie Demokratie grenzüberschreitend ausgehöhlt wird</title>
+<link>https://www.swp-berlin.org/en/publication/wie-demokratie-grenzueberschreitend-ausgehoehlt-wird</link>
+<description><![CDATA[]]></description>
+<content:encoded><![CDATA[]]></content:encoded>
+<dc:creator>Muriel Asseburg</dc:creator>
+<category>SWP Teaser</category>
+<dc:subject>Political systems</dc:subject>
+<dc:subject>United States</dc:subject>
+<dc:subject>Germany</dc:subject>
+<pubDate>Tue, 17 Nov 2026 13:51:22 +0100</pubDate>
+</item>
+<item>
+<title>Die perfekte Welle</title>
+<link>https://www.swp-berlin.org/en/publication/die-perfekte-welle</link>
+<description><![CDATA[Was der klare Sieg der Demokraten bei den Zwischenwahlen in den USA bedeutet]]></description>
+<content:encoded><![CDATA[<p>Der Erfolg der Demokraten bei den Zwischenwahlen in den USA im November 2026 hat alle Erwartungen übertroffen. Die »blaue Welle« bescherte ihr nicht nur klare Mehrheiten in beiden Kammern des Kongresses, sondern Wahl­siege auch unter­halb der Bundesebene und in Staaten, in denen das lange als unmöglich galt. Präsident Donald Trump hat den Nimbus der Unbesiegbarkeit eingebüßt. Bisher konnte er mit den fast bedingungslos loyalen Republikanern im Kongress nicht nur durchregieren, sondern auch Kompetenzen an sich ziehen, die laut Verfassung der Legislative vorbehalten sind. Die selbstverschuldete Unmündigkeit de
