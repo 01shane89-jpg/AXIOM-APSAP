@@ -80,7 +80,7 @@ const hz = FILE.choke.find((c) => c.name === "Strait of Hormuz");
   await ctx.close();
 }
 {
-  const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+  const { ctx, p, errors } = await open({ viewport: { width: 360, height: 780 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   await om(p); await p.waitForTimeout(400);
   await p.check('#ml-choke input[data-choke="on"]'); await p.waitForTimeout(1500);
   const b = await p.evaluate(() => { const e = document.querySelector("#ck-list [data-ckgo]"), r = e.getBoundingClientRect(), t = document.querySelector("#ck-prices table").getBoundingClientRect(); return { h: r.height, inside: r.right <= innerWidth + 1, table: t.right <= innerWidth + 1 }; });

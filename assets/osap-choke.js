@@ -146,7 +146,9 @@
       "#ml-choke .cksw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}" +
       ".cktab{border-collapse:collapse;font-size:12px;margin:4px 0;width:100%}.cktab td,.cktab th{padding:2px 4px;border-bottom:1px solid var(--line,#eee);text-align:left;vertical-align:top}" +
       ".cktab td:not(:first-child),.cktab th:not(:first-child){text-align:right;white-space:nowrap}.ckprices i{color:#777;font-style:normal;font-size:10px}" +
-      "#ml-choke .ckprices{margin-left:22px;width:calc(100% - 22px)}.ckspark{display:block;margin:4px 0}" +
+      "#ml-choke .ckprices{margin-left:22px;width:calc(100% - 22px);table-layout:fixed}#ml-choke .ckprices td,#ml-choke .ckprices th{white-space:normal;overflow-wrap:anywhere}" +
+      "#ml-choke .ckprices td:first-child,#ml-choke .ckprices th:first-child{width:40%}.ckspark{display:block;margin:4px 0;max-width:100%}" +
+      "@media (max-width:520px){#ml-choke .ckprices td:nth-child(4),#ml-choke .ckprices th:nth-child(4){display:none}}" +
       "@media (pointer:coarse){#ml-choke .cklist button{min-height:44px}}";
     D.head.appendChild(css);
     if (!map.getPane("chokepane")) { map.createPane("chokepane"); map.getPane("chokepane").style.zIndex = 660; }
