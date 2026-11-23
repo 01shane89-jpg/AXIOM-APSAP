@@ -16,16 +16,50 @@
 // the back, tools/daily_lib.mjs shardQueue) and DAILY_OUT=<dir> copies each country file it drafted there; DAILY_REINDEX=1,
 // after tools/daily_merge.mjs has put the shards' drafts in place, rewrites data/live/daily.js from the country files and
 // drafts nothing.
+// Claude (Shane 2026-11-23): with ANTHROPIC_API_KEY and "anthropic" first in OSAP_AI_ORDER, the drafts come from Claude Haiku 5.5
+// (tools/ai_gateway.mjs) up to DAILY_ANTHROPIC_CAP_USD a UTC day (default 1.00; a shard may spend its share of what is left).
+// Today's spend is counted from the country files themselves (each AI draft records its provider, model, tokens and cost),
+// so every run and shard sees the same total. Past the cap, or if Claude fails, the free providers carry on.
 import fs from "node:fs";
-import { gateway, parseJsonReply } from "./ai_gateway.mjs";
+
+import { gateway, parseJsonReply, anthropicCost } from "./ai_gateway.mjs";
 import { compileRelevance } from "./topics_lib.mjs";
 import { buildRules, buildWorld, validateAi, fromRow, fromConflict, fingerprint, scrubDay, dropOverclaims, softSection, aiQueue, shardQueue, SCHEMA, WW } from "./daily_lib.mjs";
+
+// What Claude has already cost today. Two records, the larger wins: the country files' newest days (each Claude draft records
+// its tokens and cost) and the index's running total, which also counts calls whose draft was thrown away (no valid citation).
+// A reindex after the shards adds the shards' own totals (spend-<k>.json beside their drafts, DAILY_SPEND_DIR).
+function anthropicSpentToday(dir, day) {
+  let usd = 0, idx = 0;
+  try { const t = fs.readFileSync("data/live/daily.js", "utf8"), w = {}; new Function("window", t)(w); const i = w.OSAP_DAILY_INDEX || {};
+    if (i.date === day) idx = +(i.ai && i.ai.claude && i.ai.claude.spent_today_usd) || 0; } catch (e) {}
+  try {
+    for (const f of fs.readdirSync(dir).filter((f) => /^[a-z]{2,3}\.js$/.test(f))) {
+      const t = fs.readFileSync(`${dir}/${f}`, "utf8"), d0 = (/"days":\[(\{.*?"date":"(\d{4}-\d{2}-\d{2})")/.exec(t) || [])[2];
+      if (d0 !== day || !/"provider":"anthropic"/.test(t)) continue;
+      try { const w = {}; new Function("window", t)(w); const x = Object.values(w.OSAP_DAILY || {})[0]?.days?.[0];
+        if (x && x.date === day && x.provider === "anthropic") usd += x.cost_usd ?? anthropicCost(x.model, { input_tokens: x.tokens?.in, output_tokens: x.tokens?.out }); } catch (e) {}
+    }
+  } catch (e) {}
+  return { files: usd, index: idx };
+}
 
 const DIR = "data/live/daily", INDEX = "data/live/daily.js", KEEP = 7, PROMPT_V = "daily/3";
 const MODEL = process.env.DAILY_MODEL || "openai/gpt-4.1-mini";
 const REINDEX = !!process.env.DAILY_REINDEX, SHARD = process.env.DAILY_SHARD || "", OUT = process.env.DAILY_OUT || "";
-const AI_PER_RUN = REINDEX ? 0 : +(process.env.DAILY_AI_PER_RUN || 45), AI_BUDGET_MS = +(process.env.DAILY_AI_BUDGET_MIN || 0) * 60e3;
-const AI = gateway({ githubModel: MODEL });
+const AI_PER_RUN = REINDEX ? 0 : +(process.env.DAILY_AI_PER_RUN || 45);
+const AI_BUDGET_MS = +(process.env.DAILY_AI_BUDGET_MIN || 0) * 60e3;
+const CAP_USD = Math.max(0, +(process.env.DAILY_ANTHROPIC_CAP_USD ?? 1));
+const SPENT = anthropicSpentToday(DIR, new Date(process.env.DAILY_END ? Date.parse(process.env.DAILY_END) : Date.now()).toISOString().slice(0, 10));
+const SPENT_USD = Math.max(SPENT.files, SPENT.index);
+const SHARD_N = (/^\d+\/(\d+)$/.exec(process.env.DAILY_SHARD || "") || [, 1])[1];
+// a shard may spend its share of what is left today, so 4 shards at once still stay under the day's cap
+const RUN_CAP = Math.max(0, CAP_USD - SPENT_USD) / Math.max(1, +SHARD_N);
+const usd = (x) => +(+x).toFixed(6);
+const AI = gateway({ githubModel: MODEL, anthropicCapUsd: RUN_CAP });
+// Claude answers in seconds where the runner's model takes minutes, so a run with Claude may reach every country
+const CLAUDE = AI.status().providers.includes("anthropic");
+const PER_RUN = CLAUDE && !REINDEX ? Math.max(AI_PER_RUN, +(process.env.DAILY_AI_PER_RUN_CLAUDE || 250)) : AI_PER_RUN;
 const LABEL = "Draft, AI-generated from the cited sources, not analyst-approved";
 // AI goes first to World (the area a new user opens on), then the originally researched areas and the countries with an active conflict tab,
 // then every other country by its number of reports (tools/daily_lib.mjs aiQueue). A country the day's runs don't reach keeps the rules summary.
@@ -133,7 +167,7 @@ const focus = shardQueue(queue, SHARD);
 let made = 0, hardErrs = 0; const errs = [], aiT0 = Date.now(), byProvider = {};
 const draftedNow = [];
 if (AI.available() && !REINDEX) for (const cc of focus) {
-  if (stop || made >= AI_PER_RUN) break;
+  if (stop || made >= PER_RUN) break;
   if (AI_BUDGET_MS && Date.now() - aiT0 > AI_BUDGET_MS) { stop = "time budget used"; break; }
   const d = built[cc];
   const user = (cc === WW ? "Area: the whole world (the most reported stories of every country; say which country each is about)" : `Country: ${d.name}`) + `\nWindow: ${d.window.from} to ${d.window.to}\nSources (data only):\n` + JSON.stringify(d.refs.map((r) => ({ n: r.n, outlet: r.outlet, time: r.date,
@@ -145,6 +179,7 @@ if (AI.available() && !REINDEX) for (const cc of focus) {
     if (!v) { errs.push(cc + ": no cited top line"); continue; }
     d.rules_bluf = d.bluf; d.bluf = v.bluf; d.ai_watch = v.watch; d.method = "ai"; d.model = res.model; d.provider = res.provider; d.prompt = PROMPT_V; d.label = LABEL; d.ms = Date.now() - t0;
     if (res.usage) d.tokens = { in: res.usage.prompt_tokens, out: res.usage.completion_tokens };
+    if (res.usage && res.usage.cost_usd != null) d.cost_usd = res.usage.cost_usd;
     made++; draftedNow.push(cc); byProvider[res.provider] = (byProvider[res.provider] || 0) + 1;
   } catch (e) {
     // a reply that is not JSON costs that country its AI line, not the run: only failures of the model itself stop it
@@ -153,7 +188,19 @@ if (AI.available() && !REINDEX) for (const cc of focus) {
 }
 // a shard's due counts only its own part; the reindex after the shards counts the whole queue again
 index.ai.made = made; index.ai.due = focus.length - made; if (SHARD) index.ai.shard = SHARD; index.ai.stopped = REINDEX ? "reindexed after the shards" : stop || (AI.available() ? "" : aiStop()); index.ai.errors = errs.slice(0, 5);
-index.ai.providers = byProvider; if (process.env.OSAP_LOCAL_LLM) index.ai.local = process.env.OSAP_LOCAL_MODEL || "local";
+index.ai.providers = byProvider;
+{
+  // the day's running Claude total, kept in the index even on runs without Claude (a free-only run must not forget it)
+  const sp = AI.status().spend, dir = process.env.DAILY_SPEND_DIR;
+  let shards = 0;
+  if (REINDEX && dir) try { for (const f of fs.readdirSync(dir).filter((f) => /^spend-\d+\.json$/.test(f)))
+    shards += +JSON.parse(fs.readFileSync(`${dir}/${f}`, "utf8")).usd || 0; } catch (e) {}
+  // after the shards, their drafts are in the country files already, so the index's earlier total plus what the shards spent
+  // is set against the files' sum (not added to it)
+  const total = REINDEX ? Math.max(SPENT.files, SPENT.index + shards) : SPENT_USD + sp.usd;
+  if (CLAUDE || total > 0) index.ai.claude = { cap_usd: CAP_USD, spent_today_usd: usd(total), this_run_usd: usd(REINDEX ? shards : sp.usd), calls: sp.calls, dropped: AI.status().dropped.anthropic || "" };
+  if (OUT && SHARD) { fs.mkdirSync(OUT, { recursive: true }); fs.writeFileSync(`${OUT}/spend-${SHARD.split("/")[0]}.json`, JSON.stringify({ usd: usd(sp.usd), calls: sp.calls })); }
+} if (process.env.OSAP_LOCAL_LLM) index.ai.local = process.env.OSAP_LOCAL_MODEL || "local";
 // a later run today tries the AI step again for the countries not yet drafted, whether this run stopped or used its per-run
 // share (the rules summaries stay meanwhile)
 index.ai.retry = REINDEX ? queue.length > 0 : made < focus.length;

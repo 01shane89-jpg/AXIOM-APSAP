@@ -112,6 +112,8 @@ jobs:
             --n_ctx 8192 --n_threads 4 > llm.log 2>&1 &
           for i in $(seq 1 90); do curl -sf http://127.0.0.1:8080/v1/models >/dev/null && { echo "server up after ${i}x2 s"; exit 0; }; sleep 2; done
           tail -30 llm.log; exit 1
+      - name: Install the Anthropic SDK
+        run: npm install --no-save --no-audit --no-fund --no-package-lock @anthropic-ai/sdk@1.5.0 >/dev/null 2>&1 || echo "SDK not installed; this shard uses the free model"
       - name: Draft this shard's countries
         timeout-minutes: 70
         env:
@@ -123,6 +125,11 @@ jobs:
           DAILY_OUT: out/daily
           DAILY_AI_PER_RUN: ${{ github.event_name == 'pull_request' && '2' || '60' }}
           DAILY_AI_BUDGET_MIN: ${{ github.event_name == 'pull_request' && '10' || '60' }}
+          # Claude first when the key is a repository secret; each shard may spend its share of what is left of the day's cap.
+          # A pull request's test run (secrets are not given to it from forks; this repository's own branches get them) stays free.
+          ANTHROPIC_API_KEY: ${{ github.event_name != 'pull_request' && secrets.ANTHROPIC_API_KEY || '' }}
+          OSAP_AI_ORDER: anthropic,github,local
+          DAILY_ANTHROPIC_CAP_USD: "1.00"
         run: node tools/refresh_daily.mjs
       - name: Model server log (tail)
         if: ${{ always() }}
@@ -159,7 +166,7 @@ jobs:
       - name: Merge the drafts and rewrite the index
         run: |
           node tools/daily_merge.mjs out/daily
-          DAILY_REINDEX=1 node tools/refresh_daily.mjs
+          DAILY_REINDEX=1 DAILY_SPEND_DIR=out/daily node tools/refresh_daily.mjs
       - name: Show the test result (pull request or branch run; nothing committed)
         if: ${{ github.ref != 'refs/heads/main' }}
         run: |
