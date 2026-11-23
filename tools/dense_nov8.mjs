@@ -96,9 +96,9 @@ feed("eia-choke", { name: "Oil flows through maritime chokepoints (EIA baseline)
   lic: "U.S. Government public domain (EIA)", url: EIA_CHOKE, everyHours: 168 });
 // the page's chokepoint names -> a position on the water (and the PortWatch chokepoint nearest it is looked up at run time)
 const EIA_AT = [
-  [/malacca/i, "Strait of Malacca", 2.5, 101.2], [/hormuz/i, "Strait of Hormuz", 26.6, 56.4], [/suez/i, "Suez Canal and SUMED pipeline", 30.5, 32.35],
+  [/malacca/i, "Strait of Malacca", 2.0, 102.0], [/hormuz/i, "Strait of Hormuz", 26.6, 56.4], [/suez/i, "Suez Canal and SUMED pipeline", 30.5, 32.35],
   [/bab el-mandeb/i, "Bab el-Mandeb", 12.6, 43.4], [/danish/i, "Danish Straits", 55.6, 12.7], [/dardanelles|turkish/i, "Turkish Straits (Dardanelles)", 40.2, 26.4],
-  [/bosporus/i, "Bosporus", 41.1, 29.05], [/panama/i, "Panama Canal", 9.1, -79.7], [/cape/i, "Cape of Good Hope", -34.4, 18.5]];
+  [/bosporus/i, "Bosporus", 41.1, 29.05], [/panama/i, "Panama Canal", 9.1, -79.7], [/cape/i, "Cape of Good Hope", -34.8, 20.0]];
 const eiaCell = (h) => unhtml(h).replace(/&lt;/g, "<");
 /** The page's tables -> [{ name, lat, lon, periods: ["2020", ... "1H25"], total: [numbers], crude, products, lng (bcf/d), updated }] */
 export function eiaChokepoints(html) {
@@ -133,7 +133,7 @@ export function eiaChokepoints(html) {
 run("eia-choke", async (g) => {
   const list = eiaChokepoints(await g(EIA_CHOKE, "text", { timeout: 60000 }));
   if (list.length < 6) throw new Error("only " + list.length + " chokepoints read from the EIA tables");
-  // the PortWatch chokepoint nearest each one (within about 3 degrees), named so the two can be read side by side
+  // the PortWatch chokepoint nearest each one (within 1.5 degrees: the Dardanelles has no PortWatch chokepoint of its own), named so the two can be read side by side
   const pw = [];
   try { const cj = await g(PW + "PortWatch_chokepoints_database/FeatureServer/0/query?where=1%3D1&outFields=portname,lat,lon&returnGeometry=false&f=json");
     for (const f of cj.features || []) if (isFinite(f.attributes.lat) && isFinite(f.attributes.lon)) pw.push(f.attributes); } catch (e) {}
@@ -145,7 +145,7 @@ run("eia-choke", async (g) => {
       detail: (parts.length ? "Of which " + parts.join(", ") + " million b/d. " : "") + (c.lng != null ? "LNG " + c.lng + " billion cubic feet a day. " : "") +
         "By year " + c.periods.map((p, i) => p + " " + (c.total[i] == null ? "n/a" : c.total[i])).join(", ") + " million b/d." +
         (prev.length ? " Range " + Math.min(...prev) + " to " + Math.max(...prev) + " before " + per + "." : "") +
-        (near && near.d < 3 ? " Live ship counts: PortWatch chokepoint \"" + near.p.portname + "\"." : "") +
+        (near && near.d < 1.5 ? " Live ship counts: PortWatch chokepoint \"" + near.p.portname + "\"." : "") +
         " EIA estimate from tanker tracking" + (c.updated ? ", page updated " + c.updated : "") + ": a baseline of normal flows, not today's traffic.",
       date: c.updated ? new Date(c.updated + " 12:00Z").toISOString() : undefined, lat: c.lat, lon: c.lon, url: EIA_CHOKE, sev: 1, kind: "Chokepoint oil flow (baseline)",
       value: c.total[n], ccs: withOki(ccsAt(c.lat, c.lon, 2)) };
