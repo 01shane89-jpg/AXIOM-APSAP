@@ -184,6 +184,41 @@ jobs:
         timeout-minutes: 4
         run: node tools/claim_ledger.mjs
         continue-on-error: true
+      # Same story in other languages (tools/ledger_xlang.mjs, rules xmatch-v1): AI proposals beside each claim ledger, headlines in
+      # any language that an embedding model (Voyage voyage-4, task profile "embedding") places close in meaning to a ledger's
+      # reports where the word rule missed them, into data/live/ledger-x/<cc>.js. Proposals only: they never join a ledger, merge
+      # or approve anything. Off until the repository secret VOYAGE_API_KEY exists (then it removes any earlier proposals and
+      # sends nothing). Only public headlines are sent. Cost caps XLANG_DAILY_TOKENS (3 million a UTC day, about US$0.18 at
+      # most) and XLANG_RUN_TOKENS. The vectors (one bit a dimension, about 4 MB for three days of headlines) are kept in the
+      # Actions cache under one key an hour, so a headline is embedded about once and the cache stays small (about 100 MB a day,
+      # each entry gone 7 days after its last use).
+      - name: Name this hour's vector cache
+        id: xlang-hour
+        if: ${{ ((!inputs.only && inputs.lane != 'fast') || inputs.only == 'news' || inputs.only == 'topics') && github.ref == 'refs/heads/main' }}
+        run: echo "hour=$(date -u +%Y%m%d%H)" >> "$GITHUB_OUTPUT"
+      - name: Restore the headline vectors
+        if: ${{ ((!inputs.only && inputs.lane != 'fast') || inputs.only == 'news' || inputs.only == 'topics') && github.ref == 'refs/heads/main' }}
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/osap-xlang
+          key: osap-xlang-bits-voyage-4-256-${{ steps.xlang-hour.outputs.hour }}
+          restore-keys: osap-xlang-bits-voyage-4-256-
+      - name: Find the same story in other languages (AI proposals, off without VOYAGE_API_KEY)
+        if: ${{ (!inputs.only && inputs.lane != 'fast') || inputs.only == 'news' || inputs.only == 'topics' }}
+        timeout-minutes: 6
+        env:
+          VOYAGE_API_KEY: ${{ secrets.VOYAGE_API_KEY }}
+          XLANG_DAILY_TOKENS: ${{ vars.XLANG_DAILY_TOKENS }}
+        run: node tools/ledger_xlang.mjs
+        continue-on-error: true
+      - name: Keep the headline vectors
+        # once an hour: a later run in the same hour finds the key taken and saves nothing (a warning, not a failure)
+        if: ${{ always() && ((!inputs.only && inputs.lane != 'fast') || inputs.only == 'news' || inputs.only == 'topics') && github.ref == 'refs/heads/main' && steps.xlang-hour.outputs.hour != '' }}
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/osap-xlang
+          key: osap-xlang-bits-voyage-4-256-${{ steps.xlang-hour.outputs.hour }}
+        continue-on-error: true
       # Real searches on the index just built, read the way the app reads it (tools/news_search_check.mjs): an error annotation on
       # this run when a first search would come back empty or the index holds days after tomorrow. The data is still committed.
       - name: Check news search on the real index
@@ -392,7 +427,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/news data/live/news-pics.json data/live/news-dates.json data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/stories.js data/live/stories data/live/threads data/live/ledger data/live/ledger-state.json data/live/spikes.js data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json data/live/translation-cache-fast.json data/live/translation-cache-news.json data/live/warnings-geo.json probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/news data/live/news-pics.json data/live/news-dates.json data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/stories.js data/live/stories data/live/threads data/live/ledger data/live/ledger-state.json data/live/ledger-x data/live/ledger-x-usage.json data/live/spikes.js data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json data/live/translation-cache-fast.json data/live/translation-cache-news.json data/live/warnings-geo.json probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output ($ONLY) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin "HEAD:refs/heads/claude/dense-preview-data$([ "$ONLY" = dense ] || echo "-$ONLY")"
         continue-on-error: true
