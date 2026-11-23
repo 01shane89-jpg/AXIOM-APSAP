@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { verifyPairs, verifyMessage, readVerdicts, leftToday, loadState, saveState, enHash, SCHEMA, SYSTEM, KINDS, BATCH, VERIFY_MODEL, VERIFY_PROMPT } from "../tools/mt_verify.mjs";
+import { verifyPairs, verifyMessage, readVerdicts, apiError, leftToday, loadState, saveState, enHash, SCHEMA, SYSTEM, KINDS, BATCH, VERIFY_MODEL, VERIFY_PROMPT } from "../tools/mt_verify.mjs";
 import { translateAll, seed } from "../tools/translate.mjs";
 
 let n = 0; const t = async (name, f) => { await f(); n++; console.log("ok -", name); };
@@ -152,6 +152,14 @@ await t("the record files load with the newest verdict winning, and only this la
   assert.deepEqual(Object.keys(back.records).sort(), ["a", "d"]);
   assert.equal(back.model, "claude-haiku-5-5"); assert.equal(back.prompt, VERIFY_PROMPT);
   fs.rmSync(dir, { recursive: true });
+});
+
+await t("a refused request logs the API's error type and message, with any key masked", async () => {
+  const e = Object.assign(new Error("400 bad"), { status: 400, error: { type: "error", error: { type: "invalid_request_error", message: "Your credit balance is too low. key sk-ant-abc123-XYZ" } } });
+  assert.equal(apiError(e), "invalid_request_error: Your credit balance is too low. key [key]");
+  const lines = [], c = { messages: { create: async () => { throw e; } } };
+  await verifyPairs([{ key: "e1", text: "t", lang: "ko", en: "e" }], { key: "test", client: c, state: fresh(), now, log: (m) => lines.push(m) });
+  assert.match(lines.join("\n"), /stopped: the request was refused \(400\) \[invalid_request_error: Your credit balance is too low\. key \[key\]\]/);
 });
 
 console.log(n + " checks passed");
