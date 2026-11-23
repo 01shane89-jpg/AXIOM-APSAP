@@ -159,6 +159,7 @@ await t("a refused request logs the API's error type and message, with any key m
   assert.equal(apiError(e), "invalid_request_error: Your credit balance is too low. key [key]");
   const lines = [], c = { messages: { create: async () => { throw e; } } };
   await verifyPairs([{ key: "e1", text: "t", lang: "ko", en: "e" }], { key: "test", client: c, state: fresh(), now, log: (m) => lines.push(m) });
+  assert.equal((await (async () => { const st = fresh(); await verifyPairs([{ key: "e2", text: "t", lang: "ko", en: "e" }], { key: "test", client: c, state: st, now, log: quiet }); return st.usage.items; })()), 0, "a refused call does not use up the daily cap");
   assert.match(lines.join("\n"), /stopped: the request was refused \(400\) \[invalid_request_error: Your credit balance is too low\. key \[key\]\]/);
 });
 

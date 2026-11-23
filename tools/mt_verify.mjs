@@ -12,7 +12,7 @@
 //     for the refresh jobs). Without the key, without the SDK, past the daily cap or on any API error, translations stand on the
 //     rule checks alone, as before.
 //   - The daily cap (MT_VERIFY_DAILY_CAP translations a UTC day per refresh lane, default DAILY_CAP) and the per-run cap
-//     (MT_VERIFY_RUN_CAP, default RUN_CAP) count every translation sent, checked or not.
+//     (MT_VERIFY_RUN_CAP, default RUN_CAP) count every translation in an answered call; a refused call is not billed and not counted.
 //   - Every verdict is kept in data/live/mt-verify[-<lane>].json with the model the API reports, the prompt version and the time,
 //     keyed by the translation cache key and a hash of the English, so a translation is checked once. Logs carry counts only:
 //     never a headline, a translation or the key.
@@ -147,7 +147,6 @@ export async function verifyPairs(pairs, opts = {}) {
   const one = async (start) => {
     if (stop) return;
     const b = todo.slice(start, start + BATCH);
-    st.usage.items += b.length; st.usage.calls++; st.dirty = true;
     let res;
     try {
       res = await client.messages.create({
@@ -164,6 +163,9 @@ export async function verifyPairs(pairs, opts = {}) {
       else if (s === 400) stop = "the request was refused (400)";
       return;
     }
+    // only an answered call counts toward the cap: a refused request is not billed, and counting it used up the day's cap
+    // while the account still needed verification (2026-11-23)
+    st.usage.items += b.length; st.usage.calls++; st.dirty = true;
     if (res && res.usage) { st.usage.in += res.usage.input_tokens || 0; st.usage.out += res.usage.output_tokens || 0; }
     if (!res || res.stop_reason === "refusal" || res.stop_reason === "max_tokens") { failedCalls++; return; }
     let o = null; const txt = (res.content || []).filter((c) => c && c.type === "text").map((c) => c.text).join("");
