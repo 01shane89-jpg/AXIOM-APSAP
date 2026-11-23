@@ -1,0 +1,1 @@
+window.OSAP_NEWSIX_DAY=window.OSAP_NEWSIX_DAY||{};window.OSAP_NEWSIX_DAY["2026-11-24"]=[["at","2026-11-24T00:00","Hackers breach Austrian Foreign Ministry website, access diplomats' contact details","","The Record","https://therecord.media/austrian-foreign-ministry-says-website-hacked","","","cyber","scam,infra,cyber"]];
