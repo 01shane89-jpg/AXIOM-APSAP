@@ -74,6 +74,18 @@ jobs:
         if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' || startsWith(inputs.only, 'probe-mt') }}
         run: python -m pip install --quiet "ctranslate2>=4,<5" sentencepiece
         continue-on-error: true
+      # Claude check of the translations (tools/mt_verify.mjs): Claude Haiku 5.5 compares each new translation with its original and
+      # a translation with other numbers, names, places, hedges or negations is not used (the original shows). It needs the
+      # repository secret ANTHROPIC_API_KEY; without it this step does nothing and the rule checks alone decide, as before. The SDK
+      # is the one the Netlify functions use (netlify/package.json), installed only when the key is there.
+      - name: Install the Claude check client (only with the ANTHROPIC_API_KEY secret)
+        if: ${{ !inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'deepsouth' || inputs.only == 'social' }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then echo "No ANTHROPIC_API_KEY secret: translations get the rule checks only"; exit 0; fi
+          npm ci --prefix netlify --ignore-scripts --no-audit --no-fund --omit=dev
+        continue-on-error: true
       - name: Convert the translation model (only when the cache is empty)
         if: ${{ (!inputs.only || inputs.only == 'warnings' || inputs.only == 'news' || inputs.only == 'social') && steps.mt-cache.outputs.cache-hit != 'true' }}
         run: |
@@ -138,6 +150,7 @@ jobs:
         timeout-minutes: 10
         run: node tools/refresh_warnings.mjs
         env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           # sold version: MeteoAlarm (nc) is not asked; the national services' own feeds stay
           OSAP_COMMERCIAL: ${{ vars.OSAP_COMMERCIAL }}
         continue-on-error: true
@@ -145,6 +158,8 @@ jobs:
         if: ${{ (!inputs.only && inputs.lane != 'fast') || inputs.only == 'news' }}
         timeout-minutes: 14
         run: node tools/refresh_news.mjs
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         continue-on-error: true
       # Data sets (tools/topics.json): each one's news searches, then the one search index over every country's news and those
       # results (data/live/news-index.js and data/live/news-index/<day>.js), which the app's news search reads, and from that index
@@ -191,6 +206,7 @@ jobs:
         timeout-minutes: 9
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node tools/refresh_deepsouth.mjs
         continue-on-error: true
       # The conflict tabs and their extras run hourly in their own workflow (refresh-conflicts.yml), so this one stays short.
@@ -216,6 +232,7 @@ jobs:
         timeout-minutes: 11
         env:
           ONLY: ${{ inputs.only }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           if [ -z "$ONLY" ] && node -e 'const m=/"asof":"([^"]+)"/.exec(require("fs").readFileSync("data/live/social.js","utf8"));const t=m&&Date.parse(m[1].replace(" ","T"));process.exit(t&&Date.now()-t<40*60e3?0:1)' 2>/dev/null; then
             echo "Social snapshot is under 40 minutes old; skipping this cycle"; exit 0
