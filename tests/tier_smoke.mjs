@@ -141,7 +141,7 @@ gate = true;
 {
   const { ctx, p, refused, errors } = await open();
   const w = await wall(p);
-  ok(w && /trwall/.test(w.cls) && /Sign in to OSAP/.test(w.text) && /needs an account/.test(w.text) && !w.x, "signed out: the sign-in screen shows, with no close button " + JSON.stringify(w && { cls: w.cls, x: w.x, text: w.text.slice(0, 80) }));
+  ok(w && /trwall/.test(w.cls) && /Sign in to OSAP/.test(w.text) && /beyond the headlines/.test(w.text) && /create a free account/.test(w.text) && !/Early access/.test(w.text) && !w.x, "signed out: the sign-in screen shows, with no close button " + JSON.stringify(w && { cls: w.cls, x: w.x, text: w.text.slice(0, 80) }));
   await p.mouse.click(5, 5); await p.keyboard.press("Escape"); await p.waitForTimeout(300);
   ok(!!(await wall(p)), "signed out: clicking outside or Escape does not close it");
   ok(await p.evaluate(() => { const d = document.getElementById("tierdlg"), b = d.querySelector(".cbox").getBoundingClientRect(); return !!d.querySelector(".trbrand img") && b.top > 16 && getComputedStyle(d).backgroundColor !== "rgb(11, 18, 32)"; }), "the sign-in screen shows the logo, in the middle, on the theme's page colour");
@@ -513,6 +513,8 @@ delete env.OSAP_EARLY_ACCESS;
 {
   const { ctx, p } = await open();
   ok(!!(await wall(p)) && (await get(p, "data/live/ucdp.js")) !== 200 && (await get(p, "data/live/news.js")) !== 200, "early access: signed out, the sign-in screen still comes first and data is refused");
+  ok(/Early access: Full is free for every account until paid plans open/.test((await wall(p) || {}).text || ""), "early access: the sign-in screen says new accounts get Full free");
+  await p.screenshot({ path: process.env.SHOT_DIR ? process.env.SHOT_DIR + "/tier-wall-early.png" : "/dev/null" }).catch(() => {});
   await ctx.close();
 }
 env.PADDLE_ENV = "live";
