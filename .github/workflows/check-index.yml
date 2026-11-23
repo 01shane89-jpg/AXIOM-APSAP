@@ -43,6 +43,8 @@ jobs:
       - run: node tests/sensors.test.mjs
       # ships gone quiet near chokepoints and AIS position jumps (tools/darkships_lib.mjs, rules dark-v1)
       - run: node tests/darkships.test.mjs
+      # shipping chokepoints against last year and World Bank Pink Sheet prices (tools/choke_lib.mjs, rules choke-v1)
+      - run: node tests/choke.test.mjs
       # military aircraft flying an orbit and emergency squawks (tools/milpat_lib.mjs, rules milpat-v1)
       - run: node tests/milpat.test.mjs
       # seismic check beside strike reports (tools/seismic_lib.mjs, rules seismic-v1)
