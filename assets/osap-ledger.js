@@ -10,6 +10,10 @@
    Doctrine, said on the page: every line is a source's claim and a government's figure is its claim; OSAP never rates a claim
    true or false; which headlines join is machine word matching, not AI and not an analyst; no AI wrote any of it. Display only:
    nothing is stored, approved or sent.
+   Same story in other languages (tools/ledger_xlang.mjs, rules xmatch-v1, off until the VOYAGE_API_KEY secret exists): AI
+   proposals from data/live/ledger-x/<cc>.js (window.OSAP_LEDGER_X), headlines in any language an embedding model placed close in
+   meaning to the story's reports where the word rule did not join them. Shown in their own section, tagged "AI proposal", never
+   counted in the ledger; "Not the same" only hides one on this device (localStorage osap-ldx-hide).
    API: window.OSAP_LEDGERQ { load(cc, done), get(cc), forThread(cc, threadId), list(cc), open(cc, id), close(), isOpen(), _t } */
 (function () {
   "use strict";
@@ -38,12 +42,18 @@
     });
     return out;
   }
-  var T = { rowsWith: rowsWith, figPath: figPath, sensorGroups: sensorGroups };
+  /* the AI proposals kept for a ledger: well-formed rows only, never one already in the ledger, at most 5 */
+  function xRows(f, l) {
+    var x = f && f.x && l && f.x[l.id], have = {};
+    (l && l.rows || []).forEach(function (r) { have[r[4]] = 1; });
+    return (Array.isArray(x) ? x : []).filter(function (r) { return Array.isArray(r) && r.length >= 10 && /^https?:\/\//i.test(String(r[4] || "")) && !have[r[4]] && isFinite(+r[8]); }).slice(0, 5);
+  }
+  var T = { rowsWith: rowsWith, figPath: figPath, sensorGroups: sensorGroups, xRows: xRows };
   if (typeof module === "object" && module.exports) module.exports = T;
   if (typeof window === "undefined") return;
 
   var W = window, D = document, KIND = { state: "State media", public: "Public broadcaster", other: "Private or independent" };
-  var files = {}, waiting = {}, box = null, cur = null, sensP = null, allOpen = false, back = null;
+  var files = {}, waiting = {}, xfiles = {}, box = null, cur = null, sensP = null, allOpen = false, back = null;
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   var TA = D.createElement("textarea");
   function txt(s) { s = String(s == null ? "" : s); for (var k = 0; k < 2 && /&(#x?[0-9a-f]+|[a-z]+);/i.test(s); k++) { TA.innerHTML = s; s = TA.value; } return s.replace(/<\/?[a-z][^>]*>/gi, " "); }
@@ -73,6 +83,25 @@
     };
     D.head.appendChild(s);
   }
+  /* the AI proposals beside the ledgers: their own file, absent while the feature is off */
+  function getX(cc) { var f = xfiles[cc]; return f && f !== 1 && f !== 2 ? f : null; }
+  function loadX(cc, done) {
+    if (!/^[a-z]{2,3}$/.test(cc || "") || xfiles[cc] === 1) return;
+    if (xfiles[cc]) { if (done) done(); return; }
+    xfiles[cc] = 1;
+    var s = D.createElement("script"); s.async = true;
+    s.src = "data/live/ledger-x/" + encodeURIComponent(cc) + ".js?t=" + Math.floor(Date.now() / 6e5);
+    s.onload = s.onerror = function () {
+      s.remove();
+      var f = W.OSAP_LEDGER_X; W.OSAP_LEDGER_X = undefined;
+      xfiles[cc] = f && f.cc === cc && f.x && typeof f.x === "object" ? f : 2;
+      if (done) done();
+    };
+    D.head.appendChild(s);
+  }
+  var HIDE = "osap-ldx-hide";
+  function hidden() { try { var o = JSON.parse(localStorage.getItem(HIDE) || "{}"); return o && typeof o === "object" ? o : {}; } catch (e) { return {}; } }
+  function hide(k) { var o = hidden(); o[k] = Date.now(); var ks = Object.keys(o).sort(function (a, b) { return o[b] - o[a]; }).slice(0, 500), n = {}; ks.forEach(function (x) { n[x] = o[x]; }); try { localStorage.setItem(HIDE, JSON.stringify(n)); } catch (e) {} }
   function list(cc) { var f = get(cc); return f ? f.ledgers : []; }
   function find(cc, id) { return list(cc).filter(function (l) { return l.id === id; })[0] || null; }
   function forThread(cc, tid) { return list(cc).filter(function (l) { return tid && l.thread === tid; })[0] || null; }
@@ -93,7 +122,7 @@
     "#ldv ul.ldl{list-style:none;margin:0;padding:0}#ldv ul.ldl>li{position:relative;padding:8px 0 8px 18px;border-top:1px solid var(--line-soft,var(--line,#ddd))}" +
     "#ldv ul.ldl>li::before{content:'';position:absolute;left:3px;top:14px;width:8px;height:8px;border-radius:50%;background:var(--ldc,#5aa9e6)}" +
     "#ldv .ldt{display:block;font-weight:600;overflow-wrap:anywhere;color:inherit}#ldv .lds{display:block;font-size:12px;color:var(--muted,#555);overflow-wrap:anywhere}" +
-    "#ldv .ldf{--ldc:#d97706}#ldv .ldd{--ldc:#dc2626}#ldv .ldof{--ldc:#7c3aed}#ldv .ldfg{--ldc:#a16207}" +
+    "#ldv .ldai{--ldc:#64748b}#ldv .ldai .ldt{font-weight:500}#ldv .ldf{--ldc:#d97706}#ldv .ldd{--ldc:#dc2626}#ldv .ldof{--ldc:#7c3aed}#ldv .ldfg{--ldc:#a16207}" +
     "#ldv table.lddays{width:100%;border-collapse:collapse;font-size:12.5px}#ldv .lddays th,#ldv .lddays td{padding:5px 6px;border-top:1px solid var(--line-soft,var(--line,#ddd));text-align:right;white-space:nowrap}" +
     "#ldv .lddays th:first-child,#ldv .lddays td:first-child{text-align:left}#ldv .lddays thead th{border-top:0;color:var(--muted,#555);font-weight:600;white-space:normal;vertical-align:bottom;line-height:1.2}" +
     "#ldv .ldbarc{width:38%}#ldv .ldbarc span{display:block;height:8px;border-radius:2px;background:var(--accent,#1D5A86);min-width:2px}" +
@@ -155,6 +184,7 @@
     }).join("");
     H += section("Figures that differ", null, "Numbers read from the headlines by fixed rules, in time order; a bold step is a change. A rising toll can be new information, a correction or another event wrongly joined: open the reports.",
       figs || "<p>The reports give no figure, or all give the same one.</p>");
+    H += xHtml(cc, l);
     H += sensorHtml(l);
     H += '<section><details class="ldallr"' + (allOpen === "all" ? " open" : "") + '><summary><b>All reports kept</b> (' + l.rows.length + (l.r > l.rows.length ? " of " + l.r : "") + ")</summary>" +
       '<ul class="ldl">' + l.rows.map(function (r) { return rowHtml(r, /d/.test(r[7]) ? "ldd" : /o/.test(r[7]) ? "ldof" : /f/.test(r[7]) ? "ldf" : ""); }).join("") + "</ul></details></section>";
@@ -162,13 +192,32 @@
       "<p>Built " + esc(when(String(f.asof || "").replace(" ", "T"))) + ". Followed since " + esc(when(String(l.born || "").replace(" ", "T"))) + ".</p></div>";
     return H;
   }
+  function xHtml(cc, l) {
+    var xf = getX(cc), X = xRows(xf, l); if (!X.length) return "";
+    var hid = hidden(), showHid = allOpen === "xhid", vis = X.filter(function (r) { return showHid || !hid[l.id + " " + r[4]]; }), nh = X.length - X.filter(function (r) { return !hid[l.id + " " + r[4]]; }).length;
+    var tag = '<span class="aitag" tabindex="0" title="AI proposal: an embedding model placed these headlines close in meaning to this story. Not checked by a person and not part of this ledger.">AI proposal</span>';
+    var rows = vis.map(function (r) {
+      /* [outlet, kind, outlet's country, date, link, headline shown, original, machine translated, c, m] */
+      var u = safeUrl(r[4]), k = l.id + " " + r[4];
+      return '<li class="ldai">' + (u ? '<a class="ldt" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(txt(r[5])) + "</a>" : '<span class="ldt">' + esc(txt(r[5])) + "</span>") +
+        (r[6] ? '<span class="lds">Original: ' + esc(txt(r[6])) + "</span>" : "") +
+        '<span class="lds">' + esc(r[0]) + " · " + esc(KIND[r[1]] || "Outlet") + (r[1] === "state" ? " (a claim)" : "") + (r[2] ? " · " + esc(cName(r[2])) : "") + " · " + esc(when(r[3])) + (r[7] ? " · machine translated" : "") + "</span>" +
+        '<span class="lds">Close in meaning ' + (+r[8]).toFixed(2) + (xf.cut && xf.cut.cut != null ? " (cut-off " + (+xf.cut.cut).toFixed(2) + ")" : "") + "</span>" +
+        (hid[k] ? "" : '<button type="button" class="ldmore" data-ldxhide="' + esc(k) + '">Not the same</button>') + "</li>";
+    }).join("");
+    return section("Possibly the same story, found by meaning", plural(X.length, "proposal"),
+      tag + " Headlines the word rule did not join, in any language, that an embedding model placed close in meaning to this story's reports. <b>Not part of this ledger</b>: not counted in its reports, days, figures or denials. Open each one; close in meaning can still be another event.",
+      (rows ? '<ul class="ldl">' + rows + "</ul>" : "<p>All proposals hidden on this device.</p>") +
+      (nh ? '<button type="button" class="ldmore" data-ldall="' + (showHid ? "" : "xhid") + '">' + (showHid ? "Hide the ones marked not the same" : "Show " + plural(nh, "hidden proposal")) + "</button>" : "") +
+      '<p class="ldo">Model ' + esc(xf.model || "") + ", rules " + esc(xf.rules || "") + ", built " + esc(when(String(xf.asof || "").replace(" ", "T"))) + ". " + esc(xf.method || "") + " \"Not the same\" only hides a proposal on this device.</p>");
+  }
   function pickHtml(cc) {
     var L = list(cc);
     if (!L.length) return "<p>No disputed story is being followed for " + esc(cName(cc)) + " yet.</p>";
     return '<p class="ldo">Stories whose reports give different figures, or that a headline denies or disputes, followed for up to ' + esc((get(cc) || {}).days || 30) + " days.</p>" +
       '<ul class="ldl ldpick">' + L.map(function (l) {
         return '<li><span class="ldt">' + esc(txt(l.t)) + '</span><span class="lds">' + plural(l.dn, "day") + " · " + plural(l.n, "outlet") + ", " + plural(l.r, "report") + " · " + plural(l.nd, "denial or dispute", "denials or disputes") +
-          " · " + plural(l.no, "official line") + (l.figs && l.figs.length ? " · figures differ" : "") + (l.sensor && l.sensor.length ? " · strike report" : "") + '</span><span class="lds">' +
+          " · " + plural(l.no, "official line") + (l.figs && l.figs.length ? " · figures differ" : "") + (l.sensor && l.sensor.length ? " · strike report" : "") + (xRows(getX(cc), l).length ? " · " + plural(xRows(getX(cc), l).length, "AI proposal") + " by meaning" : "") + '</span><span class="lds">' +
           (l.thread ? "Still in Story coverage" : "Left Story coverage") + " · latest " + esc(when(l.d)) + '</span><button type="button" class="ldmore" data-ldopen="' + esc(l.id) + '">Open ledger</button></li>';
       }).join("") + "</ul>";
   }
@@ -207,6 +256,7 @@
     if (b.hasAttribute("data-ldclose")) close();
     else if (b.hasAttribute("data-ldopen")) show(cur.cc, b.getAttribute("data-ldopen"), true);
     else if (b.hasAttribute("data-ldlist")) show(cur.cc, "", true);
+    else if (b.hasAttribute("data-ldxhide")) { hide(b.getAttribute("data-ldxhide")); render(); }
     else if (b.hasAttribute("data-ldall")) { allOpen = b.getAttribute("data-ldall") || false; render(); }
     else if (b.hasAttribute("data-ldgo") && W.OSAP_THREADSQ) { var cc = cur.cc, tid = b.getAttribute("data-ldgo"); close(); W.OSAP_THREADSQ.open(cc, tid); }
     else if (b.hasAttribute("data-ldcf") && W.OSAP_CONFLICT_TABS) {
@@ -228,6 +278,7 @@
     }
     show(cc, id, !id);
     load(cc, function () { if (box && cur && cur.cc === cc) show(cc, id, !id); });
+    loadX(cc, function () { if (box && cur && cur.cc === cc) render(); });
     var x = box.querySelector(".ldx"); if (x) x.focus();
   }
   function close() {
@@ -240,6 +291,6 @@
     var b = e.target.closest && e.target.closest("[data-thledger]"); if (!b) return;
     var m = String(b.getAttribute("data-thledger")).split(":"); if (m.length === 2) open(m[0], m[1]);
   });
-  W.OSAP_LEDGERQ = { load: load, get: get, list: list, find: find, forThread: forThread, open: open, close: close, isOpen: function () { return !!box; },
+  W.OSAP_LEDGERQ = { load: load, get: get, getX: getX, list: list, find: find, forThread: forThread, open: open, close: close, isOpen: function () { return !!box; },
     state: function () { return cur ? { cc: cur.cc, id: cur.id } : null; }, _t: T };
 })();
