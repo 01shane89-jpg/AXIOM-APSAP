@@ -176,6 +176,8 @@ jobs:
       - run: node tests/seatransit.test.mjs
       # machine translation: invented lines rejected, and a translation stays with its item
       - run: node tests/mt_guard.test.mjs
+      # Claude check of translations: verdict only, no rewrite, data not instructions, daily cap, no key = rule checks only
+      - run: node tests/mt_verify.test.mjs
       - run: node tests/translate_keep.test.mjs
       - run: node tests/mt_confidence.test.mjs
       - run: node tests/mt_cache_lanes.test.mjs
