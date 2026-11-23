@@ -254,7 +254,7 @@
 ["w495748435",13.49306,120.88813,"ph",{"name":"Amade Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["w496456897",13.40906,121.17525,"ph",{"name":"Santa Maria Village Hospital","amenity":"hospital"}],
 ["w508042958",13.76702,121.06677,"ph",{"name":"Batangas Medical Center","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Department of Health","operator:type":"government","contact:phone":"+6343 9801743;+6343 7408307 local 1121;+6343 7230165;+6343 7230517","website":"http://batmc.doh.gov.ph/","addr:street":"Ebora Road","addr:city":"Batangas City","addr:postcode":"4200"}],
-["w52106723",13.85591,120.10633,"ph",{"name":"Lubang Community Airport","addr:city":"Lubang","aeroway":"aerodrome","icao":"RPLU","iata":"LBX"}],
+["w52106723",13.85591,120.10633,"ph",{"name":"Lubang Community Airport","addr:city":"Lubang","aeroway":"aerodrome","icao":"RPLU","iata":"LBX","wikidata":"Q6695071"}],
 ["w542584621",13.3614,121.82554,"ph",{"name":"Marinduque Airport","name:en":"Marinduque Airport","official_name":"Paliparan ng Marinduque","operator":"CAAP","operator:type":"government","aeroway":"aerodrome","icao":"RPUW","iata":"MRQ"}],
 ["w553692954",13.94494,121.63093,"ph",{"name":"Lucena MMG General Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","beds":"122","addr:street":"Old Manila South Road"}],
 ["w554072927",13.78767,121.06036,"ph",{"name":"Batangas Healthcare Specialists' Medical Center","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:street":"Batangas Diversion Road","addr:city":"Batangas City","addr:postcode":"4200"}],

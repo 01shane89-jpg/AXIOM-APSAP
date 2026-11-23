@@ -1,5 +1,6 @@
 [["n10125249957",-0.29207,111.60851,"id",{"name":"RSUD Pratama Batu Buil","amenity":"hospital","healthcare":"hospital"}],
 ["n10125249958",-0.3183,111.6572,"id",{"name":"Puskesmas Pemuar","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health"}],
+["n14305946885",-0.95691,110.47936,"id",{"name":"Puskesmas Sungai Laur","amenity":"clinic","healthcare":"clinic"}],
 ["n5414325396",-0.35064,111.67868,"id",{"aeroway":"helipad"}],
 ["w1105715561",-0.04294,111.46073,"id",{"name":"Bandara Tebelian Sintang","aeroway":"aerodrome","icao":"WIOS","iata":"SQG","wikidata":"Q4259432"}],
 ["w1525649541",-1.89512,111.31508,"id",{"name":"Puskesmas Tapin Bini","amenity":"clinic"}],

@@ -31,6 +31,7 @@
 ["n13844059220",16.21656,120.49835,"ph",{"aeroway":"helipad","surface":"asphalt"}],
 ["n13883063628",16.77828,121.1069,"ph",{"name":"Baguinge Barangay Health Center","healthcare":"clinic","operator":"Baguinge LGU;Department of Health"}],
 ["n14113314337",16.22487,120.47247,"ph",{"name":"Animal Bite Center","amenity":"clinic","healthcare:speciality":"animal_bite","addr:street":"MacArthur Highway"}],
+["n14355740801",17.41853,120.46918,"ph",{"name":"Ilocos Sur District Hospital - Narvacan","amenity":"hospital"}],
 ["n1655017605",16.90709,121.06384,"ph",{"aeroway":"helipad"}],
 ["n1708717734",16.15738,120.56573,"ph",{"aeroway":"helipad"}],
 ["n1763096645",16.04376,120.32891,"ph",{"name":"Pangasinan Medical Society","amenity":"clinic"}],
