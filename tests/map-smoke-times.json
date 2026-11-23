@@ -9,6 +9,7 @@
 "tests/locked_requests_smoke.mjs": 122,
 "tests/start_reload_smoke.mjs": 42,
 "tests/world_start_smoke.mjs": 25,
+"tests/home_country_smoke.mjs": 20,
 "tests/analyst_smoke.mjs": 23,
 "tests/seal_sw_smoke.mjs": 9,
 "tests/econ_smoke.mjs": 6,
