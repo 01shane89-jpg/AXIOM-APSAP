@@ -190,6 +190,7 @@
     var sp = spRefs(cardLinks(t.rows, t.u));
     return h + '<button type="button" class="cvdeep" data-cvdeep="' + esc(t.id) + '">Go deeper</button>' + spBtn("t" + t.id, sp) + spPanel("t" + t.id, sp) + "</li>";
   }
+  function ledgers() { var Q = W.OSAP_LEDGERQ; return Q && CC !== "ww" ? Q.list(CC) : []; }
   function threads() { var Q = W.OSAP_THREADSQ, f = Q && Q.get(CC); return f && f.threads && f.threads.length ? f.threads : null; }
   function list() {
     var S = data(), L = S ? S.stories || [] : [];
@@ -210,7 +211,9 @@
     var all = S.stories || [], nb = all.filter(function (s) { return s.b; }).length, L = list();
     h += '<span class="cvsub">Last ' + esc(S.hours) + " hours · " + plural(S.outlets || 0, "outlet") + " · " + plural(S.reports || 0, "headline") + " · built " + esc(when(String(S.asof).replace(" ", "T"))) + "</span></div>";
     h += '<div class="cvtabs" role="group" aria-label="Show"><button type="button" data-cvview="top" aria-pressed="' + (view === "top") + '">Most covered</button>' +
-      (CC === "ww" ? "" : '<button type="button" data-cvview="blind" aria-pressed="' + (view === "blind") + '">Blindspots (' + nb + ")</button>") + "</div>";
+      (CC === "ww" ? "" : '<button type="button" data-cvview="blind" aria-pressed="' + (view === "blind") + '">Blindspots (' + nb + ")</button>") +
+      // Claim ledgers (assets/osap-ledger.js): disputed stories followed for up to 30 days, including those past this window
+      (ledgers().length ? '<button type="button" data-cvledger title="Disputed stories followed for up to 30 days, including those that have left these 72 hours">Claim ledgers (' + ledgers().length + ")</button>" : "") + "</div>";
     if (view === "blind") {
       h += '<div class="cvtabs cvkinds" role="group" aria-label="Blindspot kind"><button type="button" class="cvsm" data-cvb="" aria-pressed="' + (!bsel) + '">All</button>' +
         Object.keys(BLIND).map(function (k) { var n = all.filter(function (s) { return s.b === k; }).length;
@@ -240,6 +243,8 @@
       if (data()) loadLinks(function () { if (W.OSAP_CF_LINKS) render(); });
       // then the threads, for Go deeper: Most covered switches to them when they are in
       if (W.OSAP_THREADSQ && data()) W.OSAP_THREADSQ.load(CC, function () { render(); });
+      // then the claim ledgers, for the Claim ledgers button
+      if (W.OSAP_LEDGERQ && data() && CC !== "ww") W.OSAP_LEDGERQ.load(CC, function () { render(); });
       // then who owns and pays for each outlet (assets/osap-outletfacts.js), for "About this outlet" under Who carried it
       if (W.OSAP_OUTLETFACTSQ && data()) W.OSAP_OUTLETFACTSQ.load(function () { render(); });
     };
@@ -266,6 +271,7 @@
         if (W.OSAP_TODAY && W.OSAP_TODAY.hide) W.OSAP_TODAY.hide();
         W.OSAP_CONFLICT_TABS.open(cid, c0);
       }
+      else if (t.hasAttribute("data-cvledger") && W.OSAP_LEDGERQ) W.OSAP_LEDGERQ.open(CC, "");
       else if (t.hasAttribute("data-cvdeep") && W.OSAP_THREADSQ) W.OSAP_THREADSQ.open(CC, t.getAttribute("data-cvdeep"));
     });
     el.addEventListener("toggle", function (e) { var d = e.target; if (d.classList && d.classList.contains("cvsrc")) open[d.getAttribute("data-cvid")] = d.open; }, true);

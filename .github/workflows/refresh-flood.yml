@@ -160,6 +160,15 @@ jobs:
             t=$SECONDS; node "tools/$s.mjs" || echo "::warning::$s exited with an error"; echo "step time: $s $((SECONDS - t)) s"
           done
         continue-on-error: true
+      # Claim ledgers (tools/claim_ledger.mjs, rules ledger-v1): the disputed stories in Go deeper's threads just built, followed
+      # through the whole index (about 30 days) into data/live/ledger/<cc>.js, with its seed list in data/live/ledger-state.json.
+      # Its own step and limit, so a slow ledger never stops the index, Story coverage or Reporting spikes (about 20 s on
+      # 1.1 million headlines on 2026-11-23)
+      - name: Build the claim ledgers
+        if: ${{ (!inputs.only && inputs.lane != 'fast') || inputs.only == 'news' || inputs.only == 'topics' }}
+        timeout-minutes: 4
+        run: node tools/claim_ledger.mjs
+        continue-on-error: true
       # Real searches on the index just built, read the way the app reads it (tools/news_search_check.mjs): an error annotation on
       # this run when a first search would come back empty or the index holds days after tomorrow. The data is still committed.
       - name: Check news search on the real index
@@ -335,7 +344,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan dense-preview-data
           git rm -rqf --cached .
-          for p in data/live/x data/live/news.js data/live/news data/live/news-pics.json data/live/news-dates.json data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/stories.js data/live/stories data/live/threads data/live/spikes.js data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json data/live/translation-cache-fast.json data/live/translation-cache-news.json data/live/warnings-geo.json probe-out; do git add -f "$p" 2>/dev/null || true; done
+          for p in data/live/x data/live/news.js data/live/news data/live/news-pics.json data/live/news-dates.json data/live/topics.js data/live/news-index.js data/live/news-index data/live/layerfeed data/live/stories.js data/live/stories data/live/threads data/live/ledger data/live/ledger-state.json data/live/spikes.js data/live/et.js data/live/social.js data/live/social data/live/replies data/live/warnings.js data/live/deepsouth.js data/live/ds-incidents.json data/captures data/claims data/decisions data/live/translation-cache.json data/live/translation-cache-fast.json data/live/translation-cache-news.json data/live/warnings-geo.json probe-out; do git add -f "$p" 2>/dev/null || true; done
           git commit -qm "Test output ($ONLY) $(date -u +'%Y-%m-%d %H:%MZ')"
           git push -qf origin "HEAD:refs/heads/claude/dense-preview-data$([ "$ONLY" = dense ] || echo "-$ONLY")"
         continue-on-error: true

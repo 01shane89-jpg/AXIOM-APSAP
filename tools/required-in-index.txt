@@ -23,6 +23,7 @@
 <script src="assets/osap-daily.js"></script>
 <script src="assets/osap-threads.js"></script>
 <script src="assets/osap-trail.js"></script>
+<script src="assets/osap-ledger.js"></script>
 <script src="assets/osap-outletfacts.js"></script>
 <script src="assets/osap-coverage.js"></script>
 <script src="assets/osap-asiasec.js"></script>
