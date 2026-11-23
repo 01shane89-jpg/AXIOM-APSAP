@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { fastFeeds, burstFeeds, toItem, finish, layNews, linksIn, nextGap, FastNews, UA, HOST_GAP, BURST_EVERY } from "../tools/flash_news.mjs";
+import { fastFeeds, wideFeeds, burstFeeds, PER_ROUND, toItem, finish, layNews, linksIn, nextGap, FastNews, UA, HOST_GAP, BURST_EVERY } from "../tools/flash_news.mjs";
 import { loadRelevance } from "../tools/topics_lib.mjs";
 
 let fails = 0;
@@ -80,6 +80,26 @@ const nB = N.burst("pk", now);
 ok(nB === 2 && N.queue.every((q) => q.burst && !q.f.url.startsWith("https://h1.test")), "a serious item asks the country's other feeds once (not the fast ones again)");
 ok(N.burst("pk", now + 60e3) === 0, "a second burst for the same country waits");
 ok(N.burst("pk", now + BURST_EVERY + 1) === 2, "and is allowed again after 10 minutes");
+
+// ---------- the wide tier ----------
+const wideAll = wideFeeds(listed, fast);
+ok(wideAll.length > 300 && wideAll.every((f) => !fast.includes(f.url) && !f.search && !f.html && /^en/.test(f.lang)), `the wide tier is every other plain English RSS feed (${wideAll.length})`);
+ok(new Set(wideAll.map((f) => f.url)).size === wideAll.length, "a feed listed for two countries is asked once");
+ok(wideFeeds(fake, ["https://a.test/rss"]).length === 0, "the wide tier never holds a search, a non-English, a retired or a fast feed");
+const many = { feeds: Array.from({ length: 60 }, (_, k) => ({ cc: "pk", outlet: "W" + k, url: `https://w${k}.test/rss`, lang: "en" })).concat([{ cc: "pk", outlet: "F", url: "https://f.test/rss", lang: "en" }]) };
+const calls2 = [], f2 = async (u) => { calls2.push(u); return { status: 304, ok: false, headers: new Map() }; };
+const W = new FastNews({ feeds: fastFeeds(many, ["https://f.test/rss"]), wide: wideFeeds(many, ["https://f.test/rss"]), listed: many, R, gz: null, fetchFn: f2, wideBase: 300, now });
+ok([...W.st.values()].filter((s) => s.wide && s.next <= now).length === 1, "the wide tier's first asks are spread over its interval, not all at once");
+await W.round(now + 300e3);
+ok(calls2.length === PER_ROUND && calls2[0] === "https://f.test/rss", `one round asks at most ${PER_ROUND} feeds, the fast list first`);
+const w0 = [...W.st.values()].find((s) => s.wide && s.next > now + 300e3);
+ok(w0 && w0.next - (now + 300e3) >= 300e3, "a wide feed is asked again about 5 minutes later");
+
+const f403 = async () => ({ status: 403, ok: false, headers: new Map() });
+const X = new FastNews({ feeds: [], wide: wideFeeds(many, []).slice(0, 1), listed: many, R, gz: null, fetchFn: f403, now });
+const xs = [...X.st.values()][0];
+await X.round(now); await X.round(xs.next);
+ok(xs.next === Infinity && X.refused === 1, "a wide feed that refuses OSAP's own name twice is left to the lane for the rest of the run");
 
 fs.rmSync(dir, { recursive: true, force: true });
 console.log(fails ? `\n${fails} FAILED` : "\nall passed");

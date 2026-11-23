@@ -13,6 +13,7 @@
 //   - about every minute asks a short list of English wire, state agency, official and newspaper-of-record RSS feeds
 //     (tools/flash_feeds.json, tools/flash_news.mjs) and lays their new items into each country's news file, and when one is
 //     serious asks that country's other English feeds at once, so a second source's report is in too (a news FLASH needs two);
+//     it also asks every other plain English RSS feed OSAP reads about every 5 minutes (the wide tier, 560 feeds on 23 Nov);
 //     before this a news report reached a push only through the news lane, a median 47 minutes after the outlet's own time;
 //   - whenever any of that changed and there is at least one push watch, runs tools/push_watches.mjs on the new data, so the
 //     app's own matching rules (index.html wMatches) decide what is sent, exactly as in the push job.
@@ -20,14 +21,14 @@
 // runs or waits, so one seen-list (PUSH_STATE, kept in the Actions cache) decides what was sent and nothing goes out twice.
 // Logs name quake ids, magnitudes and counts only, never report text.
 // Env: FLASH_LOOP_MIN (default 320), FLASH_QUAKE_S (15), FLASH_GDACS_S (120), FLASH_TSU_S (60), FLASH_MAIN_S (60), FLASH_LIST_S (300),
-//      FLASH_NEWS_S (60; 0 = no fast news), FLASH_NO_MAIN=1 (do not take main's data: a branch test of this file; main is still
+//      FLASH_NEWS_S (60; 0 = no fast news), FLASH_WIDE_S (300; 0 = no wide tier), FLASH_NO_MAIN=1 (do not take main's data: a branch test of this file; main is still
 //      read, never checked out, to time how much earlier the loop had each fast item), plus tools/push_watches.mjs's own env.
 import fs from "node:fs";
 import { execFileSync, spawn } from "node:child_process";
 import { USGS_HOUR, quakeRow, mergeQuakes } from "./quake_rows.mjs";
 import { fetchList } from "./push_lib.mjs";
 import { median, serious } from "./flash_lib.mjs";
-import { FastNews, fastFeeds, layNews, linksIn, partFile } from "./flash_news.mjs";
+import { FastNews, fastFeeds, wideFeeds, layNews, linksIn, partFile } from "./flash_news.mjs";
 import { storyLink } from "./news_dedupe.mjs";
 import { loadRelevance } from "./topics_lib.mjs";
 import { loadGazetteer } from "./gazetteer.mjs";
@@ -146,11 +147,12 @@ const pending = new Map(), newsLag = [], leadS = [];
 let news = null, newsAdded = 0, bursts = 0, burstAdded = 0;
 async function newsSetup() {
   const listed = JSON.parse(fs.readFileSync("tools/news_feeds.json", "utf8"));
-  const feeds = fastFeeds(listed, JSON.parse(fs.readFileSync("tools/flash_feeds.json", "utf8")).feeds);
+  const urls = JSON.parse(fs.readFileSync("tools/flash_feeds.json", "utf8")).feeds, feeds = fastFeeds(listed, urls);
+  const wideS = env.FLASH_WIDE_S === "0" ? 0 : Math.max(120, +(env.FLASH_WIDE_S || 300)), wide = wideS ? wideFeeds(listed, urls) : [];
   let gz = null;
   try { gz = await loadGazetteer(); } catch (e) { log(`gazetteer unavailable (${String(e.message || e).slice(0, 60)}): fast news items left unplaced`); }
-  news = new FastNews({ feeds, listed, R: await loadRelevance(), gz, base: Math.max(30, +(env.FLASH_NEWS_S || 60)), log });
-  log(`fast news: ${feeds.length} feeds about every ${news.base} s`);
+  news = new FastNews({ feeds, wide, listed, R: await loadRelevance(), gz, base: Math.max(30, +(env.FLASH_NEWS_S || 60)), wideBase: wideS || 300, log });
+  log(`fast news: ${feeds.length} feeds about every ${news.base} s` + (wide.length ? `, ${wide.length} more (every other plain English RSS feed) about every ${wideS} s` : ""));
 }
 async function fastNews() {
   if (!news) await newsSetup();
@@ -168,7 +170,7 @@ async function fastNews() {
       pending.set(storyLink(a.link), { cc, item: a, seen: now, first: !!i._first });
       if (i._burst) burstAdded++; else newsAdded++;
       // the first answer of a feed holds items from before the loop started: not a measure of it
-      if (!i._first) { if (!i._burst) newsLag.push(out); log(`new fast item ${cc} ${a.outlet}${i._burst ? " (burst)" : ""}: ${out} s after its outlet's time${serious({ t: a.title_en }) ? ", serious" : ""}`); }
+      if (!i._first) { if (!i._burst) newsLag.push(out); log(`new fast item ${cc} ${a.outlet}${i._burst ? " (burst)" : i._wide ? " (wide)" : ""}: ${out} s after its outlet's time${serious({ t: a.title_en }) ? ", serious" : ""}`); }
       // a burst follows a new serious report, not one from before the loop started or one a burst found
       if (!i._first && !i._burst && serious({ t: a.title_en })) { const n = news.burst(cc, now); if (n) { bursts++; log(`burst: asking ${n} more ${cc} feed(s) at once`); } }
     }
@@ -177,7 +179,7 @@ async function fastNews() {
   for (const [k, p] of pending) if (now - p.seen > 3 * 36e5) pending.delete(k);
   return changed;
 }
-const clean = (i) => { const o = { ...i }; delete o._first; delete o._burst; return o; };
+const clean = (i) => { const o = { ...i }; delete o._first; delete o._burst; delete o._wide; return o; };
 /* main moved: time each pending item main now carries (how much earlier the loop had it), re-lay the rest. read(cc) gives the text
    of main's file for cc without checking it out (a branch test); null means main's data was checked out */
 function onMain(read) {
@@ -244,7 +246,7 @@ const f = (a) => (a.length ? `median ${median(a)}, fastest ${Math.min(...a)}, sl
 log(`done: ${checks} push check(s), ${errors} error(s); push check seconds ${f(scanS.map(Math.round))}`);
 log(`new quakes seen ${qLag.length}: seconds after they happened ${f(qLag)}; seconds after USGS published them ${f(pubLag)}`);
 if (news) {
-  log(`fast news: ${news.requests} request(s), ${news.notModified} not modified, ${news.failures} failed; ${newsAdded} item(s) laid before main had them, ${bursts} burst(s) adding ${burstAdded}`);
+  log(`fast news: ${news.requests} request(s), ${news.notModified} not modified, ${news.failures} failed (${news.refused || 0} wide feed(s) refusing OSAP's name left to the lane); ${newsAdded} item(s) laid before main had them, ${bursts} burst(s) adding ${burstAdded}`);
   log(`fast news items seen after the loop started ${newsLag.length}: seconds after their outlet's time ${f(newsLag)}`);
   log(`fast news items main later carried ${leadS.length}: seconds the loop had them earlier ${f(leadS)}; still not on main ${[...pending.values()].filter((p) => !p.first).length}`);
 }

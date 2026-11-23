@@ -27,9 +27,17 @@ import { serious } from "./flash_lib.mjs";
 
 export const UA = "AXIOM-OSAP/1.0 (open-source situational awareness; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
 export const FRESH_H = 3, BURST_FRESH_H = 1, MIN_S = 60, MAX_S = 300, HOST_GAP = 20e3, BURST_EVERY = 10 * 60e3, BURST_MAX = 12;
+// the wide tier: every other plain English RSS feed news_feeds.json lists, about every WIDE_S; a round asks at most PER_ROUND feeds,
+// LANES at a time (never two at once to one host), so the loop's quake and push steps never wait long behind it
+export const WIDE_S = 300, PER_ROUND = 24, LANES = 8;
 const en = (f) => /^en\b/i.test(f.lang || "");
 const plainRss = (f) => !f.search && !f.html && !f.covers && !f.st && !f.detail && en(f);
 
+/* every plain English RSS feed news_feeds.json lists that is not on the fast list (the wide tier) */
+export function wideFeeds(listed, fastUrls) {
+  const skip = new Set(fastUrls), retired = new Set((listed.retired || []).map((r) => (typeof r === "string" ? r : r.url))), seen = new Set();
+  return listed.feeds.filter((f) => plainRss(f) && !skip.has(f.url) && !retired.has(f.url) && !seen.has(f.url) && seen.add(f.url));
+}
 /* the fast list's feeds, as tools/news_feeds.json lists them (a URL no longer listed there, or retired, is dropped) */
 export function fastFeeds(listed, urls) {
   const by = new Map(listed.feeds.filter(plainRss).map((f) => [f.url, f]));
@@ -101,28 +109,32 @@ const maxAgeOf = (cc) => { const m = /(?:^|,)\s*max-age\s*[=:]\s*(\d+)/i.exec(cc
 
 /* the poller: due feeds, one request per host every HOST_GAP; returns new finished items per country */
 export class FastNews {
-  constructor({ feeds, listed, R, gz, base = MIN_S, fetchFn = fetch, log = () => {} }) {
+  constructor({ feeds, wide = [], listed, R, gz, base = MIN_S, wideBase = WIDE_S, fetchFn = fetch, log = () => {}, now = Date.now() }) {
     this.listed = listed; this.R = R; this.gz = gz; this.base = base; this.fetch = fetchFn; this.log = log;
     this.seen = new Set(); this.st = new Map(); this.host = new Map(); this.burstAt = new Map(); this.queue = [];
     this.fast = new Set(feeds.map((f) => f.url));
-    for (const f of feeds) this.st.set(f.url, { f, next: 0, fails: 0, etag: "", lm: "", polls: 0 });
+    for (const f of feeds) this.st.set(f.url, { f, next: 0, fails: 0, etag: "", lm: "", polls: 0, base });
+    // the wide tier's first asks are spread over its interval, not all at once
+    wide.forEach((f, k) => { if (!this.st.has(f.url)) this.st.set(f.url, { f, next: now + Math.round((k * wideBase * 1000) / Math.max(1, wide.length)), fails: 0, etag: "", lm: "", polls: 0, base: wideBase, wide: true }); });
     this.requests = 0; this.notModified = 0; this.failures = 0;
   }
   hostOf(u) { try { return new URL(u).hostname; } catch (e) { return u; } }
-  /* one round: every due fast feed plus queued burst feeds whose host is free; returns { cc: [items] } of new finished items */
+  /* one round: due fast feeds first, then queued burst feeds, then due wide feeds, at most PER_ROUND, LANES at a time, one per host;
+     returns { cc: [items] } of new finished items */
   async round(now = Date.now()) {
-    const out = {}, take = [];
-    for (const s of this.st.values()) if (s.next <= now) take.push(s);
-    while (this.queue.length) take.push(this.queue.shift());
-    const later = [];
-    for (const s of take) {
+    const out = {}, due = [...this.st.values()].filter((s) => s.next <= now);
+    const cand = [...due.filter((s) => !s.wide), ...this.queue.splice(0), ...due.filter((s) => s.wide).sort((a, b) => a.next - b.next)];
+    const take = [], later = [];
+    for (const s of cand) {
       const h = this.hostOf(s.f.url);
-      if ((this.host.get(h) || 0) + HOST_GAP > now) { if (s.burst) later.push(s); continue; }
-      this.host.set(h, now);
-      const items = await this.poll(s, now);
-      for (const i of items) (out[s.f.cc] = out[s.f.cc] || []).push(i);
+      if (take.length >= PER_ROUND || (this.host.get(h) || 0) + HOST_GAP > now) { if (s.burst) later.push(s); continue; }
+      this.host.set(h, now); take.push(s);
     }
     this.queue.push(...later);
+    let k = 0;
+    await Promise.all(Array.from({ length: Math.min(LANES, take.length) }, async () => {
+      for (let s; (s = take[k++]); ) for (const i of await this.poll(s, now)) (out[s.f.cc] = out[s.f.cc] || []).push(i);
+    }));
     return out;
   }
   async poll(s, now) {
@@ -134,17 +146,19 @@ export class FastNews {
     try {
       const r = await this.fetch(s.f.url, { headers: h, signal: AbortSignal.timeout(15000) });
       maxAge = maxAgeOf(r.headers.get("cache-control"));
-      if (r.status === 304) { this.notModified++; s.fails = 0; if (!s.burst) s.next = now + nextGap(this.base, maxAge, 0); return []; }
+      if (r.status === 304) { this.notModified++; s.fails = 0; if (!s.burst) s.next = now + nextGap(s.base || this.base, maxAge, 0); return []; }
       if (!r.ok) throw new Error("HTTP " + r.status);
       body = await r.text();
       s.etag = r.headers.get("etag") || ""; s.lm = r.headers.get("last-modified") || "";
       s.fails = 0;
     } catch (e) {
       this.failures++; s.fails++;
-      if (!s.burst) { s.next = now + nextGap(this.base, maxAge, s.fails); if (s.fails === 1 || s.fails % 10 === 0) this.log(`fast news ${s.f.cc} ${this.hostOf(s.f.url)} failed (${String(e.message || e).slice(0, 60)}), ${s.fails} in a row`); }
+      // a site that refuses OSAP's own name is left to the news lane for the rest of the run (no other client is tried)
+      if (s.wide && /HTTP (401|403|410)\b/.test(String(e.message)) && s.fails >= 2) { s.next = Infinity; this.refused = (this.refused || 0) + 1; return []; }
+      if (!s.burst) { s.next = now + nextGap(s.base || this.base, maxAge, s.fails); if (!s.wide && (s.fails === 1 || s.fails % 10 === 0)) this.log(`fast news ${s.f.cc} ${this.hostOf(s.f.url)} failed (${String(e.message || e).slice(0, 60)}), ${s.fails} in a row`); }
       return [];
     }
-    if (!s.burst) s.next = now + nextGap(this.base, maxAge, 0);
+    if (!s.burst) s.next = now + nextGap(s.base || this.base, maxAge, 0);
     const first = !s.burst && s.polls++ === 0;
     const items = [];
     for (const raw of parseFeed(body, { image: true }).slice(0, s.f.max || 25)) {
@@ -153,7 +167,7 @@ export class FastNews {
       if (this.seen.has(k)) continue;
       this.seen.add(k);
       const o = finish(this.R, this.gz, toItem(raw, s.f, now), s.f.cc, now, s.burst ? BURST_FRESH_H : FRESH_H);
-      if (o) { o._first = first; o._burst = !!s.burst; items.push(o); }
+      if (o) { o._first = first; o._burst = !!s.burst; o._wide = !!s.wide; items.push(o); }
     }
     return items;
   }
