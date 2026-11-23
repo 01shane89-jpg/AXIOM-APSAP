@@ -59,6 +59,11 @@ jobs:
       - run: node tests/space.test.mjs
       # Ask about this country (tools/ask_lib.mjs, netlify/functions/osap-ask.mjs): cited answers only, plan, quota, off without the key
       - run: node tests/ask.test.mjs
+      # Official briefing transcripts (tools/transcribe_lib.mjs, tools/refresh_transcripts.mjs): official sources only, cost caps,
+      # provenance, hallucination filter, off without the key (stand-in service, needs ffmpeg)
+      - run: |
+          command -v ffmpeg >/dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null; }
+          node tests/transcribe.test.mjs
       # team shared cases (tools/cases.mjs, netlify/functions/osap-cases.mjs): roles, case isolation, decision records
       - run: node tests/cases.test.mjs
       - run: node tests/case_vault.test.mjs

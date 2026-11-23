@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, warngeo, news, topics, et, health-test, osm, deepsouth, social, more, storms, roads, dense, fulltext, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt, probe-mt-conf, probe-mt-th); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, warngeo, news, topics, et, health-test, osm, deepsouth, social, more, transcripts, storms, roads, dense, fulltext, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt, probe-mt-conf, probe-mt-th); empty runs all"
         required: false
         default: ""
       lane:
@@ -252,6 +252,37 @@ jobs:
           npm install --no-save --no-audit --no-fund pdfjs-dist@4.10.38 >/dev/null 2>&1 || echo "pdfjs-dist not installed"
           node tools/refresh_more.mjs
         continue-on-error: true
+      # Official briefing transcripts (tools/refresh_transcripts.mjs): new briefing videos where official bodies publish them
+      # (tools/briefing_sources.json: DVIDS and official government Telegram channels), the exact file hashed, its sound sent to
+      # OpenAI's Whisper, the words kept as the speaker's claims and marked AI generated (data/live/transcripts.js and .json).
+      # It needs the repository secret OPENAI_API_KEY; without it this step does nothing. Main only, so every minute it pays for is
+      # counted. Cost cap: the repository variable STT_DAILY_MIN audio minutes per UTC day (default 120, about $0.72 a day at
+      # $0.006 a minute; 0 turns it off). The day's count is also kept in the Actions cache, so a lost commit never resets it.
+      - name: Restore the transcript cost ledger
+        if: ${{ github.ref == 'refs/heads/main' && ((!inputs.only && inputs.lane != 'news') || inputs.only == 'transcripts') }}
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .stt-ledger
+          key: stt-ledger-${{ github.run_id }}
+          restore-keys: stt-ledger-
+      - name: Transcribe official briefing videos (only with the OPENAI_API_KEY secret)
+        if: ${{ github.ref == 'refs/heads/main' && ((!inputs.only && inputs.lane != 'news') || inputs.only == 'transcripts') }}
+        timeout-minutes: 8
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          STT_DAILY_MIN: ${{ vars.STT_DAILY_MIN }}
+          STT_LEDGER: .stt-ledger/usage.json
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then echo "No OPENAI_API_KEY secret: briefing transcripts are off"; exit 0; fi
+          command -v ffmpeg >/dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null; }
+          node tools/refresh_transcripts.mjs
+        continue-on-error: true
+      - name: Keep the transcript cost ledger
+        if: ${{ always() && github.ref == 'refs/heads/main' && hashFiles('.stt-ledger/usage.json') != '' }}
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .stt-ledger
+          key: stt-ledger-${{ github.run_id }}
       # Shapes of the sea and airspace warnings for Map overlays > Airspace and sea warnings (tools/refresh_warngeo.mjs):
       # NGA broadcast warnings, FAA temporary flight restrictions and EASA conflict zone bulletins, into data/live/warnings-geo.json.
       - name: Pull sea and airspace warning shapes (NGA, FAA TFR, EASA CZIB)

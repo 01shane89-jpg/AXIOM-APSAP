@@ -233,3 +233,7 @@ openNear: function (pl, km) {
 
 # the 2D base map engine follows the Leaflet view exactly, never re-centres or zooms itself (World view drift, 2026-11-15)
 transformConstrain: function (c, z) { return { center: c, zoom: z }; } });
+
+# official briefing transcripts (tools/refresh_transcripts.mjs)
+  src.push("data/live/transcripts.js");
+if (layer === "social" && window.ASAP_TRANSCRIPTS && window.ASAP_TRANSCRIPTS.items) cur = cur.concat(window.ASAP_TRANSCRIPTS.items[CC] || []);
