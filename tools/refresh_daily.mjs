@@ -12,14 +12,19 @@
 // Env: GITHUB_TOKEN, DAILY_MODEL, DAILY_FORCE=1 (build today again), DAILY_CONTINUE=1 (carry on today's AI drafts now, where the
 // runner's own model is up: .github/workflows/refresh-ai.yml), DAILY_AI_PER_RUN, DAILY_AI_BUDGET_MIN (stop starting new
 // drafts after this many minutes), DAILY_ONLY=cc,cc (test), DAILY_END (ISO, test), OSAP_LOCAL_LLM + OSAP_LOCAL_MODEL, OSAP_AI_ORDER.
+// Shards (.github/workflows/refresh-daily-ai.yml): DAILY_CONTINUE=1 DAILY_SHARD=k/n drafts one shard of today's queue (from
+// the back, tools/daily_lib.mjs shardQueue) and DAILY_OUT=<dir> copies each country file it drafted there; DAILY_REINDEX=1,
+// after tools/daily_merge.mjs has put the shards' drafts in place, rewrites data/live/daily.js from the country files and
+// drafts nothing.
 import fs from "node:fs";
 import { gateway, parseJsonReply } from "./ai_gateway.mjs";
 import { compileRelevance } from "./topics_lib.mjs";
-import { buildRules, buildWorld, validateAi, fromRow, fromConflict, fingerprint, scrubDay, dropOverclaims, softSection, aiQueue, SCHEMA, WW } from "./daily_lib.mjs";
+import { buildRules, buildWorld, validateAi, fromRow, fromConflict, fingerprint, scrubDay, dropOverclaims, softSection, aiQueue, shardQueue, SCHEMA, WW } from "./daily_lib.mjs";
 
 const DIR = "data/live/daily", INDEX = "data/live/daily.js", KEEP = 7, PROMPT_V = "daily/3";
 const MODEL = process.env.DAILY_MODEL || "openai/gpt-4.1-mini";
-const AI_PER_RUN = +(process.env.DAILY_AI_PER_RUN || 45), AI_BUDGET_MS = +(process.env.DAILY_AI_BUDGET_MIN || 0) * 60e3;
+const REINDEX = !!process.env.DAILY_REINDEX, SHARD = process.env.DAILY_SHARD || "", OUT = process.env.DAILY_OUT || "";
+const AI_PER_RUN = REINDEX ? 0 : +(process.env.DAILY_AI_PER_RUN || 45), AI_BUDGET_MS = +(process.env.DAILY_AI_BUDGET_MIN || 0) * 60e3;
 const AI = gateway({ githubModel: MODEL });
 const LABEL = "Draft, AI-generated from the cited sources, not analyst-approved";
 // AI goes first to World (the area a new user opens on), then the originally researched areas and the countries with an active conflict tab,
@@ -39,10 +44,14 @@ const retryDue = oldIdx.ai && oldIdx.ai.retry && oldIdx.ai.due > 0 && Date.now()
 // DAILY_CONTINUE skips the 3-hour wait (the news lane's own retries have no model to draft with: GitHub Models answers "OK"),
 // but still only when today's queue has countries left
 const continueDue = !!process.env.DAILY_CONTINUE && oldIdx.date === today && oldIdx.ai && oldIdx.ai.retry && oldIdx.ai.due > 0;
-if (process.env.DAILY_CONTINUE && !continueDue) {
+// a reindex only rewrites today's index after the shards' drafts were merged; a new day is the news lane's to build
+if (REINDEX && oldIdx.date !== today) {
+  console.log(`daily: the index is for ${oldIdx.date}, not today (${today}); nothing to reindex`); process.exit(0);
+}
+if (process.env.DAILY_CONTINUE && !continueDue && !REINDEX) {
   console.log(`daily: no AI drafts left to carry on today (${today}); nothing to do`); process.exit(0);
 }
-if (!process.env.DAILY_FORCE && !process.env.DAILY_ONLY && oldIdx.date === today && !retryDue && !continueDue) {
+if (!process.env.DAILY_FORCE && !process.env.DAILY_ONLY && oldIdx.date === today && !retryDue && !continueDue && !REINDEX) {
   console.log(`daily: today's summaries (${today}) are already built; nothing to do`); process.exit(0);
 }
 
@@ -118,10 +127,12 @@ const prev = {};
 for (const cc of only || ccs) { const p = readWin(`${DIR}/${cc}.js`, "OSAP_DAILY"); prev[cc] = p && p[cc]; }
 // a retry (not forced) skips the countries an earlier run already drafted today, so it carries on down the list
 const draftedToday = (cc) => { const o = prev[cc] && prev[cc].days && prev[cc].days[0]; return !!(o && o.date === today && o.method === "ai"); };
-const focus = aiQueue((only || ccs).filter((cc) => built[cc].refs.length >= 2 && built[cc].events.length), {
+const queue = aiQueue((only || ccs).filter((cc) => built[cc].refs.length >= 2 && built[cc].events.length), {
   priority: PRIORITY, conflict: (cc) => !!confByCc[cc], reports: (cc) => built[cc].basis.reports, doneToday: draftedToday, skipDone: !process.env.DAILY_FORCE });
+const focus = shardQueue(queue, SHARD);
 let made = 0, hardErrs = 0; const errs = [], aiT0 = Date.now(), byProvider = {};
-if (AI.available()) for (const cc of focus) {
+const draftedNow = [];
+if (AI.available() && !REINDEX) for (const cc of focus) {
   if (stop || made >= AI_PER_RUN) break;
   if (AI_BUDGET_MS && Date.now() - aiT0 > AI_BUDGET_MS) { stop = "time budget used"; break; }
   const d = built[cc];
@@ -134,17 +145,18 @@ if (AI.available()) for (const cc of focus) {
     if (!v) { errs.push(cc + ": no cited top line"); continue; }
     d.rules_bluf = d.bluf; d.bluf = v.bluf; d.ai_watch = v.watch; d.method = "ai"; d.model = res.model; d.provider = res.provider; d.prompt = PROMPT_V; d.label = LABEL; d.ms = Date.now() - t0;
     if (res.usage) d.tokens = { in: res.usage.prompt_tokens, out: res.usage.completion_tokens };
-    made++; byProvider[res.provider] = (byProvider[res.provider] || 0) + 1;
+    made++; draftedNow.push(cc); byProvider[res.provider] = (byProvider[res.provider] || 0) + 1;
   } catch (e) {
     // a reply that is not JSON costs that country its AI line, not the run: only failures of the model itself stop it
     errs.push(cc + ": " + e.message.slice(0, 120)); if (!e.soft && ++hardErrs > 5) { stop = "too many errors"; break; }
   }
 }
-index.ai.made = made; index.ai.due = focus.length - made; index.ai.stopped = stop || (AI.available() ? "" : aiStop()); index.ai.errors = errs.slice(0, 5);
+// a shard's due counts only its own part; the reindex after the shards counts the whole queue again
+index.ai.made = made; index.ai.due = focus.length - made; if (SHARD) index.ai.shard = SHARD; index.ai.stopped = REINDEX ? "reindexed after the shards" : stop || (AI.available() ? "" : aiStop()); index.ai.errors = errs.slice(0, 5);
 index.ai.providers = byProvider; if (process.env.OSAP_LOCAL_LLM) index.ai.local = process.env.OSAP_LOCAL_MODEL || "local";
 // a later run today tries the AI step again for the countries not yet drafted, whether this run stopped or used its per-run
 // share (the rules summaries stay meanwhile)
-index.ai.retry = made < focus.length;
+index.ai.retry = REINDEX ? queue.length > 0 : made < focus.length;
 
 // ---------- write ----------
 fs.mkdirSync(DIR, { recursive: true });
@@ -171,6 +183,7 @@ for (const cc of only || ccs) {
 if (mtScrubbed) console.log(`daily: ${mtScrubbed} source headlines in kept summaries failed the machine translation guard and now show their original words`);
 if (ocDropped) console.log(`daily: ${ocDropped} AI lines in kept summaries were dropped or cut back (a report called confirmed with no cited headline saying so, an institution given the wrong country, or a line stopping mid-sentence)`);
 index.ai.total = Object.values(index.countries).filter((c) => c.method === "ai").length;   // countries whose summary today is an AI draft
+if (OUT) { fs.mkdirSync(OUT, { recursive: true }); for (const cc of draftedNow) fs.copyFileSync(`${DIR}/${cc}.js`, `${OUT}/${cc}.js`); }
 if (!only) fs.writeFileSync(INDEX, "window.OSAP_DAILY_INDEX=" + JSON.stringify(index) + ";\n");
 const n = Object.values(built), quiet = n.filter((d) => !d.basis.reports).length;
 console.log(`daily ${today}: ${n.length} countries, ${n.length - quiet} with reports, ${quiet} quiet; AI top lines ${made} this run, ${index.ai.total} of ${n.length} today, ${focus.length - made} still due` + (stop ? `; AI stopped: ${stop}` : "") + (errs.length ? `; errors: ${errs.join(" | ")}` : ""));
