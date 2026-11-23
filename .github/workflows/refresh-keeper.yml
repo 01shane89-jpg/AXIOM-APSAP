@@ -98,6 +98,18 @@ jobs:
                 echo "$(date -u +%H:%MZ) a $wf run is still waiting; skipping this round"
               fi
             done
+            # radiation near nuclear sites (refresh-rad.yml, about 1.5 min a run): its "every 30 min" schedule fired 16 times in the
+            # 48 h to 23 Nov 2026 15:00Z (96 due), 3 to 4 h apart, and the late-job restart only steps in at 4 h, so each sensor's
+            # hourly readings in state.json had gaps of 3 h and more. Every second round (about every 30 minutes), start one unless
+            # one is already waiting.
+            if [ $(( round % 2 )) = 1 ]; then
+              rq=$(( $(gh run list --workflow refresh-rad.yml --branch main --status queued --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 1) + $(gh run list --workflow refresh-rad.yml --branch main --status pending --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 1) ))
+              if [ "$rq" = "0" ]; then
+                gh workflow run refresh-rad.yml --ref main && echo "$(date -u +%H:%MZ) started refresh-rad.yml" || echo "$(date -u +%H:%MZ) could not start refresh-rad.yml"
+              else
+                echo "$(date -u +%H:%MZ) a refresh-rad.yml run is still waiting; skipping this round"
+              fi
+            fi
             # any other scheduled data job that is late (data/live/health.json jobs; tools/late_jobs.mjs): start it again, at most
             # once per 2 hours each, so a job whose own schedule GitHub skips does not sit late (refresh-avwx.yml "every 20 min" and
             # refresh-darkships.yml "every 15 min" fired only every 4 to 9 h in the week to 20 Nov 2026). The live health file is
