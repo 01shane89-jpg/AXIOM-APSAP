@@ -2,13 +2,14 @@ name: Flash alerts loop
 
 # Push alerts within about a minute of a source publishing, instead of after a whole refresh lane (tools/flash_loop.mjs).
 # One runner stays awake for about 5 h 20 min (under GitHub's 6-hour job limit), asking USGS every 15 seconds, the NOAA tsunami
-# warning centers every minute and GDACS every 2 minutes, taking main's newest data every minute, and running the push check (tools/push_watches.mjs) whenever something
+# warning centers every minute and GDACS every 2 minutes, 40 English wire, agency and official news feeds about every minute
+# (tools/flash_feeds.json, tools/flash_news.mjs; a serious item asks its country's other English feeds at once), taking main's newest data every minute, and running the push check (tools/push_watches.mjs) whenever something
 # changed. Then it starts a fresh copy of itself, as the refresh keeper does. The hourly schedule restarts the chain if it ever
 # breaks; only one loop runs at a time and GitHub keeps at most one waiting, so hand-overs never double up.
 # It commits nothing, so it starts no Netlify or GitHub Pages builds (tools/netlify_ignore.mjs is not involved).
 # While a loop runs or waits, the push job in refresh-flood.yml stands aside; both keep the same seen-list in the Actions cache.
 # Free while the repository is public (standard GitHub-hosted runners cost nothing for public repositories).
-# On a feature branch (a test): FLASH_NO_MAIN, a short loop, and with test=1 a throwaway list of test watches on a random ntfy
+# On a feature branch (a test): FLASH_NO_MAIN (main is read, not taken, to time how much earlier fast news items were seen), a short loop, and with test=1 a throwaway list of test watches on a random ntfy
 # channel, read back at the end, so a change can be timed without touching any account's watches.
 on:
   schedule:

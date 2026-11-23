@@ -10,24 +10,34 @@
 //     after the hourly lane (competitor gap, Shane 2026-11-18 "close the gap");
 //   - every 60 s fetches main's newest commit and takes its data/ (so the fast and news lanes' commits are checked within a
 //     minute of landing, not after the push job's own start-up);
+//   - about every minute asks a short list of English wire, state agency, official and newspaper-of-record RSS feeds
+//     (tools/flash_feeds.json, tools/flash_news.mjs) and lays their new items into each country's news file, and when one is
+//     serious asks that country's other English feeds at once, so a second source's report is in too (a news FLASH needs two);
+//     before this a news report reached a push only through the news lane, a median 47 minutes after the outlet's own time;
 //   - whenever any of that changed and there is at least one push watch, runs tools/push_watches.mjs on the new data, so the
 //     app's own matching rules (index.html wMatches) decide what is sent, exactly as in the push job.
 // Nothing is committed: the lanes still own the published files. The push job in refresh-flood.yml stands aside while a loop
 // runs or waits, so one seen-list (PUSH_STATE, kept in the Actions cache) decides what was sent and nothing goes out twice.
 // Logs name quake ids, magnitudes and counts only, never report text.
 // Env: FLASH_LOOP_MIN (default 320), FLASH_QUAKE_S (15), FLASH_GDACS_S (120), FLASH_TSU_S (60), FLASH_MAIN_S (60), FLASH_LIST_S (300),
-//      FLASH_NO_MAIN=1 (do not take main's data: a branch test of this file), plus tools/push_watches.mjs's own env.
+//      FLASH_NEWS_S (60; 0 = no fast news), FLASH_NO_MAIN=1 (do not take main's data: a branch test of this file; main is still
+//      read, never checked out, to time how much earlier the loop had each fast item), plus tools/push_watches.mjs's own env.
 import fs from "node:fs";
 import { execFileSync, spawn } from "node:child_process";
 import { USGS_HOUR, quakeRow, mergeQuakes } from "./quake_rows.mjs";
 import { fetchList } from "./push_lib.mjs";
-import { median } from "./flash_lib.mjs";
+import { median, serious } from "./flash_lib.mjs";
+import { FastNews, fastFeeds, layNews, linksIn, partFile } from "./flash_news.mjs";
+import { storyLink } from "./news_dedupe.mjs";
+import { loadRelevance } from "./topics_lib.mjs";
+import { loadGazetteer } from "./gazetteer.mjs";
 
 const env = process.env, S = (k, d) => Math.max(5, +(env[k] || d)) * 1000;
 const END = Date.now() + Math.max(1, +(env.FLASH_LOOP_MIN || 320)) * 60e3;
-const EVERY = { quake: S("FLASH_QUAKE_S", 15), gdacs: S("FLASH_GDACS_S", 120), tsu: S("FLASH_TSU_S", 60), main: S("FLASH_MAIN_S", 60), list: S("FLASH_LIST_S", 300) };
+const NEWS_ON = env.FLASH_NEWS_S !== "0";
+const EVERY = { quake: S("FLASH_QUAKE_S", 15), gdacs: S("FLASH_GDACS_S", 120), tsu: S("FLASH_TSU_S", 60), main: S("FLASH_MAIN_S", 60), list: S("FLASH_LIST_S", 300), news: 5000 };
 const QFILE = "data/live/quakes.js", GFILE = "data/live/gdacs.js", TFILE = "data/live/tsunami.js";
-const due = { quake: 0, gdacs: 0, tsu: 0, main: 0, list: 0 };
+const due = { quake: 0, gdacs: 0, tsu: 0, main: 0, list: 0, news: NEWS_ON ? 0 : Infinity };
 const zt = () => new Date().toISOString().slice(11, 19) + "Z";
 const log = (s) => console.log(`flash ${zt()} ${s}`);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -122,10 +132,68 @@ function main() {
   const sha = execFileSync("git", ["rev-parse", "FETCH_HEAD"], { encoding: "utf8" }).trim();
   if (sha === mainSha) return false;
   mainSha = sha;
+  if (env.FLASH_NO_MAIN) { onMain((cc) => { try { return execFileSync("git", ["show", "FETCH_HEAD:" + partFile(cc)], { encoding: "utf8", maxBuffer: 64e6, stdio: ["ignore", "pipe", "ignore"] }); } catch (e) { return ""; } }); return false; }
   execFileSync("git", ["checkout", "-q", "FETCH_HEAD", "--", "data"], { stdio: "ignore", timeout: 120000 });
   layQuakes();   // main's quakes.js can be older than the loop's newest hour
+  onMain(null);  // and main's news files may not carry the loop's fast items yet
   log(`main is at ${sha.slice(0, 7)}: took its data`);
   return true;
+}
+
+// ---------- fast news ----------
+// pending: fast items main did not carry yet when the loop laid them (storyLink -> { cc, item, seen, firstPoll })
+const pending = new Map(), newsLag = [], leadS = [];
+let news = null, newsAdded = 0, bursts = 0, burstAdded = 0;
+async function newsSetup() {
+  const listed = JSON.parse(fs.readFileSync("tools/news_feeds.json", "utf8"));
+  const feeds = fastFeeds(listed, JSON.parse(fs.readFileSync("tools/flash_feeds.json", "utf8")).feeds);
+  let gz = null;
+  try { gz = await loadGazetteer(); } catch (e) { log(`gazetteer unavailable (${String(e.message || e).slice(0, 60)}): fast news items left unplaced`); }
+  news = new FastNews({ feeds, listed, R: await loadRelevance(), gz, base: Math.max(30, +(env.FLASH_NEWS_S || 60)), log });
+  log(`fast news: ${feeds.length} feeds about every ${news.base} s`);
+}
+async function fastNews() {
+  if (!news) await newsSetup();
+  const now = Date.now(), got = await news.round(now);
+  let changed = false;
+  for (const [cc, list] of Object.entries(got)) {
+    const fresh = list.filter((i) => !pending.has(storyLink(i.link)));
+    if (!fresh.length) continue;
+    const add = layNews(cc, fresh.map(clean));
+    if (!add.length) continue;
+    changed = true;
+    const byLink = new Map(fresh.map((i) => [i.link, i]));
+    for (const a of add) {
+      const i = byLink.get(a.link) || {}, out = Math.round((now - Date.parse(a.date + "Z")) / 1000);
+      pending.set(storyLink(a.link), { cc, item: a, seen: now, first: !!i._first });
+      if (i._burst) burstAdded++; else newsAdded++;
+      // the first answer of a feed holds items from before the loop started: not a measure of it
+      if (!i._first) { if (!i._burst) newsLag.push(out); log(`new fast item ${cc} ${a.outlet}${i._burst ? " (burst)" : ""}: ${out} s after its outlet's time${serious({ t: a.title_en }) ? ", serious" : ""}`); }
+      // a burst follows a new serious report, not one from before the loop started or one a burst found
+      if (!i._first && !i._burst && serious({ t: a.title_en })) { const n = news.burst(cc, now); if (n) { bursts++; log(`burst: asking ${n} more ${cc} feed(s) at once`); } }
+    }
+  }
+  // old pending items: main carries them by now or never will (the lane's own cut); stop re-laying them
+  for (const [k, p] of pending) if (now - p.seen > 3 * 36e5) pending.delete(k);
+  return changed;
+}
+const clean = (i) => { const o = { ...i }; delete o._first; delete o._burst; return o; };
+/* main moved: time each pending item main now carries (how much earlier the loop had it), re-lay the rest. read(cc) gives the text
+   of main's file for cc without checking it out (a branch test); null means main's data was checked out */
+function onMain(read) {
+  const by = {};
+  for (const [k, p] of pending) (by[p.cc] = by[p.cc] || []).push([k, p]);
+  for (const [cc, list] of Object.entries(by)) {
+    let have;
+    if (read) { const t = read(cc), tmp = ".flash-main-" + cc + ".js"; fs.writeFileSync(tmp, t || ""); have = linksIn(cc, tmp); fs.rmSync(tmp, { force: true }); }
+    else have = linksIn(cc);
+    const left = [];
+    for (const [k, p] of list) {
+      if (have.has(k)) { if (!p.first) { const s = Math.round((Date.now() - p.seen) / 1000); leadS.push(s); log(`main now carries a fast ${cc} item the loop had ${s} s earlier`); } pending.delete(k); }
+      else left.push(p.item);
+    }
+    if (!read && left.length) layNews(cc, left);
+  }
 }
 
 // ---------- the push check ----------
@@ -149,9 +217,8 @@ function pushCheck(why) {
 }
 
 // ---------- the loop ----------
-log(`started; runs until ${new Date(END).toISOString().slice(11, 16)}Z; quakes every ${EVERY.quake / 1000} s, GDACS every ${EVERY.gdacs / 1000} s, tsunami bulletins every ${EVERY.tsu / 1000} s, main every ${EVERY.main / 1000} s`);
+log(`started; runs until ${new Date(END).toISOString().slice(11, 16)}Z; quakes every ${EVERY.quake / 1000} s, GDACS every ${EVERY.gdacs / 1000} s, tsunami bulletins every ${EVERY.tsu / 1000} s, main every ${EVERY.main / 1000} s${env.FLASH_NO_MAIN ? " (read only, to time fast news)" : ""}, fast news ${NEWS_ON ? "on" : "off"}`);
 let checks = 0, errors = 0;
-if (env.FLASH_NO_MAIN) due.main = Infinity;
 while (Date.now() < END) {
   const now = Date.now(), why = [];
   const step = async (k, fn) => {
@@ -169,9 +236,15 @@ while (Date.now() < END) {
   await step("quake", quakes);
   await step("gdacs", gdacs);
   await step("tsu", tsunami);
+  await step("news", fastNews);
   if (why.length && watches > 0) { checks++; await pushCheck(why.join("+")); }
   await sleep(Math.max(1000, Math.min(...Object.values(due)) - Date.now()));
 }
 const f = (a) => (a.length ? `median ${median(a)}, fastest ${Math.min(...a)}, slowest ${Math.max(...a)}` : "none");
 log(`done: ${checks} push check(s), ${errors} error(s); push check seconds ${f(scanS.map(Math.round))}`);
 log(`new quakes seen ${qLag.length}: seconds after they happened ${f(qLag)}; seconds after USGS published them ${f(pubLag)}`);
+if (news) {
+  log(`fast news: ${news.requests} request(s), ${news.notModified} not modified, ${news.failures} failed; ${newsAdded} item(s) laid before main had them, ${bursts} burst(s) adding ${burstAdded}`);
+  log(`fast news items seen after the loop started ${newsLag.length}: seconds after their outlet's time ${f(newsLag)}`);
+  log(`fast news items main later carried ${leadS.length}: seconds the loop had them earlier ${f(leadS)}; still not on main ${[...pending.values()].filter((p) => !p.first).length}`);
+}
