@@ -31,6 +31,8 @@ function postLocal(url, headers, body, signal) {
 
 // Claude Haiku 5.5 list prices, US dollars per million tokens (prompts up to 100K tokens; a daily summary prompt is about 3K)
 export const ANTHROPIC_PRICE = { "claude-haiku-5-5": { in: 0.10, out: 0.50 } };
+// an Anthropic 400 about the account rather than the request: no later call can succeed this run
+export const ACCOUNT_400 = /identity verification|verif(y|ication) (your|the) (identity|organization)|credit balance|billing|organization (has been|is) (disabled|suspended)|not (yet )?enabled/i;
 export const anthropicCost = (model, usage) => {
   const p = ANTHROPIC_PRICE[model] || ANTHROPIC_PRICE["claude-haiku-5-5"], u = usage || {};
   return ((u.input_tokens || u.prompt_tokens || 0) * p.in + (u.output_tokens || u.completion_tokens || 0) * p.out) / 1e6;
@@ -70,6 +72,7 @@ export function gateway({ token = process.env.GITHUB_TOKEN || "", githubModel = 
     return { content, provider: "anthropic", model: res.model || p.model,
       usage: { prompt_tokens: (res.usage && res.usage.input_tokens) || 0, completion_tokens: (res.usage && res.usage.output_tokens) || 0, cost_usd: +cost.toFixed(6) } };
   }
+  let bad400 = 0;
   async function chat({ messages, max_tokens = 600, temperature = 0.2, json = true }) {
     for (const p of providers) {
       if (dropped[p.id]) continue;
@@ -77,14 +80,20 @@ export function gateway({ token = process.env.GITHUB_TOKEN || "", githubModel = 
         // a hard cap: the next call is counted at what the last one cost (or a cent, before the first), so it never goes over
         if (spend.usd + (spend.last || 0.01) > anthropicCapUsd) { dropped[p.id] = `spend cap reached ($${spend.usd.toFixed(4)} of $${anthropicCapUsd.toFixed(4)} for this run)`; continue; }
         const t0 = Date.now();
-        try { return { ...(await claude(p, messages, max_tokens)), ms: Date.now() - t0 }; }
+        try { const out = await claude(p, messages, max_tokens); bad400 = 0; return { ...out, ms: Date.now() - t0 }; }
         catch (e) {
           if (e.soft) throw e;
           // the SDK's errors carry the HTTP status: a bad key, no access, a rate limit or a server fault drops Claude for the
           // run and the free providers carry on; so does a missing SDK or a network failure (after the SDK's own retries)
           const st = e && e.status;
           if (!st || [401, 403, 404, 429].includes(st) || st >= 500) { dropped[p.id] = st ? "HTTP " + st : "no answer (" + String(e && e.message).slice(0, 80) + ")"; continue; }
-          throw new Error("anthropic HTTP " + st + ": " + String(e.message).slice(0, 160));
+          // a 400 about the account (identity verification, credit, billing, a disabled organization) will fail every call:
+          // drop Claude at once. Any other 400 drops it on the second in a row (the same request shape every country uses).
+          // Either way this request goes on to the free providers (23 Nov: a key on an unverified account stopped the run).
+          const msg = String(e.message || "");
+          bad400 = st === 400 ? bad400 + 1 : 0;
+          if (st === 400 && (ACCOUNT_400.test(msg) || bad400 >= 2)) { dropped[p.id] = "HTTP 400: " + msg.replace(/^400\s*/, "").slice(0, 160); continue; }
+          throw new Error("anthropic HTTP " + st + ": " + msg.slice(0, 160));
         }
       }
       const body = { model: p.model, temperature, max_tokens, messages };

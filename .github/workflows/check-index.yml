@@ -55,10 +55,17 @@ jobs:
       - run: node tests/picture.test.mjs
       # Claim ledger: disputed stories followed past 72 hours (tools/ledger_lib.mjs, tools/claim_ledger.mjs, rules ledger-v1)
       - run: node tests/ledger.test.mjs
+      # Same story in other languages: AI proposals beside the claim ledgers, off without VOYAGE_API_KEY (tools/xlang_lib.mjs, rules xmatch-v1)
+      - run: node tests/xlang.test.mjs
       # Check it from space: next Sentinel passes over a strike report (assets/osap-space.js, rules space-v1)
       - run: node tests/space.test.mjs
       # Ask about this country (tools/ask_lib.mjs, netlify/functions/osap-ask.mjs): cited answers only, plan, quota, off without the key
       - run: node tests/ask.test.mjs
+      # Official briefing transcripts (tools/transcribe_lib.mjs, tools/refresh_transcripts.mjs): official sources only, cost caps,
+      # provenance, hallucination filter, off without the key (stand-in service, needs ffmpeg)
+      - run: |
+          command -v ffmpeg >/dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null; }
+          node tests/transcribe.test.mjs
       # team shared cases (tools/cases.mjs, netlify/functions/osap-cases.mjs): roles, case isolation, decision records
       - run: node tests/cases.test.mjs
       - run: node tests/case_vault.test.mjs
@@ -166,6 +173,8 @@ jobs:
       - run: node tests/flash_loop.test.mjs
       # alert speed scorecard: what it reads from the flash loop's log, targets (tools/speed_scorecard.mjs)
       - run: node tests/speed_scorecard.test.mjs
+      # fast news in the flash loop: only feeds OSAP already reads, plain OSAP name, polite polling, no copy of a story twice (tools/flash_news.mjs)
+      - run: node tests/flash_news.test.mjs
       - run: node tests/terrain.test.mjs
       - run: node tests/terrain_layers.test.mjs
       - run: node tests/facility_intel.test.mjs

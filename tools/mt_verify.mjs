@@ -12,7 +12,7 @@
 //     for the refresh jobs). Without the key, without the SDK, past the daily cap or on any API error, translations stand on the
 //     rule checks alone, as before.
 //   - The daily cap (MT_VERIFY_DAILY_CAP translations a UTC day per refresh lane, default DAILY_CAP) and the per-run cap
-//     (MT_VERIFY_RUN_CAP, default RUN_CAP) count every translation sent, checked or not.
+//     (MT_VERIFY_RUN_CAP, default RUN_CAP) count every translation in an answered call; a refused call is not billed and not counted.
 //   - Every verdict is kept in data/live/mt-verify[-<lane>].json with the model the API reports, the prompt version and the time,
 //     keyed by the translation cache key and a hash of the English, so a translation is checked once. Logs carry counts only:
 //     never a headline, a translation or the key.
@@ -115,6 +115,14 @@ export async function sdkClient(key) {
   } catch (e) { return null; }
 }
 
+// The API's own error type and message (about the request, never its content), so a refused request can be fixed from the log.
+// Anything shaped like a key is masked, and the message is cut short.
+export function apiError(e) {
+  const b = e && e.error && e.error.error ? e.error.error : e && e.error ? e.error : null;
+  const type = String((b && b.type) || (e && e.name) || "error").slice(0, 40);
+  const msg = String((b && b.message) || (e && e.message) || "").replace(/sk-ant-[\w-]+/g, "[key]").replace(/\s+/g, " ").slice(0, 200);
+  return type + (msg ? ": " + msg : "");
+}
 const said = new Set(), once = (log, m) => { if (!said.has(m)) { said.add(m); log(m); } };
 const numEnv = (v, d) => (Number.isFinite(+v) && +v >= 0 && String(v).trim() !== "" ? Math.floor(+v) : d);
 
@@ -135,11 +143,10 @@ export async function verifyPairs(pairs, opts = {}) {
   if (!client) { once(log, "Claude check: Anthropic SDK not installed (npm ci --prefix netlify), rule checks only"); return out; }
   const todo = pairs.slice(0, left), batches = [];
   for (let i = 0; i < todo.length; i += BATCH) batches.push(i);
-  let stop = "", model = "", flagged = 0, failedCalls = 0; const kinds = {}; const t0 = Date.now();
+  let stop = "", errWhy = "", model = "", flagged = 0, failedCalls = 0; const kinds = {}; const t0 = Date.now();
   const one = async (start) => {
     if (stop) return;
     const b = todo.slice(start, start + BATCH);
-    st.usage.items += b.length; st.usage.calls++; st.dirty = true;
     let res;
     try {
       res = await client.messages.create({
@@ -150,11 +157,15 @@ export async function verifyPairs(pairs, opts = {}) {
     } catch (e) {
       failedCalls++;
       const s = e && e.status;
+      if (!errWhy) errWhy = apiError(e);
       if (s === 401 || s === 403) stop = "the key was refused (" + s + ")";
       else if (s === 429) stop = "rate limited (429)";
       else if (s === 400) stop = "the request was refused (400)";
       return;
     }
+    // only an answered call counts toward the cap: a refused request is not billed, and counting it used up the day's cap
+    // while the account still needed verification (2026-11-23)
+    st.usage.items += b.length; st.usage.calls++; st.dirty = true;
     if (res && res.usage) { st.usage.in += res.usage.input_tokens || 0; st.usage.out += res.usage.output_tokens || 0; }
     if (!res || res.stop_reason === "refusal" || res.stop_reason === "max_tokens") { failedCalls++; return; }
     let o = null; const txt = (res.content || []).filter((c) => c && c.type === "text").map((c) => c.text).join("");
@@ -172,7 +183,7 @@ export async function verifyPairs(pairs, opts = {}) {
   for (let i = 0; i < batches.length; i += CONCURRENCY) await Promise.all(batches.slice(i, i + CONCURRENCY).map(one));
   log("Claude check (" + (model || VERIFY_MODEL) + ", " + VERIFY_PROMPT + "): " + out.size + " of " + todo.length + " translations checked, " +
     flagged + " failed" + (flagged ? " (" + Object.entries(kinds).map(([k, n]) => k + " " + n).join(", ") + ")" : "") +
-    (failedCalls ? ", " + failedCalls + " calls without an answer" : "") + (stop ? ", stopped: " + stop : "") +
+    (failedCalls ? ", " + failedCalls + " calls without an answer" : "") + (stop ? ", stopped: " + stop : "") + (errWhy ? " [" + errWhy + "]" : "") +
     (pairs.length > todo.length ? ", " + (pairs.length - todo.length) + " left for later" : "") +
     "; " + st.usage.items + " of " + dailyCap + " today, " + Math.round((Date.now() - t0) / 1000) + " s");
   return out;
