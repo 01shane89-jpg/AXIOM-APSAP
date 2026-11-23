@@ -272,6 +272,8 @@
         (W.OSAP_TRAIL ? '<button type="button" class="thshare" data-thshare title="A phone-sized picture of this story\'s reporting trail: the first report, who repeated it, headlines that deny or dispute it, and the sources. Claims, never a verdict.">Share this trail</button>' : "") +
         // Play on the map (assets/osap-trailmap.js): the same trail played over time, outlets lighting up where they are based
         (W.OSAP_TRAILMAP ? ' <button type="button" class="thshare" data-thmap="' + esc(top.cc + ":" + top.id) + '" title="Play this story\'s reporting trail on the map: each outlet lights up when it published, where it is based. Claims, never a verdict.">Play on the map</button>' : "") +
+        // Claim ledger (assets/osap-ledger.js): a disputed story followed past these 72 hours, for up to 30 days
+        (W.OSAP_LEDGERQ && W.OSAP_LEDGERQ.forThread(top.cc, top.id) ? ' <button type="button" class="thshare" data-thledger="' + esc(top.cc + ":" + W.OSAP_LEDGERQ.forThread(top.cc, top.id).id) + '" title="This story followed for up to 30 days: the first report, who repeated it, the official line, denials, figures that changed, and sensor checks. Claims, never a verdict.">Claim ledger</button>' : "") +
         '<div class="thtabs" role="tablist">' + [["parts", "The story", "Story"], ["dev", "Timeline", "Timeline"], ["check", "Check it", "Check it"], ["conn", "Connections", "Links"], ["all", "All reports", "Reports"]].map(function (b) {
           return '<button type="button" role="tab" data-thtab="' + b[0] + '" aria-selected="' + (tab === b[0]) + '" aria-label="' + esc(b[1]) + '"><span class="thl">' + esc(b[1]) + '</span><span class="thsh">' + esc(b[2]) + "</span></button>"; }).join("") + "</div>" : "") +
       '</div><div class="thbody">' + body +
@@ -310,6 +312,7 @@
     }
     trail = [{ cc: cc, id: id }]; tab = "parts"; nameSel = "";
     render(); load(cc, function () { render(); });
+    if (W.OSAP_LEDGERQ) W.OSAP_LEDGERQ.load(cc, function () { if (box) render(); });
     if (W.OSAP_OUTLETFACTSQ) W.OSAP_OUTLETFACTSQ.load(function () { if (box) render(); });
     var x = box.querySelector(".thx"); if (x) x.focus();
   }

@@ -100,6 +100,8 @@ tests/threads_smoke.mjs
 # Share this trail: the reporting trail of a Go deeper story as a 1080 x 1920 picture, and its ?trail= link (assets/osap-trail.js)
 tests/trail_smoke.mjs
 tests/trailmap_smoke.mjs
+# Claim ledger: a disputed story followed for up to 30 days, from Go deeper and Story coverage (assets/osap-ledger.js)
+tests/ledger_smoke.mjs
 tests/spikes_smoke.mjs
 tests/maploading_smoke.mjs
 tests/streets_english_smoke.mjs
