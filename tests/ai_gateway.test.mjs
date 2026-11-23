@@ -77,6 +77,23 @@ await t("a bad key (401) or a rate limit drops Claude for the run; the free prov
     assert.equal(r.provider, "local"); assert.equal(ai.status().dropped.anthropic, "HTTP " + st);
   }
 });
+await t("an account 400 (identity verification) drops Claude at once; this request and the rest go to the free provider", async () => {
+  const e400 = () => Object.assign(new Error('400 {"type":"error","error":{"type":"invalid_request_error","message":"Identity verification is required"}}'), { status: 400 });
+  const c = claudeStub([e400(), e400(), e400()]);
+  const ai = gateway({ token: "", localUrl: url, order: ["anthropic", "local"], anthropicKey: "k", anthropicCapUsd: 1, anthropicClient: c });
+  for (let i = 0; i < 3; i++) { plan = ["ok"]; assert.equal((await ai.chat(sys)).provider, "local"); }
+  assert.equal(c.calls.length, 1); assert.match(ai.status().dropped.anthropic, /^HTTP 400: .*Identity verification/);
+});
+await t("any other 400 costs that request; a second 400 in a row drops Claude, and a success in between resets it", async () => {
+  const e400 = () => Object.assign(new Error("400 prompt is too long"), { status: 400 });
+  const c = claudeStub([e400(), reply('{"a":1}'), e400(), e400()]);
+  const ai = gateway({ token: "", localUrl: url, order: ["anthropic", "local"], anthropicKey: "k", anthropicCapUsd: 1, anthropicClient: c });
+  await assert.rejects(ai.chat(sys), /anthropic HTTP 400/);
+  assert.equal((await ai.chat(sys)).provider, "anthropic");
+  await assert.rejects(ai.chat(sys), /anthropic HTTP 400/);
+  plan = ["ok"]; assert.equal((await ai.chat(sys)).provider, "local"); assert.match(ai.status().dropped.anthropic, /^HTTP 400/);
+  plan = ["ok"]; assert.equal((await ai.chat(sys)).provider, "local"); assert.equal(c.calls.length, 4);
+});
 await t("a refusal or a cut-off reply costs that request only (soft), and Claude stays on", async () => {
   const c = claudeStub([reply("", undefined, "refusal"), reply("{", undefined, "max_tokens"), reply('{"b":1}')]);
   const ai = gateway({ token: "", order: ["anthropic"], anthropicKey: "k", anthropicCapUsd: 1, anthropicClient: c });
