@@ -164,6 +164,8 @@ jobs:
       # flash alerts: which push alerts are flash first reports, flash-only watches, one corroboration follow-up (tools/flash_lib.mjs)
       - run: node tests/flash.test.mjs
       - run: node tests/flash_loop.test.mjs
+      # alert speed scorecard: what it reads from the flash loop's log, targets (tools/speed_scorecard.mjs)
+      - run: node tests/speed_scorecard.test.mjs
       - run: node tests/terrain.test.mjs
       - run: node tests/terrain_layers.test.mjs
       - run: node tests/facility_intel.test.mjs
