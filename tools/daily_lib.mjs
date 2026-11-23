@@ -325,3 +325,19 @@ export function aiQueue(ccs, { priority = [], conflict = () => 0, reports = () =
   return ccs.filter((c) => !(skipDone && doneToday(c)))
     .sort((a, b) => rank(b) - rank(a) || reports(b) - reports(a) || (a < b ? -1 : a > b ? 1 : 0));
 }
+
+// One shard's part of today's AI queue (.github/workflows/refresh-daily-ai.yml). The 3-hourly rounds in refresh-ai.yml draft
+// from the front of the queue (priority and busiest first), so the shards take it from the back, dealt out in turn: the two
+// meet in the middle instead of drafting the same countries. shard is "k/n" with k counted from 0; anything else is no shard.
+export function shardQueue(queue, shard) {
+  const m = /^(\d+)\/(\d+)$/.exec(String(shard || "")); if (!m) return queue;
+  const k = +m[1], n = +m[2]; if (!(n > 0) || k >= n) return [];
+  return [...queue].reverse().filter((_, i) => i % n === k);
+}
+// Whether a shard's file for one country should replace the one on main: only a draft made today by the AI, and only where
+// main has no AI draft of today yet (a round in refresh-ai.yml may have drafted it meanwhile; that draft stays).
+export function takeShardDay(shardDoc, mainDoc, today) {
+  const s = shardDoc && shardDoc.days && shardDoc.days[0], m = mainDoc && mainDoc.days && mainDoc.days[0];
+  if (!s || s.date !== today || s.method !== "ai") return false;
+  return !(m && m.date === today && m.method === "ai");
+}
