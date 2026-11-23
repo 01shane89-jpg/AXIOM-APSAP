@@ -4,6 +4,8 @@
 //                          summary sources only, every sentence cited, labelled a draft. Not saved anywhere.
 // Off until the owner adds ANTHROPIC_API_KEY to the Netlify environment (Shane 2026-11-18): until then POST answers 503 and the
 // rest of OSAP is unchanged. OSAP_ASK_DAILY_CAP sets the site's questions a day (default tools/ask_lib.mjs ASK_DAILY_CAP).
+// Shane added the key on 23 Nov 2026 (Production context only, so deploy previews stay off). Netlify reads a new environment
+// variable only at the next deploy, which is why the change that added this line went out with "[deploy now]".
 // Logs carry the country, counts and timings only: never the question, the sources or the answer, never the key.
 import Anthropic from "@anthropic-ai/sdk";
 import { getStore } from "@netlify/blobs";
