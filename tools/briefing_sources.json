@@ -1,0 +1,25 @@
+{
+  "note": "Official briefing videos that tools/refresh_transcripts.mjs turns into AI transcripts. Official publishers only: a government body's own channel or a government media hub, never a news outlet, state media, a mirror or an aggregator. Each video is read where the body itself published it (no logins, proxies or spoofed clients). A transcript is the speaker's claim, never a finding. Telegram channels are named here and their country, kind and language come from tools/social_accounts.json, so the two lists never disagree. Added 2026-11-23.",
+  "dvids": {
+    "note": "DVIDS (Defense Visual Information Distribution Service), the US Department of Defense's media hub. Its videos are US government works (public domain) with a direct MP4 on its own CDN. Only titles that name a briefing, press conference, news conference, media availability, press gaggle or remarks are taken, not B-roll or features.",
+    "feeds": ["https://www.dvidshub.net/rss/video"],
+    "cc": "us",
+    "kind": "government (military)",
+    "account": "DVIDS (US Department of Defense)",
+    "lang": "en"
+  },
+  "telegram_note": "Official government channels whose public web preview (t.me/s/<channel>) shows the video file itself. Videos Telegram marks too big for the preview are skipped, not fetched another way.",
+  "telegram": [
+    "mod_russia",
+    "mod_russia_en",
+    "MID_Russia",
+    "MFARussia",
+    "mchs_official",
+    "ministry_of_defense_ua",
+    "GeneralStaffZSU",
+    "V_Zelenskiy_official",
+    "dsns_telegram",
+    "idfofficial",
+    "IraqiPMO"
+  ]
+}
