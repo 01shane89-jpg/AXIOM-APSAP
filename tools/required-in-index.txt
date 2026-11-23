@@ -219,6 +219,7 @@ L.Polyline.prototype._projectLatlngs = function (lls, result, pxb) {
 <script src="assets/osap-gnss.js"></script>
 # ships gone quiet near chokepoints (claude/dark-ships)
 <script src="assets/osap-darkships.js"></script>
+<script src="assets/osap-choke.js"></script>
 <script src="assets/osap-warngeo.js"></script>
 <script src="assets/osap-grade.js"></script>
 <script src="assets/osap-econ.js"></script>
