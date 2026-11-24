@@ -73,8 +73,6 @@ jobs:
       - run: node tests/teams.test.mjs
       # Netlify production deploys come in batches (tools/netlify_ignore.mjs): 15 credits each
       - run: node tests/netlify_ignore.test.mjs
-      # a depth-1 run whose origin/main was moved by a fetch must not roll main back (24 Nov 2026 12:07Z)
-      - run: bash tests/push_rebase_shallow.test.sh
       # IMB PRC piracy map reader, the NGA ASAM backup (tools/imb_piracy.mjs)
       - run: node tests/imb_piracy.test.mjs
       - run: node tests/recaap_incidents.test.mjs

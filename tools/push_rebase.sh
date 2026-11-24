@@ -26,10 +26,6 @@ replay() {
 }
 for i in $(seq 1 "$tries"); do
   base=$(git rev-parse -q --verify "refs/remotes/origin/$b" || git rev-parse HEAD~1)
-  # The replay must start from a commit this checkout holds below HEAD. If something fetched the branch first and moved the
-  # ref, HEAD's shallow history does not reach it and the rebase would replay the checkout's whole tree, rolling back every
-  # newer change on the branch (24 Nov 2026 12:07Z). Fall back to the run's own commit in that case.
-  git merge-base --is-ancestor "$base" HEAD 2>/dev/null || { echo "push_rebase: origin/$b is not below HEAD, replaying HEAD only"; base=$(git rev-parse HEAD~1); }
   if timeout 180 git fetch -q --depth=1 origin "$b" && replay; then
     git update-ref "refs/remotes/origin/$b" FETCH_HEAD
     timeout 120 git push -q origin "HEAD:$b" && exit 0

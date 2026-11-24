@@ -268,10 +268,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           # this run checked out main hours ago; a country the shards (refresh-daily-ai.yml) drafted since then keeps that AI
           # draft, as the rebase below takes this run's side of every conflict (24 Nov 2026: 38 shard drafts lost that way)
-          # --refmap= leaves origin/main where the checkout put it: tools/push_rebase.sh replays the commits after that ref, and
-          # when this fetch moved it, the replay took this depth-1 checkout's whole tree with "theirs" and rolled main's newer code
-          # back (24 Nov 2026 12:07Z: #920, #921 and #922 undone). Only FETCH_HEAD is read here.
-          if git fetch -q --depth=1 --refmap= origin main && mkdir -p "$RUNNER_TEMP/main" && git archive FETCH_HEAD data/live/daily | tar -x -C "$RUNNER_TEMP/main"; then
+          if git fetch -q origin main && mkdir -p "$RUNNER_TEMP/main" && git archive origin/main data/live/daily | tar -x -C "$RUNNER_TEMP/main"; then
             # the index is rewritten only when a draft was taken, so this run's own AI notes (made, stopped, Claude) stay otherwise
             m=$(node tools/daily_merge.mjs "$RUNNER_TEMP/main/data/live/daily" || true); echo "$m"
             echo "$m" | grep -q ": [1-9][0-9]* shard drafts taken" && { DAILY_REINDEX=1 node tools/refresh_daily.mjs || echo "could not rewrite the index"; }

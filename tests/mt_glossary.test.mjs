@@ -169,21 +169,4 @@ t("Taiwan's actors keep their names: 共機, 共艦, 國軍, 陸委會 (CNA, PTS
   assert.equal(termMissing("【寄稿】公共機関の無理な地方分散", "Unreasonable decentralization of public institutions"), "", "Japanese 公共機関 is not 共機");
   assert.equal(protectTerms("偵獲15共機艦、4氣球侵擾"), "偵獲15共機艦、4氣球侵擾", "a combined 機艦 count is left to tools/mt_zh.mjs");
 });
-t("Korean island names are kept: 울릉도, 독도, 백령도 (Dong-A, Newsis, Kyunghyang, 2026-11-24)", () => {
-  const o = "러 군용기, 울릉도 코앞까지 접근…주민 대피 사이렌 울려";
-  assert.match(termMissing(o, "Russian military aircraft approaches Ulsan, and residents evacuation sirens sound"), /Ulleungdo/);
-  assert.equal(termMissing(o, "Russian military aircraft come close to Ulleungdo; evacuation sirens sound for residents"), "");
-  assert.equal(protectTerms(o), "러 군용기, Ulleungdo 코앞까지 접근…주민 대피 사이렌 울려");
-  assert.match(termMissing("울릉 주민들 대피", "Ulju residents evacuate"), /Ulleung/);
-  assert.match(termMissing("日시마네현 지사, 또 독도 영유권 주장", "Shimane governor again presses claims to Indochina"), /Dokdo/);
-  assert.equal(termMissing("日시마네현 지사, 또 독도 영유권 주장", "Shimane governor again claims Dokdo"), "");
-});
-t("核搭載 stays nuclear-armed, not nuclear-powered (Jiji, 2026-11-24)", () => {
-  const jiji = "ロシアが核搭載衛星計画か 年内打ち上げも";
-  assert.match(termMissing(jiji, "Russia's nuclear-powered satellite program likely to be launched in the year"), /nuclear-armed/);
-  assert.equal(termMissing(jiji, "Russia plans a nuclear-armed satellite, launch possible within the year"), "");
-  assert.match(termMissing("ロシアが年内に核弾頭搭載の衛星打ち上げ計画か", "Russia plans to launch a nuclear-powered satellite this year"), /nuclear-armed/);
-  assert.equal(termMissing("ロシアが年内に核弾頭搭載の衛星打ち上げ計画か", "Russia plans to launch a satellite carrying nuclear warheads this year"), "");
-  assert.equal(protectTerms(jiji), "ロシアが nuclear-armed 衛星計画か 年内打ち上げも");
-});
 console.log(ok + " passed");

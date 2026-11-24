@@ -30,7 +30,6 @@ const ZONES = [
 // original is kept), what the English must have, what was lost].
 const MINE_EN = /\b(?:land|sea)?mine|\bde-?min/i;
 const ATTACHE_EN = /\battach[eé]/i;
-const NUKE_ARMED = /^(?![\s\S]*nuclear[- ]powered)[\s\S]*(?:nuclear[- ]?(?:armed|warheads?|weapons?|tipped|capable|payloads?|arms|missiles?|bombs?)|warheads?|carrying nuclear|nuclear-carrying)/i;
 const KEEP = [
   [/\branjau(?:\s+laut)?\b/gi, "mine", MINE_EN, "mine"],                   // Indonesian, Malay
   [/ทุ่นระเบิด/g, "mine", MINE_EN, "mine"],                                // Thai
@@ -63,18 +62,7 @@ const KEEP = [
   [/(?<![公])共(?:機|机)(?![艦舰船])/g, "PLA aircraft", /\b(?:Chinese|China|PLA|Communist|CCP|CPC)\b/i, "PLA aircraft (共機)"],
   [/(?<![公])共(?:艦|舰)/g, "PLA warships", /\b(?:Chinese|China|PLA|PLAN|Communist|CCP|CPC)\b/i, "PLA warships (共艦)"],
   [/國軍/g, "Taiwan's armed forces", /^(?![\s\S]*\bJapan)[\s\S]*\b(?:Taiwan(?:ese)?|ROC|armed forces|military|army|troops|soldiers|defen[cs]e|forces)\b/i, "Taiwan's armed forces (國軍)"],
-  // 2026-11-24, Russian aircraft near Ulleungdo (IG P62): 울릉도 came out as "Ulsan" or "Ulju", a city 150 km away, in 38 of 40
-  // stored Korean lines; 독도 (Dokdo) as "Indochina" or "Donghae" in 17 of 17; 백령도 (Baengnyeongdo, on the northern limit line)
-  // lost in its one line. 대마도 is not pinned: 대마 is also "cannabis" and 도 "also".
-  [/울릉도/g, "Ulleungdo", /Ulleung|Ullung/i, "Ulleungdo (울릉도)"],
-  [/울릉(?!도)/g, "Ulleung", /Ulleung|Ullung/i, "Ulleung (울릉)"],
-  [/독도/g, "Dokdo", /Dokdo|Tokdo|Liancourt|Takeshima/i, "Dokdo (독도)"],
-  [/백령도/g, "Baengnyeongdo", /Baengnyeong|Paengnyong/i, "Baengnyeongdo (백령도)"],
   [/陸委會|陆委会/g, "Mainland Affairs Council", /Mainland Affairs Council|\bMAC\b/, "Mainland Affairs Council (陸委會)"],
-  // 2026-11-24, Russia's satellite (IG Post 63): Jiji's 核搭載衛星 (a satellite carrying nuclear arms) came out as a
-  // "nuclear-powered satellite". 核搭載 and 核弾頭搭載 are about weapons on board, not the power source (原子力).
-  [/核弾頭搭載/g, "carrying nuclear warheads", NUKE_ARMED, "nuclear-armed (核弾頭搭載)"],
-  [/核(?:兵器)?搭載/g, "nuclear-armed", NUKE_ARMED, "nuclear-armed (核搭載)"],
 ];
 // Iraq and Syria named in the English when the original names neither (Newtalk's 伊, Iran, read as "Iraqi forces" and
 // "Syria"; Korean 이란 as "Iraq"; a Croatian "Russians fired on a school" as "a Syrian attack"). Measured on the stored

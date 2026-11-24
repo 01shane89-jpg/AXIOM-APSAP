@@ -185,33 +185,15 @@
       .replace(/\?&+/, "?").replace(/&&+/g, "&").replace(/[?&]+$/, "").replace(/\/+$/, "");
   }
   function storyOf(r) { return (r.live || r.news || r.social) && r.url ? "u|" + normUrl(r.url) : "k|" + keyOf(r); }
-  /* the same headline at another link is the same story too: on 24 Nov 2026 two Malaysian outlets ran "18 locations
-     identified route, landing site of PATI in Kelantan" word for word, and the card listed it twice. Live feed headlines of four
-     words or more group by their wording (case, punctuation and spacing left out); the first copy stays on the list and the
-     other outlets that carried it are kept for alsoOf(), so the row can say so. */
-  function titleOf(r) {
-    /* an untranslated item's title is a stand-in ("Thai report from Matichon, not translated yet"): its original wording counts */
-    var w = r.untr ? r.orig : r.title;
-    if (!(r.live || r.news || r.social) || !w) return "";
-    var t = String(w).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
-    return t.split(" ").length >= 4 ? "t|" + t : "";
-  }
-  var ALSO = typeof WeakMap === "function" ? new WeakMap() : null;
-  function alsoOf(r) { return (ALSO && r && typeof r === "object" && ALSO.get(r)) || []; }
   function freshRecs(R, base) {
-    var old = {}, pick = {}, order = [], byTitle = {}, also = {};
-    R.forEach(function (r) { if (base[keyOf(r)]) { old[storyOf(r)] = 1; var t = titleOf(r); if (t) old[t] = 1; } });
+    var old = {}, pick = {}, order = [];
+    R.forEach(function (r) { if (base[keyOf(r)]) old[storyOf(r)] = 1; });
     R.forEach(function (r) {
-      var s = storyOf(r), t = titleOf(r), p = pick[s];
-      if (old[s] || (t && old[t])) return;
-      if (!p && t && byTitle[t] && byTitle[t] !== s) {
-        var name = r.src && r.src.name, first = pick[byTitle[t]], L = also[byTitle[t]] = also[byTitle[t]] || [];
-        if (name && name !== (first.src && first.src.name) && L.indexOf(name) < 0) L.push(name);
-        return;
-      }
-      if (!p) { pick[s] = r; order.push(s); if (t && !byTitle[t]) byTitle[t] = s; } else if (r.news && !p.news) pick[s] = r;
+      var s = storyOf(r), p = pick[s];
+      if (old[s]) return;
+      if (!p) { pick[s] = r; order.push(s); } else if (r.news && !p.news) pick[s] = r;
     });
-    return order.map(function (s) { var r = pick[s]; if (ALSO && r && typeof r === "object") ALSO.set(r, also[s] || []); return r; });
+    return order.map(function (s) { return pick[s]; });
   }
   function trackSeen(force) {
     var R = recs();
@@ -870,7 +852,7 @@
     new MutationObserver(function () { if (pend) return; pend = true; setTimeout(function () { pend = false; decorate(); }, 50); })
       .observe(document.body, { childList: true, subtree: true });
     decorate();
-    window.OSAP_WORK = { open: openWk, keyOf: keyOf, fresh: freshRecs, alsoOf: alsoOf, items: function () { return WORK.items; }, sourceDefaults: function () { return WORK.srcRel; }, addNote: addNote,
+    window.OSAP_WORK = { open: openWk, keyOf: keyOf, fresh: freshRecs, items: function () { return WORK.items; }, sourceDefaults: function () { return WORK.srcRel; }, addNote: addNote,
       /* the My work side panel: dock(section) opens it ("places" or "mine" opens that section), undock() closes it */
       dock: dockOpen, undock: dockClose, toggle: dockToggle, docked: function () { return DK.open; }, covers: dockCovers, pad: dockPad, sectionOpen: function (k) { return DK.open && dockSecOpen(k); } };
   }

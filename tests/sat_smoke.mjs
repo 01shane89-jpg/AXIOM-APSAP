@@ -219,8 +219,7 @@ const AREA = [[50.40, 30.45], [50.50, 30.45], [50.50, 30.60], [50.40, 30.60]];
   const { p, errors } = await open(ctx);
   await p.evaluate(() => { window.__asapMap.setView([50.45, 30.525], 12, { animate: false }); window.OSAP_SAT.mode("side"); window.OSAP_SAT.open(); });
   await p.waitForFunction(() => window.OSAP_SAT.state().bright, null, { timeout: 20000 }).catch(() => {});
-  /* both passes: waiting on the later one alone let the earlier one still be loading (main, 24 Nov 2026: [null, ...]) */
-  await p.waitForFunction(() => ["before", "after"].every((k) => { const c = document.querySelector('#satba [data-pic="' + k + '"] canvas'); if (!c) return false; const d = c.getContext("2d").getImageData(c.width >> 1, c.height >> 1, 1, 1).data; return d[0] < 200; }), null, { timeout: 20000 }).catch(() => {});
+  await p.waitForFunction(() => { const c = document.querySelector('#satba [data-pic="after"] canvas'); if (!c) return false; const d = c.getContext("2d").getImageData(c.width >> 1, c.height >> 1, 1, 1).data; return d[0] < 200; }, null, { timeout: 20000 }).catch(() => {});
   const bp = await pics(p);
   ok(await p.evaluate(() => window.OSAP_SAT.state().bright) && near(bp[0], [128, 64, 26, 255]) && near(bp[1], [128, 64, 26, 255]), "clipped-white picture: both passes drawn again from the 16-bit bands " + JSON.stringify(bp));
   ok(log.cog.some((c) => /WHITE\/B04\.tif/.test(c)) && log.cog.some((c) => /WHITE\/B02\.tif/.test(c)), "bands B04, B03, B02 read next to TCI.tif");
