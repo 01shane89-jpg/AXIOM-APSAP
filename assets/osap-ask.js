@@ -74,8 +74,12 @@
       e.preventDefault(); ask(f.querySelector("input").value);
     });
     var t = T();
-    if (!t || !t.on || !t.on() || cc === "ww") return;   // no server (GitHub Pages), or World: no card
-    call(null).then(function (r) { st.on = !!r.on; render(); }).catch(function () {});
+    if (!t || cc === "ww") return;   // World: no card
+    /* the plan loads after Today mounts this card when the app opens on Today, so asking OSAP_TIER.on() at once found no plan
+       and left the card hidden for good (Shane could not find Ask on 24 Nov 2026): wait for the plan first. No server (GitHub
+       Pages) still means no card. */
+    var go = function () { if (!t.on || !t.on()) return; call(null).then(function (r) { st.on = !!r.on; render(); }).catch(function () {}); };
+    if (t.ready && t.ready.then) t.ready.then(go, go); else go();
   }
   W.OSAP_ASKQ = { mount: mount };
 })();
