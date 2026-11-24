@@ -436,7 +436,9 @@
     h += '<span class="tdcount">' + N.length + " new since " + esc(s.baseAt ? when(s.baseAt) : "your last visit") + "</span></div>";
     if (!N.length) h += '<p class="tdobs">Nothing new since you last looked.</p>';
     N.slice(0, 4).forEach(function (x) {
-      h += '<button type="button" class="tdrow" data-rec="' + esc(x.r.id) + '">' + esc(x.r.title) + ' <span class="tdt">' + esc(x.r.src ? x.r.src.name : "") + (isFinite(x.ms) ? " · " + esc(ago(x.ms) || when(x.ms)) : "") + "</span></button>";
+      /* the same headline run by other outlets is one row that names them (assets/osap-work.js alsoOf) */
+      var A = W.alsoOf ? W.alsoOf(x.r) : [], also = A.length ? " · also " + A.slice(0, 2).join(", ") + (A.length > 2 ? " +" + (A.length - 2) : "") : "";
+      h += '<button type="button" class="tdrow" data-rec="' + esc(x.r.id) + '">' + esc(x.r.title) + ' <span class="tdt">' + esc(x.r.src ? x.r.src.name : "") + esc(also) + (isFinite(x.ms) ? " · " + esc(ago(x.ms) || when(x.ms)) : "") + "</span></button>";
     });
     h += '<div class="tdlinks">' + (N.length ? '<button type="button" class="tdlink" data-go="@new">See all ' + N.length + "</button>" : "") + '<button type="button" class="tdlink" data-go="@mine">My work</button></div></section>';
     return h;
