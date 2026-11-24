@@ -41,7 +41,7 @@ await t("a retry that passes both checks is used, recorded with model and prompt
   assert.equal(c.sent.tr.length, 1); assert.equal(c.sent.ck.length, 1);
   const r = st.records.k1;
   assert.equal(r.h, enHash("President Lee visits Washington")); assert.equal(r.v, "ok");
-  assert.deepEqual(r.retry, { at: now, prompt: RETRY_PROMPT, model: "claude-haiku-5-5-20261101", provider: "anthropic", ok: true, why: "" });
+  assert.deepEqual(r.retry, { at: new Date(now).toISOString().slice(0, 16), prompt: RETRY_PROMPT, model: "claude-haiku-5-5-20261101", provider: "anthropic", ok: true, why: "" });
   assert.ok(!JSON.stringify(r.retry).includes("Washington"), "the record holds no text");
   const again = await retryRejected(items, { key: "test", client: c, state: st, now, log: quiet });
   assert.equal(again.size, 0); assert.equal(c.sent.tr.length, 1, "once per headline");
