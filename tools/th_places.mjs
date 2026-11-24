@@ -9,8 +9,18 @@
 // Chumphon), and the names that are also common words (ตาก "to dry", แพร่ "to spread") only after a place marker
 // (จังหวัด, จ., อำเภอ, อ., เมือง, ชายแดน "the border of", ที่ "at") or next to another place ("ตาก-แม่ฮ่องสอน").
 import fs from "fs";
+import path from "path";
 
-const DATA = JSON.parse(fs.readFileSync(new URL("./mt/th_places.json", import.meta.url), "utf8"));
+/* next to this file in the repo; in a Netlify function the bundler moves this code to netlify/functions/, so the list that
+   netlify.toml's included_files ships sits at tools/mt/ under the function's working directory instead (24 Nov 2026: every
+   call to "Ask about this country" failed with ENOENT on netlify/functions/mt/th_places.json, and the card said "Off") */
+function placesFile() {
+  const at = [new URL("./mt/th_places.json", import.meta.url), path.join(process.cwd(), "tools/mt/th_places.json")];
+  if (typeof __dirname === "string") at.push(path.join(__dirname, "../../tools/mt/th_places.json"));
+  for (const f of at) { try { return fs.readFileSync(f, "utf8"); } catch (e) { if (e.code !== "ENOENT") throw e; } }
+  throw new Error("th_places.json not found (looked in " + at.map(String).join(", ") + ")");
+}
+const DATA = JSON.parse(placesFile());
 const PLACES = DATA.places, MARKED = new Set(DATA.marked || []);
 const BY_FIRST = new Map();
 for (const th of Object.keys(PLACES).sort((a, b) => b.length - a.length)) {
