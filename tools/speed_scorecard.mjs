@@ -58,6 +58,7 @@ export function markdown(o, hours, runs) {
     const s = stats(o.alerts[k]); L.push(`| ${label} | ${s.n} | ${fmt(s.med)} | ${fmt(s.p10)} | ${fmt(s.p90)} | | |`);
   }
   const qk = stats(o.quakes); L.push(`| Quakes: USGS published to seen | ${qk.n} | ${fmt(qk.med)} | ${fmt(qk.p10)} | ${fmt(qk.p90)} | | |`, "");
+  if (o.unread) L.push(`WARNING: ${o.unread} of ${o.logs || o.unread} loop log(s) could not be read, so these numbers are incomplete (a scorecard of 0 items is a read failure, not a quiet day).`, "");
   L.push(`Fast news requests ${o.requests}, failed ${o.failed}${o.requests ? " (" + ((100 * o.failed) / o.requests).toFixed(1) + "%)" : ""}.`);
   const slow = Object.entries(o.newsBy).map(([k, a]) => [k, stats(a)]).filter(([, s]) => s.n >= 2).sort((a, b) => b[1].med - a[1].med).slice(0, 5);
   if (slow.length) L.push("", "Slowest feeds (median, 2+ items): " + slow.map(([k, s]) => `${k} ${fmt(s.med)} (${s.n})`).join("; ") + ".");
@@ -67,21 +68,34 @@ export function markdown(o, hours, runs) {
 if (process.argv[1] && /speed_scorecard\.mjs$/.test(process.argv[1])) {
   const repo = process.env.GH_REPO || "01shane89-jpg/AXIOM-APSAP", hours = Math.max(1, +(process.env.SPEED_HOURS || 24));
   const since = Date.now() - hours * 36e5, gh = (p) => execFileSync("gh", ["api", p], { encoding: "utf8", maxBuffer: 256e6 });
+  // a job log has colour codes, and newer gh (the Actions runner's) refuses to print escape sequences without
+  // --allow-escape-sequences ("the response contains terminal escape sequences"): every log failed and the daily scorecard read
+  // 0 items (24 Nov 2026). Older gh (2.89) has no such flag, so it is asked without it when the flag is unknown.
+  let escFlag = true;
+  const ghLog = (p) => {
+    if (escFlag) {
+      try { return execFileSync("gh", ["api", "--allow-escape-sequences", p], { encoding: "utf8", maxBuffer: 256e6, stdio: ["ignore", "pipe", "pipe"] }); }
+      catch (e) { if (!/unknown flag/i.test(String(e.stderr || e.message))) throw e; escFlag = false; }
+    }
+    return gh(p);
+  };
   // a loop runs about 5 h 20 min, so runs started up to 6 h before the window can still hold lines inside it
   const runs = JSON.parse(gh(`repos/${repo}/actions/workflows/refresh-flash.yml/runs?branch=main&per_page=40`)).workflow_runs
     .filter((r) => Date.parse(r.created_at) > since - 6 * 36e5);
-  const parts = [];
+  const parts = []; let logs = 0, unread = 0;
   for (const r of runs) {
     try {
       for (const j of JSON.parse(gh(`repos/${repo}/actions/runs/${r.id}/jobs`)).jobs) {
         if (j.status !== "completed") continue;   // a running job's log is not served until it ends
-        parts.push(parseLog(gh(`repos/${repo}/actions/jobs/${j.id}/logs`), since));
+        logs++;
+        try { parts.push(parseLog(ghLog(`repos/${repo}/actions/jobs/${j.id}/logs`), since)); }
+        catch (e) { unread++; console.error(`run ${r.id}: log not read (${String(e.stderr || e.message || e).split("\n")[0].slice(0, 120)})`); }
       }
-    } catch (e) { console.error(`run ${r.id}: log not read (${String(e.message || e).split("\n")[0].slice(0, 80)})`); }
+    } catch (e) { unread++; console.error(`run ${r.id}: jobs not read (${String(e.message || e).split("\n")[0].slice(0, 80)})`); }
   }
-  const o = merge(parts);
+  const o = merge(parts); o.logs = logs; o.unread = unread;
   const out = process.env.SPEED_JSON ? JSON.stringify({ hours, runs: runs.length, target: TARGET, before: BEFORE, news: stats(o.news),
-    flash: stats(o.alerts.flash), newsAlerts: stats(o.alerts.news), otherAlerts: stats(o.alerts.other), quakes: stats(o.quakes), requests: o.requests, failed: o.failed }) + "\n"
+    logs, unread, flash: stats(o.alerts.flash), newsAlerts: stats(o.alerts.news), otherAlerts: stats(o.alerts.other), quakes: stats(o.quakes), requests: o.requests, failed: o.failed }) + "\n"
     : markdown(o, hours, runs.length);
   process.stdout.write(out);
   if (process.env.GITHUB_STEP_SUMMARY && !process.env.SPEED_JSON) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, out);
