@@ -170,7 +170,7 @@ async function fastNews() {
       pending.set(storyLink(a.link), { cc, item: a, seen: now, first: !!i._first });
       if (i._burst) burstAdded++; else newsAdded++;
       // the first answer of a feed holds items from before the loop started: not a measure of it
-      if (!i._first) { if (!i._burst) newsLag.push(out); log(`new fast item ${cc} ${a.outlet}${i._burst ? " (burst)" : i._wide ? " (wide)" : ""}: ${out} s after its outlet's time${serious({ t: a.title_en }) ? ", serious" : ""}`); }
+      if (!i._first) { if (!i._burst) newsLag.push(out); log(`new fast item ${cc} ${a.outlet}${i._burst ? " (burst)" : i._wide ? " (wide)" : ""}: ${out} s after its outlet's time${i._late ? ", late post" : ""}${serious({ t: a.title_en }) ? ", serious" : ""}`); }
       // a burst follows a new serious report, not one from before the loop started or one a burst found
       if (!i._first && !i._burst && serious({ t: a.title_en })) { const n = news.burst(cc, now); if (n) { bursts++; log(`burst: asking ${n} more ${cc} feed(s) at once`); } }
     }
@@ -179,7 +179,7 @@ async function fastNews() {
   for (const [k, p] of pending) if (now - p.seen > 3 * 36e5) pending.delete(k);
   return changed;
 }
-const clean = (i) => { const o = { ...i }; delete o._first; delete o._burst; delete o._wide; return o; };
+const clean = (i) => { const o = { ...i }; delete o._first; delete o._burst; delete o._wide; delete o._late; return o; };
 /* main moved: time each pending item main now carries (how much earlier the loop had it), re-lay the rest. read(cc) gives the text
    of main's file for cc without checking it out (a branch test); null means main's data was checked out */
 function onMain(read) {

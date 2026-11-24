@@ -75,6 +75,19 @@ status = 429; await N.round(now + 400e3);
 const s1 = N.st.get(calls[calls.length - 1].u);
 ok(s1.fails === 1 && s1.next >= now + 400e3 + 120e3, "a 429 doubles the wait");
 
+// ---------- late posts ----------
+{
+  let body2 = body([raw("Gunmen attack police post in Bannu, two officers killed", 2, "https://l.test/a")]);
+  const fl = async () => ({ status: 200, ok: true, headers: new Map(), text: async () => body2 });
+  const L = new FastNews({ feeds: [{ cc: "pk", outlet: "L", url: "https://l.test/rss", lang: "en" }], listed: two, R, gz: null, fetchFn: fl });
+  await L.round(now);
+  body2 = body([raw("Blast kills three at market in Quetta, police say", 10, "https://l.test/b"), raw("Rocket attack kills two near border post in Chaman", 0, "https://l.test/c")]);
+  const g = (await L.round(now + 120e3)).pk || [];
+  const lb = g.find((i) => i.link.endsWith("/b")), lc = g.find((i) => i.link.endsWith("/c"));
+  ok(lb && lb._late === true, "an item dated before the feed's previous answer is a late post (the outlet's delay, not OSAP's)");
+  ok(lc && lc._late === false, "an item dated after it is OSAP's own delay");
+}
+
 // ---------- bursts ----------
 const nB = N.burst("pk", now);
 ok(nB === 2 && N.queue.every((q) => q.burst && !q.f.url.startsWith("https://h1.test")), "a serious item asks the country's other feeds once (not the fast ones again)");
