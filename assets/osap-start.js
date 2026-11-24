@@ -8,7 +8,8 @@
       that names a country keeps that country; a plain open uses the person's choice: the last country viewed on this device
       (localStorage "osap-last-cc") when it is one of My countries or none are pinned, else the first of My countries
       ("osap-mycc", assets/osap-mycountries.js); and the very first open on a device (no OSAP setting saved yet) starts on World ("ww", the whole map,
-      every country's most-covered stories and the global feeds; Shane 2026-11-15). The tab part of the address is dropped. Not applied when the user chose "Map" as the start screen.
+      every country's most-covered stories and the global feeds; Shane 2026-11-15). The tab part of the address is dropped. When the user chose "Map" as the start screen, Today does not open but the
+      country is picked the same way and the tab is kept.
    Neither applies to alert links (?wopen=) or the hidden scan frames (?watchscan=). */
 (function () {
   /* 0. A shared route link carries its waypoints after "#" (".../#kh/route?rt=..."), the part of an address a browser never
@@ -51,24 +52,28 @@
   var loc = was == null ? ls("osap-loc") : null, h0 = (location.hash || "").replace("#", "").split("/");
   var mine = loc && loc.on && typeof loc.cc === "string" && /^[a-z]{2,3}$/.test(loc.cc) && !(h0.length > 1 && /^[a-z]{2,3}$/.test(h0[0])) ? loc.cc : "";
   if (mine) try { sessionStorage.setItem("osap-loc-go", "1"); } catch (e) {}
-  if (was == null && ls("osap-home") !== "map") {
-    var h = h0, CCRE = /^[a-z]{2,3}$/, last = ls("osap-last-cc"), my = ls("osap-mycc");
+  /* the country a fresh open starts on. The page reads a country only from "cc/tab". A link that names a country wins; then
+     "Use my location"; then the person's choice: the last country viewed when it is one of My countries, or when none are
+     pinned; otherwise the first of My countries (Shane 2026-11-23 "even with countries set their account still defaults to
+     Thailand"; "osap-last-cc" is saved on every open, so an open that once fell back to Thailand used to keep them there).
+     A bare "#tab" (older links, from when Thailand was the only country) and nothing chosen is Thailand. Nothing in the link
+     and nothing chosen: World on a new device (newDevice above); a device that has used OSAP before with no country chosen
+     stays on Thailand, where it always opened. The same for both start screens, Today and Map: until 2026-11-25 the Map start
+     screen skipped all of this and every open of it was Thailand (tests/home_country_smoke.mjs) */
+  function startCc() {
+    var CCRE = /^[a-z]{2,3}$/, last = ls("osap-last-cc"), my = ls("osap-mycc");
+    if (h0.length > 1 && CCRE.test(h0[0])) return h0[0];
     last = typeof last === "string" && CCRE.test(last) ? last : "";
     var pins = my && Array.isArray(my.pins) ? my.pins.filter(function (c) { return typeof c === "string" && CCRE.test(c); }) : [];
-    /* the person's own choice (Shane 2026-11-23 "even with countries set their account still defaults to Thailand"):
-       the last country viewed when it is one of My countries, or when none are pinned; otherwise the first of My countries.
-       "osap-last-cc" is saved on every open, so an open that once fell back to Thailand used to keep them there for good. */
     var chosen = last && (!pins.length || pins.indexOf(last) >= 0) ? last : pins[0] || "";
-    /* the page reads a country only from "cc/tab". A link that names a country wins; then "Use my location"; then the
-       person's choice. A bare "#tab" (older links, from when Thailand was the only country) and nothing chosen is Thailand.
-       Nothing in the link and nothing chosen: World on a new device (newDevice above); a device that has used OSAP before
-       with no country chosen stays on Thailand, where it always opened (tests/home_country_smoke.mjs) */
-    var cc = (h.length > 1 && CCRE.test(h[0]) ? h[0] : "") || mine || chosen || (h[0] ? "th" : newDevice() ? "ww" : "th");
-    try { history.replaceState(null, "", location.pathname + stq(mine) + "#" + (cc === "th" ? "" : cc + "/") + "timeline"); } catch (e) {}
-  } else if (mine) {
-    /* "Map" start screen: keep the tab, change only the country */
-    var tab = h0.length > 1 ? h0[1] : h0[0] || "timeline";
-    try { history.replaceState(null, "", location.pathname + stq(mine) + "#" + (mine === "th" ? "" : mine + "/") + tab); } catch (e) {}
+    return mine || chosen || (h0[0] ? "th" : newDevice() ? "ww" : "th");
+  }
+  if (was == null) {
+    var cc = startCc(), home = ls("osap-home") === "map";
+    /* Today start screen: the tab part is dropped (Today covers it). "Map" start screen: keep the tab the link names */
+    var tab = !home ? "timeline" : h0.length > 1 ? h0[1] || "timeline" : /^[a-z][a-z0-9-]{1,30}$/.test(h0[0] || "") ? h0[0] : "timeline";
+    /* a link that names a country on the Map start screen is left exactly as it is */
+    if (!(home && h0.length > 1 && cc === h0[0])) try { history.replaceState(null, "", location.pathname + stq(mine) + "#" + (cc === "th" ? "" : cc + "/") + tab); } catch (e) {}
   }
   /* 4. Today opens first: ask now for the country's daily summary and story list, which Today shows at the top
         (assets/osap-daily.js, assets/osap-coverage.js load the same addresses), so they are here when Today is drawn instead
