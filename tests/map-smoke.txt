@@ -302,6 +302,8 @@ tests/daily_cites_smoke.mjs
 tests/empty_map_hint_smoke.mjs
 # daily summary: an AI line calling a report confirmed or verified when no cited headline says so is hidden; all-overclaim drafts show the rules top lines
 tests/daily_confirm_smoke.mjs
+# daily summary: each AI line shows its source check (Traced, or what is not in its sources), the trace opens on a tap, and the check's counts show
+tests/daily_ground_smoke.mjs
 tests/split_map_full_smoke.mjs
 tests/brief_report_smoke.mjs
 tests/health_ops_smoke.mjs
