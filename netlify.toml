@@ -43,3 +43,8 @@
   [headers.values]
     Content-Type = "application/json"
     Access-Control-Allow-Origin = "*"
+
+# "Ask about this country" checks each answer against its sources with the machine translation guard's fact checks
+# (tools/ground.mjs -> tools/mt_guard.mjs), which read the Thai place list once at load; the function carries that file.
+[functions."osap-ask"]
+  included_files = ["tools/mt/th_places.json"]

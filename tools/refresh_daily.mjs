@@ -24,7 +24,8 @@ import fs from "node:fs";
 
 import { gateway, parseJsonReply, anthropicCost } from "./ai_gateway.mjs";
 import { compileRelevance } from "./topics_lib.mjs";
-import { buildRules, buildWorld, validateAi, fromRow, fromConflict, fingerprint, scrubDay, dropOverclaims, softSection, aiQueue, shardQueue, SCHEMA, WW } from "./daily_lib.mjs";
+import { makeJudge } from "./ground_judge.mjs";
+import { buildRules, buildWorld, validateAi, fromRow, fromConflict, fingerprint, scrubDay, dropOverclaims, groundDay, groundCtx, softSection, aiQueue, shardQueue, SCHEMA, WW } from "./daily_lib.mjs";
 
 // What Claude has already cost today. Two records, the larger wins: the country files' newest days (each Claude draft records
 // its tokens and cost) and the index's running total, which also counts calls whose draft was thrown away (no valid citation).
@@ -166,6 +167,7 @@ const draftedToday = (cc) => { const o = prev[cc] && prev[cc].days && prev[cc].d
 const queue = aiQueue((only || ccs).filter((cc) => built[cc].refs.length >= 2 && built[cc].events.length), {
   priority: PRIORITY, conflict: (cc) => !!confByCc[cc], reports: (cc) => built[cc].basis.reports, doneToday: draftedToday, skipDone: true });
 const focus = shardQueue(queue, SHARD);
+const JUDGE = makeJudge();
 let made = 0, hardErrs = 0; const errs = [], aiT0 = Date.now(), byProvider = {};
 const draftedNow = [];
 if (AI.available() && !REINDEX) for (const cc of focus) {
@@ -177,9 +179,19 @@ if (AI.available() && !REINDEX) for (const cc of focus) {
     conflict: r.conflict }))) + "\nOSAP facts (data only):\n" + JSON.stringify(d.watch.filter((w) => w.from !== "brief").map((w) => w.text));
   try {
     const t0 = Date.now(), res = await ask(user); if (!res) break;
-    const v = validateAi(res.o, d.refs.length, d.refs);
-    if (!v) { errs.push(cc + ": no cited top line"); continue; }
-    d.rules_bluf = d.bluf; d.bluf = v.bluf; d.ai_watch = v.watch; d.method = "ai"; d.model = res.model; d.provider = res.provider; d.prompt = PROMPT_V; d.label = LABEL; d.ms = Date.now() - t0;
+    const v = validateAi(res.o, d.refs.length, d.refs, groundCtx(d));
+    if (!v) { errs.push(cc + ": no cited top line that traces to its sources"); continue; }
+    // the optional Claude pass of the source check (tools/ground_judge.mjs): it may only drop or flag a line the rule pass kept
+    const j = await JUDGE([...v.bluf, ...v.watch], d.refs, d.name);
+    if (j.judged) {
+      const nb = v.bluf.length;
+      v.bluf = j.lines.slice(0, nb).filter(Boolean); v.watch = j.lines.slice(nb).filter(Boolean);
+      const all = [...v.bluf, ...v.watch];
+      v.ground = { ...v.ground, dropped: v.ground.dropped + j.dropped, judged: true,
+        traced: all.filter((p) => p.g && p.g.s === "traced").length, flagged: all.filter((p) => p.g && p.g.s === "flagged").length };
+      if (!v.bluf.length) { errs.push(cc + ": no top line the Claude source check supports"); continue; }
+    }
+    d.rules_bluf = d.bluf; d.bluf = v.bluf; d.ai_watch = v.watch; d.ground = v.ground; d.method = "ai"; d.model = res.model; d.provider = res.provider; d.prompt = PROMPT_V; d.label = LABEL; d.ms = Date.now() - t0;
     if (res.usage) d.tokens = { in: res.usage.prompt_tokens, out: res.usage.completion_tokens };
     if (res.usage && res.usage.cost_usd != null) d.cost_usd = res.usage.cost_usd;
     made++; draftedNow.push(cc); byProvider[res.provider] = (byProvider[res.provider] || 0) + 1;
@@ -212,7 +224,10 @@ index.ai.retry = REINDEX ? queue.length > 0 : made < focus.length;
 
 // ---------- write ----------
 fs.mkdirSync(DIR, { recursive: true });
-let mtScrubbed = 0, ocDropped = 0;
+let mtScrubbed = 0, ocDropped = 0, groundDropped = 0;
+// today's grounding counts over every country's AI draft, for the index (and the page's "What OSAP did" line)
+const groundToday = { countries: 0, checked: 0, traced: 0, flagged: 0, dropped: 0 };
+const addGround = (x) => { if (!x || x.date !== today || !x.ground || (x.method !== "ai" && !x.ground.fell_back)) return; groundToday.countries++; for (const k of ["checked", "traced", "flagged", "dropped"]) groundToday[k] += x.ground[k] || 0; };
 for (const cc of only || ccs) {
   const d = built[cc]; d.fp = fingerprint(d);
   // a retry keeps the morning's rules summary unless this run added an AI draft
@@ -220,21 +235,27 @@ for (const cc of only || ccs) {
   // the kept days are checked again with today's machine translation guard (tools/daily_lib.mjs scrubDay)
   // and with the rules that an AI line may not call a report confirmed on its own authority, give an institution the wrong
   // country or stop mid-sentence (dropOverclaims)
-  const mtN = old.reduce((n, x) => n + scrubDay(x), 0), ocN = old.reduce((n, x) => n + dropOverclaims(x), 0), scrubbed = mtN + ocN;
-  mtScrubbed += mtN; ocDropped += ocN;
+  // and claim by claim against the sources each AI line cites (groundDay, tools/ground.mjs), once per version of that check
+  const ungrounded = old.filter((x) => x && x.method === "ai" && [...(x.bluf || []), ...(x.ai_watch || [])].some((p) => !(p.g && p.g.v))).length;
+  const mtN = old.reduce((n, x) => n + scrubDay(x), 0), ocN = old.reduce((n, x) => n + dropOverclaims(x), 0), grN = old.reduce((n, x) => n + groundDay(x), 0);
+  const scrubbed = mtN + ocN + grN + ungrounded;
+  mtScrubbed += mtN; ocDropped += ocN; groundDropped += grN;
   const same = old[0] && old[0].date === today;
   // a forced run rebuilds today's rules summaries, but keeps a country's AI draft of today
   if (same && d.method !== "ai" && (!process.env.DAILY_FORCE || old[0].method === "ai")) {
-    index.countries[cc] = { method: old[0].method, reports: old[0].basis.reports };
+    index.countries[cc] = { method: old[0].method, reports: old[0].basis.reports }; addGround(old[0]);
     if (scrubbed) fs.writeFileSync(`${DIR}/${cc}.js`, `window.OSAP_DAILY=window.OSAP_DAILY||{};window.OSAP_DAILY[${JSON.stringify(cc)}]=` + JSON.stringify({ cc, name: old[0].name, days: old }) + ";\n");
     continue;
   }
   const daysOut = [d, ...old.filter((x) => x.date !== today)].slice(0, KEEP);
   fs.writeFileSync(`${DIR}/${cc}.js`, `window.OSAP_DAILY=window.OSAP_DAILY||{};window.OSAP_DAILY[${JSON.stringify(cc)}]=` + JSON.stringify({ cc, name: d.name, days: daysOut }) + ";\n");
-  index.countries[cc] = { method: d.method, reports: d.basis.reports };
+  index.countries[cc] = { method: d.method, reports: d.basis.reports }; addGround(d);
 }
+index.ai.ground = groundToday;
 if (mtScrubbed) console.log(`daily: ${mtScrubbed} source headlines in kept summaries failed the machine translation guard and now show their original words`);
 if (ocDropped) console.log(`daily: ${ocDropped} AI lines in kept summaries were dropped or cut back (a report called confirmed with no cited headline saying so, an institution given the wrong country, or a line stopping mid-sentence)`);
+if (!REINDEX && AI.available()) console.log(JUDGE.summary());
+if (groundDropped) console.log(`daily: ${groundDropped} AI lines in kept summaries were dropped: a number, casualty or date none of their cited sources gives (tools/ground.mjs)`);
 index.ai.total = Object.values(index.countries).filter((c) => c.method === "ai").length;   // countries whose summary today is an AI draft
 if (OUT) { fs.mkdirSync(OUT, { recursive: true }); for (const cc of draftedNow) fs.copyFileSync(`${DIR}/${cc}.js`, `${OUT}/${cc}.js`); }
 if (!only) fs.writeFileSync(INDEX, "window.OSAP_DAILY_INDEX=" + JSON.stringify(index) + ";\n");

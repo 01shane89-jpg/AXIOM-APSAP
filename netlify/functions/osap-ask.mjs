@@ -83,12 +83,12 @@ export default async (req) => {
   if (res.stop_reason === "refusal") return json({ answered: false, sentences: [], sources: [], note: "The model declined to answer this question." });
   const text = (res.content || []).filter((c) => c.type === "text").map((c) => c.text).join("");
   let o = null; try { o = JSON.parse(text); } catch (e) {}
-  const a = checkAnswer(o, src.refs.length);
+  const a = checkAnswer(o, src.refs.length, src);
   const used = [...new Set(a.sentences.flatMap((s) => s.refs))].sort((x, y) => x - y);
-  console.log("osap ask", cc, "sources", src.refs.length, "sentences", a.sentences.length, "dropped", a.dropped, Date.now() - t0 + " ms",
+  console.log("osap ask", cc, "sources", src.refs.length, "sentences", a.sentences.length, "dropped", a.dropped, "flagged", (a.ground && a.ground.flagged) || 0, Date.now() - t0 + " ms",
     res.usage ? "tokens " + res.usage.input_tokens + "/" + res.usage.output_tokens : "");
   return json({
-    answered: a.answered, sentences: a.sentences,
+    answered: a.answered, sentences: a.sentences, ground: a.ground || null,
     sources: src.refs.filter((r) => used.includes(r.n)).map((r) => ({ n: r.n, headline: r.headline, outlet: r.outlet, time: r.time, kind: r.kind, url: r.url })),
     day: src.date, label: LABEL, model: res.model || ASK_MODEL, prompt: PROMPT_V, left: quota.left,
     note: a.answered ? "" : "The sources in today's summary don't answer this question.",

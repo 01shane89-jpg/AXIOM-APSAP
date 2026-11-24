@@ -110,6 +110,9 @@ jobs:
       - run: node tests/ref_layers.test.mjs
       # daily summary rules (tools/daily_lib.mjs): grouping, AI output checks, citations dropped from inside sentences
       - run: node tests/daily.test.mjs
+      # source check of AI text (tools/ground.mjs, tools/ground_judge.mjs): every AI summary line and Ask answer read claim by claim
+      # against the sources it cites; untraceable numbers, casualties and dates dropped, names flagged
+      - run: node tests/ground.test.mjs
       - run: node tests/brief_refresh.test.mjs
       - run: node tests/newimg.test.mjs
       - run: node tests/whatchanged.test.mjs

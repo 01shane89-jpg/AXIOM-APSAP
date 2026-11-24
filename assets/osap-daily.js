@@ -81,6 +81,11 @@
     ".dlwbtn{all:unset;box-sizing:border-box;display:block;width:100%;cursor:pointer;border-radius:4px;padding:2px 22px 2px 2px;margin:-2px;position:relative}.dlwbtn:hover{background:var(--surface2,rgba(127,127,127,.09))}" +
     ".dlwbtn:focus-visible{outline:2px solid var(--accent,#1f5f99);outline-offset:1px}.dlwarr{position:absolute;right:4px;top:2px;color:var(--accent,#1f5f99);font-weight:700}" +
     ".dlwrep{list-style:none;margin:6px 0 2px;padding:0 0 0 10px;border-left:2px solid var(--line)}.dlwrep li{padding:4px 0;font-size:13px}.dlwrep a{font-weight:600}" +
+    ".dlg{font:600 10.5px/1.5 inherit;color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:0 7px;margin-left:6px;cursor:pointer;vertical-align:1px}" +
+    ".dlg.fl{color:var(--ink);border-color:var(--l2,#C2792B);border-width:1.5px}.dlg:focus-visible{outline:2px solid var(--accent,#1f5f99);outline-offset:1px}" +
+    "@media (pointer:coarse){.dlg{min-height:24px;padding:2px 9px}}" +
+    ".dlgm{display:block;font-size:12px;color:var(--ink);margin-top:3px;padding-left:6px;border-left:2px solid var(--l2,#C2792B)}.dlgt{display:block;font-size:12px;color:var(--muted);margin-top:2px}" +
+    ".dlgf{font-size:11.5px!important;color:var(--muted);margin:6px 0 0!important}" +
     ".dlfrom{font:600 10.5px/1.5 inherit;color:var(--muted);border:1px solid currentColor;border-radius:9px;padding:0 6px;margin-right:5px;white-space:nowrap}" +
     ".dlfoot{margin-top:8px;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}.dlfoot select{font:inherit;font-size:12px}" +
     ".dlfoot button{min-height:30px;padding:2px 12px;font-weight:600}.dlauto{display:inline-block;font:500 10.5px/1.5 inherit;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 7px;cursor:help}" +
@@ -94,6 +99,26 @@
       return u ? '<a class="dlref" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer" title="' + esc(r.outlet + ": " + r.title) + '">[' + n + "]</a>" : '<span class="dlref">[' + n + "]</span>";
     }).join("");
   }
+  /* The source check of an AI line (tools/ground.mjs, Shane 2026-11-24): every AI sentence was read claim by claim against the
+     sources it cites. A traced line gets a small "Traced" button that opens which source holds each checked name and number; a
+     flagged line says, in the open, what is not in its sources, so the reader sees exactly what the AI added. Lines that gave a
+     number, casualty or date none of their sources gives were removed before the page got them. */
+  var GK = { name: "Not in its sources", outlet: "Credits an outlet it doesn't cite", judge: "Claude source check, partly supported" };
+  function gChip(p, d, key) {
+    var g = p && p.g; if (!g || !g.v) return "";
+    var tr = (g.t || []).map(function (x) { return esc(x[0]) + " " + (x[1] || []).map(function (n) { return "[" + n + "]"; }).join(""); }).join(" · ");
+    var open = !!openG[key];
+    var btn = '<button type="button" class="dlg' + (g.s === "flagged" ? " fl" : "") + '" data-dlg="' + esc(key) + '" aria-expanded="' + open + '" title="Checked claim by claim against the sources this line cites">' +
+      (g.s === "flagged" ? "Partly traced" : "Traced") + "</button>";
+    var miss = (g.m || []).reduce(function (a, x) { var k = GK[x[0]] ? x[0] : "name"; (a[k] = a[k] || []).push(x[1]); return a; }, {});
+    var fl = Object.keys(miss).map(function (k) { return '<span class="dlgm">' + GK[k] + ": " + esc(miss[k].join(", ")) + "</span>"; }).join("");
+    return btn + fl + (open ? '<span class="dlgt">' + (tr ? "In its sources: " + tr : "Nothing in this line names a number or a name to check.") + "</span>" : "");
+  }
+  function gFoot(d) {
+    var g = d.ground; if (d.method !== "ai" || !g || !g.checked) return "";
+    return '<p class="dlgf">Source check: ' + g.checked + " AI line" + (g.checked === 1 ? "" : "s") + " read claim by claim against the sources they cite. " + g.traced + " traced" +
+      (g.flagged ? ", " + g.flagged + " partly traced (what is missing is shown)" : "") + (g.dropped ? ", " + g.dropped + " removed for a number, casualty or date their sources don't give" : "") + ".</p>";
+  }
   function tag(d) {
     if (d.method === "ai") return '<span class="aitag" tabindex="0" title="' + esc(d.label || "Draft, AI-generated, not analyst-approved") + '">AI generated</span>';
     return '<span class="dlauto" tabindex="0" title="Built by rules from the sources listed, with no AI: the most reported, security-first headlines of the day, as the outlets wrote them. Not an assessment.">Automatic</span>';
@@ -102,7 +127,7 @@
      reports"): a conflict line opens its conflict tab, the travel advisory opens the State Department page, a country brief
      line opens the country brief, and a flashpoint, warning or AI line unfolds the reports behind it, each linking to the original.
      A flashpoint built before its line carried its reports finds them in the watch list file (data/live/aiwatch.js) by name. */
-  var openW = {}, AIW_FILE = "data/live/aiwatch.js", aiwState = 0;
+  var openW = {}, openG = {}, AIW_FILE = "data/live/aiwatch.js", aiwState = 0;
   /* a country brief's watch point is an AI draft from its as_of day: shown only while that is within 30 days of the summary's
      window (the same rule as tools/daily_lib.mjs briefFresh), so summaries built before that rule never show a stale draft */
   function briefOk(w, d) {
@@ -110,7 +135,7 @@
     var t = Date.parse(String(w.asof || "").slice(0, 10) + "T00:00:00Z"), e = Date.parse((d.window && d.window.to) || "") || Date.now();
     return isFinite(t) && e - t <= 30 * 864e5 && t - e <= 864e5;
   }
-  function watchAll(d) { return (d.ai_watch || []).map(function (w) { return { from: "ai", text: w.text, refs: w.refs }; }).concat((d.watch || []).filter(function (w) { return briefOk(w, d); })); }
+  function watchAll(d) { return (d.ai_watch || []).map(function (w) { return { from: "ai", text: w.text, refs: w.refs, g: w.g }; }).concat((d.watch || []).filter(function (w) { return briefOk(w, d); })); }
   function aiwItem(w) {
     var A = W.OSAP_AIWATCH, a = A && A.areas && A.areas[CC], t = w.fp || "";
     var it = a && (a.items || []).filter(function (x) { return x && x.title && (t ? x.title === t : String(w.text).indexOf(x.title) === 0); })[0];
@@ -153,10 +178,11 @@
       var lab = w.from === "ai" ? '<span class="aitag" tabindex="0" title="' + esc(d.label || "Draft, AI-generated, not analyst-approved") + '">AI generated</span> '
         : f ? '<span class="dlfrom">' + esc(f + extra) + "</span>" : "";
       var wt = w.from === "ai" ? ct(w.text) : w.text;
-      if (!go) return "<li>" + lab + esc(wt) + refs(w.refs, d) + "</li>";
+      var gc = w.from === "ai" ? gChip(w, d, "w" + i) : "";
+      if (!go) return "<li>" + lab + esc(wt) + refs(w.refs, d) + gc + "</li>";
       return '<li class="dlwgo' + (open ? " open" : "") + '"><button type="button" class="dlwbtn" data-dlw="' + i + '" title="' + GO_HINT[go] + '"' + (go === "list" ? ' aria-expanded="' + !!open + '"' : "") + ">" +
         lab.replace(' tabindex="0"', "") + esc(wt) + '<span class="dlwarr" aria-hidden="true">' + (go === "list" ? (open ? "▾" : "▸") : go === "url" ? "↗" : "›") + "</span></button>" +
-        (go === "list" ? "" : refs(w.refs, d)) + (open ? watchReports(w, d) : "") + "</li>";
+        (go === "list" ? "" : refs(w.refs, d)) + gc + (open ? watchReports(w, d) : "") + "</li>";
     }).join("");
   }
   function watchTap(i) {
@@ -189,7 +215,7 @@
     el.hidden = false;
     var b = d.basis || {}, ai = d.method === "ai";
     var h = '<div class="dlhead"><h2>Daily summary</h2>' + tag(d) + '<span class="dlsub">' + esc(d.window.hours) + " hours to " + esc(when(d.window.to)) + "</span></div>";
-    if ((d.bluf || []).length) h += '<div class="dlbluf"><p class="dllbl">' + (ai ? "BLUF" : "Top lines") + "</p>" + d.bluf.map(function (s) { return "<p>" + esc(ct(s.text)) + refs(s.refs, d) + "</p>"; }).join("") + "</div>";
+    if ((d.bluf || []).length) h += '<div class="dlbluf"><p class="dllbl">' + (ai ? "BLUF" : "Top lines") + "</p>" + d.bluf.map(function (s, i) { return "<p>" + esc(ct(s.text)) + refs(s.refs, d) + (ai ? gChip(s, d, "b" + i) : "") + "</p>"; }).join("") + (ai ? gFoot(d) : "") + "</div>";
     /* key events open beside What to watch on a wide screen; on a phone they fold away, as Top stories just below already lists
        the same headlines. Print keeps them in full. An open or fold by the user holds across redraws. */
     var nev = (d.events || []).length;
@@ -210,13 +236,14 @@
     var p = D.getElementById("dl-print"); if (!p) { p = D.createElement("div"); p.id = "dl-print"; D.body.appendChild(p); }
     var ai = d.method === "ai", b = d.basis || {};
     var cite = function (rs) { return (rs || []).length ? " [" + rs.join("][") + "]" : ""; };
+    var gp = function (x) { var m = (x && x.g && x.g.m) || []; return m.length ? ' <span class="pm">(' + esc(m.map(function (y) { return (y[0] === "outlet" ? "credits an outlet it doesn't cite: " : y[0] === "judge" ? "Claude source check, partly supported: " : "not in its sources: ") + y[1]; }).join("; ")) + ")</span>" : ""; };
     p.innerHTML = "<h1>" + esc(d.name) + ": daily brief</h1>" +
       '<p class="pm">AXIOM OSAP · ' + esc(d.window.hours) + " hours to " + esc(when(d.window.to)) + " · built " + esc(when(d.made)) + " · printed " + esc(W.OSAP_TIME ? W.OSAP_TIME.dualT(Date.now(), { date: true }) : new Date().toISOString()) +
       " · " + (ai ? esc(d.label || "Draft, AI-generated, not analyst-approved") + " (" + esc(d.model || "") + ")" : "Automatic: built by rules, no AI") + "</p>" +
-      ((d.bluf || []).length ? "<h2>" + (ai ? "BLUF" : "Top lines") + '</h2><div class="bl">' + d.bluf.map(function (s) { return "<p>" + esc(ct(s.text)) + cite(s.refs) + "</p>"; }).join("") + "</div>" : "") +
+      ((d.bluf || []).length ? "<h2>" + (ai ? "BLUF" : "Top lines") + '</h2><div class="bl">' + d.bluf.map(function (s) { return "<p>" + esc(ct(s.text)) + cite(s.refs) + gp(s) + "</p>"; }).join("") + (ai ? gFoot(d) : "") + "</div>" : "") +
       "<h2>Key events</h2><ol>" + (d.events || []).map(function (e) { return "<li><b>" + esc(e.text) + "</b>" + cite(e.refs) + '<div class="pm">' + (e.where ? esc(e.where) + " · " : "") + esc(e.outlets.join(", ")) + " · " + esc(when(e.when)) + (e.claim ? " · state media or official, a claim" : e.some_state ? " · includes state media" : "") + (e.mt ? " · machine translated" : "") + "</div>" +
         (function (x) { return x ? '<div class="dg">(AI generated digest of [' + x.n + "], draft, not analyst-approved) " + esc(x.g.what) + (x.g.where ? " (" + esc(x.g.where) + ")" : "") + "</div>" : ""; })(digestOf(e, d)) + "</li>"; }).join("") + "</ol>" +
-      "<h2>What to watch</h2><ul>" + (d.ai_watch || []).map(function (w) { return "<li>(AI generated) " + esc(ct(w.text)) + cite(w.refs) + "</li>"; }).join("") +
+      "<h2>What to watch</h2><ul>" + (d.ai_watch || []).map(function (w) { return "<li>(AI generated) " + esc(ct(w.text)) + cite(w.refs) + gp(w) + "</li>"; }).join("") +
       (d.watch || []).filter(function (w) { return briefOk(w, d); }).map(function (w) { return "<li>" + esc((FROM[w.from] ? FROM[w.from] + (w.from === "brief" && w.asof ? " of " + w.asof + ", AI draft" : "") + ": " : "") + w.text) + cite(w.refs) + "</li>"; }).join("") + "</ul>" +
       "<h2>Sources</h2><ol>" + d.refs.map(function (r) { return '<li class="pm">' + esc(r.outlet) + ", " + esc(when(r.date)) + ": " + esc(r.title) + (/g/.test(r.flags || "") ? " (official or state media: a claim)" : "") + (/m/.test(r.flags || "") ? " (machine translated)" : "") + " · " + esc(r.url) + "</li>"; }).join("") + "</ol>" +
       '<p class="pm">From ' + (b.reports || 0) + " reports by " + (b.outlets || 0) + " outlets. Situational awareness only: reports are the sources' claims and are not verified; statements by any government, including figures, are its claims. " +
@@ -255,10 +282,11 @@
     if (!D.getElementById("dl-css")) { var st = D.createElement("style"); st.id = "dl-css"; st.textContent = CSS; D.head.appendChild(st); }
     el.addEventListener("click", function (e) {
       var t = e.target.closest && e.target.closest("[data-dlprint]"); if (t) { e.preventDefault(); printIt(); return; }
+      var gb = e.target.closest && e.target.closest("[data-dlg]"); if (gb) { e.preventDefault(); var k = gb.getAttribute("data-dlg"); openG[k] = !openG[k]; render(); var nb = el.querySelector('[data-dlg="' + k + '"]'); if (nb) nb.focus(); return; }
       var g = e.target.closest && e.target.closest("[data-dlw]"); if (g && !(e.target.closest("a, .aitag") && e.target !== g)) { e.preventDefault(); watchTap(+g.getAttribute("data-dlw")); }
     });
     el.addEventListener("toggle", function (e) { if (e.target.classList && e.target.classList.contains("dlkev")) kevOpen = e.target.open; }, true);
-    el.addEventListener("change", function (e) { if (e.target.hasAttribute("data-dlday")) { sel = +e.target.value || 0; openW = {}; render(); } });
+    el.addEventListener("change", function (e) { if (e.target.hasAttribute("data-dlday")) { sel = +e.target.value || 0; openW = {}; openG = {}; render(); } });
     load(); if (state === 2) render();
   }
   W.OSAP_DAILYQ = { mount: mount, print: printIt, brief: brief, has: function () { var x = W.OSAP_DAILY && W.OSAP_DAILY[CC || (W.TSAP && W.TSAP.country)]; return state !== 2 || !!(x && x.days && x.days.length); } };

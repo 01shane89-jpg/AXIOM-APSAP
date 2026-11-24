@@ -14,6 +14,7 @@ import { ccsInText } from "./geo_cc.mjs";
 import { mtSuspect } from "./mt_guard.mjs";
 import { worldStories } from "./world_lib.mjs";
 import { actorCountryAdded, cutOff } from "./ai_lines.mjs";
+import { groundLines, groundStats, GROUND_V } from "./ground.mjs";
 
 export const SCHEMA = "osap-daily/1";
 export const MAX_EVENTS = 6, MAX_REFS = 30;
@@ -236,14 +237,38 @@ export function dropOverclaims(d) {
 // 20 Nov, ended "... Matsue-lu due to"), that give no institution the wrong country (tools/ai_lines.mjs) and, given the numbered
 // sources, that do not call a report confirmed when no
 // cited headline says so); returns null when nothing usable is left
-export function validateAi(o, nRefs, refs) {
+// ctx (the country's name, the OSAP facts the model was given and the window): when given, every kept line is then checked claim
+// by claim against the sources it cites (tools/ground.mjs): a line with a number, casualty, harm or date none of them gives is
+// dropped, a line naming someone or some place none of them names is kept with that name flagged, and every line carries its
+// trace. The result's ground holds the counts.
+export function validateAi(o, nRefs, refs, ctx) {
   const clean = (s, n) => String(s || "").replace(/\s+/g, " ").trim().slice(0, n);
   const ok = (a) => [...new Set((Array.isArray(a) ? a : []).map((x) => +String(x).replace(/\D/g, "")).filter((x) => x >= 1 && x <= nRefs))].slice(0, 6);
   const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: cutOff(stripInlineCites(clean(p && p.text, 400).replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, ""))), refs: ok(p && p.refs) }))
     .filter((p) => p.text.length > 15 && p.refs.length && !overclaims(p.text, headsOf(refs, p.refs)) && !actorCountryAdded(p.text, headsOf(refs, p.refs))).slice(0, max);
-  const bluf = list(o && o.bluf, 3), watch = list(o && o.watch, 3);
+  let bluf = list(o && o.bluf, 3), watch = list(o && o.watch, 3), ground;
+  if (ctx && refs) {
+    const b = groundLines(bluf, refs, ctx), w = groundLines(watch, refs, ctx);
+    bluf = b.kept; watch = w.kept; ground = groundStats([...b.kept, ...w.kept], [...b.dropped, ...w.dropped]);
+  }
   if (!bluf.length) return null;
-  return { bluf, watch };
+  return ground ? { bluf, watch, ground } : { bluf, watch };
+}
+export const groundCtx = (d) => ({ place: d.name, facts: (d.watch || []).filter((w) => w && w.from !== "brief").map((w) => w.text), window: d.window });
+// A kept AI summary (one made before this check, or under an older version of it) is checked again the same way; an AI summary
+// left with no top line falls back to its rules top lines. Lines already checked under this version are not checked again.
+// Returns the number of lines dropped.
+export function groundDay(d) {
+  if (!d || d.method !== "ai" || !Array.isArray(d.refs)) return 0;
+  const fresh = (p) => p && p.g && p.g.v === GROUND_V;
+  const lines = [...(d.bluf || []), ...(d.ai_watch || [])];
+  if (lines.every(fresh)) return 0;
+  const ctx = groundCtx(d), strip = (a) => (a || []).map((p) => (fresh(p) ? p : { text: p.text, refs: p.refs }));
+  const b = groundLines(strip(d.bluf), d.refs, ctx), w = groundLines(strip(d.ai_watch), d.refs, ctx);
+  d.bluf = b.kept; d.ai_watch = w.kept;
+  d.ground = groundStats([...b.kept, ...w.kept], [...b.dropped, ...w.dropped]);
+  if (!d.bluf.length) { d.bluf = d.rules_bluf || []; d.method = "rules"; d.ground.fell_back = true; }
+  return b.dropped.length + w.dropped.length;
 }
 // ---------- World ("ww") ----------
 // The World daily summary (Shane 2026-11-16: "a daily summary for world just like the ones for countries"). Same schema, same
