@@ -26,5 +26,9 @@ ok(/\| News: outlet's time to in OSAP \| 3 \|/.test(md) && /MET \/ MISSED/.test(
 ok(TARGET.newsMed === 120 && TARGET.newsP90 === 300 && TARGET.flashMed === 180, "targets: news median 2 min, 90% 5 min; flash median 3 min");
 ok(!/Anadolu Agency: 93/.test(md), "the scorecard names outlets and seconds only");
 
+const bad = markdown({ ...merge([]), logs: 5, unread: 5 }, 24, 5);
+ok(/WARNING: 5 of 5 loop log\(s\) could not be read/.test(bad), "logs that could not be read are said, never shown as a quiet day of 0 items");
+ok(!/WARNING/.test(md), "no warning when every log was read");
+
 console.log(fails ? `\n${fails} FAILED` : "\nall passed");
 process.exit(fails ? 1 : 0);
