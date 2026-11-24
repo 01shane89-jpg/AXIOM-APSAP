@@ -11,7 +11,7 @@
 //   Env: HEALTH_DRY=1 prints instead of posting; HEALTH_SITE / HEALTH_TOPIC override tools/health.json (tests).
 import fs from "node:fs";
 import vm from "node:vm";
-import { stampOf, sourcesOf, countOf, evaluate, decide, lastAnnounced, fpTag, updateSeen, quietSources, cronsOf, jobLimitMin, jobLimitFor, cronGapMin, lateJobs } from "./health_lib.mjs";
+import { stampOf, sourcesOf, countOf, evaluate, decide, lastAnnounced, fpTag, updateSeen, quietSources, cronsOf, jobLimitMin, jobLimitFor, cronGapMin, lateJobs, jobStarted, askRunning } from "./health_lib.mjs";
 
 const cfg = JSON.parse(fs.readFileSync(new URL("./health.json", import.meta.url), "utf8"));
 const SITE = (process.env.HEALTH_SITE || cfg.site).replace(/\/?$/, "/");
@@ -51,15 +51,27 @@ async function jobs(prev) {
         if (w.ok) since = (await w.json()).created_at || undefined;
       } catch (e) {}
     }
-    // past its limit: is a run going on main right now? (the keeper runs about 5 h 20 min a time, longer than its hourly
-    // schedule's limit, so its last success is always "late" near the end of each run while it is plainly working)
+    // past its limit, or will be before this answer stops being trusted: is a run going on main right now? (the keeper runs
+    // about 5 h 20 min a time, longer than its hourly schedule's limit, so its last success is always "late" near the end of each
+    // run while it is plainly working). The list is asked hourly and read for up to SNAPSHOT_TRUST_MIN after, so a run is asked
+    // about from maxMin - SNAPSHOT_TRUST_MIN on: asked only once already late, a keeper seen at 4 h 36 min had no "running" and
+    // read as late 45 min later, while it ran fine (24 Nov 2026, 14:57Z). Its time is when its job started, not the run's
+    // run_started_at: a copy queued behind the one running (concurrency group) keeps the time it was queued, 4 h early.
     let running;
-    if (!last || Date.now() - Date.parse(last) > maxMin * 60000) {
+    if (askRunning(last, maxMin)) {
       try {
         const g = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/${file}/runs?branch=main&status=in_progress&per_page=1`,
           { headers: { authorization: "Bearer " + token, accept: "application/vnd.github+json", "user-agent": "osap-health" }, signal: AbortSignal.timeout(20000) });
         const run = g.ok ? ((await g.json()).workflow_runs || [])[0] : null;
-        if (run) running = run.run_started_at || run.created_at;
+        if (run) {
+          running = run.run_started_at || run.created_at;
+          try {
+            const jr = await fetch(`https://api.github.com/repos/${repo}/actions/runs/${run.id}/jobs`,
+              { headers: { authorization: "Bearer " + token, accept: "application/vnd.github+json", "user-agent": "osap-health" }, signal: AbortSignal.timeout(20000) });
+            const started = jr.ok ? jobStarted((await jr.json()).jobs) : null;
+            if (started) running = started;
+          } catch (e) {}
+        }
       } catch (e) {}
     }
     const gapMin = Math.min(...cronsOf(yml).map(cronGapMin).filter((g) => g != null));

@@ -289,6 +289,19 @@ export function runRef(at, now = Date.now()) {
   const t = Date.parse(at || "");
   return t && t <= now && now - t < SNAPSHOT_TRUST_MIN * 60000 ? t : now;
 }
+/** should the hourly job list ask whether a run is going? Yes once the last success is within SNAPSHOT_TRUST_MIN of the limit:
+ *  the list is read for up to that long after it is asked, so asking only once already late left a keeper seen at 4 h 36 min
+ *  with no "running", and it read as late 45 min later while it ran fine (24 Nov 2026, 14:57Z). */
+export function askRunning(last, maxMin, now = Date.now()) {
+  return !last || now - Date.parse(last) > (maxMin - SNAPSHOT_TRUST_MIN) * 60000;
+}
+/** when a run's work really began: the earliest started_at of its jobs that have started (null when none has). A run queued
+ *  behind another in its concurrency group reports run_started_at = when it was queued (refresh-keeper.yml 24 Nov 2026: queued
+ *  11:01Z, job started 15:01Z), which would make a fresh keeper look 6 h "stuck" four hours early. */
+export function jobStarted(jobs) {
+  const t = (jobs || []).map((j) => j && j.started_at && j.status !== "queued" && j.status !== "waiting" && j.status !== "pending" ? Date.parse(j.started_at) : NaN).filter(isFinite);
+  return t.length ? new Date(Math.min(...t)).toISOString().slice(0, 19) + "Z" : null;
+}
 export function lateJobs(jobs, now = Date.now(), at = null) {
   const ref = runRef(at, now);
   return (jobs || []).filter((j) => j && j.maxMin && !(j.running && ref - Date.parse(j.running) < RUN_ALIVE_MIN * 60000) &&
