@@ -159,10 +159,12 @@ async function ask(user) {
 }
 const prev = {};
 for (const cc of only || ccs) { const p = readWin(`${DIR}/${cc}.js`, "OSAP_DAILY"); prev[cc] = p && p[cc]; }
-// a retry (not forced) skips the countries an earlier run already drafted today, so it carries on down the list
+// every run, forced or not, skips the countries an earlier run (or a shard) already drafted today, so it carries on down the
+// list: the forced morning pass rebuilt every country from its rules summary and so threw away the shards' drafts (24 Nov
+// 2026: 68 AI drafts by 03:21Z, 30 after the 02:37Z daily pass committed at 06:30Z)
 const draftedToday = (cc) => { const o = prev[cc] && prev[cc].days && prev[cc].days[0]; return !!(o && o.date === today && o.method === "ai"); };
 const queue = aiQueue((only || ccs).filter((cc) => built[cc].refs.length >= 2 && built[cc].events.length), {
-  priority: PRIORITY, conflict: (cc) => !!confByCc[cc], reports: (cc) => built[cc].basis.reports, doneToday: draftedToday, skipDone: !process.env.DAILY_FORCE });
+  priority: PRIORITY, conflict: (cc) => !!confByCc[cc], reports: (cc) => built[cc].basis.reports, doneToday: draftedToday, skipDone: true });
 const focus = shardQueue(queue, SHARD);
 let made = 0, hardErrs = 0; const errs = [], aiT0 = Date.now(), byProvider = {};
 const draftedNow = [];
@@ -221,7 +223,8 @@ for (const cc of only || ccs) {
   const mtN = old.reduce((n, x) => n + scrubDay(x), 0), ocN = old.reduce((n, x) => n + dropOverclaims(x), 0), scrubbed = mtN + ocN;
   mtScrubbed += mtN; ocDropped += ocN;
   const same = old[0] && old[0].date === today;
-  if (same && d.method !== "ai" && !process.env.DAILY_FORCE) {
+  // a forced run rebuilds today's rules summaries, but keeps a country's AI draft of today
+  if (same && d.method !== "ai" && (!process.env.DAILY_FORCE || old[0].method === "ai")) {
     index.countries[cc] = { method: old[0].method, reports: old[0].basis.reports };
     if (scrubbed) fs.writeFileSync(`${DIR}/${cc}.js`, `window.OSAP_DAILY=window.OSAP_DAILY||{};window.OSAP_DAILY[${JSON.stringify(cc)}]=` + JSON.stringify({ cc, name: old[0].name, days: old }) + ";\n");
     continue;
