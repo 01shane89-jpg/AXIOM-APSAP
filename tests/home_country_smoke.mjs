@@ -105,6 +105,33 @@ const pins = (p) => J({ pins: p, role: "analyst" });
   ok(s.cc === "th" && s.hash === "#timeline", "My countries Thailand, Japan with Thailand last viewed opens Thailand (" + s.cc + ")");
   await ctx.close();
 }
+// 10. the "Map" start screen (Settings: start on Map) picks the country the same way. Until 2026-11-25 it skipped the choice
+//     altogether, so every open of it was Thailand and saved Thailand as the last country (Shane: "Thailand is still the default")
+{
+  const { ctx, s } = await open("", { "osap-home": J("map"), "osap-setup": "\"done\"", "osap-mycc": pins(["jp"]), "osap-last-cc": J("jp") });
+  ok(s.cc === "jp" && s.last === "jp", "Map start screen with My countries Japan opens Japan and keeps it saved (" + s.cc + ", last " + s.last + ")");
+  await ctx.close();
+}
+{
+  const { ctx, s } = await open("", { "osap-home": J("map"), "osap-theme": J("dark"), "osap-last-cc": J("fr") });
+  ok(s.cc === "fr", "Map start screen, no pins, last viewed France opens France (" + s.cc + ")");
+  await ctx.close();
+}
+{
+  const { ctx, s } = await open("#alerts", { "osap-home": J("map"), "osap-mycc": pins(["vn"]) });
+  ok(s.cc === "vn" && s.hash === "#vn/alerts", "Map start screen keeps the tab of a bare #alerts link, on the chosen country (" + s.hash + ")");
+  await ctx.close();
+}
+{
+  const { ctx, s } = await open("#kh/alerts", { "osap-home": J("map"), "osap-mycc": pins(["jp"]) });
+  ok(s.cc === "kh" && s.hash === "#kh/alerts", "Map start screen leaves a link to Cambodia's alerts as it is (" + s.hash + ")");
+  await ctx.close();
+}
+{
+  const { ctx, s } = await open("", { "osap-home": J("map"), "osap-theme": J("dark") });
+  ok(s.cc === "th", "Map start screen with nothing chosen on an older device still falls back to Thailand (" + s.cc + ")");
+  await ctx.close();
+}
 await browser.close(); server.close();
 if (failed) { console.log(failed + " failed"); process.exit(1); }
 console.log("all passed");
