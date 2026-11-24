@@ -109,15 +109,19 @@
     var tr = (g.t || []).map(function (x) { return esc(x[0]) + " " + (x[1] || []).map(function (n) { return "[" + n + "]"; }).join(""); }).join(" · ");
     var open = !!openG[key];
     var btn = '<button type="button" class="dlg' + (g.s === "flagged" ? " fl" : "") + '" data-dlg="' + esc(key) + '" aria-expanded="' + open + '" title="Checked claim by claim against the sources this line cites">' +
-      (g.s === "flagged" ? "Partly traced" : "Traced") + "</button>";
+      (g.s === "flagged" ? "Partly traced" : g.r ? "Traced, 2nd draft" : "Traced") + "</button>";
     var miss = (g.m || []).reduce(function (a, x) { var k = GK[x[0]] ? x[0] : "name"; (a[k] = a[k] || []).push(x[1]); return a; }, {});
     var fl = Object.keys(miss).map(function (k) { return '<span class="dlgm">' + GK[k] + ": " + esc(miss[k].join(", ")) + "</span>"; }).join("");
-    return btn + fl + (open ? '<span class="dlgt">' + (tr ? "In its sources: " + tr : "Nothing in this line names a number or a name to check.") + "</span>" : "");
+    /* a line the check dropped and the model wrote once more, fresh, from the same sources (tools/ground_retry.mjs): it passed
+       every check, and the page says it is a second draft */
+    var re = g.r ? "Second draft: the first failed the source check, so it was written again from the same sources" + (g.r.model ? " (" + esc(g.r.model) + ")" : "") + " and passed. " : "";
+    return btn + fl + (open ? '<span class="dlgt">' + re + (tr ? "In its sources: " + tr : "Nothing in this line names a number or a name to check.") + "</span>" : "");
   }
   function gFoot(d) {
     var g = d.ground; if (d.method !== "ai" || !g || !g.checked) return "";
     return '<p class="dlgf">Source check: ' + g.checked + " AI line" + (g.checked === 1 ? "" : "s") + " read claim by claim against the sources they cite. " + g.traced + " traced" +
-      (g.flagged ? ", " + g.flagged + " partly traced (what is missing is shown)" : "") + (g.dropped ? ", " + g.dropped + " removed for a number, casualty or date their sources don't give" : "") + ".</p>";
+      (g.flagged ? ", " + g.flagged + " partly traced (what is missing is shown)" : "") + (g.rewritten ? ", " + g.rewritten + " written again from their sources after failing it" : "") +
+      (g.dropped ? ", " + g.dropped + " removed for a number, casualty or date their sources don't give" : "") + ".</p>";
   }
   function tag(d) {
     if (d.method === "ai") return '<span class="aitag" tabindex="0" title="' + esc(d.label || "Draft, AI-generated, not analyst-approved") + '">AI generated</span>';

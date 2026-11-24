@@ -145,7 +145,10 @@ export function groundLine(line, refs, ctx = {}) {
   // count words: "three reports", "two outlets"; the number of sources or outlets cited is the line's own count of them
   const outlets = new Set(cited.map((r) => fold(String(r.outlet || "").replace(/\s*\((?:via|on) .*\)$/i, "").replace(/ on msn$/i, "")))).size;
   const enWords = new Set(Object.entries(COUNT_WORDS).filter(([w]) => new RegExp(`\\b${w}s?\\b`, "i").test(all)).map(([, v]) => v));
-  const inAll0 = numberIn(all), inAll = (v) => inAll0(v) || enWords.has(v), wordVals = numberWordValues(all);
+  // number words in other languages are read only in the original-language headlines: read in English text they misfire ("fire" is
+  // a Scandinavian four)
+  const origs = cited.map((r) => r.orig).filter(Boolean).join(" \n ");
+  const inAll0 = numberIn(all), inAll = (v) => inAll0(v) || enWords.has(v), wordVals = numberWordValues(origs);
   for (const m of text.matchAll(/\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|dozen|thirteen|fourteen|fifteen|twenty|thirty|hundred)s?\b/gi)) {
     const v = COUNT_WORDS[m[1].toLowerCase()];
     const self = /^\s*(?:\w+\s+)?(?:reports?|sources?|outlets?|headlines?|articles?|stories|mentions?|warnings?|alerts?|advisories)\b/i.test(text.slice(m.index + m[0].length));
@@ -153,7 +156,7 @@ export function groundLine(line, refs, ctx = {}) {
     gap("number", m[0]);
   }
   // casualty counts and casualty words
-  const c = extraCount(all, text, inAll);
+  const c = extraCount(origs, text, inAll);
   if (c) gap("count", c);
   const h = text.match(EN_HARM);
   if (h) {

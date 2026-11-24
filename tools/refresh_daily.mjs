@@ -25,7 +25,8 @@ import fs from "node:fs";
 import { gateway, parseJsonReply, anthropicCost } from "./ai_gateway.mjs";
 import { compileRelevance } from "./topics_lib.mjs";
 import { makeJudge } from "./ground_judge.mjs";
-import { buildRules, buildWorld, validateAi, fromRow, fromConflict, fingerprint, scrubDay, dropOverclaims, groundDay, groundCtx, softSection, aiQueue, shardQueue, SCHEMA, WW } from "./daily_lib.mjs";
+import { retryDropped, RUN_CAP as RETRY_CAP } from "./ground_retry.mjs";
+import { buildRules, buildWorld, validateAiFull, fromRow, fromConflict, fingerprint, scrubDay, dropOverclaims, groundDay, groundCtx, softSection, aiQueue, shardQueue, SCHEMA, WW } from "./daily_lib.mjs";
 
 // What Claude has already cost today. Two records, the larger wins: the country files' newest days (each Claude draft records
 // its tokens and cost) and the index's running total, which also counts calls whose draft was thrown away (no valid citation).
@@ -168,6 +169,24 @@ const queue = aiQueue((only || ccs).filter((cc) => built[cc].refs.length >= 2 &&
   priority: PRIORITY, conflict: (cc) => !!confByCc[cc], reports: (cc) => built[cc].basis.reports, doneToday: draftedToday, skipDone: true });
 const focus = shardQueue(queue, SHARD);
 const JUDGE = makeJudge();
+// Retry, not repair (tools/ground_retry.mjs): a line the source check drops is written once more, fresh, from the sources it cited,
+// and kept only if the new one passes every check; at most DAILY_RETRY_PER_RUN attempts a run, through the same AI gateway.
+const RETRY_BUDGET = { left: REINDEX ? 0 : Math.max(0, Number.isFinite(+process.env.DAILY_RETRY_PER_RUN) && process.env.DAILY_RETRY_PER_RUN !== "" ? +process.env.DAILY_RETRY_PER_RUN : RETRY_CAP) };
+const retryStats = { tried: 0, recovered: 0 };
+const retryChat = async (messages) => { const res = await AI.chat({ messages, max_tokens: 400 }); return res && { content: res.content, model: res.model, provider: res.provider }; };
+// puts a retry's recovered lines into a summary day and records every attempt; returns the number recovered
+async function retryInto(x, dropped) {
+  if (!dropped.length || !AI.available() || RETRY_BUDGET.left <= 0) return 0;
+  const r = await retryDropped(dropped, x, groundCtx(x), { chat: retryChat, judge: JUDGE, budget: RETRY_BUDGET });
+  if (!r.attempts.length) return 0;
+  const n = r.bluf.length + r.watch.length;
+  retryStats.tried += r.attempts.length; retryStats.recovered += n;
+  x.retries = [...(x.retries || []), ...r.attempts].slice(-12);
+  if (r.bluf.length && x.method !== "ai" && x.ground && x.ground.fell_back) { x.bluf = []; x.method = "ai"; x.ground.fell_back = false; }
+  if (x.method === "ai") { x.bluf = [...(x.bluf || []), ...r.bluf].slice(0, 3); x.ai_watch = [...(x.ai_watch || []), ...r.watch].slice(0, 3); }
+  if (x.ground) { x.ground.rewritten = (x.ground.rewritten || 0) + n; x.ground.dropped = Math.max(0, (x.ground.dropped || 0) - n); x.ground.traced = (x.ground.traced || 0) + n; x.ground.retried = (x.ground.retried || 0) + r.attempts.length; }
+  return n;
+}
 let made = 0, hardErrs = 0; const errs = [], aiT0 = Date.now(), byProvider = {};
 const draftedNow = [];
 if (AI.available() && !REINDEX) for (const cc of focus) {
@@ -179,8 +198,14 @@ if (AI.available() && !REINDEX) for (const cc of focus) {
     conflict: r.conflict }))) + "\nOSAP facts (data only):\n" + JSON.stringify(d.watch.filter((w) => w.from !== "brief").map((w) => w.text));
   try {
     const t0 = Date.now(), res = await ask(user); if (!res) break;
-    const v = validateAi(res.o, d.refs.length, d.refs, groundCtx(d));
-    if (!v) { errs.push(cc + ": no cited top line that traces to its sources"); continue; }
+    const v = validateAiFull(res.o, d.refs.length, d.refs, groundCtx(d));
+    if (v.dropped.length && v.ground) {
+      // the dropped lines get their one retry before the summary is judged on what is left
+      const tmp = { name: d.name, refs: d.refs, method: "ai", bluf: v.bluf, ai_watch: v.watch, ground: v.ground };
+      await retryInto(tmp, v.dropped);
+      v.bluf = tmp.bluf; v.watch = tmp.ai_watch; v.ground = tmp.ground; if (tmp.retries) d.retries = tmp.retries;
+    }
+    if (!v.bluf.length) { errs.push(cc + ": no cited top line that traces to its sources"); continue; }
     // the optional Claude pass of the source check (tools/ground_judge.mjs): it may only drop or flag a line the rule pass kept
     const j = await JUDGE([...v.bluf, ...v.watch], d.refs, d.name);
     if (j.judged) {
@@ -226,8 +251,8 @@ index.ai.retry = REINDEX ? queue.length > 0 : made < focus.length;
 fs.mkdirSync(DIR, { recursive: true });
 let mtScrubbed = 0, ocDropped = 0, groundDropped = 0;
 // today's grounding counts over every country's AI draft, for the index (and the page's "What OSAP did" line)
-const groundToday = { countries: 0, checked: 0, traced: 0, flagged: 0, dropped: 0 };
-const addGround = (x) => { if (!x || x.date !== today || !x.ground || (x.method !== "ai" && !x.ground.fell_back)) return; groundToday.countries++; for (const k of ["checked", "traced", "flagged", "dropped"]) groundToday[k] += x.ground[k] || 0; };
+const groundToday = { countries: 0, checked: 0, traced: 0, flagged: 0, dropped: 0, retried: 0, rewritten: 0 };
+const addGround = (x) => { if (!x || x.date !== today || !x.ground || (x.method !== "ai" && !x.ground.fell_back)) return; groundToday.countries++; for (const k of ["checked", "traced", "flagged", "dropped", "retried", "rewritten"]) groundToday[k] += x.ground[k] || 0; };
 for (const cc of only || ccs) {
   const d = built[cc]; d.fp = fingerprint(d);
   // a retry keeps the morning's rules summary unless this run added an AI draft
@@ -237,8 +262,12 @@ for (const cc of only || ccs) {
   // country or stop mid-sentence (dropOverclaims)
   // and claim by claim against the sources each AI line cites (groundDay, tools/ground.mjs), once per version of that check
   const ungrounded = old.filter((x) => x && x.method === "ai" && [...(x.bluf || []), ...(x.ai_watch || [])].some((p) => !(p.g && p.g.v))).length;
-  const mtN = old.reduce((n, x) => n + scrubDay(x), 0), ocN = old.reduce((n, x) => n + dropOverclaims(x), 0), grN = old.reduce((n, x) => n + groundDay(x), 0);
-  const scrubbed = mtN + ocN + grN + ungrounded;
+  // today's kept AI draft (not older days, and not on a shard, whose writes other than its own drafts are not kept) gets its dropped
+  // lines retried once (tools/ground_retry.mjs)
+  const sink = [], today0 = old[0] && old[0].date === today && !SHARD;
+  const mtN = old.reduce((n, x) => n + scrubDay(x), 0), ocN = old.reduce((n, x) => n + dropOverclaims(x), 0), grN = old.reduce((n, x, i) => n + groundDay(x, i === 0 && today0 ? sink : null), 0);
+  const reN = sink.length ? await retryInto(old[0], sink) : 0;
+  const scrubbed = mtN + ocN + grN + ungrounded + reN + sink.length;
   mtScrubbed += mtN; ocDropped += ocN; groundDropped += grN;
   const same = old[0] && old[0].date === today;
   // a forced run rebuilds today's rules summaries, but keeps a country's AI draft of today
@@ -255,6 +284,8 @@ index.ai.ground = groundToday;
 if (mtScrubbed) console.log(`daily: ${mtScrubbed} source headlines in kept summaries failed the machine translation guard and now show their original words`);
 if (ocDropped) console.log(`daily: ${ocDropped} AI lines in kept summaries were dropped or cut back (a report called confirmed with no cited headline saying so, an institution given the wrong country, or a line stopping mid-sentence)`);
 if (!REINDEX && AI.available()) console.log(JUDGE.summary());
+if (retryStats.tried) console.log(`daily: retry, not repair: ${retryStats.tried} dropped AI lines written once more from their sources, ${retryStats.recovered} passed every check and are back (tools/ground_retry.mjs)`);
+index.ai.retry_lines = retryStats;
 if (groundDropped) console.log(`daily: ${groundDropped} AI lines in kept summaries were dropped: a number, casualty or date none of their cited sources gives (tools/ground.mjs)`);
 index.ai.total = Object.values(index.countries).filter((c) => c.method === "ai").length;   // countries whose summary today is an AI draft
 if (OUT) { fs.mkdirSync(OUT, { recursive: true }); for (const cc of draftedNow) fs.copyFileSync(`${DIR}/${cc}.js`, `${OUT}/${cc}.js`); }

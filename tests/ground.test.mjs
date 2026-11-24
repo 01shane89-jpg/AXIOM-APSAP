@@ -48,6 +48,12 @@ t("number words: 'two' in the source traces 'two'; 'three reports' traces to thr
   assert.equal(groundLine({ text: "Three reports carry a flood alert for Narathiwat.", refs: [1, 2, 3] }, three, { place: "Thailand" }).drop, false);
   assert.equal(groundLine({ text: "Three reports carry a flood alert for Narathiwat.", refs: [1] }, three, { place: "Thailand" }).drop, true);
 });
+t("NEGATIVE: other languages' number words are read only in original-language headlines ('fire' is a Scandinavian four)", () => {
+  const refs = [ref(1, "IRGC Navy says three tankers hit mines, catch fire in Strait of Hormuz", "Iran International")];
+  assert.equal(groundLine({ text: "Four tankers hit mines in the Strait of Hormuz, the IRGC Navy says.", refs: [1] }, refs, { place: "Oman" }).drop, true);
+  const no = [ref(2, "Fire kills 4 in Oslo", "NRK", "2026-11-23T10:00", { orig: "Fire døde i brann i Oslo" })];
+  assert.equal(groundLine({ text: "Four people died in a fire in Oslo, NRK reports.", refs: [2] }, no, { place: "Norway" }).drop, false);
+});
 t("a line's own pointers to its sources are not claims: '(5)', '(CBS News, 1; UPI, 3)', a source's publication time", () => {
   const refs = [ref(1, "Newspapers delayed as Allied Media hit by cyber attack", "RNZ", "2026-11-24T05:18"), ref(2, "x", "UPI"), ref(3, "y", "UPI")];
   const r = groundLine({ text: "Newspapers were delayed after a cyber attack on Allied Media, as reported by RNZ (1) at 05:18 (2026-11-24T05:18).", refs: [1] }, refs, { place: "New Zealand" });

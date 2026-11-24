@@ -113,6 +113,8 @@ jobs:
       # source check of AI text (tools/ground.mjs, tools/ground_judge.mjs): every AI summary line and Ask answer read claim by claim
       # against the sources it cites; untraceable numbers, casualties and dates dropped, names flagged
       - run: node tests/ground.test.mjs
+      # retry, not repair (tools/retry_once.mjs, tools/ground_retry.mjs): a dropped line is written once more from its sources and kept only if it passes
+      - run: node tests/ground_retry.test.mjs
       - run: node tests/brief_refresh.test.mjs
       - run: node tests/newimg.test.mjs
       - run: node tests/whatchanged.test.mjs
