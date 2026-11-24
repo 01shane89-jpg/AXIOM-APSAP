@@ -169,4 +169,12 @@ t("Taiwan's actors keep their names: 共機, 共艦, 國軍, 陸委會 (CNA, PTS
   assert.equal(termMissing("【寄稿】公共機関の無理な地方分散", "Unreasonable decentralization of public institutions"), "", "Japanese 公共機関 is not 共機");
   assert.equal(protectTerms("偵獲15共機艦、4氣球侵擾"), "偵獲15共機艦、4氣球侵擾", "a combined 機艦 count is left to tools/mt_zh.mjs");
 });
+t("核搭載 stays nuclear-armed, not nuclear-powered (Jiji, 2026-11-24)", () => {
+  const jiji = "ロシアが核搭載衛星計画か 年内打ち上げも";
+  assert.match(termMissing(jiji, "Russia's nuclear-powered satellite program likely to be launched in the year"), /nuclear-armed/);
+  assert.equal(termMissing(jiji, "Russia plans a nuclear-armed satellite, launch possible within the year"), "");
+  assert.match(termMissing("ロシアが年内に核弾頭搭載の衛星打ち上げ計画か", "Russia plans to launch a nuclear-powered satellite this year"), /nuclear-armed/);
+  assert.equal(termMissing("ロシアが年内に核弾頭搭載の衛星打ち上げ計画か", "Russia plans to launch a satellite carrying nuclear warheads this year"), "");
+  assert.equal(protectTerms(jiji), "ロシアが nuclear-armed 衛星計画か 年内打ち上げも");
+});
 console.log(ok + " passed");
