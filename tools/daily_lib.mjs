@@ -242,23 +242,31 @@ export function dropOverclaims(d) {
 // dropped, a line naming someone or some place none of them names is kept with that name flagged, and every line carries its
 // trace. The result's ground holds the counts.
 export function validateAi(o, nRefs, refs, ctx) {
+  const v = validateAiFull(o, nRefs, refs, ctx);
+  if (!v.bluf.length) return null;
+  const { dropped, ...rest } = v;
+  return v.ground ? rest : { bluf: rest.bluf, watch: rest.watch };
+}
+// validateAi without the null: also when no top line is left, and with the lines the source check dropped ({ text, refs, gaps,
+// section }), which tools/ground_retry.mjs may try once more. The dropped lines never reach the page.
+export function validateAiFull(o, nRefs, refs, ctx) {
   const clean = (s, n) => String(s || "").replace(/\s+/g, " ").trim().slice(0, n);
   const ok = (a) => [...new Set((Array.isArray(a) ? a : []).map((x) => +String(x).replace(/\D/g, "")).filter((x) => x >= 1 && x <= nRefs))].slice(0, 6);
   const list = (a, max) => (Array.isArray(a) ? a : []).map((p) => ({ text: cutOff(stripInlineCites(clean(p && p.text, 400).replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, ""))), refs: ok(p && p.refs) }))
     .filter((p) => p.text.length > 15 && p.refs.length && !overclaims(p.text, headsOf(refs, p.refs)) && !actorCountryAdded(p.text, headsOf(refs, p.refs))).slice(0, max);
-  let bluf = list(o && o.bluf, 3), watch = list(o && o.watch, 3), ground;
+  let bluf = list(o && o.bluf, 3), watch = list(o && o.watch, 3), ground, dropped = [];
   if (ctx && refs) {
     const b = groundLines(bluf, refs, ctx), w = groundLines(watch, refs, ctx);
     bluf = b.kept; watch = w.kept; ground = groundStats([...b.kept, ...w.kept], [...b.dropped, ...w.dropped]);
+    dropped = [...b.dropped.map((x) => ({ ...x, section: "bluf" })), ...w.dropped.map((x) => ({ ...x, section: "watch" }))];
   }
-  if (!bluf.length) return null;
-  return ground ? { bluf, watch, ground } : { bluf, watch };
+  return ground ? { bluf, watch, ground, dropped } : { bluf, watch, dropped };
 }
 export const groundCtx = (d) => ({ place: d.name, facts: (d.watch || []).filter((w) => w && w.from !== "brief").map((w) => w.text), window: d.window });
 // A kept AI summary (one made before this check, or under an older version of it) is checked again the same way; an AI summary
 // left with no top line falls back to its rules top lines. Lines already checked under this version are not checked again.
-// Returns the number of lines dropped.
-export function groundDay(d) {
+// Returns the number of lines dropped; sink (an array), when given, receives them ({ text, refs, gaps, section }) for a retry.
+export function groundDay(d, sink) {
   if (!d || d.method !== "ai" || !Array.isArray(d.refs)) return 0;
   const fresh = (p) => p && p.g && p.g.v === GROUND_V;
   const lines = [...(d.bluf || []), ...(d.ai_watch || [])];
@@ -266,6 +274,7 @@ export function groundDay(d) {
   const ctx = groundCtx(d), strip = (a) => (a || []).map((p) => (fresh(p) ? p : { text: p.text, refs: p.refs }));
   const b = groundLines(strip(d.bluf), d.refs, ctx), w = groundLines(strip(d.ai_watch), d.refs, ctx);
   d.bluf = b.kept; d.ai_watch = w.kept;
+  if (sink) sink.push(...b.dropped.map((x) => ({ ...x, section: "bluf" })), ...w.dropped.map((x) => ({ ...x, section: "watch" })));
   d.ground = groundStats([...b.kept, ...w.kept], [...b.dropped, ...w.dropped]);
   if (!d.bluf.length) { d.bluf = d.rules_bluf || []; d.method = "rules"; d.ground.fell_back = true; }
   return b.dropped.length + w.dropped.length;

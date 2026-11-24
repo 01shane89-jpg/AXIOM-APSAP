@@ -3,7 +3,8 @@
 //  1. a traced line shows "Traced"; a tap opens which source holds each name it checked, a second tap closes it;
 //  2. a line with a name its sources don't give shows "Partly traced" and says, in the open, what is not in its sources, and an
 //     outlet it credits without citing;
-//  3. the BLUF ends with the check's counts (lines read, traced, partly traced, removed); a What to watch AI line has its chip too;
+//  3. the BLUF ends with the check's counts (lines read, traced, partly traced, removed); a What to watch AI line has its chip too,
+//     and one written again after failing the check (tools/ground_retry.mjs) says "2nd draft";
 //  4. on a phone, the chip is at least 24 px tall (touch target). The page throws nothing. External hosts are blocked.
 // Run from the repo root: node tests/daily_ground_smoke.mjs  (needs playwright). SHOT=path saves a screenshot of the summary.
 import { createServer } from "node:http";
@@ -17,7 +18,7 @@ const BLUF = [
   { text: "Trat Fisheries sent a truck to the army for use against Khmer drones on the Thai–Cambodian border.", refs: [1, 2], g: G("traced", [["Trat", [1, 2]], ["Khmer", [1, 2]]]) },
   { text: "A Burmese man was arrested for a murder and fled to Samut Sakhon, Matichon and Amarin TV report.", refs: [2], g: G("flagged", [["Samut", [2]], ["Matichon", [2]]], [["name", "Burmese"], ["outlet", "Amarin TV"]]) },
 ];
-const WATCH = [{ text: "Watch for further flood alerts in Narathiwat.", refs: [1], g: G("traced", [["Narathiwat", [1]]]) }];
+const WATCH = [{ text: "Watch for further flood alerts in Narathiwat.", refs: [1], g: { ...G("traced", [["Narathiwat", [1]]]), r: { at: "2026-11-24T15:00", model: "claude-haiku-5-5", provider: "anthropic", prompt: "ground-retry/1", of: "abc" } } }];
 const server = createServer(async (req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "") || "index.html";
   try {
@@ -70,7 +71,7 @@ ok(r0.flags.some((f) => /Not in its sources: Burmese/.test(f)) && r0.flags.some(
 ok(!r0.trace.length && r1.trace.length === 1 && /Trat \[1\]\[2\]/.test(r1.trace[0]) && r1.chips[0] === "Traced|true", "a tap opens the trace: " + (r1.trace[0] || ""));
 ok(!r2.trace.length && r2.chips[0] === "Traced|false", "a second tap closes it");
 ok(/5 AI lines read claim by claim/.test(r0.foot) && /2 traced/.test(r0.foot) && /1 partly traced/.test(r0.foot) && /2 removed/.test(r0.foot), "the check's counts show: " + r0.foot);
-ok(r0.watchChip[0] === "Traced", "the AI What to watch line has its chip: " + r0.watchChip.join());
+ok(r0.watchChip[0] === "Traced, 2nd draft", "the AI What to watch line, rewritten after failing the check, says it is a second draft: " + r0.watchChip.join());
 ok(r0.h >= 24, "the chip is a 24 px touch target on a phone (" + r0.h + " px)");
 ok(errors.length === 0, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
 await browser.close(); server.close();
