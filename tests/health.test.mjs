@@ -271,6 +271,18 @@ console.log("health tests passed");
     assert.equal(lateJobs([seen], N, new Date(N - 150 * 60000).toISOString()).length, 1, "a list over 2 h old is not trusted for runs: the reader's clock");
     assert.equal(lateJobs([seen], N, new Date(N + 10 * 60000).toISOString()).length, 1, "a list time in the future is ignored");
     assert.equal(lateJobs([{ ...keeper, last: new Date(N - 400 * 60000).toISOString() }], N, listAt).length, 1, "the list time never excuses a job with no run going");
+    // the list is asked hourly and read for up to 2 h: it must ask about a run before the job is late, not only once it is
+    // (24 Nov 2026: keeper last success 4 h 36 min old when asked, no "running" kept, shown late 45 min later while it ran)
+    const { askRunning, jobStarted } = await import("../tools/health_lib.mjs");
+    assert.equal(askRunning(new Date(N - 276 * 60000).toISOString(), 300, N), true, "4 h 36 min of a 5 h limit: ask whether a run is going");
+    assert.equal(askRunning(new Date(N - 150 * 60000).toISOString(), 300, N), false, "2 h 30 min of a 5 h limit: no need to ask yet");
+    assert.equal(askRunning(null, 300, N), true, "no success on record: ask");
+    // a run queued behind another keeps its queue time as run_started_at; its job's start is when it really began
+    assert.equal(jobStarted([{ status: "in_progress", started_at: "2026-11-24T15:01:09Z" }]), "2026-11-24T15:01:09Z");
+    assert.equal(jobStarted([{ status: "queued", started_at: "2026-11-24T11:01:36Z" }]), null, "a job still queued has not started");
+    assert.equal(jobStarted([{ status: "completed", started_at: "2026-11-24T15:02:00Z" }, { status: "in_progress", started_at: "2026-11-24T15:01:09Z" }]), "2026-11-24T15:01:09Z", "earliest started job");
+    assert.equal(jobStarted([]), null);
+    assert.equal(jobStarted(undefined), null);
     const { jobLabel } = await import("../tools/health_lib.mjs");
     assert.equal(jobLabel("Keep the 15-minute refresh running"), "15-minute refresh keeper");
     assert.equal(jobLabel("Refresh airfield weather (METAR/TAF)"), "Airfield weather (METAR/TAF)");
