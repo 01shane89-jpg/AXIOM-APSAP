@@ -146,7 +146,7 @@ export class FastNews {
     try {
       const r = await this.fetch(s.f.url, { headers: h, signal: AbortSignal.timeout(15000) });
       maxAge = maxAgeOf(r.headers.get("cache-control"));
-      if (r.status === 304) { this.notModified++; s.fails = 0; if (!s.burst) s.next = now + nextGap(s.base || this.base, maxAge, 0); return []; }
+      if (r.status === 304) { this.notModified++; s.fails = 0; s.lastOk = now; if (!s.burst) s.next = now + nextGap(s.base || this.base, maxAge, 0); return []; }
       if (!r.ok) throw new Error("HTTP " + r.status);
       body = await r.text();
       s.etag = r.headers.get("etag") || ""; s.lm = r.headers.get("last-modified") || "";
@@ -160,6 +160,9 @@ export class FastNews {
     }
     if (!s.burst) s.next = now + nextGap(s.base || this.base, maxAge, 0);
     const first = !s.burst && s.polls++ === 0;
+    // late: the outlet's own time is before this feed's previous answer (a minute's slack for minute-precision dates), so the item
+    // was not in the feed when OSAP last asked: the outlet posted it after the time it gives. Its delay is the outlet's, not OSAP's.
+    const prev = s.lastOk || 0; s.lastOk = now;
     const items = [];
     for (const raw of parseFeed(body, { image: true }).slice(0, s.f.max || 25)) {
       // an item read before is not made again (the loop keeps what it laid; main's copy is the lane's)
@@ -167,7 +170,7 @@ export class FastNews {
       if (this.seen.has(k)) continue;
       this.seen.add(k);
       const o = finish(this.R, this.gz, toItem(raw, s.f, now), s.f.cc, now, s.burst ? BURST_FRESH_H : FRESH_H);
-      if (o) { o._first = first; o._burst = !!s.burst; o._wide = !!s.wide; items.push(o); }
+      if (o) { o._first = first; o._burst = !!s.burst; o._wide = !!s.wide; o._late = !first && prev > 0 && Date.parse(o.date + "Z") < prev - 60e3; items.push(o); }
     }
     return items;
   }

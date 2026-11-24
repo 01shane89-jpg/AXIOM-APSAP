@@ -20,13 +20,13 @@ export const stats = (a) => ({ n: a.length, p10: q(a, 0.1), med: q(a, 0.5), p90:
 
 /* the lines that matter in one loop log; ts is each line's Actions timestamp (ms), to keep only the window */
 export function parseLog(text, since = 0) {
-  const out = { news: [], newsBy: {}, alerts: { news: [], other: [], flash: [] }, quakes: [], requests: 0, failed: 0 };
+  const out = { news: [], onTime: [], late: [], newsBy: {}, alerts: { news: [], other: [], flash: [] }, quakes: [], requests: 0, failed: 0 };
   for (const line of String(text).split("\n")) {
     const t = Date.parse((line.match(/^(\d{4}-\d\d-\d\dT[\d:.]+Z)/) || [])[1] || "");
     if (since && isFinite(t) && t < since) continue;
     let m;
     if ((m = line.match(/new fast item ([a-z]{2,3}) (.+?): (\d+) s after its outlet's time/)) && !/\(burst\)/.test(m[2])) {
-      out.news.push(+m[3]); (out.newsBy[m[1] + " " + m[2]] = out.newsBy[m[1] + " " + m[2]] || []).push(+m[3]);
+      out.news.push(+m[3]); (/, late post/.test(line) ? out.late : out.onTime).push(+m[3]); (out.newsBy[m[1] + " " + m[2]] = out.newsBy[m[1] + " " + m[2]] || []).push(+m[3]);
     } else if ((m = line.match(/push: alert lag (\d+) s (flash|alert) (\S+)/))) {
       const s = +m[1];
       if (m[2] === "flash") out.alerts.flash.push(s);
@@ -37,9 +37,9 @@ export function parseLog(text, since = 0) {
   return out;
 }
 export function merge(parts) {
-  const o = { news: [], newsBy: {}, alerts: { news: [], other: [], flash: [] }, quakes: [], requests: 0, failed: 0 };
+  const o = { news: [], onTime: [], late: [], newsBy: {}, alerts: { news: [], other: [], flash: [] }, quakes: [], requests: 0, failed: 0 };
   for (const p of parts) {
-    o.news.push(...p.news); o.quakes.push(...p.quakes); o.requests += p.requests; o.failed += p.failed;
+    o.news.push(...p.news); o.onTime.push(...(p.onTime || [])); o.late.push(...(p.late || [])); o.quakes.push(...p.quakes); o.requests += p.requests; o.failed += p.failed;
     for (const k of Object.keys(o.alerts)) o.alerts[k].push(...p.alerts[k]);
     for (const [k, a] of Object.entries(p.newsBy)) (o.newsBy[k] = o.newsBy[k] || []).push(...a);
   }
@@ -53,6 +53,8 @@ export function markdown(o, hours, runs) {
     `Goal: beat Dataminr on alerts that are not natural hazards. Before the fast news feeds: news on main a median ${fmt(BEFORE.newsMed)} after the outlet's time.`, "",
     "| Measure | Items | Median | 10% within | 90% within | Target | |", "|---|---|---|---|---|---|---|",
     `| News: outlet's time to in OSAP | ${n.n} | ${fmt(n.med)} | ${fmt(n.p10)} | ${fmt(n.p90)} | median ${fmt(TARGET.newsMed)}, 90% ${fmt(TARGET.newsP90)} | ${ok(n.med, TARGET.newsMed)} / ${ok(n.p90, TARGET.newsP90)} |`,
+    (() => { const s = stats(o.onTime); return `| ... posted on time by the outlet (OSAP's own delay) | ${s.n} | ${fmt(s.med)} | ${fmt(s.p10)} | ${fmt(s.p90)} | median ${fmt(TARGET.newsMed)}, 90% ${fmt(TARGET.newsP90)} | ${ok(s.med, TARGET.newsMed)} / ${ok(s.p90, TARGET.newsP90)} |`; })(),
+    (() => { const s = stats(o.late); return `| ... posted to the feed after its stated time (outlet's delay) | ${s.n} | ${fmt(s.med)} | ${fmt(s.p10)} | ${fmt(s.p90)} | | |`; })(),
     `| Flash alerts: first report to push | ${f.n} | ${fmt(f.med)} | ${fmt(f.p10)} | ${fmt(f.p90)} | median ${fmt(TARGET.flashMed)} | ${ok(f.med, TARGET.flashMed)} |`];
   for (const [k, label] of [["news", "News alerts: first report to push"], ["other", "Other alerts (hazards, warnings): first report to push"]]) {
     const s = stats(o.alerts[k]); L.push(`| ${label} | ${s.n} | ${fmt(s.med)} | ${fmt(s.p10)} | ${fmt(s.p90)} | | |`);
@@ -94,7 +96,7 @@ if (process.argv[1] && /speed_scorecard\.mjs$/.test(process.argv[1])) {
     } catch (e) { unread++; console.error(`run ${r.id}: jobs not read (${String(e.message || e).split("\n")[0].slice(0, 80)})`); }
   }
   const o = merge(parts); o.logs = logs; o.unread = unread;
-  const out = process.env.SPEED_JSON ? JSON.stringify({ hours, runs: runs.length, target: TARGET, before: BEFORE, news: stats(o.news),
+  const out = process.env.SPEED_JSON ? JSON.stringify({ hours, runs: runs.length, target: TARGET, before: BEFORE, news: stats(o.news), newsOnTime: stats(o.onTime), newsLate: stats(o.late),
     logs, unread, flash: stats(o.alerts.flash), newsAlerts: stats(o.alerts.news), otherAlerts: stats(o.alerts.other), quakes: stats(o.quakes), requests: o.requests, failed: o.failed }) + "\n"
     : markdown(o, hours, runs.length);
   process.stdout.write(out);
