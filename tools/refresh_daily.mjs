@@ -192,14 +192,17 @@ index.ai.providers = byProvider;
 {
   // the day's running Claude total, kept in the index even on runs without Claude (a free-only run must not forget it)
   const sp = AI.status().spend, dir = process.env.DAILY_SPEND_DIR;
-  let shards = 0;
-  if (REINDEX && dir) try { for (const f of fs.readdirSync(dir).filter((f) => /^spend-\d+\.json$/.test(f)))
-    shards += +JSON.parse(fs.readFileSync(`${dir}/${f}`, "utf8")).usd || 0; } catch (e) {}
+  let shards = 0, shardCalls = 0, shardDropped = "";
+  if (REINDEX && dir) try { for (const f of fs.readdirSync(dir).filter((f) => /^spend-\d+\.json$/.test(f))) {
+    const x = JSON.parse(fs.readFileSync(`${dir}/${f}`, "utf8")); shards += +x.usd || 0; shardCalls += +x.calls || 0;
+    if (x.dropped && !shardDropped) shardDropped = String(x.dropped).slice(0, 240); } } catch (e) {}
   // after the shards, their drafts are in the country files already, so the index's earlier total plus what the shards spent
   // is set against the files' sum (not added to it)
   const total = REINDEX ? Math.max(SPENT.files, SPENT.index + shards) : SPENT_USD + sp.usd;
-  if (CLAUDE || total > 0) index.ai.claude = { cap_usd: CAP_USD, spent_today_usd: usd(total), this_run_usd: usd(REINDEX ? shards : sp.usd), calls: sp.calls, dropped: AI.status().dropped.anthropic || "" };
-  if (OUT && SHARD) { fs.mkdirSync(OUT, { recursive: true }); fs.writeFileSync(`${OUT}/spend-${SHARD.split("/")[0]}.json`, JSON.stringify({ usd: usd(sp.usd), calls: sp.calls })); }
+  // why Claude stopped is kept through the shards' reindex too, so the index (and the run log) say it rather than nothing
+  const dropped = REINDEX ? shardDropped : AI.status().dropped.anthropic || "";
+  if (CLAUDE || total > 0 || dropped) index.ai.claude = { cap_usd: CAP_USD, spent_today_usd: usd(total), this_run_usd: usd(REINDEX ? shards : sp.usd), calls: REINDEX ? shardCalls : sp.calls, dropped };
+  if (OUT && SHARD) { fs.mkdirSync(OUT, { recursive: true }); fs.writeFileSync(`${OUT}/spend-${SHARD.split("/")[0]}.json`, JSON.stringify({ usd: usd(sp.usd), calls: sp.calls, dropped })); }
 } if (process.env.OSAP_LOCAL_LLM) index.ai.local = process.env.OSAP_LOCAL_MODEL || "local";
 // a later run today tries the AI step again for the countries not yet drafted, whether this run stopped or used its per-run
 // share (the rules summaries stay meanwhile)
@@ -234,3 +237,5 @@ if (OUT) { fs.mkdirSync(OUT, { recursive: true }); for (const cc of draftedNow) 
 if (!only) fs.writeFileSync(INDEX, "window.OSAP_DAILY_INDEX=" + JSON.stringify(index) + ";\n");
 const n = Object.values(built), quiet = n.filter((d) => !d.basis.reports).length;
 console.log(`daily ${today}: ${n.length} countries, ${n.length - quiet} with reports, ${quiet} quiet; AI top lines ${made} this run, ${index.ai.total} of ${n.length} today, ${focus.length - made} still due` + (stop ? `; AI stopped: ${stop}` : "") + (errs.length ? `; errors: ${errs.join(" | ")}` : ""));
+if (index.ai.claude) { const c = index.ai.claude; console.log(`claude: ${c.calls} calls, $${c.this_run_usd} this run, $${c.spent_today_usd} of $${c.cap_usd} today` + (c.dropped ? `; dropped: ${c.dropped}` : "")); }
+else if (process.env.ANTHROPIC_API_KEY && !REINDEX) console.log(`claude: not set up (OSAP_AI_ORDER ${process.env.OSAP_AI_ORDER || "unset"}, run cap $${RUN_CAP.toFixed(4)})`);
