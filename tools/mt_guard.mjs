@@ -69,8 +69,7 @@ const DECADE_WORD = { twenties: 2, thirties: 3, forties: 4, fifties: 5, sixties:
 const CENTURY = /\b(\d{1,2})(?:st|nd|rd|th) century\b/gi;
 // a clock time in the English: "10:35", "10.35am", "10.35 a.m.", "9am", "22.30 hrs"
 const CLOCK = /(?<![\d.,:])([01]?\d|2[0-3])(?:[:.]([0-5]\d))?\s*(a\.?m\b\.?|p\.?m\b\.?|hrs\b|h\b|o'clock\b)?(?![\d.,:]?\d)/gi;
-// a comma after the year is punctuation ("in 2015, German media report", NHK 2026-11-24); only a digit after it makes it 2,015
-const YEAR = /(?<![\d,.:/])(1[5-9]\d\d|20\d\d)(?!\d|,\d)/g;
+const YEAR = /(?<![\d,.:/])(1[5-9]\d\d|20\d\d)(?![\d,])/g;
 
 // reason the English is not a translation of orig, or "" when nothing is wrong. now: the time of the check (ms), for the
 // current year, which a translation may add (Japanese era years, "this year"). lang: the original's language tag, when known,
