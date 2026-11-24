@@ -16,6 +16,7 @@ tests/locked_requests_smoke.mjs
 tests/start_reload_smoke.mjs
 # the first open on a device starts on World; returning users keep their last country (Shane 2026-11-15)
 tests/world_start_smoke.mjs
+tests/home_country_smoke.mjs
 tests/analyst_smoke.mjs
 tests/seal_sw_smoke.mjs
 tests/econ_smoke.mjs

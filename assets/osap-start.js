@@ -5,8 +5,9 @@
       its own #osap-boot, that one is used and this cover is not added.
    2. Today on launch: every fresh open of the app lands on the Today home screen (assets/osap-today.js), not on the tab that
       was open last time. A fresh open is a new tab or app launch (this tab's sessionStorage has no "osap-today" yet). A link
-      that names a country keeps that country; a plain open uses the last country viewed on this device (localStorage
-      "osap-last-cc"), and the very first open on a device (no OSAP setting saved yet) starts on World ("ww", the whole map,
+      that names a country keeps that country; a plain open uses the person's choice: the last country viewed on this device
+      (localStorage "osap-last-cc") when it is one of My countries or none are pinned, else the first of My countries
+      ("osap-mycc", assets/osap-mycountries.js); and the very first open on a device (no OSAP setting saved yet) starts on World ("ww", the whole map,
       every country's most-covered stories and the global feeds; Shane 2026-11-15). The tab part of the address is dropped. Not applied when the user chose "Map" as the start screen.
    Neither applies to alert links (?wopen=) or the hidden scan frames (?watchscan=). */
 (function () {
@@ -26,8 +27,18 @@
     if (a && (/^(javascript|vbscript):$/i.test(a.protocol || "") || /^\s*(javascript|vbscript):/i.test(a.getAttribute("href") || ""))) { e.preventDefault(); e.stopPropagation(); }
   }, true);
   if (/[?&](watchscan|wopen)=/.test(location.search)) return;
+  /* a device where nobody has chosen anything yet. The sign-in screen (assets/osap-tier.js, assets/osap-datagate.js), the saved-work
+     hand-off (assets/osap-carry.js) and the first-run setup's own "pending"/"skipped" mark (assets/osap-mycountries.js) save keys
+     before the person has made any choice; they are not settings, so a new account that signs in (the sign-in reloads the
+     page) still opens on World rather than Thailand (Shane 2026-11-23, tests/home_country_smoke.mjs) */
+  var NOT_A_CHOICE = /^osap-(setup|auth|gated|tier-.*|carry.*|today|boot.*)$/;
   function newDevice() {
-    try { for (var i = 0; i < localStorage.length; i++) if (/^(osap|asap|tsap|tfw|tw|tbw)[-.]/.test(localStorage.key(i) || "")) return false; } catch (e) { return false; }
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i) || "";
+        if (/^(osap|asap|tsap|tfw|tw|tbw)[-.]/.test(k) && !NOT_A_CHOICE.test(k)) return false;
+      }
+    } catch (e) { return false; }
     return true;
   }
   function ls(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
@@ -41,11 +52,18 @@
   var mine = loc && loc.on && typeof loc.cc === "string" && /^[a-z]{2,3}$/.test(loc.cc) && !(h0.length > 1 && /^[a-z]{2,3}$/.test(h0[0])) ? loc.cc : "";
   if (mine) try { sessionStorage.setItem("osap-loc-go", "1"); } catch (e) {}
   if (was == null && ls("osap-home") !== "map") {
-    var h = h0, last = ls("osap-last-cc");
-    /* the page reads a country only from "cc/tab"; a bare "#tab" is Thailand (older links). Nothing in the link and no
-       country viewed yet: World on a new device (no OSAP setting saved yet, the same test as the first-run setup in
-       assets/osap-mycountries.js, which runs next); a device that has used OSAP before stays on Thailand, where it always opened */
-    var cc = mine || (h.length > 1 && /^[a-z]{2,3}$/.test(h[0]) ? h[0] : h[0] ? "th" : typeof last === "string" && /^[a-z]{2,3}$/.test(last) ? last : newDevice() ? "ww" : "th");
+    var h = h0, CCRE = /^[a-z]{2,3}$/, last = ls("osap-last-cc"), my = ls("osap-mycc");
+    last = typeof last === "string" && CCRE.test(last) ? last : "";
+    var pins = my && Array.isArray(my.pins) ? my.pins.filter(function (c) { return typeof c === "string" && CCRE.test(c); }) : [];
+    /* the person's own choice (Shane 2026-11-23 "even with countries set their account still defaults to Thailand"):
+       the last country viewed when it is one of My countries, or when none are pinned; otherwise the first of My countries.
+       "osap-last-cc" is saved on every open, so an open that once fell back to Thailand used to keep them there for good. */
+    var chosen = last && (!pins.length || pins.indexOf(last) >= 0) ? last : pins[0] || "";
+    /* the page reads a country only from "cc/tab". A link that names a country wins; then "Use my location"; then the
+       person's choice. A bare "#tab" (older links, from when Thailand was the only country) and nothing chosen is Thailand.
+       Nothing in the link and nothing chosen: World on a new device (newDevice above); a device that has used OSAP before
+       with no country chosen stays on Thailand, where it always opened (tests/home_country_smoke.mjs) */
+    var cc = (h.length > 1 && CCRE.test(h[0]) ? h[0] : "") || mine || chosen || (h[0] ? "th" : newDevice() ? "ww" : "th");
     try { history.replaceState(null, "", location.pathname + stq(mine) + "#" + (cc === "th" ? "" : cc + "/") + "timeline"); } catch (e) {}
   } else if (mine) {
     /* "Map" start screen: keep the tab, change only the country */
