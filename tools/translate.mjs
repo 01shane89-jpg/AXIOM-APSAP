@@ -23,6 +23,7 @@ import { protectThaiPlaces } from "./th_places.mjs";
 import { protectTerms } from "./mt_glossary.mjs";
 import { mtSuspect, looksEnglish, lowConfidence } from "./mt_guard.mjs";
 import { verifyPairs, loadState, saveState, enHash } from "./mt_verify.mjs";
+import { retryRejected } from "./mt_retry.mjs";
 
 // One cache file per refresh lane. The fast lane (warnings) and the news lane (news, Deep South, social) run at the same time and
 // both committed data/live/translation-cache.json, and the later push kept only its own copy (tools/push_rebase.sh "theirs" on a
@@ -119,9 +120,22 @@ async function claudeCheck(items, out, vopts, runStart) {
     (c && c.at && c.at >= runStart ? fresh : old).push({ i, key: k, text: it.text, lang: it.lang, en: o.en });
   });
   const pairs = [...fresh, ...old];
-  if (!pairs.length) return;
-  const res = await verifyPairs(pairs, { ...vopts, state: st });
-  for (const [j, v] of res) if (!v.ok) reject(pairs[j].i, pairs[j].key, (st.records[pairs[j].key].f || 0) >= 2);
+  if (pairs.length) {
+    const res = await verifyPairs(pairs, { ...vopts, state: st });
+    for (const [j, v] of res) if (!v.ok) reject(pairs[j].i, pairs[j].key, (st.records[pairs[j].key].f || 0) >= 2);
+  }
+  // Retry, not repair (tools/mt_retry.mjs): a headline whose translation was rejected, by the rule checks or by Claude, gets one
+  // fresh translation from Claude, written from the original. It is used only if it passes both checks; otherwise the original stays.
+  if (vopts.retry === false || process.env.MT_RETRY === "0") return;
+  const flagged = [];
+  items.forEach((it, i) => {
+    if (out[i] || !it.text || looksEnglish(it.text) || /^en\b/i.test(it.lang || "")) return;
+    const k = key(it.text, it.lang), c = cache[k];
+    if (c && c.rejected) flagged.push({ i, key: k, text: it.text, lang: it.lang });
+  });
+  if (!flagged.length) return;
+  const got = await retryRejected(flagged, { ...vopts, state: st });
+  for (const [j, r] of got) { const f = flagged[j]; out[f.i] = { en: r.en, tool: r.tool }; put(f.key, { en: r.en, tool: r.tool, model: r.model, retry: 1, at: Date.now() }); }
 }
 export const MT_TOOL = "MADLAD-400 (Google open model, run in the refresh job)";
 const MT_DIR = process.env.MT_DIR || path.join(os.homedir(), ".cache/osap-mt/madlad400-3b-mt-ct2-int8");

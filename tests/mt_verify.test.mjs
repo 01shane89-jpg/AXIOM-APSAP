@@ -111,12 +111,12 @@ await t("translateAll: a translation Claude fails is taken out (the original sho
   const st = fresh();
   const c = stub((p) => ({ results: p.map((x) => ({ id: x.id, verdict: /1 million/.test(x.english) ? "fail" : "ok", kinds: /1 million/.test(x.english) ? ["number"] : [] })) }));
   const items = [{ text: A, lang: "ko" }, { text: B, lang: "ko" }, { text: C, lang: "en" }];
-  const out = await translateAll(items, { model: false, verify: { key: "test", client: c, state: st, now, log: quiet } });
+  const out = await translateAll(items, { model: false, verify: { key: "test", client: c, state: st, now, log: quiet, retry: false } });
   assert.equal(out[0].en, null); assert.equal(out[1].en, "President Lee visits the US"); assert.equal(out[2].en, C);
   assert.equal(c.sent.length, 1);
   assert.ok(!c.sent[0].messages[0].content.includes("Already English"));
   // the same translations again: the records answer, nothing is sent, the fail stays out
-  const again = await translateAll(items, { model: false, verify: { key: "test", client: c, state: st, now, log: quiet } });
+  const again = await translateAll(items, { model: false, verify: { key: "test", client: c, state: st, now, log: quiet, retry: false } });
   assert.equal(c.sent.length, 1); assert.equal(again[0].en, null); assert.equal(again[1].en, "President Lee visits the US");
 });
 

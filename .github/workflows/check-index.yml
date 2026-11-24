@@ -196,6 +196,8 @@ jobs:
       - run: node tests/mt_guard.test.mjs
       # Claude check of translations: verdict only, no rewrite, data not instructions, daily cap, no key = rule checks only
       - run: node tests/mt_verify.test.mjs
+      # retry, not repair: one fresh Claude translation of a rejected headline, used only if it passes both checks
+      - run: node tests/mt_retry.test.mjs
       - run: node tests/translate_keep.test.mjs
       - run: node tests/mt_confidence.test.mjs
       - run: node tests/mt_cache_lanes.test.mjs
