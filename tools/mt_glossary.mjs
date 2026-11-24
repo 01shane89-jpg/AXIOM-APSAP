@@ -62,6 +62,13 @@ const KEEP = [
   [/(?<![公])共(?:機|机)(?![艦舰船])/g, "PLA aircraft", /\b(?:Chinese|China|PLA|Communist|CCP|CPC)\b/i, "PLA aircraft (共機)"],
   [/(?<![公])共(?:艦|舰)/g, "PLA warships", /\b(?:Chinese|China|PLA|PLAN|Communist|CCP|CPC)\b/i, "PLA warships (共艦)"],
   [/國軍/g, "Taiwan's armed forces", /^(?![\s\S]*\bJapan)[\s\S]*\b(?:Taiwan(?:ese)?|ROC|armed forces|military|army|troops|soldiers|defen[cs]e|forces)\b/i, "Taiwan's armed forces (國軍)"],
+  // 2026-11-24, Russian aircraft near Ulleungdo (IG P62): 울릉도 came out as "Ulsan" or "Ulju", a city 150 km away, in 38 of 40
+  // stored Korean lines; 독도 (Dokdo) as "Indochina" or "Donghae" in 17 of 17; 백령도 (Baengnyeongdo, on the northern limit line)
+  // lost in its one line. 대마도 is not pinned: 대마 is also "cannabis" and 도 "also".
+  [/울릉도/g, "Ulleungdo", /Ulleung|Ullung/i, "Ulleungdo (울릉도)"],
+  [/울릉(?!도)/g, "Ulleung", /Ulleung|Ullung/i, "Ulleung (울릉)"],
+  [/독도/g, "Dokdo", /Dokdo|Tokdo|Liancourt|Takeshima/i, "Dokdo (독도)"],
+  [/백령도/g, "Baengnyeongdo", /Baengnyeong|Paengnyong/i, "Baengnyeongdo (백령도)"],
   [/陸委會|陆委会/g, "Mainland Affairs Council", /Mainland Affairs Council|\bMAC\b/, "Mainland Affairs Council (陸委會)"],
 ];
 // Iraq and Syria named in the English when the original names neither (Newtalk's 伊, Iran, read as "Iraqi forces" and
