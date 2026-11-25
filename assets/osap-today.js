@@ -540,6 +540,13 @@
     ".tdvh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}" +
     ".tdloc[aria-pressed=true]{border-color:#1a73e8;color:#1a73e8}.tdmap,.tdloc,.tdlink,.tdhome button,.tdplaces button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;min-height:40px;padding:6px 12px}" +
     ".tdmap{background:var(--accent);border-color:var(--accent);color:var(--on-accent,var(--surface));font-weight:600}" +
+    /* phones: the header took ~195 px before the news search (about 30% of a 664 px screen; nightly review 22 Nov 2026), with the
+       country and buttons in ragged rows. The data badge moves up beside "Today", the time goes under it, and the country and
+       buttons fill their rows evenly: the search starts ~40 px higher. Header buttons only (the news Search button is also .tdmap). */
+    "@media (max-width:560px){.tdtop{gap:8px;padding:6px 0;margin-bottom:10px}.tdmark{width:36px;height:36px}" +
+    ".tdbrand{flex:1 1 calc(100% - 44px);flex-direction:row;flex-wrap:wrap;align-items:center;column-gap:8px}.tdbrand b{font-size:20px}.tdbrand .tdsub{order:2;flex-basis:100%}" +
+    ".tdbrand .ohw{margin-top:0!important;margin-left:auto;align-self:center!important}" +
+    ".tdcc{flex:1 1 55%;min-width:0}.tdcc select{width:100%;max-width:none}.tdtop .tdloc,.tdtop .tdmap{flex:1 1 120px}}" +
     /* the screen fills the window, news first: three columns on a wide screen (stories | weather | warnings), two on a tablet or
        small laptop (stories beside weather and warnings), one on a phone (stories on top) */
     ".tdcols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto 1fr;grid-template-areas:'c a b' 'c a b';gap:12px;align-items:start}" +
