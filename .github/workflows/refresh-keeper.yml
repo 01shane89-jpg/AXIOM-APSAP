@@ -69,6 +69,15 @@ jobs:
             if [ "$aw" = "0" ]; then
               gh workflow run refresh-ai.yml --ref main -f task=cycle && echo "$(date -u +%H:%MZ) started the AI drafts round" || echo "$(date -u +%H:%MZ) could not start the AI drafts round"
             fi
+            # the 3-hourly fact checks (refresh-factchecks.yml, about 3 min a run): its "23 */3" schedule started 7 runs (1 cancelled)
+            # in the 72 h to 25 Nov 2026 14:30Z (24 due), and the late-job restart below only steps in at 420 min, the same moment the
+            # fact-check feed itself runs out of time, so the Fact checks panel sat 6 to 7 h old between rounds. When no run of it has
+            # been created in the last 3 h 20 min, start one by hand, as for the AI drafts.
+            since=$(date -u -d '200 minutes ago' +%Y-%m-%dT%H:%M:%SZ)
+            fw=$(gh run list --workflow refresh-factchecks.yml --branch main --limit 20 --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 1)
+            if [ "$fw" = "0" ]; then
+              gh workflow run refresh-factchecks.yml --ref main && echo "$(date -u +%H:%MZ) started the fact checks" || echo "$(date -u +%H:%MZ) could not start the fact checks"
+            fi
             # the daily AI pass (refresh-ai.yml task=daily, due on its 01:23Z schedule after the news lane has built the day's rules
             # summaries). GitHub skipped that schedule on 25 Oct 2026, leaving every country's daily summary rules-only. From 02:30Z, when
             # no daily (or both) run of it has been created today, start one by hand; at most one a day, so a failed pass is not retried.
