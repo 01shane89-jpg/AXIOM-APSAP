@@ -71,8 +71,10 @@ const r = await p.evaluate((cc) => {
   const twin = Object.assign({}, one, { url: one.url.replace(/\/?$/, "/") + "?utm_source=rss&utm_medium=feed", layer: "transport", news: undefined });
   const variant = W.fresh([one, twin], {}).length;
   /* the same headline at another outlet's link (24 Nov 2026, two Malaysian outlets): one row, naming the other outlet */
-  const o1 = Object.assign({}, one, { id: "t-a", url: "https://a.example/x", title: "18 locations identified: route, landing site of PATI in Kelantan", src: { name: "Outlet A" } });
-  const o2 = Object.assign({}, one, { id: "t-b", url: "https://b.example/y", title: "18 Locations Identified Route, Landing Site Of PATI In Kelantan ", src: { name: "Outlet B" } });
+  /* the copies are translated headlines: "one" is whatever news item the live data holds first, and when that item was an
+     untranslated one (25 Nov 2026) its original wording came along and decided the grouping, so two "Live updates" merged */
+  const o1 = Object.assign({}, one, { untr: undefined, orig: undefined, id: "t-a", url: "https://a.example/x", title: "18 locations identified: route, landing site of PATI in Kelantan", src: { name: "Outlet A" } });
+  const o2 = Object.assign({}, one, { untr: undefined, orig: undefined, id: "t-b", url: "https://b.example/y", title: "18 Locations Identified Route, Landing Site Of PATI In Kelantan ", src: { name: "Outlet B" } });
   const T = W.fresh([o1, o2], {}), also = W.alsoOf ? W.alsoOf(T[0]) : [];
   const seenTitle = W.fresh([o1, o2], { [W.keyOf(o1)]: 1 }).length;
   /* untranslated items share a stand-in title; their own original wording decides */
