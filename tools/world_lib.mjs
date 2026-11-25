@@ -8,14 +8,15 @@
 //   worldNews(stories, newsOf, asof) -> the World news file's body (data/live/news/ww.js, window.ASAP_NEWS, items.ww)
 import { relevance } from "./topics_lib.mjs";
 
-export const WW = "ww", MAX_WORLD = 40, PER_COUNTRY = 4, MAX_SRC = 10;
+export const WW = "ww", MAX_WORLD = 40, PER_COUNTRY = 4, MAX_SRC = 10, FRESH_H = 24;
 // sport and show business that can still reach a country's most-covered list through a word the filter keeps
 const SOFT = /\b(football|soccer|cricket|tennis|golf|basketball|baseball|rugby|olympic\w*|world cup|premier league|champions league|fifa|nba|nfl|messi|ronaldo|striker|goalkeeper|coach|squad|qualifiers?|friendly|derby|formula (one|1)|f1|grand prix|motogp|ufc|boxing|marathon|celebrit\w*|actors?|actress|singers?|k-?pop|concerts?|album|box office|movies?|films?|oscars?|grammys?|fashion|horoscope|lottery)\b/i;
 
 const ms = (d) => Date.parse(String(d || "").slice(0, 16) + "Z");
 
 // built: Map or [[cc, { stories, reports, outlets }]]; R: compiled relevance rules (tools/relevance.json), optional.
-// A story's rank: outlets that carried it, +3 when its headline is strong analyst news (security, disaster, crisis words).
+// A story's rank: outlets that carried it, those in the last 24 hours counted twice, +3 when its headline is strong analyst
+// news (security, disaster, crisis words).
 // Blindspots are left out (they are about one country's own outlets). The same story filed under two countries (it names
 // both) is kept once, under the country with more outlets on it; at most PER_COUNTRY stories per country, so one country's
 // busy news day does not fill the world list.
@@ -34,7 +35,10 @@ export function worldStories(built, opt = {}) {
       if (rel === "drop") continue;
       const t = ms(s.d);
       if (!isFinite(t) || now - t > hours * 36e5) continue;
-      cand.push({ s, cc, rank: (s.n || 0) + (rel === "strong" ? 3 : 0), t });
+      // outlets that filed in the last 24 hours count twice, so a story breaking now (the CIA breach, 24 Nov 2026: 26 outlets in
+      // three hours) is not buried under three-day-old stories with more outlets in total
+      const fresh = (s.src || []).filter((r) => { const d = ms(r[4]); return isFinite(d) && now - d <= FRESH_H * 36e5; }).length;
+      cand.push({ s, cc, rank: (s.n || 0) + Math.min(fresh, s.n || 0) + (rel === "strong" ? 3 : 0), t });
     }
   }
   cand.sort((a, b) => b.rank - a.rank || b.t - a.t || (a.cc < b.cc ? -1 : 1));
