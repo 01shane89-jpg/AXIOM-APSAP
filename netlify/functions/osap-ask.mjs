@@ -46,7 +46,8 @@ async function dailyOf(cc) {
 }
 
 export default async (req) => {
-  const key = env("ANTHROPIC_API_KEY");
+  // trimmed: a key pasted into Netlify with a stray space or line break is rejected by Anthropic as invalid (401)
+  const key = String(env("ANTHROPIC_API_KEY") || "").trim();
   if (req.method === "GET") return json({ on: !!key, model: ASK_MODEL, label: LABEL, perUser: ASK_PER_USER });
   if (req.method !== "POST") return json({ error: "method not allowed" }, 405);
   const me = await deps.who(req);
@@ -78,7 +79,11 @@ export default async (req) => {
   } catch (e) {
     const status = e instanceof Anthropic.RateLimitError ? 429 : e instanceof Anthropic.AuthenticationError ? 503 : e instanceof Anthropic.APIError ? 502 : 504;
     console.log("osap ask", cc, "model error", e instanceof Anthropic.APIError ? e.status : "network", Date.now() - t0 + " ms");
-    return json({ error: status === 429 ? "The AI service is busy. Try again in a minute." : "The AI service didn't answer. Try again later." }, status);
+    // a rejected key needs the owner, not a retry: say so plainly (the key itself is never logged or returned)
+    const error = status === 429 ? "The AI service is busy. Try again in a minute."
+      : e instanceof Anthropic.AuthenticationError ? "The AI service rejected OSAP's key. The owner needs to re-enter ANTHROPIC_API_KEY in Netlify."
+      : "The AI service didn't answer. Try again later.";
+    return json({ error, keyRejected: e instanceof Anthropic.AuthenticationError || undefined }, status);
   }
   if (res.stop_reason === "refusal") return json({ answered: false, sentences: [], sources: [], note: "The model declined to answer this question." });
   const text = (res.content || []).filter((c) => c.type === "text").map((c) => c.text).join("");
