@@ -31,6 +31,7 @@
 ["w152980522",40.57988,120.69778,"cn",{"name:en":"Xingcheng Air Base","aeroway":"aerodrome","military":"airfield"}],
 ["w1546883791",40.70194,120.83822,"cn",{"name":"葫芦岛市天合医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1565859554",41.00477,121.49081,"cn",{"name":"辽河油田锦采医院","amenity":"hospital","healthcare":"hospital"}],
+["w1580975564",40.74794,120.83952,"cn",{"name":"葫芦岛化机医院","amenity":"hospital","healthcare":"hospital"}],
 ["w645838150",40.61785,120.7674,"cn",{"name":"校医院","amenity":"hospital","healthcare":"hospital"}],
 ["w677342458",40.93615,121.27713,"cn",{"name":"锦州湾机场","name:en":"Jinzhou Airport","operator":"辽宁省机场管理集团","addr:housenumber":"1","addr:street":"机场路","addr:district":"滨海新区","addr:city":"锦州市","addr:province":"辽宁省","addr:postcode":"121212","aeroway":"aerodrome","icao":"ZYJZ","iata":"JNZ","wikidata":"Q16924465"}],
 ["w685890119",40.75884,120.85548,"cn",{"name":"葫芦岛市中心医院","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+86 429 261 3660","website":"http://www.hldszxyy.com","addr:housenumber":"15号","addr:street":"连山大街","addr:district":"连山区","addr:city":"葫芦岛市","addr:province":"辽宁省","addr:postcode":"125000"}],

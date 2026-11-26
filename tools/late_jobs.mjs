@@ -16,7 +16,7 @@ export function dispatchable(yml) {
 
 /** health.json + workflow texts by file -> files to start (never the keeper itself) */
 export function toRestart(health, ymlOf, now = Date.now()) {
-  return lateJobs(health && health.jobs && health.jobs.list, now).map((j) => j.file)
+  return lateJobs(health && health.jobs && health.jobs.list, now, health && health.jobs && health.jobs.at).map((j) => j.file)
     .filter((f) => /^[\w.-]+\.ya?ml$/.test(f) && f !== "refresh-keeper.yml" && dispatchable(ymlOf(f)));
 }
 

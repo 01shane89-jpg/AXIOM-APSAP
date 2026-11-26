@@ -51,7 +51,7 @@
 ["w1394008293",41.58693,24.02606,"bg",{"name":"Здравна служба","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;dentistry"}],
 ["w1394008294",41.58696,24.02619,"bg",{"amenity":"hospital","healthcare":"hospital"}],
 ["w148318150",40.86174,25.80252,"gr",{"name":"Πανεπιστημιακό Γενικό Νοσοκομείο Αλεξανδρούπολης","name:en":"University Hospital Alexandroupolis","amenity":"hospital","healthcare":"hospital","phone":"+30 2551 351000","website":"https://www.pgna.gr/","addr:street":"Δραγάνα","addr:city":"Αλεξανδρούπολη","addr:postcode":"68100","wikidata":"Q21626643"}],
-["w148550587",40.2053,25.88674,"tr",{"name":"Gökçeada Havalimanı","website":"https://dhmi.gov.tr/Sayfalar/Havalimani/Gokceada/AnaSayfa.aspx","aeroway":"aerodrome","icao":"LTFK","iata":"GKD","wikidata":"Q3275365"}],
+["w148550587",40.2053,25.88674,"tr",{"name":"Gökçeada Havalimanı","operator":"DHMİ","website":"https://dhmi.gov.tr/Sayfalar/Havalimani/Gokceada/AnaSayfa.aspx","aeroway":"aerodrome","icao":"LTFK","iata":"GKD","wikidata":"Q3275365"}],
 ["w1489504843",41.82888,25.67058,"bg",{"aeroway":"helipad"}],
 ["w1508771469",41.57392,24.71984,"bg",{"name":"HEMS Helipad - Smolyan","aeroway":"helipad","surface":"concrete"}],
 ["w1537303565",41.48514,24.84711,"bg",{"name":"ЦСМП","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"emergency","emergency":"yes","addr:housenumber":"2","addr:street":"Атанас Буров","addr:city":"Рудозем","addr:postcode":"4960"}],

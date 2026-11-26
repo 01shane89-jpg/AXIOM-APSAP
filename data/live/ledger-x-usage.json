@@ -1,0 +1,22 @@
+{
+ "schema": "osap-ledger-x-usage/1",
+ "task": "embedding",
+ "provider": "voyage",
+ "model": "voyage-4",
+ "dims": 256,
+ "rules": "xmatch-v1",
+ "caps": {
+  "daily_tokens": 3000000,
+  "run_tokens": 1000000
+ },
+ "usage": {
+  "day": "2026-11-26",
+  "tokens": 0,
+  "calls": 0,
+  "items": 0
+ },
+ "usd_today": 0,
+ "asof": "2026-11-26 14:44Z",
+ "state": "off",
+ "why": "no VOYAGE_API_KEY secret"
+}

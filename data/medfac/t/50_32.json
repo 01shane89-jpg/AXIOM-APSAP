@@ -32,7 +32,7 @@
 ["n9253206690",50.00484,32.99534,"ua",{"name":"Лубенська міська комунальна стоматологічна поліклініка","official_name":"Комунальне підприємство \"Лубенська міська клінічна стоматологічна поліклініка\" Лубенської міської ради Лубенського району Полтавської області","amenity":"dentist","healthcare":"hospital","addr:housenumber":"16","addr:street":"вулиця В'ячеслава Чорновола","addr:postcode":"37500"}],
 ["n9907263128",50.59827,32.35096,"ua",{"name":"Центральна міська лікарня","amenity":"hospital","healthcare":"hospital"}],
 ["r11487050",51.53147,32.22764,"ua",{"name":"Менська центральна районна лікарня","name:en":"Mena Central district hospital","amenity":"hospital","healthcare":"hospital"}],
-["r4126551",51.24118,33.14941,"ua",{"name":"Конотоп","name:en":"Konotop","operator":"ВПС України","aeroway":"aerodrome","icao":"UKBF","wikidata":"Q6429662"}],
+["r4126551",51.24118,33.14941,"ua",{"name":"Конотоп","name:en":"Konotop","operator":"ВПС України","aeroway":"aerodrome","icao":"UKBF","military":"airfield","wikidata":"Q6429662"}],
 ["r9225157",51.67195,33.91846,"ua",{"name":"Глухівська центральна районна лікарня","amenity":"hospital"}],
 ["w1001843550",50.35784,33.2822,"ua",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1001848374",50.00438,32.99691,"ua",{"name":"Лубенський обласний протитуберкульозний диспансер","official_name":"Лубенський обласний протитуберкульозний диспансер","amenity":"hospital","healthcare":"hospital","addr:housenumber":"21","addr:street":"вулиця Пушкіна","addr:postcode":"37500"}],

@@ -70,7 +70,20 @@ const r = await p.evaluate((cc) => {
   const one = R.find((x) => x.news && x.url && !/\?/.test(x.url));
   const twin = Object.assign({}, one, { url: one.url.replace(/\/?$/, "/") + "?utm_source=rss&utm_medium=feed", layer: "transport", news: undefined });
   const variant = W.fresh([one, twin], {}).length;
-  return { rows, cnt, n: F.length, dupUrls: urls.length - new Set(urls).size, wn: wn ? +wn.textContent.replace(/\D/g, "") : 0, after, variant };
+  /* the same headline at another outlet's link (24 Nov 2026, two Malaysian outlets): one row, naming the other outlet */
+  /* the copies are translated headlines: "one" is whatever news item the live data holds first, and when that item was an
+     untranslated one (25 Nov 2026) its original wording came along and decided the grouping, so two "Live updates" merged */
+  const o1 = Object.assign({}, one, { untr: undefined, orig: undefined, id: "t-a", url: "https://a.example/x", title: "18 locations identified: route, landing site of PATI in Kelantan", src: { name: "Outlet A" } });
+  const o2 = Object.assign({}, one, { untr: undefined, orig: undefined, id: "t-b", url: "https://b.example/y", title: "18 Locations Identified Route, Landing Site Of PATI In Kelantan ", src: { name: "Outlet B" } });
+  const T = W.fresh([o1, o2], {}), also = W.alsoOf ? W.alsoOf(T[0]) : [];
+  const seenTitle = W.fresh([o1, o2], { [W.keyOf(o1)]: 1 }).length;
+  /* untranslated items share a stand-in title; their own original wording decides */
+  const u1 = Object.assign({}, o1, { title: "Thai report from Matichon, not translated yet", untr: true, orig: "ข่าวหนึ่ง" }), u2 = Object.assign({}, o2, { title: u1.title, untr: true, orig: "ข่าวสอง" });
+  const untr = W.fresh([u1, u2], {}).length;
+  const short = W.fresh([Object.assign({}, o1, { title: "Live updates" }), Object.assign({}, o2, { title: "Live updates" })], {}).length;
+  const dupTitles = F.filter((x) => x.url).map((x) => String(x.untr ? x.orig : x.title).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim()).filter((t) => t.split(" ").length >= 4);
+  return { rows, cnt, n: F.length, dupUrls: urls.length - new Set(urls).size, dupTitles: dupTitles.length - new Set(dupTitles).size, wn: wn ? +wn.textContent.replace(/\D/g, "") : 0, after, variant,
+    title: { n: T.length, first: T[0] && T[0].id, also, seenTitle, short, untr } };
 }, setup.cc);
 ok(r.rows.length > 0 && new Set(r.rows).size === r.rows.length, `the card's rows are all different stories (${r.rows.length} rows)`);
 ok(r.dupUrls === 0, `the new list holds each link once (${r.dupUrls} repeats)`);
@@ -79,6 +92,11 @@ ok(r.n < setup.raw, `the deduped list is shorter than the raw live records (${r.
 ok(r.wn === Math.min(r.n, 999) || r.wn === 0, `the What's new count matches (${r.wn})`);
 ok(!r.after, "a headline seen as news on the last visit is not new through its topic copy");
 ok(r.variant === 1, "a link with tracking codes and a closing slash is the same story");
+ok(r.dupTitles === 0, `the new list holds each headline once (${r.dupTitles} repeats)`);
+ok(r.title.n === 1 && r.title.first === "t-a" && r.title.also.join() === "Outlet B", `the same headline at two outlets' links is one story, the first kept, naming the other (${JSON.stringify(r.title)})`);
+ok(r.title.seenTitle === 0, "a headline seen at one outlet on the last visit is not new at another");
+ok(r.title.short === 2, "short generic headlines (under four words) are not merged");
+ok(r.title.untr === 2, "untranslated items with the same stand-in title but different originals stay apart");
 ok(!errors.length, "the page throws nothing" + (errors.length ? ": " + errors.slice(0, 3).join(" | ") : ""));
 await browser.close(); server.close();
 process.exit(fails ? 1 : 0);

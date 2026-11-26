@@ -1,0 +1,57 @@
+name: Refresh shipping chokepoints and world prices
+
+# Once a day (tools/refresh_choke.mjs, rules choke-v1 in tools/choke_lib.mjs): IMF PortWatch daily transits through 28 maritime
+# chokepoints set against the previous year (IMF terms, attribution, tagged NC), and World Bank Pink Sheet monthly commodity
+# prices (CC BY 4.0), into data/live/choke/index.json. The app's Map overlays > Ships > "Shipping chokepoints" reads it
+# (assets/osap-choke.js). Keyless, no account. A run on any branch other than main parks its output on
+# claude/choke-preview-data instead of committing.
+on:
+  schedule:
+    # PortWatch updates its daily table once a day; off the hour
+    - cron: "41 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-choke-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  choke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Read chokepoint transits and world prices
+        timeout-minutes: 10
+        run: node tools/refresh_choke.mjs
+      - name: Park test output on a preview-data branch
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan choke-preview-data
+          git rm -rqf --cached .
+          git add -f data/live/choke
+          git commit -qm "Test output (choke) $(date -u +'%Y-%m-%d %H:%MZ')"
+          git push -qf origin HEAD:refs/heads/claude/choke-preview-data
+      - name: Commit if anything changed
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          node tools/seal_hidden.mjs  # hidden areas (tools/hidden-areas.json) are sealed before anything is committed
+          git add -N data/live/choke 2>/dev/null || true
+          if git diff --quiet -- data/live/choke; then echo "no change"; exit 0; fi
+          git config user.name "asap-choke-refresh[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/live/choke
+          git commit -m "Refresh shipping chokepoints and world prices $(date -u +'%Y-%m-%d %H:%MZ')"
+          bash tools/push_rebase.sh main theirs 3 && exit 0
+          exit 1

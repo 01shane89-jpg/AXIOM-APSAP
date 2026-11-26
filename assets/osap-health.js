@@ -19,12 +19,14 @@
     ".ohp strong{font:inherit;font-weight:600;color:inherit}.ohp ul{margin:6px 0;padding-left:18px}.ohp li{margin:2px 0}" +
     ".ohp .hk,.ohp .ohl.down{color:var(--bad,#C0392B)}.ohp .ha,.ohp .ohl.amber{color:var(--warn,#B7800F)}" +
     ".ohb .ohx{text-transform:none;letter-spacing:0;font-weight:500;max-width:46vw;overflow:hidden;text-overflow:ellipsis}" +
-    "@media (max-width:700px){#osap-health .ohx{display:none}}.ohp p{margin:6px 0}.ohp a{color:inherit}.ohp .obs{color:var(--muted);font-size:11.5px}";
+    "@media (max-width:700px){#osap-health .ohx{display:none}}.ohp p{margin:6px 0}.ohp a{color:inherit}.ohp .obs{color:var(--muted);font-size:11.5px}" +
+    ".ohp{max-height:calc(100vh - 120px);overflow-y:auto;overscroll-behavior:contain}.ohq{margin:6px 0}" +
+    ".ohq summary{cursor:pointer;padding:6px 0;min-height:24px}.ohq summary .obs{font-weight:400}";
   document.head.appendChild(css);
 
   /* one badge in the map header (after the OSAP name) and one on the Today screen (after its date line); Today is drawn by
      assets/osap-today.js and can be redrawn, so mount() runs again on every redraw of the badge */
-  var panel = null, H = null, EV = null, readAt = 0;
+  var panel = null, panelOf = "", H = null, EV = null, readAt = 0, qOpen = false;
   function makeBadge(id) {
     var w = document.createElement("span"); w.className = "ohw"; w.id = id;
     w.innerHTML = '<button type="button" class="ohb" aria-expanded="false" aria-haspopup="dialog"><i aria-hidden="true"></i><span>Data …</span></button>';
@@ -35,7 +37,12 @@
     var hdr = document.querySelector("header"), brand = hdr && hdr.querySelector(".brand");
     if (hdr && !document.getElementById("osap-health")) { var a = makeBadge("osap-health"); if (brand && brand.nextSibling) hdr.insertBefore(a, brand.nextSibling); else hdr.appendChild(a); }
     var tb = document.querySelector("#today .tdbrand");
-    if (tb && !tb.querySelector(".ohw")) { var b = makeBadge("osap-health-today"); b.style.marginTop = "4px"; b.style.alignSelf = "flex-start"; tb.appendChild(b); }
+    if (tb && !tb.querySelector(".ohw")) {
+      var b = makeBadge("osap-health-today"); b.style.marginTop = "4px"; b.style.alignSelf = "flex-start"; tb.appendChild(b);
+      /* 22 Nov 2026: Today redraws its header (and this badge with it) while the panel may be open; the open panel was left
+         detached, so it vanished, and a fold opened in it was lost. It moves to the new badge instead. */
+      if (panel && panelOf === b.id && !document.documentElement.contains(panel)) { b.appendChild(panel); b.firstChild.setAttribute("aria-expanded", "true"); }
+    }
   }
   function badges() { return Array.prototype.slice.call(document.querySelectorAll(".ohw > .ohb")); }
 
@@ -50,8 +57,12 @@
   }
   /* scheduled data jobs with no success within their limit; one with none on record counts once it has existed that long */
   function lateJobs(h, now) {
+    /* a run seen going is judged as of the job list's own time (asked hourly; trusted for 2 h), as tools/health_lib.mjs runRef:
+       read 39 min after it was asked, a keeper run seen at 5 h 21 min counted as 6 h "stuck" and turned the badge amber (22 Nov 2026) */
+    var at = Date.parse((h && h.jobs && h.jobs.at) || ""), ref = at && at <= now && now - at < 120 * 60000 ? at : now;
     return ((h && h.jobs && h.jobs.list) || []).filter(function (j) {
-      return j && j.maxMin && (j.last ? now - Date.parse(j.last) > j.maxMin * 60000 : !(j.since && now - Date.parse(j.since) <= j.maxMin * 60000));
+      return j && j.maxMin && !(j.running && ref - Date.parse(j.running) < 360 * 60000) &&
+        (j.last ? now - Date.parse(j.last) > j.maxMin * 60000 : !(j.since && now - Date.parse(j.since) <= j.maxMin * 60000));
     });
   }
   function when(ms) { var T = window.OSAP_TIME; return T && T.dualT ? T.dualT(ms) : new Date(ms).toISOString().slice(11, 16) + "Z"; }
@@ -71,7 +82,7 @@
     });
     /* a scheduled data job past its limit (health_lib lateJobs) is named like a late minor feed: amber, never a phone alert */
     lateJobs(h, now).forEach(function (j) {
-      var nm = String(j.name || j.file).replace(/^Refresh\s+/i, "");
+      var nm = String(j.name || j.file).replace(/^Refresh\s+/i, "").replace(/^Keep the (.+) running$/i, "$1 keeper");
       probs.push({ name: nm.charAt(0).toUpperCase() + nm.slice(1), why: j.last ? "last updated " + ago(now - Date.parse(j.last)) + " ago" : "no successful run", key: false, job: true });
     });
     /* what the reader sees (tools/health_lib.mjs userView): red only when nothing has refreshed for downMin or most key feeds
@@ -120,6 +131,7 @@
   }
 
   function fillPanel() {
+    var qd = panel && panel.querySelector("details.ohq"); if (qd) qOpen = qd.open;
     var now = Date.now(), h = '<p><strong>Data health</strong></p>';
     if (!EV) h += '<p>The data health file could not be read' + (navigator.onLine === false ? " (offline)." : ".") + "</p>";
     else {
@@ -134,15 +146,24 @@
       /* behind schedule (tools/health_lib.mjs lateJobs, quietSources): scheduled data jobs with no recent success (they also turn the
          badge amber, through EV.probs; listed here only, by their workflow name) and sources that answer but have had nothing new for 10+ days or fail (listed here
          and read by the nightly run; they never change the badge). */
-      var jl = (H.jobs && H.jobs.list) || [], late = lateJobs(H, now);
-      var qn = (H.quiet && H.quiet.n) || 0, ql = (H.quiet && H.quiet.list) || [];
-      if (late.length || qn || (H.jobs && H.jobs.error)) {
-        h += '<p><strong>Behind schedule</strong></p><ul class="ohops">' +
+      /* 21 Nov 2026: quiet sources used to sit under "Behind schedule" right after "All feeds are fresh", oldest first (years-quiet
+         microstate tag pages), and made the panel taller than a phone screen. Now "Behind schedule" is only late jobs; quiet sources
+         are a folded list, the most recently gone quiet first (the ones worth a look), and the fold stays open across redraws. */
+      var jl = (H.jobs && H.jobs.list) || [], late = lateJobs(H, now), jerr = H.jobs && H.jobs.error;
+      var qn = (H.quiet && H.quiet.n) || 0, ql = ((H.quiet && H.quiet.list) || []).slice();
+      if (late.length || jerr) {
+        h += '<p><strong>Behind schedule</strong></p><ul class="ohops ohlate">' +
           late.map(function (j) { return '<li class="ha"><strong>' + esc(j.name) + "</strong>: " + (j.last ? "last succeeded " + ago(now - Date.parse(j.last)) + " ago" : "no successful run on record") + "</li>"; }).join("") +
-          (H.jobs && H.jobs.error ? "<li><strong>Scheduled job check</strong>: " + esc(H.jobs.error) + "</li>" : "") +
-          ql.slice(0, 8).map(function (q) { return "<li><strong>" + esc(q.name) + "</strong>" + (q.cc ? " (" + esc(String(q.cc).toUpperCase()) + ")" : "") + ": " + esc(q.why) + "</li>"; }).join("") +
-          (qn > 8 ? "<li>" + (qn - 8) + " more quiet source" + (qn - 8 === 1 ? "" : "s") + "</li>" : "") + "</ul>";
+          (jerr ? "<li><strong>Scheduled job check</strong>: " + esc(jerr) + "</li>" : "") + "</ul>";
       } else if (jl.length) h += '<p class="obs">All ' + jl.length + " scheduled data jobs have run on time.</p>";
+      if (qn) {
+        ql.sort(function (a, b) { return ((a && a.days) || 0) - ((b && b.days) || 0) || String(a && a.name).localeCompare(String(b && b.name)); });
+        var more = qn - ql.length;
+        h += '<details class="ohq"' + (qOpen ? " open" : "") + "><summary><strong>" + qn + " quiet source" + (qn === 1 ? "" : "s") + "</strong>" +
+          '<span class="obs"> · they answer but have had nothing new for 10+ days, or keep failing. Badge not affected.</span></summary>' +
+          '<ul class="ohops">' + ql.map(function (q) { return "<li><strong>" + esc(q.name) + "</strong>" + (q.cc ? " (" + esc(String(q.cc).toUpperCase()) + ")" : "") + ": " + esc(q.why) + "</li>"; }).join("") +
+          (more > 0 ? "<li>" + more + " more not listed</li>" : "") + "</ul></details>";
+      }
       if (H.run) h += '<p class="obs"><a href="' + esc(H.run) + '" target="_blank" rel="noopener noreferrer">The refresh run that wrote this</a></p>';
     }
     var topic = H && H.topic;
@@ -159,10 +180,10 @@
   function toggle(w, open) {
     var cur = panel && panel.parentNode;
     if (open === undefined) open = !(panel && cur === w);
-    if (panel) { if (cur && cur.firstChild) cur.firstChild.setAttribute("aria-expanded", "false"); panel.remove(); panel = null; }
+    if (panel) { if (cur && cur.firstChild) cur.firstChild.setAttribute("aria-expanded", "false"); panel.remove(); panel = null; panelOf = ""; }
     if (open && w) {
       panel = document.createElement("div"); panel.className = "ohp"; panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "Data health");
-      w.appendChild(panel); w.firstChild.setAttribute("aria-expanded", "true"); fillPanel();
+      w.appendChild(panel); panelOf = w.id; w.firstChild.setAttribute("aria-expanded", "true"); fillPanel();
       /* keep the panel on screen: shift it left when the badge sits near the right edge */
       var r = panel.getBoundingClientRect(), over = r.right - (window.innerWidth - 8);
       if (over > 0) panel.style.left = -Math.min(over, r.left - 8) + "px";

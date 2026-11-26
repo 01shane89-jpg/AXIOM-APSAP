@@ -25,6 +25,7 @@ const DEMONYM = { US: "American|U\\.S\\.|US|United States", GB: "British|UK|U\\.
   EC: "Ecuadorian", NI: "Nicaraguan", HN: "Honduran", GT: "Guatemalan", SV: "Salvadoran", PA: "Panamanian", DO: "Dominican" };
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 let C = null;
+export const countryForms = () => countries();
 const countries = () => {
   if (C) return C;
   const en = new Intl.DisplayNames(["en"], { type: "region" }), by = new Map();

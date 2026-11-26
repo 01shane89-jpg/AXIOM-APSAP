@@ -30,10 +30,18 @@
   }
   /* the overall badge: a category with no data means no overall level, only "Partial" (osap.risk/0.3; older records too) */
   function isPartial(O) { return !!(O && (O.partial || (O.level && O.missing && O.missing.length))); }
-  function partialText(O) { var m = (O && O.missing) || []; return "Partial: " + m.length + " of " + ((O && O.of) || CATS.length) + " categories have no data (" + m.join(", ") + ")"; }
+  function partialText(O) {
+    var m = (O && O.missing) || [], t = (O && O.thin) || [], s = [];
+    if (m.length) s.push(m.length + " of " + ((O && O.of) || CATS.length) + " categories have no data (" + m.join(", ") + ")");
+    s = s.concat(t);
+    return "Partial: " + s.join("; ");
+  }
   function obadge(O, small) { return isPartial(O) ? '<span class="rkb rkb0' + (small ? " rkbs" : "") + '" title="' + esc(partialText(O)) + '">Partial</span>' : badge(O && O.level, small); }
   /* a category's badge: one with no score has no data, which is not the same as no risk */
-  function cbadge(x) { return x && x.score == null && !x.level ? '<span class="rkb rkb0 rkbs">No data</span>' : badge(x && x.level, true); }
+  function cbadge(x) {
+    if (x && x.partial) return '<span class="rkb rkb0 rkbs" title="' + esc("Rests on " + (x.rests_on || "part of its data")) + '">Partial</span>';
+    return x && x.score == null && !x.level ? '<span class="rkb rkb0 rkbs">No data</span>' : badge(x && x.level, true);
+  }
   function num(v) { return v == null || !isFinite(v) ? "n/a" : String(Math.round(v * 10) / 10); }
   var TAG_TIP = "OSAP risk equivalent: derived by OSAP from open data with a fixed, published formula. Not an official travel advisory and not an analyst assessment.";
   var core = { esc: esc, safeUrl: safeUrl, LEVELS: LEVELS, CATS: CATS, fileOf: fileOf, badge: badge, num: num, isPartial: isPartial, partialText: partialText, obadge: obadge };
@@ -99,7 +107,7 @@
     var h = '<article class="bpage brisk" id="risk"><header><div><b>AXIOM OSAP</b> · Risk rating equivalent</div><h2>' + esc(name || R.name) + "</h2><div>Computed " + esc(z) + "</div></header>" +
       '<p class="bwarn">' + tag() + " " + esc(NOTE) + "</p>" +
       (isPartial(O) ? '<div class="rkhead rkbig">' + obadge(O) + "<span> " + esc(partialText(O).replace(/^Partial: /, "")) + "</span></div>" +
-        '<p class="bm">No overall level: a category with no data is unknown, not calm, so a mean of the others would understate the risk. The categories that have data keep their own levels below (their weighted mean is ' + esc(num(O.score)) + " of 100, partial).</p>"
+        '<p class="bm">No overall level: a category with no data, or with only part of its data, is unknown, not calm, so a mean of the others would understate the risk. The categories that have data keep their own levels below (their weighted mean is ' + esc(num(O.score)) + " of 100, partial).</p>"
       : '<div class="rkhead rkbig">' + badge(O.level) + '<span> overall · score ' + esc(num(O.score)) + " of 100" +
         (O.floor === "security" ? " · raised to the security level" : O.floor ? " · raised to one below the worst category" : "") + "</span></div>");
     h += '<table class="btwo rkcats"><tr><th style="width:36%">Category</th><th style="width:20%">Level</th><th>Score</th><th>Weight</th></tr>' + CATS.map(function (k, i) {
@@ -109,7 +117,9 @@
     h += "<h3>What each score is made of</h3>";
     CATS.forEach(function (k) {
       var x = (R.cats || {})[k[0]] || {};
-      h += "<h4>" + esc(k[1]) + " " + badge(x.level, true) + "</h4>" + (x.by_deaths ? '<p class="bm">The conflict-deaths score alone is higher than the mix, so it is the score.</p>' : "");
+      h += "<h4>" + esc(k[1]) + " " + cbadge(x) + "</h4>" + (x.by_deaths ? '<p class="bm">The conflict-deaths score alone is higher than the mix, so it is the score.</p>' : "") +
+        (x.partial ? '<p class="bm">Partial: rests on ' + esc(x.rests_on || "part of its data") + ". A score of " + esc(num(x.score)) + " here is not a reading of calm.</p>" : "") +
+        (x.unmeasured ? '<p class="bm">Not counted: ' + esc(x.unmeasured) + ".</p>" : "");
       var rows = partsRows(x);
       h += rows ? '<table class="btwo rkparts"><tr><th style="width:52%">Indicator or event</th><th>Value</th><th>Points</th><th>Weight</th></tr>' + rows + "</table>"
         : '<p class="bm">' + (k[0] === "hazards" && x.score === 0 ? "No hazard event in force near this country." : "No figure for this category.") + "</p>";
@@ -126,12 +136,12 @@
         "Cities: the capital and the largest cities of a million people or more (" + link((R.sources && R.sources.cities && R.sources.cities.url) || "https://www.geonames.org/", "GeoNames") + ", CC BY 4.0).</p>";
     }
     h += '<h3>Method</h3><p class="bm">Levels: score 0–19 Minimal, 20–39 Low, 40–59 Moderate, 60–79 High, 80–100 Extreme. ' +
-      "Security: World Bank Political Stability and Absence of Violence/Terrorism 40% (an estimate of +1.5 or better scores 0, −2.5 scores 100) and the UCDP conflict deaths of the past 365 days 60%, scored half on the count (log scale: 10 deaths 26 points, 100 deaths 50, 1,000 deaths 75, 10,000 or more 100) and half per million people (1 per million 10 points, 10 35, 100 67, 1,000 or more 100); the conflict-deaths score alone counts when it is higher than the mix. " +
+      "Security: World Bank Political Stability and Absence of Violence/Terrorism 40% (an estimate of +1.5 or better scores 0, −2.5 scores 100) and the UCDP conflict deaths of the past 365 days 60%, scored half on the count (log scale: 10 deaths 26 points, 100 deaths 50, 1,000 deaths 75, 10,000 or more 100) and half per million people (1 per million 10 points, 10 35, 100 67, 1,000 or more 100); the conflict-deaths score alone counts when it is higher than the mix. Without the governance estimate (Taiwan and Western Sahara have none) the score rests on conflict deaths alone, so security is Partial with no level. Not counted: military pressure without combat deaths (air and sea incursions, blockades, drills). " +
       "Crime: UNODC intentional homicides per 100,000 60% (log scale: 1 scores 18, 10 scores 61, 50 or more 100) and World Bank Rule of Law 40%. " +
       "Health: 70% of the under-5 mortality score (UN IGME deaths before age 5 per 1,000 live births, log scale: 3 or fewer scores 0, 10 scores 33, 30 scores 62, 120 or more 100), plus WHO outbreak notices in the past 90 days (15 each) and CDC travel health notices (level 3: 30, level 2: 15, level 1: 5), notices at most 45. " +
       "Natural hazards now: events in force only: GDACS red 60, orange 35, green 5 (green at most 15); earthquakes M7+ 50, M6+ 25 (past 7 days); official warnings extreme 30, severe 15 (at most 45); a tropical cyclone within 300 km in the next 72 hours 40 (hurricane force) or 15; a volcanic ash advisory 15. " +
       "Infrastructure: 80% of the share of people without electricity (half) and not using the internet (half), plus a large IODA internet outage signal in the past week (40, or 20), plus war damage where 100 or more people died in armed conflict in the past year: 2 points for each point the deaths per million score passes 40 (50 per million adds 34, 100 per million 53, 250 per million 80). " +
-      "Overall: weighted mean (security 35%, crime 20%, health, hazards and infrastructure 15% each), never below the security level and never more than one level below any other category. With any category missing there is no overall level, only Partial. Rule " + esc(R.rule || "") + ".</p>" +
+      "Overall: weighted mean (security 35%, crime 20%, health, hazards and infrastructure 15% each), never below the security level and never more than one level below any other category. With any category missing or Partial there is no overall level, only Partial. Rule " + esc(R.rule || "") + ".</p>" +
       '<footer>Sources: World Bank WDI and Worldwide Governance Indicators (CC BY 4.0); UCDP (CC BY 4.0); UN IGME and UNODC via the World Bank; WHO; U.S. CDC; GDACS; USGS; national warning agencies; IODA; GeoNames (CC BY 4.0). ' +
       (R.fp ? "Record fingerprint SHA-256 " + esc(R.fp) + "." : "") + "</footer></article>";
     return h;

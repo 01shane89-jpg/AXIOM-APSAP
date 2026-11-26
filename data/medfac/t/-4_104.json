@@ -3,6 +3,8 @@
 ["n1042092873",-2.43443,104.092,"id",{"name":"Bentayan Airport","aeroway":"aerodrome"}],
 ["n11786114345",-3.24489,104.43359,"id",{"name":"PUSKESMAS GELUMBANG","amenity":"hospital","healthcare":"hospital"}],
 ["n13751873908",-2.86956,104.37444,"id",{"name":"Rumah Sakit Umum Daerah Kabupaten Banyuasin.","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:subdistrict":"Seterio","addr:district":"Banyuasin 3","addr:city":"Pangkalan Balai","addr:province":"Sumatera Selatan"}],
+["n14370012977",-2.99847,104.76155,"id",{"amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;medical_laboratory;emergency_care_service","operator":"Klinik Altamira","operator:type":"business","addr:subdistrict":"5 Ulu","addr:district":"Seberang Ulu","addr:city":"Palembang","addr:province":"Sumatra selatan","addr:postcode":"30113","opening_hours":"24 hours","osap:withheld":"1"}],
+["n14377142958",-2.43955,105.26178,"id",{"name":"KLINIK PRATAMA WIKAR MEDIKA","amenity":"clinic","healthcare":"clinic","operator":"PT WIKAR MEDIKA GROUP","addr:housenumber":"Blok C","addr:street":"Jalur 13","addr:subdistrict":"Jalur Mulya","addr:district":"Muara Sugihan","addr:city":"Banyuasin","addr:province":"Sumatera Selatan","addr:postcode":"30975","opening_hours":"24/7"}],
 ["n5285517901",-2.07766,105.66882,"id",{"name":"Puskesmas Tempilang","amenity":"hospital","healthcare":"hospital"}],
 ["n5847354392",-3.76992,104.16929,"id",{"name":"Bidan Yuni","amenity":"clinic","addr:street":"Jl. A. Yani","addr:postcode":"31173"}],
 ["n5914109988",-3.8817,104.10625,"id",{"name":"Puskesmas Desa Lecah","amenity":"clinic","addr:street":"Jalan Raya Prabumulih - Baturaja"}],

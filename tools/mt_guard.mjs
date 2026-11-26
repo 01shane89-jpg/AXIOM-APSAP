@@ -21,6 +21,8 @@
 //     secretary-general as "Mr. Lee Myung-bak" with "the United States", ใต้, the Deep South, as "South Korea", 2026-11-20);
 //   - in a Chinese headline, keeps one noun of a combined 機艦 count of aircraft and ships, or adds an aircraft carrier
 //     (tools/mt_zh.mjs: CNA's 中共17機艦船 as "17 ships", FTNN's 15共機艦 as "15 aircraft", "14 aircraft carriers", 2026-11-20);
+//   - gives a Korean, Chinese or Japanese amount on the wrong scale (Hankyoreh's 1억 원, 100 million won, as "1 million won"), or
+//     a Korean name that is not the original's (최교진, Choi Kyo-jin, as "Ju Ji-jin"; 이 대통령 as "Kim Jong Un") (tools/mt_ko.mjs, 2026-11-23);
 //   - names Iraq or Syria where the original names neither (Newtalk's 伊, Iran, as "Iraqi forces", 2026-11-17);
 //   - drops the original's "possible" or "suspected", or makes its radioactive bomb a nuclear one (LSM's "warns of a possible
 //     Iranian dirty bomb attack" as "Iran's Dirty Bomb Attack on Washington", Naewna's ระเบิดกัมมันตรังสี as "nuclear bomb", 2026-11-18);
@@ -45,6 +47,7 @@ import { extraCount, extraHarm, numberWordValues } from "./mt_facts.mjs";
 import { missingThaiPlace } from "./th_places.mjs";
 import { thaiDeathAdded, thaiCurrencyAdded, thaiCountryAdded } from "./mt_thai.mjs";
 import { zhCombinedCountLost, zhCarrierAdded } from "./mt_zh.mjs";
+import { cjkAmountWrong, koNameWrong } from "./mt_ko.mjs";
 import { termMissing, countryAdded, hedgeLost, verdictAdded } from "./mt_glossary.mjs";
 
 // any script's decimal digits as ASCII ("২০০১" -> "2001"), so a year written in Bengali or Thai digits is recognised
@@ -66,7 +69,8 @@ const DECADE_WORD = { twenties: 2, thirties: 3, forties: 4, fifties: 5, sixties:
 const CENTURY = /\b(\d{1,2})(?:st|nd|rd|th) century\b/gi;
 // a clock time in the English: "10:35", "10.35am", "10.35 a.m.", "9am", "22.30 hrs"
 const CLOCK = /(?<![\d.,:])([01]?\d|2[0-3])(?:[:.]([0-5]\d))?\s*(a\.?m\b\.?|p\.?m\b\.?|hrs\b|h\b|o'clock\b)?(?![\d.,:]?\d)/gi;
-const YEAR = /(?<![\d,.:/])(1[5-9]\d\d|20\d\d)(?![\d,])/g;
+// a comma after the year is punctuation ("in 2015, German media report", NHK 2026-11-24); only a digit after it makes it 2,015
+const YEAR = /(?<![\d,.:/])(1[5-9]\d\d|20\d\d)(?!\d|,\d)/g;
 
 // reason the English is not a translation of orig, or "" when nothing is wrong. now: the time of the check (ms), for the
 // current year, which a translation may add (Japanese era years, "this year"). lang: the original's language tag, when known,
@@ -123,6 +127,11 @@ export function mtSuspect(orig, en, now = Date.now(), lang = "") {
   if (zc) return zc + " not in the original";
   const zk = zhCombinedCountLost(orig, en);
   if (zk) return "count of aircraft and ships: " + zk + " left out";
+  // Korean, Chinese, Japanese: an amount on the wrong scale (억, 만), or a Korean name that is another person's (tools/mt_ko.mjs)
+  const am = cjkAmountWrong(orig, en);
+  if (am) return "amount " + am + " not in the original";
+  const kn = koNameWrong(orig, en);
+  if (kn) return "name " + kn + " not in the original";
   const pl = missingThaiPlace(orig, en);
   if (pl) return "place " + pl + " left out";
   const tm = termMissing(orig, en);

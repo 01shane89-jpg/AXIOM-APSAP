@@ -48,6 +48,7 @@
 ["n12305692966",9.36779,-70.43432,"ve",{"name":"Clinica Candelaria","amenity":"clinic","healthcare":"clinic","opening_hours":"Mo-Fr 09:00-18:00"}],
 ["n12810614096",8.593,-71.15113,"ve",{"name":"Sede Consejo Comunal Av.2 Lora","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"community","operator":"Consejo Comunal","operator:type":"government"}],
 ["n1297505290",8.22402,-71.13766,"ve",{"amenity":"hospital"}],
+["n14332447301",9.24192,-70.27153,"ve",{"name":"Clinica coromoto","amenity":"clinic","addr:street":"Avenida Colón"}],
 ["n1461575200",8.61172,-71.14293,"ve",{"amenity":"clinic","healthcare":"clinic","osap:withheld":"1"}],
 ["n1559025753",8.55479,-71.2052,"ve",{"name":"Ambulatorio de La Mara","amenity":"hospital","emergency":"yes"}],
 ["n1705277932",8.5981,-71.16811,"ve",{"name":"Clínica Lumonty Sinai","amenity":"clinic","emergency":"yes"}],

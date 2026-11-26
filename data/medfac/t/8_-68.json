@@ -11,6 +11,11 @@
 ["n1042091951",9.25641,-67.55678,"ve",{"name":"Agropecuaria Cuajarote Pista","name:en":"Agropecuaria Cuajarote Runway","aeroway":"aerodrome"}],
 ["n1042091962",9.80999,-66.89349,"ve",{"name":"Camatagua Pista","name:en":"Camatagua Runway","aeroway":"aerodrome"}],
 ["n13767259208",8.92516,-67.42864,"ve",{"name":"Clínica María Rosa Mistica","amenity":"clinic","healthcare":"clinic","addr:street":"Carrera 12 San José","addr:city":"Calabozo","addr:postcode":"2312"}],
+["n14334100404",9.91105,-67.35804,"ve",{"name":"IVSS San Juan de los Morros","amenity":"clinic"}],
+["n14334100406",9.90603,-67.36567,"ve",{"name":"Unidad Médica Integral Los Morros","amenity":"clinic","healthcare":"clinic"}],
+["n14337456931",9.89121,-67.36453,"ve",{"name":"Policlínica San Juan S.A.","amenity":"clinic"}],
+["n14338653919",9.91987,-67.37986,"ve",{"name":"Centro de Salud Aurora C.A.","amenity":"clinic","healthcare":"clinic"}],
+["n14338653921",9.89718,-67.35788,"ve",{"name":"Ambulatorio Urbano - Tipo III - La Morera","amenity":"clinic","healthcare":"clinic"}],
 ["n3884214869",9.917,-67.36298,"ve",{"name":"Diálisis","amenity":"clinic"}],
 ["n3884214870",9.91444,-67.35805,"ve",{"name":"Despistaje Cáncer","amenity":"clinic","healthcare":"clinic"}],
 ["n3884214874",9.91229,-67.35633,"ve",{"name":"Clínica Cedeño","amenity":"clinic","healthcare":"clinic"}],
@@ -87,5 +92,5 @@
 ["w718232955",8.91013,-67.4176,"ve",{"name":"Módulo de Vicario II (CDI)","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:city":"Calabozo","addr:postcode":"2312"}],
 ["w718489075",8.9343,-67.42573,"ve",{"amenity":"clinic","healthcare":"clinic","addr:city":"Calabozo","addr:postcode":"2312","osap:withheld":"1"}],
 ["w718489076",8.93264,-67.42919,"ve",{"name":"Clínica Pérez Guillén","amenity":"clinic","healthcare":"clinic","addr:street":"Calle 6 entre carreras 13 y 14","addr:city":"Calabozo","addr:postcode":"2312"}],
-["w718768499",8.93323,-67.40773,"ve",{"name":"Módulo de Dinamitas (CDI)","amenity":"hospital","healthcare":"hospital","addr:city":"Calabozo","addr:postcode":"2312"}],
+["w718768499",8.93319,-67.40784,"ve",{"name":"Módulo de Dinamitas (CDI)","amenity":"hospital","healthcare":"hospital","addr:city":"Calabozo","addr:postcode":"2312"}],
 ["w722666324",8.91798,-67.43292,"ve",{"name":"Clínica Bolivariana","amenity":"clinic","healthcare":"clinic","addr:city":"Calabozo","addr:postcode":"2312"}]]

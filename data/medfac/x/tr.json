@@ -14,6 +14,8 @@
 ["n12681138002",38.34803,38.2968,"tr",{"name":"Kızılay Kan Alma Birimi","healthcare":"blood_donation"}],
 ["n13114321705",38.2287,27.97685,"tr",{"name":"Türk Kızılayı Ödemiş Kan Bağışı Merkezi","official_name":"Türkiye Kızılay Derneği","healthcare":"blood_donation"}],
 ["n13173391315",36.83671,28.7634,"tr",{"name":"Türk Kızılayı","official_name":"Türkiye Kızılay Derneği","healthcare":"blood_donation"}],
+["n14293183529",41.65558,26.58795,"tr",{"name":"Edirne Kan Bağışı Merkezi","healthcare":"blood_donation","operator":"Türk Kızılayı"}],
+["n14377049711",39.94167,32.85683,"tr",{"name":"Türk Kızılayı","official_name":"Türkiye Kızılay Derneği","healthcare":"blood_donation"}],
 ["n5100823683",41.01983,28.93225,"tr",{"name":"Med Ok Hiperbarik Oksijen Tedavi Merkezi","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"hyperbaric","operator:type":"private","contact:phone":"+90 212 635 82 55","addr:street":"Tatlıpınar Caddesi","addr:district":"Fatih","addr:city":"İstanbul"}],
 ["n5667618692",41.01417,28.90321,"tr",{"name":"Çapa Kan Bağış Merkezi","healthcare":"blood_donation","emergency":"no","phone":"+90 212 449 19 00","addr:street":"Cevizlibağ Sokağı","addr:district":"Zeytinburnu","addr:city":"İstanbul","opening_hours":"24/7"}],
 ["n6320269448",40.91787,29.28221,"tr",{"name":"Türk Kızılayı","official_name":"Türkiye Kızılay Derneği","healthcare":"blood_donation","operator":"Türk Kızılayı Kurtköy Şubesi"}],

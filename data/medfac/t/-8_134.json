@@ -31,11 +31,12 @@
 ["n11509772336",-6.52822,134.52432,"id",{"name":"Pustu Fatlabata","amenity":"hospital","healthcare":"hospital","addr:street":"Kepulauan Aru","addr:city":"Fatlabata","addr:postcode":"97662"}],
 ["n11510140142",-6.76909,134.67455,"id",{"name":"Puseksemas Perawatan Longgar Apara","amenity":"hospital","healthcare":"hospital","addr:city":"Longgar Apara","addr:postcode":"97662"}],
 ["n11510277105",-6.48582,134.8353,"id",{"name":"Puskesmas Jambu Air","amenity":"hospital","healthcare":"hospital","addr:street":"Kepulauan Aru","addr:city":"Jambu Air","addr:postcode":"97662"}],
-["n11517897619",-6.85954,134.14695,"id",{"name":"Pustu Dosimar","amenity":"hospital","healthcare":"hospital","addr:street":"Kepulauan Aru","addr:city":"Sosimar","addr:postcode":"97662"}],
+["n11517897619",-6.85954,134.14695,"id",{"name":"Pustu Dosimar","amenity":"clinic","healthcare":"hospital","addr:street":"Kepulauan Aru","addr:city":"Sosimar","addr:postcode":"97662"}],
 ["n11517923630",-6.88371,134.26102,"id",{"name":"Pustu Salarem","amenity":"hospital","healthcare":"hospital","addr:street":"Kepulauan Aru","addr:city":"Salarem","addr:postcode":"97662"}],
 ["n11521221096",-6.30477,134.89983,"id",{"name":"Puskesmas Rawat Inap Penambulai","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"Kepulauan Aru","addr:city":"Warabal","addr:postcode":"97662"}],
 ["n11521252805",-6.02741,134.38451,"id",{"name":"Posyandu Maririmar","amenity":"hospital","healthcare":"hospital","addr:street":"Kepulauan Aru","addr:city":"Maririmar","addr:postcode":"97662"}],
 ["n11548478215",-6.3204,134.70486,"id",{"name":"Ruang Bersalin Basada","amenity":"hospital","healthcare":"hospital","addr:street":"Kepulauan Aru","addr:city":"Basada","addr:postcode":"97662"}],
 ["w1234245876",-6.81184,134.37035,"id",{"name":"Puskesmas Rawat Inap Meror","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:city":"Meror","addr:postcode":"97662"}],
 ["w1235117115",-6.28475,134.44299,"id",{"name":"Puskesmas Lorang","amenity":"hospital","healthcare":"hospital","emergency":"no","addr:street":"Kepulauan Aru","addr:city":"Lorang","addr:postcode":"97662"}],
+["w1239781358",-6.85956,134.14695,"id",{"name":"Pustu Dosimar","amenity":"clinic","addr:street":"Kepulauan Aru","addr:city":"Dosimar","addr:postcode":"97662"}],
 ["w550109060",-6.0661,134.27397,"id",{"name":"Bandar Udara Benjina","aeroway":"aerodrome","icao":"WAPK","iata":"BJK"}]]

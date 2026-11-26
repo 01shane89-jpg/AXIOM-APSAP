@@ -22,7 +22,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { createRequire } from "node:module";
 import { gateway, parseJsonReply } from "./ai_gateway.mjs";
-import { unsupportedFigures, unsupportedNames, unsupportedDeaths, normCites, figureContext } from "./evsum_lib.mjs";
+import { unsupportedFigures, unsupportedNames, unsupportedDeaths, normCites, figureContext, flashpointTerms, termsRegex } from "./evsum_lib.mjs";
 
 const OUT = "data/live/evsum.js", OUT_AI = "data/live/evsum_ai.js", PROMPT_V = "evsum/2";
 const AI_ONLY = !!process.env.EVSUM_AI_ONLY, AI_PER_RUN = +(process.env.EVSUM_AI_PER_RUN || 40), AI_BUDGET_MS = +(process.env.EVSUM_AI_BUDGET_MIN || 45) * 60e3,
@@ -463,25 +463,11 @@ for (const cc of due) {
 }
 // Plain lists (no AI) for every conflict country without an AI list: the curated flashpoints that recent reports mention, with
 // those reports, and the latest conflict-related reports. Nothing is inferred; rebuilt on every run because it costs nothing.
-const GENERIC = new Set("chong ban phu khao doi mae nong wat around near along with from temples temple checkpoint villages village fishing grounds posts post camps bank scam scams sector sectors tribal phnom hill hills hub hubs park parks dry state states zone old new great little black white yellow three four five first second shoal shoals reef reefs trade shipping targets target strike deep fortress front islands border borders front frontline zone zones river rivers island islands strait straits line area areas region regions north south east west northern southern eastern western central upper lower corridor crossing crossings point points pass mountains mountain hills coast coastal waters province state district city town camp base disputed dispute tensions maritime conflict civil war insurgency armed group groups spillover route routes sea gulf bay valley plateau lake desert".split(" "));
-// country names and their demonyms say nothing about which flashpoint a report is about ("Thai", "Myanmar", "Sudanese")
-const CWORDS = (() => {
-  const out = new Set(["burmese", "filipino", "dutch", "swiss", "british", "korean", "emirati", "saudi", "kiwi", "okinawa"]);
-  try {
-    const dn = new Intl.DisplayNames(["en"], { type: "region" }), A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    for (const a of A) for (const b of A) { const n = dn.of(a + b); if (n && n !== a + b) n.toLowerCase().split(/[^a-z]+/).filter((w) => w.length >= 4).forEach((w) => out.add(w)); }
-  } catch (e) {}
-  return [...out];
-})();
-function countryWord(w) { const l = w.toLowerCase(), k = Math.min(5, l.length); return CWORDS.some((c) => c.slice(0, k) === l.slice(0, k) && Math.abs(c.length - l.length) <= 6); }
-function termsOf(f) {
-  return [...new Set(String(f.name).split(/[^A-Za-zÀ-ɏ'’-]+/).map((w) => w.replace(/['’]s$/, ""))
-    .filter((w) => w.length >= 4 && !GENERIC.has(w.toLowerCase()) && !countryWord(w)))].slice(0, 8);
-}
+// flashpoint name words (tools/evsum_lib.mjs flashpointTerms): place names, never generic, prefix or country words
 function plainWatch(cc, D, reps) {
   const fps = (D.flashpoints || []).slice(0, 30), LV = { active: 3, elevated: 2, latent: 1 };
   const items = fps.map((f, fi) => {
-    const terms = termsOf(f), re = terms.length ? new RegExp("\\b(" + terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")\\b", "i") : null;
+    const terms = flashpointTerms(f.name), re = termsRegex(terms);
     const hits = re ? reps.map((r, i) => (re.test(r.title + " " + (r.text || "")) ? i + 1 : 0)).filter(Boolean) : [];
     const found = re ? [...new Set(reps.flatMap((r) => (String(r.title + " " + (r.text || "")).match(new RegExp(re.source, "gi")) || []).map((x) => x.toLowerCase())))] : [];
     return { f, fi, hits, found };

@@ -47,6 +47,7 @@
 ["w1483124534",31.36965,110.23755,"cn",{"name":"神农架林区下谷中心卫生院","amenity":"clinic","healthcare":"clinic"}],
 ["w1552239092",30.68768,111.30216,"cn",{"aeroway":"helipad"}],
 ["w1558284715",30.80546,111.34201,"cn",{"name":"夷陵区养老项目","amenity":"hospital","healthcare":"hospital"}],
+["w1580183935",30.62455,110.32664,"cn",{"name":"巴东县第二人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["w373853147",30.19917,111.40549,"cn",{"amenity":"hospital"}],
 ["w517890988",30.68671,111.30106,"cn",{"name":"宜昌市中心人民医院伍家院区","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"183号","addr:street":"夷陵大道","addr:district":"伍家岗区","addr:city":"宜昌市","addr:province":"湖北省","addr:postcode":"443003"}],
 ["w518678947",31.62617,110.34023,"cn",{"name":"神农架机场","name:en":"Hongping Airport","aeroway":"aerodrome","icao":"ZHSN","iata":"HPG","wikidata":"Q795096"}],

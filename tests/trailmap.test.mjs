@@ -43,6 +43,15 @@ ok(m.total === 6 && T.playModel({ r: 411, rows: thread.rows }, CAPS).total === 4
 ok(m.t0 === Date.parse("2026-11-17T06:30Z") && m.t1 === Date.parse("2026-11-17T13:00Z"), "trail runs from the first to the last report");
 ok(T.playModel({ rows: [] }, CAPS, DISPUTE).reports.length === 0 && isNaN(T.playModel({}, CAPS).t0) && T.playModel({ fp: "nothex" }, CAPS).fp === "", "empty or broken story: nothing to play, no fake fingerprint");
 
+// two outlets in the same first minute (e.g. both running one agency's copy): both are first reports, neither is a repeat
+const tie = T.playModel({ rows: [
+  ["Outlet P", "other", "out", "bo", "2026-11-18T00:55", "https://p.example/1", "Bridge attack", 0, 0],
+  ["Outlet Q", "other", "out", "gt", "2026-11-18T00:55", "https://q.example/1", "Bridge attack", 0, 0],
+  ["Outlet R", "other", "out", "kr", "2026-11-18T01:12", "https://r.example/1", "Bridge attack", 0, 0],
+  ["Outlet P", "other", "out", "bo", "2026-11-18T02:00", "https://p.example/2", "Bridge attack, more", 0, 0]] }, CAPS, DISPUTE);
+ok(tie.reports.map((r) => r.role).join() === "first,first,repeat,again" && tie.firsts === 2 && m.firsts === 1, "same first minute: every report in it is a first report (order within a minute is not known)");
+ok(T.frameAt(tie, tie.t0).reports === 2 && T.frameAt(tie, tie.t0).outlets === 2, "at the start of a tied trail: both first reports are out");
+
 // counters at a moment
 const f0 = T.frameAt(m, Date.parse("2026-11-17T06:30Z")), f1 = T.frameAt(m, Date.parse("2026-11-17T11:00Z")), f2 = T.frameAt(m, m.t1);
 ok(f0.reports === 1 && f0.outlets === 1 && f0.countries === 1 && f0.kinds.public === 1, "at the first report: one outlet, one country");

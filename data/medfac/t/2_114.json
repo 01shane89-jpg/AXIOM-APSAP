@@ -10,6 +10,7 @@
 ["w1303132024",3.80518,115.65003,"id",{"name":"Lapangan Terbang Berian","name:en":"Berian Airstrip","aeroway":"aerodrome","icao":"WALI"}],
 ["w1363986367",3.56159,115.75329,"id",{"name":"Bandar Udara Pa Upan","name:en":"Pa Upan Airport","operator":"Missionaris","aeroway":"aerodrome","icao":"WAQY"}],
 ["w1453504043",3.90631,115.69692,"id",{"name":"Puskesmas Long Bawan","amenity":"clinic","healthcare":"clinic","emergency":"yes","operator":"Ministry of Health","operator:type":"government"}],
+["w1582333729",3.71492,115.8508,"id",{"name":"Lapangan Terbang Long Padi","aeroway":"aerodrome"}],
 ["w244041005",3.1039,115.81847,"id",{"name":"Puskesmas","amenity":"clinic","healthcare":"clinic","emergency":"yes","operator":"Ministry of Health","operator:type":"government"}],
 ["w261334502",3.85876,114.59198,"my",{"name":"Klinik Kesihatan Long Bemang","amenity":"clinic","healthcare":"clinic"}],
 ["w407606392",2.34316,114.81011,"my",{"aeroway":"helipad"}],

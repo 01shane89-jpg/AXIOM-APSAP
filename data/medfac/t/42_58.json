@@ -185,7 +185,7 @@
 ["w497454878",42.61224,59.44459,"uz",{"aeroway":"helipad"}],
 ["w497454880",42.61123,59.44471,"uz",{"aeroway":"aerodrome"}],
 ["w502811152",42.42353,59.47765,"uz",{"name":"№1 sanli ko'ptarmaqli poliklinika","name:en":"Multidisciplinary Clinic №1","amenity":"hospital"}],
-["w518548377",43.82349,58.89559,"uz",{"name":"Uch-say awilliq poliklinikasi","name:en":"Rural medical center \"Uch-sai\"","amenity":"clinic"}],
+["w518548377",43.82349,58.89559,"uz",{"name":"Uch-say awilliq poliklinikasi","name:en":"Rural medical center \"Uch-sai\"","amenity":"clinic","healthcare":"clinic"}],
 ["w523631195",42.6321,58.92524,"uz",{"amenity":"clinic"}],
 ["w523644631",42.62598,58.92796,"uz",{"name":"Shomanay orayliq emlewxanasi","amenity":"hospital","emergency":"yes","phone":"+99 (861) 345-22-61","addr:street":"Abay ko'shesi"}],
 ["w524326532",42.77187,59.61351,"uz",{"name":"Kegeyli rayoni orayliq emlewxanasi","name:en":"Kegaili Central District Hospital","amenity":"hospital"}],

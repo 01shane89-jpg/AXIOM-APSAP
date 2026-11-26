@@ -193,7 +193,11 @@ async function open(opts, o) {
   await ctx.route(/\/data\/hospitals\//, (r) => o.web === "fail" ? r.fulfill({ status: 503, body: "" }) : o.web && /\/th\/web\.json/.test(r.request().url()) ? J(r, o.web) :
     o.gov && /\/th\/registry\.json/.test(r.request().url()) ? J(r, o.gov) : o.phones !== null && /\/th\/phones\.json/.test(r.request().url()) ? J(r, o.phones || PHONES) : r.fulfill({ status: 404, body: "" }));
   /* the split view setting (shared with Find LZ, Watch, NAI/TAI) starts on; these checks start from the full window */
-  await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); if (localStorage.getItem("osap.split") === null) localStorage.setItem("osap.split", "0"); } catch (e) {} });
+  /* the checks below read every section and every map object, so they start unfolded with every object on; the flow case
+     (o.flow) keeps the plan's own defaults: two sections open, clinics and landing sites off the map */
+  await ctx.addInitScript((flow) => { try { localStorage.setItem("osap-home", "map"); if (localStorage.getItem("osap.split") === null) localStorage.setItem("osap.split", "0");
+    if (!flow && localStorage.getItem("osap-medplan-open") === null) localStorage.setItem("osap-medplan-open", JSON.stringify({ conop: 1, pic: 1, val: 1, pst: 1, pstmore: 1, gh: 1, fac: 1, rt: 1, ems: 1, air: 1, oc: 1, thr: 1, wx: 1, unit: 1, src: 1 }));
+    if (!flow && localStorage.getItem("osap-medplan-layers") === null) localStorage.setItem("osap-medplan-layers", "[\"oh\"]"); } catch (e) {} }, !!o.flow);
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.TSAP && window.TSAP.areaApi && document.getElementById("atk-tools"), null, { timeout: 60000 });
   await p.waitForTimeout(3000);
@@ -341,7 +345,7 @@ async function openPlan(p) {
   /* Shane 2026-10-29: "i need to be able to easily turn on/off the objects on the map": one chip per kind of object */
   const lyr = () => p.evaluate(() => ({ chips: [...document.querySelectorAll("#mp-layers [data-mp-lyr]")].map((b) => b.textContent + ":" + b.getAttribute("aria-pressed")),
     mk: [...document.querySelectorAll(".mpicon")].map((m) => m.textContent), paths: window.OSAP_MEDPLAN._shown().filter((g) => g === "rt").length, n: window.OSAP_MEDPLAN._shown().length,
-    lg: (document.querySelector('[data-lg="medplan"]') || {}).textContent || "", hide: localStorage.getItem("osap-medplan-hide") }));
+    lg: (document.querySelector('[data-lg="medplan"]') || {}).textContent || "", hide: localStorage.getItem("osap-medplan-layers") }));
   const ly0 = await lyr();
   ok(["Point of injury:true", "Planned hospitals:true", "Routes:true", "Road reach:true"].every((c) => ly0.chips.includes(c)) && ly0.chips.includes("All off:null"), "layers: a chip for each kind of map object, all on to start " + JSON.stringify(ly0.chips));
   await p.click('#mp-layers [data-mp-lyr="mtf"]'); await p.waitForTimeout(150);
@@ -357,7 +361,8 @@ async function openPlan(p) {
   ok(await p.evaluate(() => !document.querySelector('#medplan [data-mp-opt="gr"]').checked), "layers: the Road reach chip and the section 1 ground rings switch are the same setting");
   await p.click('#mp-layers [data-mp-lyr="*on"]'); await p.waitForTimeout(150);
   const ly4 = await lyr();
-  ok(ly4.mk.length === ly0.mk.length && ly4.n === ly0.n && ly4.hide === "[]", "layers: All on puts every object back " + ly4.mk.length + "/" + ly0.mk.length + " marks, " + ly4.paths + "/" + ly0.paths + " lines");
+  ok(ly4.mk.length > ly0.mk.length && ly4.mk.filter((t) => !/^H\d+$/.test(t)).length === ly0.mk.length && ly4.hide === "[]", "layers: All on puts every object back " + ly4.mk.length + "/" + ly0.mk.length + " marks, " + ly4.paths + "/" + ly0.paths + " lines");
+  await p.click('#mp-layers [data-mp-lyr="oh"]'); await p.waitForTimeout(150); /* back to the plan's hospitals only for the checks below */
   const ghs = await p.textContent("#mp-gh");
   ok(/60 minutes from injury/.test(ghs) && /10 minutes to treat and load/.test(ghs) && /green 30 minutes/.test(ghs) && /light blue ring/.test(ghs), "desktop: golden-hour section states its thresholds, the road reach and the air rings");
   const ems = await p.textContent("#mp-ems");
@@ -946,6 +951,10 @@ async function openPlan(p) {
   ok(rl.n >= 12 && rl.narrow === 0 && rl.sw <= rl.cw + 1 && rl.tw <= rl.vw && rl.head === "none" && /Primary.*Secondary.*Tertiary/.test(rl.labels), "phone: Primary, Secondary and Tertiary stack full width with their labels, nothing cut off " + JSON.stringify(rl));
   if (OUT) await p.evaluate(() => document.querySelector("#mp-pst table.mproles").scrollIntoView());
   if (OUT) await p.screenshot({ path: OUT + "/phone-roles.png" });
+  /* on a phone the export buttons fold behind Export, so the plan starts near the top */
+  ok(await p.evaluate(() => { const b = document.querySelector('#medplan [data-mp="print"]'), x = document.querySelector('#medplan [data-mp="exp"]'); return !b.offsetParent && !!x.offsetParent && x.getAttribute("aria-expanded") === "false"; }), "phone: the export buttons fold behind one Export button");
+  await p.tap('#medplan [data-mp="exp"]'); await p.waitForTimeout(100);
+  ok(await p.evaluate(() => !!document.querySelector('#medplan [data-mp="print"]').offsetParent && document.querySelector('#medplan [data-mp="exp"]').getAttribute("aria-expanded") === "true"), "phone: Export shows them");
   await p.click('#medplan [data-mp="print"]');
   await p.waitForFunction(() => /^data:image\/png/.test((document.getElementById("mpd-map") || {}).src || ""), null, { timeout: 20000 });
   await p.waitForTimeout(300);
@@ -1125,6 +1134,67 @@ const GOVDOC = { schema: "osap-th-registry/1", cc: "th", built: "2026-10-03T10:0
   const t = await p.textContent("#medplan");
   ok(/does not mean there is no hospital/.test(t) && !/No hospital within/.test(t) && /No routes: the hospital lookup failed/.test(t), "all down: says the lookup failed, never that there is no hospital");
   ok(!errors.length, "all down: no page errors " + errors.join(" | "));
+  await ctx.close();
+}
+// ---------- the flow (Shane 2026-11-21: "easier to use. Less wordy and more direct facts"; clinics, airfields and LZs not on by default) ----------
+for (const dev of [{ name: "desktop", opts: { viewport: { width: 1400, height: 900 } } }, { name: "phone", opts: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 } }]) {
+  const { ctx, p, errors } = await open(dev.opts, { flow: true });
+  await p.evaluate((P) => window.TSAP.areaApi.setArea(P), square(C0, 0.02)); await p.waitForTimeout(800);
+  await medBtn(p);
+  await p.waitForFunction(() => /Planned hospitals, major trauma/.test((document.getElementById("mp-quick") || {}).textContent || "") && document.querySelectorAll("#mp-quick [data-mp-q]").length >= 3, null, { timeout: 20000 });
+  await p.waitForFunction(() => /via |by road/.test(document.getElementById("mp-quick").textContent) && /Chamber|chamber/.test(document.getElementById("mp-quick").textContent), null, { timeout: 15000 }).catch(() => {});
+  const q = await p.evaluate(() => { const el = document.getElementById("mp-quick"), D = [...document.querySelectorAll("#medplan details.mpsec")];
+    return { t: el.textContent, steps: [...el.querySelectorAll(".mpqs > li > .mpqh")].map((x) => x.firstChild.textContent.trim()), open: D.filter((d) => d.open).map((d) => d.dataset.sec), n: D.length,
+      roles: [...el.querySelectorAll("[data-mp-q]")].map((x) => x.dataset.mpQ), links: el.querySelectorAll("a[href^='http']").length, top: el.getBoundingClientRect().top - document.querySelector("#medplan .mpbox").getBoundingClientRect().top,
+      chips: [...document.querySelectorAll("#mp-layers [data-mp-lyr]")].map((b) => b.getAttribute("data-mp-lyr") + ":" + b.getAttribute("aria-pressed")), mk: [...document.querySelectorAll(".mpicon")].map((m) => m.textContent) }; });
+  ok(JSON.stringify(q.steps) === JSON.stringify(["Closest hospital", "Most capable in reach", "Planned hospitals, major trauma", "Routes", "CASEVAC PACE", "Evacuation"]), dev.name + " flow: the card walks closest, most capable, planned hospitals, routes, PACE, evacuation " + JSON.stringify(q.steps));
+  ok(/Closest hospital.*Far North Hospital/.test(q.t) && /Most capable in reach.*Trauma Test Hospital.*Trauma Level I/.test(q.t), dev.name + " flow: closest and most capable are named with their facts " + q.t.slice(0, 400));
+  ok(["Primary", "Secondary", "Tertiary"].every((r) => q.roles.includes(r)) && /\d+(\.\d)? km by road · \d+ min drive/.test(q.t) && /~\d+ min air estimate/.test(q.t) && /Blood (bank documented|listed|not documented)/.test(q.t), dev.name + " flow: each planned hospital has distance, drive, flight and blood in one line");
+  ok(/tel:/.test(await p.innerHTML("#mp-quick")) && /No published phone|emergency|\(/.test(q.t), dev.name + " flow: a published phone is a call link, else the card says none is published");
+  ok(/Test Hyperbaric Centre/.test(q.t) && /Test National Blood Centre/.test(q.t) && /1669/.test(q.t) && q.links >= 3, dev.name + " flow: chamber, blood, the emergency number and the air base are listed, each with its source link (" + q.links + " links)");
+  ok(/P Ground ambulance, call 1669/.test(q.t) && /Suggested from this plan, not set by you/.test(q.t), dev.name + " flow: CASEVAC PACE is a labelled suggestion until the planner sets it");
+  ok(JSON.stringify(q.open.sort()) === JSON.stringify(["pst", "rt"]) && q.n >= 14, dev.name + " flow: only the hospitals and routes sections start unfolded " + JSON.stringify(q.open));
+  ok(["cl", "air", "bl", "dc", "em"].every((g) => !q.chips.some((c) => c.startsWith(g + ":true"))) && ["poi:true", "mtf:true", "rt:true"].every((c) => q.chips.includes(c)) && !q.mk.some((t) => /^(C|L|A|M|B|D|E)\d/.test(t)) && q.mk.some((t) => /^(PRI|SEC|TER)$/.test(t)), dev.name + " flow: clinics, landing sites, ambulance, blood and chambers start off the map; injury point, planned hospitals and routes on " + JSON.stringify(q.chips) + " " + JSON.stringify(q.mk));
+  await p.click('#mp-quick [data-mp-sec="ems"]'); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => document.querySelector('#medplan details[data-sec="ems"]').open && JSON.parse(localStorage.getItem("osap-medplan-open")).ems === 1), dev.name + " flow: Contacts unfolds section 4 and remembers it");
+  await p.click('#mp-quick [data-mp-sec="pst"]'); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => document.activeElement && document.activeElement.matches("[data-mp-sel]")), dev.name + " flow: Change goes to the hospital choice");
+  if (OUT) {
+    await p.evaluate(() => { const b = document.querySelector("#medplan .mpbox"); (b.scrollHeight > b.clientHeight ? b : document.getElementById("medplan")).scrollTop = 0; }); await p.screenshot({ path: OUT + "/" + dev.name + "-flow-top.png" });
+    await p.evaluate(() => document.getElementById("mp-quick").scrollIntoView()); await p.screenshot({ path: OUT + "/" + dev.name + "-flow.png" });
+    await p.evaluate(() => document.documentElement.setAttribute("data-map", "dark")); await p.waitForTimeout(200); await p.screenshot({ path: OUT + "/" + dev.name + "-flow-dark.png" });
+    await p.evaluate(() => document.documentElement.removeAttribute("data-map"));
+  }
+  /* edit on the map (Shane 2026-11-21): a hospital's mark opens a card to make it Primary, Secondary or Tertiary, or turn it off */
+  if (dev.name === "desktop") {
+    await p.click('#mp-layers [data-mp-lyr="oh"]'); await p.waitForTimeout(300);
+    const nearMk = await p.evaluate(() => { const m = [...document.querySelectorAll(".mpicon")].find((x) => /^H\d+$/.test(x.textContent) && /Near Hospital/.test(x.closest(".leaflet-marker-icon") ? "" : "") || false); return [...document.querySelectorAll(".mpicon")].filter((x) => /^H\d+$/.test(x.textContent.trim())).length; });
+    ok(nearMk >= 1, "map edit: Other hospitals puts the hospitals outside the plan on the map (" + nearMk + ")");
+    const opened = await p.evaluate(() => { const L = window.__asapMap; let hit = null; L.eachLayer((l) => { if (!hit && l.getPopup && l.getPopup() && l.getTooltip && /Near Hospital/.test(String(l.getTooltip().getContent()))) hit = l; }); if (hit) hit.openPopup(); return !!hit; });
+    await p.waitForTimeout(200);
+    const pop = await p.evaluate(() => { const c = document.querySelector(".mppop .mpedit"); return c ? { t: c.textContent, b: [...c.querySelectorAll("[data-mpe]")].map((b) => b.dataset.mpe) } : null; });
+    ok(opened && pop && /Near Hospital/.test(pop.t) && /Not in the plan/.test(pop.t) && ["primary", "secondary", "tertiary", "off"].every((k) => pop.b.includes(k)), "map edit: the hospital's card offers Primary, Secondary, Tertiary and Turn off " + JSON.stringify(pop));
+    await p.evaluate(() => document.querySelector('.mppop [data-mpe="primary"]').click()); /* the undocked plan covers the map on a desktop; docked or folded it is pressed by hand */ await p.waitForTimeout(800);
+    const ed = await p.evaluate(() => ({ sel: (JSON.parse(localStorage.getItem("osap-medplan-sites-th") || "[]").map((x) => x.v && x.v.mtfsel).filter(Boolean)[0]) || JSON.parse(localStorage.getItem("osap-medplan-th") || "{}").mtfsel || null, q: document.querySelector('#mp-quick [data-mp-q="Primary"]').textContent, pop: !!document.querySelector(".mppop .mpedit") }));
+    ok(ed.sel && ed.sel.primary && /Near Hospital/.test(ed.sel.primary.name) && ed.sel.primary.computed && /Far North/.test(ed.sel.primary.computed.name) && /Your choice/.test(ed.q) && /Near Hospital/.test(ed.q) && !ed.pop, "map edit: Primary makes it your Primary, recorded with the computed pick it replaced " + JSON.stringify(ed.sel && ed.sel.primary));
+    await p.evaluate(() => { let hit = null; window.__asapMap.eachLayer((l) => { if (!hit && l.getPopup && l.getPopup() && l.getTooltip && /Primary: .*Near Hospital/.test(String(l.getTooltip().getContent()))) hit = l; }); if (hit) hit.openPopup(); }); await p.waitForTimeout(200);
+    ok(await p.evaluate(() => { const c = document.querySelector(".mppop .mpedit"); return !!c && /Primary \(your choice\)/.test(c.textContent) && !!c.querySelector('[data-mpe="reset"]'); }), "map edit: the card shows it is your choice and offers Back to computed");
+    await p.evaluate(() => document.querySelector('.mppop [data-mpe="reset"]').click()); /* the undocked plan covers the map on a desktop; docked or folded it is pressed by hand */ await p.waitForTimeout(800);
+    ok(await p.evaluate(() => /Far North Hospital/.test(document.querySelector('#mp-quick [data-mp-q="Primary"]').textContent) && !/Your choice/.test(document.querySelector('#mp-quick [data-mp-q="Primary"]').textContent)), "map edit: Back to computed restores the computed Primary");
+    await p.evaluate(() => { let hit = null; window.__asapMap.eachLayer((l) => { if (!hit && l.getPopup && l.getPopup() && l.getTooltip && /^Primary: .*Far North/.test(String(l.getTooltip().getContent()))) hit = l; }); if (hit) hit.openPopup(); }); await p.waitForTimeout(200);
+    await p.evaluate(() => document.querySelector('.mppop [data-mpe="off"]').click()); /* the undocked plan covers the map on a desktop; docked or folded it is pressed by hand */ await p.waitForTimeout(800);
+    ok(await p.evaluate(() => !/Far North Hospital/.test(document.querySelector('#mp-quick [data-mp-q="Primary"]') ? document.querySelector('#mp-quick [data-mp-q="Primary"]').textContent : "") && (JSON.parse(localStorage.getItem("osap-medplan-off-th") || "[]")).length === 1), "map edit: Turn off leaves the hospital out and the next one is picked");
+    await p.evaluate(() => { let hit = null; window.__asapMap.eachLayer((l) => { if (!hit && l.getPopup && l.getPopup() && l.getTooltip && /Far North.*turned off/.test(String(l.getTooltip().getContent()))) hit = l; }); if (hit) hit.openPopup(); });
+    await p.waitForTimeout(1500);
+    ok(await p.evaluate(() => !!document.querySelector('.mppop [data-mpe="on"]')), "map edit: the card stays open while the plan redraws");
+    await p.evaluate(() => document.querySelector('.mppop [data-mpe="on"]').click()); /* the undocked plan covers the map on a desktop; docked or folded it is pressed by hand */ await p.waitForTimeout(800);
+    ok(await p.evaluate(() => /Far North Hospital/.test(document.querySelector('#mp-quick [data-mp-q="Primary"]').textContent) && JSON.parse(localStorage.getItem("osap-medplan-off-th") || "[]").length === 0), "map edit: a turned-off hospital stays on the map (Other hospitals) and Turn on brings it back");
+    if (OUT) { await p.evaluate(() => document.querySelector('#medplan [data-mp="dock"]').click()); await p.waitForTimeout(600); await p.evaluate(() => { let hit = null; window.__asapMap.eachLayer((l) => { if (!hit && l.getPopup && l.getPopup() && l.getTooltip && /Near Hospital/.test(String(l.getTooltip().getContent()))) hit = l; }); if (hit) hit.openPopup(); }); await p.waitForTimeout(300); await p.screenshot({ path: OUT + "/desktop-map-edit.png" }); await p.evaluate(() => { window.__asapMap.closePopup(); document.querySelector('#medplan [data-mp="dock"]').click(); }); await p.waitForTimeout(300); }
+  }
+  /* print still carries every section, unfolded, with its heading */
+  const pv = await p.evaluate(() => { document.querySelector('#medplan [data-mp="print"]').click(); const b = document.getElementById("brief"); return { det: b.querySelectorAll("details.mpsec").length, quick: !!b.querySelector(".mpq"), h3: [...b.querySelectorAll("h3")].map((h) => h.textContent) }; });
+  ok(!pv.det && !pv.quick && ["1. Golden hour", "2. Receiving hospitals", "3. Routes", "10. Sources"].every((h) => pv.h3.some((x) => x.startsWith(h))) && !pv.h3.includes("CONOP summary"), dev.name + " flow: the annex prints every section unfolded under its heading, without the on-screen card " + JSON.stringify(pv.h3.slice(0, 6)));
+  ok(!errors.length, dev.name + " flow: no page errors " + errors.join(" | "));
   await ctx.close();
 }
 // ---------- rule helpers ----------

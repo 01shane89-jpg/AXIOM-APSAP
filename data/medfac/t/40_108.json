@@ -11,7 +11,7 @@
 ["n11951660342",40.61547,108.98004,"cn",{"aeroway":"helipad"}],
 ["n11951660343",40.61542,108.98082,"cn",{"aeroway":"helipad"}],
 ["r11151089",41.69419,108.37856,"cn",{"name":"乌拉特中旗机场","aeroway":"aerodrome"}],
-["r14511576",40.55985,109.99922,"cn",{"name":"包头东河国际机场","name:en":"Baotou Donghe International Airport","operator":"内蒙古民航机场集团公司","aeroway":"aerodrome","icao":"ZBOW","iata":"BAV","wikidata":"Q1930670"}],
+["r14511576",40.55985,109.99922,"cn",{"name":"包头东河国际机场 ᠪᠤᠭᠤᠲᠤ ᠳᠦᠩᠬᠧ ᠣᠯᠣᠨ ᠤᠯᠤᠰ ᠤᠨ ᠨᠢᠰᠡᠬᠦ ᠪᠠᠭᠤᠳᠠᠯ","name:en":"Baotou Donghe International Airport","operator":"内蒙古民航机场集团公司","aeroway":"aerodrome","icao":"ZBOW","iata":"BAV","wikidata":"Q1930670"}],
 ["w1006110059",40.6065,109.83398,"cn",{"name":"沼潭街道社区卫生中心","amenity":"clinic","healthcare":"clinic"}],
 ["w1021377584",40.7273,108.64869,"cn",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1085297980",40.63982,109.8321,"cn",{"name":"包头云龙骨科医院","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"orthopaedics","addr:street":"阿尔丁大街","addr:district":"昆都仑区","addr:city":"包头市","addr:province":"内蒙古自治区"}],

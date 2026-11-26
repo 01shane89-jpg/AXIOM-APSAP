@@ -44,6 +44,15 @@ assert.equal(pageDate("2026.09.29"), "2026-09-29");
 assert.equal(pageDate("Posted 29/09/2026"), "2026-09-29");
 assert.equal(pageDate("26 กันยายน 2569"), "2026-09-26");
 assert.equal(pageDate("yesterday"), "");
+// English month names (23 Nov 2026: The Standard, Gambia, and Critical Threats print them)
+assert.equal(pageDate("20 November 2026"), "2026-11-20");
+assert.equal(pageDate("Iran Update, November 22, 2026"), "2026-11-22");
+assert.equal(pageDate("Sept 3 2026"), "2026-09-03");
+assert.equal(pageDate("The May 2026 budget"), "");
+{ // a date tacked on after the headline is dropped from it; one the headline names after a comma stays
+  const E = parseList('<a href="/gambia-wins-case/">GAMBIA WINS GENOCIDE CASE AGAINST MYANMAR AT ICJ 20 November 2026</a><a href="/analysis/iran-update-november-22-2026">Iran Update, November 22, 2026</a>', "https://example.org/", "^/");
+  assert.deepEqual(E.map((x) => [x.title, x.date]), [["GAMBIA WINS GENOCIDE CASE AGAINST MYANMAR AT ICJ", "2026-11-20"], ["Iran Update, November 22, 2026", "2026-11-22"]]);
+}
 // a web-page list: one item per link, headline from the heading, date in the link or just after it
 const html = `<a href="/en/News/PLAAct/87845" class="news_list"><div class="date">2026.09.29</div><h2 class="title">PLA activities around Taiwan</h2><div>Click-Through Rate：197</div></a>
 <a href="/th/detail/iid/5" title="ผู้ว่าฯ สั่งอพยพชาวบ้านเข้าศูนย์พักพิง"><img></a><a href="/th/detail/iid/5">ผู้ว่าฯ สั่งอพยพชาวบ้านเข้าศูนย์พักพิง &ldquo;ด่วน&rdquo;</a><span>26 กันยายน 2569</span>
@@ -71,6 +80,11 @@ assert.equal(parseFeed("<rss><item><title>&#xD55C;&#44397; test</title><link>htt
   assert.equal(d.title, "Taiwan MND: 3 PLA aircraft (1 into the ADIZ or across the median line), 5 PLAN ships, 4 official ships detected around Taiwan");
   assert.deepEqual(d.counts, { aircraft: 3, adiz: 1, ships: 5, official: 4, balloons: 0 });
   assert.ok(d.summary.startsWith("6 a.m. Sep. 27 (Sun.) to 6 a.m. Sep. 28 (Mon.) (UTC+8). 3 sorties"));
+  // one official ship (MND report 88313, 21 Nov) was read as none
+  const one = `<p>二、 PLA activities： 15 sorties of PLA aircraft, 7 PLAN ships and 1 official ship operating around Taiwan were detected as of 6 a.m. (UTC+8) today.</p><p>Keywords： Taiwan</p>`;
+  const o = ADAPTERS["mnd-pla"](one);
+  assert.equal(o.counts.official, 1); assert.match(o.title, /7 PLAN ships, 1 official ship detected/);
+  assert.equal(ADAPTERS["mnd-pla"]("<p>二、 PLA activities： 2 sorties of PLA aircraft and 1 PLAN ship operating around Taiwan were detected today.</p><p>Share</p>").counts.ships, 1);
   assert.equal(ADAPTERS["mnd-pla"]("<p>Page not found</p>"), null);
 }
 

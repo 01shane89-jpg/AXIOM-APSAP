@@ -38,6 +38,15 @@ ok(T.includes("Ground stop ordered for all airports nationwide"), "other countri
   ok(k.src.length === 10 && k.srcMore === 20 && k.src[0][5] === k.u && k.n === 30, "Who carried it keeps the lead and the first 10 outlets, with the count of the rest");
 }
 
+{
+  // a story breaking now outranks an older story with somewhat more outlets in all: outlets in the last 24 hours count twice
+  // (the CIA breach, 24 Nov 2026: 26 outlets in three hours sat 20th behind three-day-old stories)
+  const fresh = (id, n, d) => ({ ...st(id, "Story " + id, n, d, Array.from({ length: n }, (_, i) => "https://" + id + "/" + i)) });
+  const b2 = new Map([["ua", { stories: [fresh("old", 40, "2026-11-12T06:00")] }], ["us", { stories: [fresh("new", 26, "2026-11-15T01:00")] }]]);
+  const w2 = worldStories(b2, { end: END }).stories.map((s) => s.t);
+  ok(w2[0] === "Story new" && w2[1] === "Story old", "a story with 26 outlets today ranks above one with 40 outlets two days ago");
+}
+
 const news = worldNews(W, (cc) => cc === "ir" ? [{ title: "دو نفتکش", title_en: "Two supertankers explode", link: "https://x/1", date: "2026-11-15T01:00", outlet: "Mehr", geo: { n: "Hormuz", la: 26.5, lo: 56.3 } }] : [], "2026-11-15 03:00Z");
 const I = news.items[WW];
 ok(Object.keys(news.items).length === 1 && I.length === W.stories.length, "one World headline per world story, under items.ww");
