@@ -60,13 +60,28 @@
      and nothing chosen: World on a new device (newDevice above); a device that has used OSAP before with no country chosen
      stays on Thailand, where it always opened. The same for both start screens, Today and Map: until 2026-11-25 the Map start
      screen skipped all of this and every open of it was Thailand (tests/home_country_smoke.mjs) */
+  var MIG = "osap-start-mig1";
   function startCc() {
     var CCRE = /^[a-z]{2,3}$/, last = ls("osap-last-cc"), my = ls("osap-mycc");
     if (h0.length > 1 && CCRE.test(h0[0])) return h0[0];
     last = typeof last === "string" && CCRE.test(last) ? last : "";
     var pins = my && Array.isArray(my.pins) ? my.pins.filter(function (c) { return typeof c === "string" && CCRE.test(c); }) : [];
+    /* once per device (Shane 2026-11-26 "thailand is still the default location for users"): a saved last country of Thailand
+       with no My countries is what every open before 2026-11-15 saved by default (Thailand was the only start then, and a
+       device with settings but no country still fell back to it), so it is not taken as a choice: it becomes World, once.
+       Anyone who then picks Thailand keeps it from the next open on. Only where a last country is saved, so a new device stays
+       free of OSAP keys for the first-run setup in assets/osap-mycountries.js (tests/home_country_smoke.mjs) */
+    var mig = null; try { mig = localStorage.getItem(MIG); } catch (e) { mig = "1"; }
+    if (mig == null && last) {
+      try { localStorage.setItem(MIG, "1"); } catch (e) {}
+      if (last === "th" && !pins.length) { last = "ww"; try { localStorage.setItem("osap-last-cc", JSON.stringify("ww")); } catch (e) {} }
+    }
     var chosen = last && (!pins.length || pins.indexOf(last) >= 0) ? last : pins[0] || "";
-    return mine || chosen || (h0[0] ? "th" : newDevice() ? "ww" : "th");
+    var cc = mine || chosen || (h0[0] ? "th" : newDevice() ? "ww" : "th");
+    /* an open that falls back to Thailand now saves it as the last country; that is the fallback working as meant, not the old
+       default, so the one-time step above is marked done (this device already has OSAP settings, so the key is harmless) */
+    if (mig == null && cc === "th" && !chosen) try { localStorage.setItem(MIG, "1"); } catch (e) {}
+    return cc;
   }
   if (was == null) {
     var cc = startCc(), home = ls("osap-home") === "map";
