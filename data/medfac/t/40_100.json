@@ -1,7 +1,11 @@
-[["n8060604497",40.54518,100.00969,"cn",{"name":"Airstrip","aeroway":"aerodrome"}],
+[["n8060604497",40.54518,100.00969,"cn",{"name:en":"Shuangchengzi North Airfield","aeroway":"aerodrome","military":"airfield"}],
 ["w1238526449",40.61952,100.17499,"cn",{"aeroway":"helipad"}],
+["w1280476197",40.541,100.015,"cn",{"name:en":"Shuangchengzi North Airfield","aeroway":"aerodrome","military":"airfield"}],
 ["w1280744124",41.93219,101.03198,"cn",{"aeroway":"helipad"}],
 ["w1280744125",41.93225,101.03224,"cn",{"aeroway":"helipad"}],
 ["w1280744126",41.93233,101.03264,"cn",{"aeroway":"helipad"}],
 ["w1280744127",41.93239,101.03291,"cn",{"aeroway":"helipad"}],
+["w1576118823",40.97521,100.20141,"cn",{"aeroway":"helipad"}],
+["w1576118824",40.97424,100.20198,"cn",{"aeroway":"helipad"}],
+["w1576118825",40.97451,100.20306,"cn",{"aeroway":"helipad"}],
 ["w972635520",40.69469,100.66132,"cn",{"aeroway":"helipad"}]]
