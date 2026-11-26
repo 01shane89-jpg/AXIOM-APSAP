@@ -1322,6 +1322,12 @@
   },
   {
    "cc": "ua",
+   "channel": "serhii_flash",
+   "kind": "government (defense adviser)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
    "channel": "V_Zelenskiy_official",
    "kind": "government (head of state)",
    "lang": "uk"
