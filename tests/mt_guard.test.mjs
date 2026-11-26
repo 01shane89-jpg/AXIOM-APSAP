@@ -84,6 +84,13 @@ t("a number the original does not have is rejected", () => {
   assert.match(mtSuspect("Bijna iedereen kan volgend jaar hogere hypotheek krijgen: ‘Verschil van 10.000 tot 35.000 euro’", "Almost everyone can get a higher mortgage next year: ‘Differences of 10,000 to 35,002 euros’", n8), /35,002/);
   assert.match(mtSuspect("Đắk Lắk đề nghị xác minh thông tin 845 triệu đồng tiền thưởng ở trường học", "The school is expected to receive an additional $850 million in grants from the government.", n8), /850/);
   assert.match(mtSuspect("Journal en Arabe de 18h du 30/10/2026", "Journal en Arabe de 18h du 09/10/2026", n8), /number 09/);
+  // an amount glued to a currency symbol is read too (it used to hide behind the letter before it, 26 Nov 2026)
+  assert.equal(extraNumber("Polis rampas kokain bernilai RM2.5 juta", "Police seize cocaine worth RM9 million"), "9 million");
+  assert.equal(extraNumber("Tanzania yapokea maghala ya Sh500 milioni", "Tanzania receives Sh900 million warehouses"), "900 million");
+  assert.equal(extraNumber("Polis rampas kokain bernilai RM2.5 juta", "Police seize cocaine worth RM2.5 million"), "");
+  assert.equal(extraNumber("بلوچستان: دہشت گردوں کی گرفتاری پر 25 کروڑ روپے انعام", "Balochistan: Rs250 million reward for terrorists"), "");
+  // NEGATIVE: a letter that is not a currency still hides a model or flight number
+  assert.equal(extraNumber("Avion de chasse abattu", "MH17 and F16 jets"), "");
 });
 t("numbers written another way pass", () => {
   const same = (o, e) => assert.equal(extraNumber(o, e), "", o + " -> " + e);

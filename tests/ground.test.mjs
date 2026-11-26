@@ -79,6 +79,18 @@ t("names: a country in any of its forms, the summary's own country, spelling of 
   assert.equal(groundLine({ text: "A Burmese military air strike killed 4 in Southern Rakhine State.", refs: [2] }, refs, { place: "Myanmar" }).ok, true);
   assert.deepEqual(namesIn("Continued conflict on the Thai–Cambodian border. The Kenya Police Academy cafeteria"), ["Thai", "Cambodian", "Kenya"]);
 });
+t("names: a mixed-case currency symbol next to its amount is not a name (\"Not in its sources: Rs\", \"Sh\", 26 Nov 2026)", () => {
+  assert.deepEqual(namesIn("Balochistan's government announces rewards of up to Rs250m, according to Dawn."), ["Dawn"]);
+  assert.deepEqual(namesIn("The Citizen reports that Tanzania has received Sh500 million in mobile warehouses."), ["Citizen", "Tanzania"]);
+  assert.deepEqual(namesIn("Officials in Nairobi set aside Ksh 2 billion and Rs 40 crore."), ["Nairobi"]);
+  const refs = [ref(1, "Tanzania gets Sh500 million mobile warehouses for disaster response.", "The Citizen")];
+  const r = groundLine({ text: "The Citizen reports that Tanzania has received Sh500 million in mobile warehouses for disaster response.", refs: [1] }, refs, { place: "Tanzania" });
+  assert.ok(!r.gaps.some((g) => g.kind === "name"), JSON.stringify(r.gaps));
+  // NEGATIVE: the same word not next to an amount is still a name, and the amount itself is still checked
+  assert.ok(namesIn("Talks in Sh Ahmed's office resumed.").includes("Sh"));
+  const r2 = groundLine({ text: "The Citizen reports that Tanzania has received Sh900 million in mobile warehouses.", refs: [1] }, refs, { place: "Tanzania" });
+  assert.ok(r2.gaps.some((g) => g.kind === "number"), JSON.stringify(r2.gaps));
+});
 t("names: a currency or unit next to its amount is not a name (\"Not in its sources: RM\", 25 Nov 2026)", () => {
   assert.deepEqual(namesIn("Thai police, as reported by Harian Metro, seized RM2.5 million in suspected cocaine at Sungai Golok."), ["Harian", "Metro", "Sungai", "Golok"]);
   assert.deepEqual(namesIn("Officials said the fine was USD 40 per day and US$5m in total."), []);
