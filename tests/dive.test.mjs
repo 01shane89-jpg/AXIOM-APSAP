@@ -87,5 +87,16 @@ ok(s.dives[1].block && /190 fsw/.test(s.dives[1].err), "a repetitive dive deeper
 ok(C.plan(T, 0, 10).err && C.plan(T, 60, 0).err, "no depth or no bottom time: nothing read");
 ok(C.altWait(T, "Z", 11000).over, "above 10,000 ft: not covered by Table 9-6");
 
+// OSAP's sourced chamber list (data/dive/chambers.json): every entry is placed, sourced and dialable
+const CH = req("../data/dive/chambers.json");
+const BASES = ["facility", "government_list", "journal"];
+ok(CH.schema === "osap-dive-chambers/1" && /^\d{4}-\d\d-\d\d$/.test(CH.read) && CH.chambers.length >= 20, "chamber list: schema, read date and " + CH.chambers.length + " chambers");
+ok(CH.chambers.every(c => isFinite(c.lat) && isFinite(c.lon) && Math.abs(c.lat) <= 90 && Math.abs(c.lon) <= 180 && c.coord), "chamber list: every chamber has a map point and says where it comes from");
+ok(CH.chambers.every(c => c.src.length && c.src.every(k => CH.sources[k] && /^https:\/\//.test(CH.sources[k].url) && /^\d{4}-\d\d-\d\d$/.test(CH.sources[k].read))), "chamber list: every chamber names sources that exist, with an https link and the date read");
+ok(CH.chambers.every(c => BASES.includes(c.basis) && (c.tel || []).every(t => t.n && /^\+?\d{4,15}$/.test(t.dial))), "chamber list: every basis is known and every phone has a dialable form");
+ok(new Set(CH.chambers.map(c => c.id)).size === CH.chambers.length, "chamber list: ids are unique");
+const bph = CH.chambers.find(c => c.id === "th-bph");
+ok(bph && /Bangkok Hospital Pattaya/.test(bph.name) && bph.tel[0].dial === "+6638259986" && CH.sources[bph.src[0]].url === "https://www.bangkokhospital.com/en/pattaya/center-clinic/other/hyperbaric-oxygen-therapy-bph/overview", "chamber list: Bangkok Hospital Pattaya is listed with its own page and phone (Shane 2026-11-21)");
+
 console.log(fails ? fails + " FAILED" : "all passed");
 process.exit(fails ? 1 : 0);

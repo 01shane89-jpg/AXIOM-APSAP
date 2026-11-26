@@ -38,7 +38,8 @@ const WIND = { hourly: { time: hours, wind_speed_10m: fill(8), wind_gusts_10m: f
 const OVERPASS = { osm3s: { timestamp_osm_base: "2026-11-04T00:00:00Z" }, elements: [
   { type: "node", id: 901, lat: SITE[0] + 0.27, lon: SITE[1], tags: { healthcare: "hyperbaric_chamber", name: "Test Naval Recompression Chamber", military: "naval_base", opening_hours: "24/7", phone: "+66 38 000 000" } },
   { type: "way", id: 902, center: { lat: SITE[0], lon: SITE[1] + 1.1 }, tags: { amenity: "hospital", "healthcare:speciality": "general;hyperbaric", name: "Test Hospital Hyperbaric Unit", "operator:type": "public" } },
-  { type: "node", id: 903, lat: SITE[0] + 0.1, lon: SITE[1], tags: { amenity: "hospital", name: "Ordinary Hospital" } }
+  { type: "node", id: 903, lat: SITE[0] + 0.1, lon: SITE[1], tags: { amenity: "hospital", name: "Ordinary Hospital" } },
+  { type: "node", id: 904, lat: SITE[0] + 0.05, lon: SITE[1], tags: { healthcare: "chiropractor", name: "Test Chiropractic & Spinal Decompression" } }
 ] };
 
 async function open(opts, flags = {}) {
@@ -48,9 +49,11 @@ async function open(opts, flags = {}) {
     const u = r.request().url(), H = { "Access-Control-Allow-Origin": "*" };
     if (/marine-api\.open-meteo\.com/.test(u)) { hits.marine++; return r.fulfill({ status: 200, contentType: "application/json", headers: H, body: JSON.stringify(MARINE) }); }
     if (/api\.open-meteo\.com\/v1\/forecast/.test(u) && /wind_gusts_10m/.test(u) && /wind_direction_10m/.test(u)) { hits.wind++; return r.fulfill({ status: 200, contentType: "application/json", headers: H, body: JSON.stringify(WIND) }); }
-    if (/\/api\/interpreter/.test(u) && /hyperbaric/.test(decodeURIComponent(r.request().postData() || ""))) { hits.overpass++; return r.fulfill({ status: 200, contentType: "application/json", headers: H, body: JSON.stringify(OVERPASS) }); }
+    if (/\/api\/interpreter/.test(u) && /hyperbaric/.test(decodeURIComponent(r.request().postData() || ""))) { hits.overpass++; return r.fulfill({ status: 200, contentType: "application/json", headers: H, body: JSON.stringify(flags.overpass || OVERPASS) }); }
     return r.abort();
   });
+  /* OSAP's own chamber list: empty for the made-up site unless a check asks for the real data/dive/chambers.json */
+  if (!flags.realDir) await ctx.route(/\/data\/dive\/chambers\.json/, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ schema: "osap-dive-chambers/1", read: "2026-11-21", sources: {}, chambers: [] }) }));
   if (flags.noTables) await ctx.route(/\/data\/dive\/usn-rev7-air\.json/, (r) => r.fulfill({ status: 404, body: "" }));
   await ctx.addInitScript(() => { try { localStorage.setItem("osap-home", "map"); } catch (e) {} });
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
@@ -112,7 +115,7 @@ async function setF(p, sel, v) { await p.fill("#dive " + sel, String(v)); await 
 
   /* the dive medical plan */
   t = await text(p);
-  ok(hits.overpass > 0 && s.ch && s.ch.list.length === 2 && s.ch.list[0].name === "Test Naval Recompression Chamber" && !s.ch.list.some((c) => c.name === "Ordinary Hospital"), "desktop: the two chambers are listed, nearest first, and an ordinary hospital is not");
+  ok(hits.overpass > 0 && s.ch && s.ch.list.length === 2 && s.ch.list[0].name === "Test Naval Recompression Chamber" && !s.ch.list.some((c) => c.name === "Ordinary Hospital" || /Chiropractic/.test(c.name)), "desktop: the two chambers are listed, nearest first, and an ordinary hospital or a spinal decompression chiropractor is not");
   ok(s.ch.list[0].mil.k === "Military" && s.ch.list[0].hours === "24/7" && s.ch.list[1].mil.k === "Civilian" && s.ch.list[1].hours === "", "desktop: military/civilian and hours come only from the tags");
   ok(/24\/7/.test(t) && /Not stated/.test(t) && /Tel \+66 38 000 000/.test(t) && /No phone in OpenStreetMap/.test(t), "desktop: hours, Not stated and the phone (or its absence) are shown");
   ok(/30\.0 km|30 km/.test(t) && /16 NM/.test(t) && /8 min \/ 4 min/.test(t), "desktop: distance and flight times at 120 / 250 kn are shown for the naval chamber");
@@ -148,6 +151,37 @@ async function setF(p, sel, v) { await p.fill("#dive " + sel, String(v)); await 
   ok(/The Navy dive tables could not be loaded/.test(t) && /Use the manual/.test(t) && s.series === null && !/Table 9-7:/.test(t), "failure: with the tables unreachable the sheet says so and reads no schedule");
   ok(errors.length === 0, "failure: no page errors " + errors.join(" | "));
   await ctx.close();
+}
+
+/* ---------- OSAP's chamber list: Pattaya (Shane 2026-11-21) and a site with nothing near ---------- */
+{
+  /* OpenStreetMap answers with Bangkok Hospital Pattaya tagged as hyperbaric (a twin of the list's entry) and nothing else */
+  const BPH = { type: "way", id: 226823896, center: { lat: 12.9538, lon: 100.9055 }, tags: { amenity: "hospital", name: "Bangkok Hospital Pattaya", "healthcare:speciality": "hyperbaric" } };
+  const { ctx, p, errors } = await open({ viewport: { width: 1280, height: 800 } }, { realDir: true, overpass: { elements: [] } });
+  await p.evaluate(() => window.OSAP_DIVE_GO({ at: [12.92, 100.78] })); /* off Koh Larn, Pattaya */
+  await p.waitForFunction(() => window.OSAP_DIVE && window.OSAP_DIVE.isOpen && window.OSAP_DIVE.isOpen(), null, { timeout: 15000 }); await settled(p);
+  let t = await text(p), s = await p.evaluate(() => window.OSAP_DIVE.state());
+  const c1 = s.ch && s.ch.list[0];
+  ok(c1 && /Bangkok Hospital Pattaya/.test(c1.name) && c1.dir && c1.m < 20000, "Pattaya: C1 is Bangkok Hospital Pattaya's hyperbaric center from OSAP's list, " + (c1 && (c1.m / 1000).toFixed(1)) + " km, with OpenStreetMap returning nothing");
+  ok(/Nearest known chamber: Hyperbaric Oxygen Therapy Center, Bangkok Hospital Pattaya/.test(t) && /\+66 3825 9986/.test(t) && /Decompression Sickness/.test(t) && /monoplace/.test(t), "Pattaya: the nearest chamber is named first with its phone, what its page says and its chamber type");
+  ok(await p.evaluate(() => [...document.querySelectorAll("#dive a")].some((a) => a.href === "https://www.bangkokhospital.com/en/pattaya/center-clinic/other/hyperbaric-oxygen-therapy-bph/overview") && [...document.querySelectorAll('#dive a[href^="tel:"]')].some((a) => a.getAttribute("href") === "tel:+6638259986")), "Pattaya: the source page and a tap-to-call link are on the sheet");
+  if (OUT) await p.evaluate(() => { const h = [...document.querySelectorAll("#dive h4")].find((x) => /recompression/.test(x.textContent)); if (h) h.scrollIntoView({ block: "center" }); }), await p.screenshot({ path: OUT + "/dive-pattaya.png" });
+  ok(s.ch.list.some((c) => /Apakorn/.test(c.name) && c.mil.k === "Military") && s.ch.list.every((c) => !c.dir || (c.srcs.length && c.srcs[0].u)), "Pattaya: the Navy chamber at Sattahip is listed as military, and every listed entry names its source");
+  await p.click('#dive [data-dv="close"]'); await ctx.close();
+  /* the same site with OpenStreetMap tagging the hospital: one entry, not two */
+  const b = await open({ viewport: { width: 1280, height: 800 } }, { realDir: true, overpass: { elements: [BPH] } });
+  await b.p.evaluate(() => window.OSAP_DIVE_GO({ at: [12.92, 100.78] })); await b.p.waitForFunction(() => window.OSAP_DIVE && window.OSAP_DIVE.isOpen && window.OSAP_DIVE.isOpen(), null, { timeout: 15000 }); await settled(b.p);
+  s = await b.p.evaluate(() => window.OSAP_DIVE.state());
+  ok(s.ch.list.filter((c) => /Bangkok Hospital Pattaya/.test(c.name)).length === 1 && /openstreetmap\.org\/way\/226823896/.test(s.ch.list[0].osm || ""), "Pattaya: an OpenStreetMap entry at the same place is merged into the sourced entry, not listed twice");
+  ok(errors.length === 0 && b.errors.length === 0, "Pattaya: no page errors " + errors.concat(b.errors).join(" | "));
+  await b.ctx.close();
+  /* mid-Pacific: nothing within 500 km */
+  const f = await open({ viewport: { width: 1280, height: 800 } }, { realDir: true, overpass: { elements: [] } });
+  await f.p.evaluate(() => window.OSAP_DIVE_GO({ at: [0, -150] })); await f.p.waitForFunction(() => window.OSAP_DIVE && window.OSAP_DIVE.isOpen && window.OSAP_DIVE.isOpen(), null, { timeout: 15000 }); await settled(f.p);
+  t = await text(f.p); s = await f.p.evaluate(() => window.OSAP_DIVE.state());
+  ok(s.ch.list.length === 0 && /No recompression chamber is known within 500 km of this site/.test(t) && /Nearest chamber OSAP knows of: /.test(t) && s.ch.far && s.ch.far.m > 500000, "none nearby: the sheet says plainly no chamber is known within 500 km and names the nearest known one, " + (s.ch.far && Math.round(s.ch.far.m / 1000)) + " km");
+  ok(f.errors.length === 0, "none nearby: no page errors " + f.errors.join(" | "));
+  await f.ctx.close();
 }
 
 /* ---------- phone ---------- */

@@ -14,8 +14,9 @@
      deeper depth and the exact or next longer bottom time (para 9-6.1); repetitive dives follow para 9-9.1 and the RNT exception
      rule para 9-9.2. Each result names its table, row and manual page, so the dive supervisor can check it against the manual;
    - flying and altitude after diving: Table 9-6 for the highest repetitive group of the plan;
-   - the dive medical plan: the nearest recompression (hyperbaric) chambers within 500 km from OpenStreetMap (OSAP's stored copy
-     plus a live check), with their published hours, operator, military or civilian where the source says so, phone, straight
+   - the dive medical plan: the nearest recompression (hyperbaric) chambers within 500 km from OSAP's own sourced chamber list
+     (data/dive/chambers.json) and OpenStreetMap (OSAP's stored copy plus a live check), the nearest one named first, and the
+     nearest known one anywhere when none is within 500 km, with their published hours, operator, military or civilian where the source says so, phone, straight
      line distance, flight times at stated speeds and drive times by the medical plan's road routing; the manual's own words on
      moving a diver by air (para 17-5.4.1.2 and 17-9.3.1: as low as safely possible, no more than 1,000 feet preferable, or an
      aircraft pressurized to one ata); DAN's published diving emergency lines; and one press to open the medical plan here.
@@ -173,6 +174,16 @@
       .then(function (j) { if (!j || !j.tables || !j.tables.t99) throw new Error("not the dive tables"); TBL = j; return j; }, function (e) { TBLp = null; throw e; });
     return TBLp;
   }
+  /* OSAP's own sourced chamber list (data/dive/chambers.json): chambers read from the facility's page, a government list or a
+     medical journal, each with its source. OpenStreetMap misses chambers inside a hospital mapped only as a hospital (Bangkok
+     Hospital Pattaya, Shane 2026-11-21), so the dive medical plan reads both. */
+  var CD = null, CDp = null;
+  function chamberDir() {
+    if (CD) return Promise.resolve(CD);
+    if (!CDp) CDp = fetch("data/dive/chambers.json").then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (j) { if (!j || !Array.isArray(j.chambers)) throw new Error("not the chamber list"); CD = j; return j; }, function (e) { CDp = null; return { err: (e && e.message) || "no answer" }; });
+    return CDp;
+  }
   function contacts() { return CT ? Promise.resolve(CT) : fetch("data/dive/contacts.json").then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { CT = j; return j; }, function () { return null; }); }
 
   /* ---------- the record ---------- */
@@ -269,7 +280,10 @@
 
   /* ---------- recompression chambers (OpenStreetMap: OSAP's stored copy, then a live check) ---------- */
   var CH_R = 500000, HB = /hyperbaric|diving|decompression|recompression/i;
+  /* "Spinal Decompression" chiropractors match the name rule: never a recompression chamber */
+  var NOTCH = /spinal|chiropract|back pain|physiotherap/i;
   function isChamber(t) {
+    if (t.healthcare !== "hyperbaric_chamber" && (NOTCH.test(t.name || "") || /^(chiropractor|alternative|physiotherapist)$/.test(t.healthcare || ""))) return false;
     return t.healthcare === "hyperbaric_chamber" || HB.test(String(t["healthcare:speciality"] || "")) ||
       ((t.healthcare || /^(hospital|clinic)$/.test(t.amenity || "")) && /hyperbaric|decompression|recompression/i.test(t.name || ""));
   }
@@ -288,22 +302,38 @@
     ST.chBusy = true; ST.chErr = ""; ST.ch = null; ST.gnd = {}; paint();
     var pv = W.OSAP_HOSP && W.OSAP_HOSP.provider && W.OSAP_HOSP.provider("osm"), stored = pv && pv.extras ? pv.extras(o, CH_R).catch(function () { return null; }) : Promise.resolve(null);
     var live = W.OSAP_OSM ? W.OSAP_OSM.query({ ql: chamberQl(o), opMs: 40000 }).catch(function (e) { return { err: (e && e.message) || "no answer" }; }) : Promise.resolve({ err: "OpenStreetMap reader not loaded" });
-    Promise.all([stored, live]).then(function (res) {
+    Promise.all([stored, live, chamberDir()]).then(function (res) {
       if (run !== ST.run.ch) return;
-      var els = ((res[0] && res[0].els) || []).concat((res[1] && res[1].elements) || []), seen = {}, out = [];
+      var els = ((res[0] && res[0].els) || []).concat((res[1] && res[1].elements) || []), seen = {}, out = [], dir = res[2] && !res[2].err ? res[2] : null, near = [], far = null;
+      /* OSAP's chamber list first: within the radius it is listed; the nearest one anywhere is kept for "none nearby" */
+      if (dir) dir.chambers.forEach(function (c) {
+        if (!isFinite(c.lat) || !isFinite(c.lon)) return;
+        var p = [+c.lat, +c.lon], m = dist(o, p);
+        var srcs = (c.src || []).map(function (k) { var x = dir.sources && dir.sources[k]; return x ? { t: str(x.title, 160), u: str(x.url, 300), read: str(x.read, 10), kind: str(x.kind, 20) } : null; }).filter(Boolean);
+        var tels = (c.tel || []).slice(0, 4).map(function (t) { return { n: str(t.n, 40), dial: str(t.dial, 20), label: str(t.label, 40) }; });
+        var e = { id: "dir:" + c.id, name: str(c.name, 120), local: "", place: str(c.place, 80), op: "", mil: { k: c.mil === "Military" || c.mil === "Civilian" ? c.mil : "Not stated", why: c.mil === "Military" || c.mil === "Civilian" ? "the source" : "" },
+          hours: str(c.hours, 120), em: "", tel: tels[0] ? tels[0].n : "", tels: tels, web: "", p: p, m: m, b: brg(o, p), why: "OSAP's chamber list", dir: true, basis: str(c.basis, 20),
+          kind: str(c.type, 40), dcs: str(c.dcs, 240), coord: str(c.coord, 240), srcs: srcs, url: srcs[0] ? srcs[0].u : "" };
+        if (m <= CH_R) near.push(e); else if (!far || m < far.m) far = e;
+      });
+      near.forEach(function (e) { out.push(e); });
       els.forEach(function (e) {
         var k = e.type + e.id, t = e.tags || {}; if (seen[k] || !isChamber(t)) return; seen[k] = 1;
         var la = e.lat != null ? e.lat : e.center && e.center.lat, lo = e.lon != null ? e.lon : e.center && e.center.lon; if (la == null || lo == null) return;
         var p = [la, lo], m = dist(o, p); if (m > CH_R) return;
+        var url = "https://www.openstreetmap.org/" + (e.type || "node") + "/" + e.id;
+        /* the same place in OSAP's list (within 500 m): keep the sourced entry, note the map entry on it */
+        var twin = near.filter(function (d) { return dist(d.p, p) < 500; })[0]; if (twin) { twin.osm = url; return; }
         out.push({ id: k, name: str(t["name:en"] || t.name || t.operator || "Hyperbaric chamber (no name in OpenStreetMap)", 90), local: t["name:en"] && t.name && t.name !== t["name:en"] ? str(t.name, 90) : "",
           op: str(t.operator || "", 80), mil: milOf(t), hours: str(t.opening_hours || "", 120), em: t.emergency === "yes" ? "Emergency department (OpenStreetMap emergency=yes)" : "",
           tel: str(t["contact:phone"] || t.phone || t["emergency:phone"] || "", 60), web: str(t["contact:website"] || t.website || "", 200), p: p, m: m, b: brg(o, p),
           why: t.healthcare === "hyperbaric_chamber" ? "healthcare=hyperbaric_chamber" : HB.test(String(t["healthcare:speciality"] || "")) ? "healthcare:speciality=" + str(t["healthcare:speciality"], 60) : "name",
-          url: "https://www.openstreetmap.org/" + (e.type || "node") + "/" + e.id });
+          url: url });
       });
       out.sort(function (a, b) { return a.m - b.m; });
-      ST.ch = { list: out.slice(0, 6), n: out.length, storedAt: res[0] && res[0].at || "", missing: res[0] && res[0].missing || [], live: !(res[1] && res[1].err), liveErr: res[1] && res[1].err || "", key: o.join(",") };
-      if (!res[0] && res[1] && res[1].err) ST.chErr = res[1].err;
+      ST.ch = { list: out.slice(0, 6), n: out.length, far: out.length ? null : far, storedAt: res[0] && res[0].at || "", missing: res[0] && res[0].missing || [], live: !(res[1] && res[1].err), liveErr: res[1] && res[1].err || "",
+        dir: !!dir, dirRead: dir ? str(dir.read, 10) : "", dirErr: dir ? "" : (res[2] && res[2].err) || "not loaded", key: o.join(",") };
+      if (!res[0] && res[1] && res[1].err && !dir) ST.chErr = res[1].err;
     }).then(function () { if (run === ST.run.ch) { ST.chBusy = false; paint(); drawMap(); loadGnd(); } });
   }
   /* drive times by the medical plan's own road routing (OSRM, then Valhalla), when that file is on the page */
@@ -343,7 +373,7 @@
     "#dive .g{display:grid;grid-template-columns:minmax(11em,auto) 1fr;gap:5px 10px;align-items:center}#dive .g>span{color:var(--muted,#555)}#dive .r{display:flex;flex-wrap:wrap;gap:5px 8px;align-items:center}" +
     "#dive button{font:inherit;font-size:12.5px;border:1px solid var(--line,#bbb);background:var(--surface,#fff);color:inherit;border-radius:5px;padding:3px 9px;min-height:30px;cursor:pointer}#dive button.pri{background:#0b7285;border-color:#0b7285;color:#fff;font-weight:700}" +
     "#dive input,#dive select,#dive textarea{font:inherit;font-size:12.5px;max-width:100%;box-sizing:border-box}#dive input[type=number]{width:6.5em}#dive textarea{width:100%;min-height:2.4em}" +
-    "#dive .tw{overflow-x:auto}#dive table{border-collapse:collapse;font-size:12px;width:100%}#dive th,#dive td{border-bottom:1px solid var(--line,#e2e2e2);padding:3px 5px;text-align:left;vertical-align:top}#dive th{background:var(--surface2,#f4f6f8);font-weight:600}" +
+    "#dive .tw{overflow-x:auto}#dive td.chc{min-width:15em;max-width:24em;white-space:normal;overflow-wrap:anywhere}#dive table{border-collapse:collapse;font-size:12px;width:100%}#dive th,#dive td{border-bottom:1px solid var(--line,#e2e2e2);padding:3px 5px;text-align:left;vertical-align:top}#dive th{background:var(--surface2,#f4f6f8);font-weight:600}" +
     "#dive .obs{font-size:12px;color:var(--muted,#555);margin:3px 0}#dive .bad{color:#b71c1c;font-weight:600}#dive .ok{color:#2e7d32;font-weight:600}#dive .mg{color:#b26a00;font-weight:600}" +
     "#dive .you{display:inline-block;font-size:10.5px;border-radius:3px;padding:0 4px;background:#fff3e0;color:#8a4b00;font-weight:700;margin-right:4px}#dive .src{display:inline-block;font-size:10.5px;border-radius:3px;padding:0 4px;background:#e3f2fd;color:#0d47a1;font-weight:600;margin-right:4px}" +
     "#dive .card{border:1px solid var(--line,#ccc);border-radius:6px;padding:6px 9px;margin:6px 0}#dive .sch{font-weight:700}#dive .stops td,#dive .stops th{text-align:center}#dive .o2{font-weight:700;color:#0d47a1}" +
@@ -423,22 +453,48 @@
     h += '<p class="obs">Open-Meteo Marine and forecast models (keyless), read ' + esc(stamp(ST.wx.at)) + ". Model values for open water near the point, not measurements: coastal and reef effects, surge and local currents are not in them. The call compares each hour with the limits above; the Diving Supervisor decides." + (ST.wx.errs.length ? " Not read: " + esc(ST.wx.errs.join("; ")) + "." : "") + "</p>";
     return h;
   }
+  function telHtml(t, print) {
+    var d = String(t.dial || t.n || "").replace(/[^+\d]/g, "");
+    return (print || !d ? esc(t.n) : '<a href="tel:' + esc(d) + '">' + esc(t.n) + "</a>") + (t.label ? ' <span class="obs">(' + esc(t.label) + ")</span>" : "");
+  }
+  function linkHtml(u, t, print) { return print ? esc(t) + " " + esc(u) : '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(t) + "</a>"; }
+  var BASIS = { facility: "the facility's own page", government_list: "a government list", journal: "a medical journal article (no current hours or phone in it)" };
+  function chNameHtml(c, print) {
+    var h = "<b>" + esc(c.name) + "</b>" + (c.local ? "<br>" + esc(c.local) : "") + (c.place ? "<br>" + esc(c.place) : "") + (c.op && c.op !== c.name ? '<br><span class="obs">Operator: ' + esc(c.op) + "</span>" : "");
+    if (c.dir) {
+      h += c.tels.length ? "<br>Tel " + c.tels.map(function (t) { return telHtml(t, print); }).join(", ") : '<br><span class="obs">No phone in the source: call the hospital, or DAN (below)</span>';
+      if (c.kind) h += '<br><span class="obs">Chamber: ' + esc(c.kind) + "</span>";
+      if (c.dcs) h += '<br><span class="obs">Source says: ' + esc(c.dcs) + "</span>";
+      h += '<br><span class="obs">Listed from ' + esc(BASIS[c.basis] || "a source") + ": " + c.srcs.map(function (x) { return linkHtml(x.u, x.t, print) + " (read " + esc(x.read) + ")"; }).join("; ") +
+        ". Map point: " + esc(c.coord) + (c.osm ? "; " + linkHtml(c.osm, "OpenStreetMap", print) : "") + "</span>";
+      return h;
+    }
+    return h + (c.tel ? "<br>Tel " + telHtml({ n: c.tel }, print) : '<br><span class="obs">No phone in OpenStreetMap</span>') +
+      (c.em ? '<br><span class="obs">' + esc(c.em) + "</span>" : "") + '<br><span class="obs">Listed by ' + esc(c.why) + ", " + linkHtml(c.url, "OpenStreetMap", print) + "</span>";
+  }
   function chHtml(print) {
     var r = ST.r, h = "<h4>Nearest recompression (hyperbaric) chambers " + SRC + "</h4>";
     if (ST.chBusy) return h + '<p class="obs">Looking up recompression chambers within 500 km…</p>';
     if (ST.chErr) return h + '<p class="bad">Chambers could not be looked up (' + esc(ST.chErr) + "). Call DAN (below) for the nearest working chamber.</p>";
     var C = ST.ch; if (!C) return h;
-    if (!C.list.length) return h + '<p class="bad">No recompression chamber within 500 km in OpenStreetMap. That does not mean there is none: call DAN (below) for the nearest working chamber before the dive.</p>';
+    var foot = '<p class="obs">' + (C.dir ? "OSAP's chamber list (data/dive/chambers.json, sources read " + esc(C.dirRead) + "), and " : "OSAP's chamber list did not load (" + esc(C.dirErr) + "); ") +
+      "OpenStreetMap contributors (ODbL): OSAP\'s stored copy" + (C.storedAt ? " of " + esc(String(C.storedAt).slice(0, 10)) : "") + (C.live ? " plus a live check" : ", live check failed (" + esc(C.liveErr) + ")") + ". OpenStreetMap lists only places mapped with a hyperbaric chamber, a hyperbaric or diving speciality, or named as a hyperbaric or recompression center; a chamber inside a hospital mapped only as a hospital is missing there, which is why OSAP keeps its own sourced list. ";
+    if (!C.list.length) {
+      h += '<p class="bad"><b>No recompression chamber is known within 500 km of this site</b>, in OSAP\'s chamber list or in OpenStreetMap. That does not mean there is none: call DAN (below) for the nearest working chamber before the dive.</p>';
+      if (C.far) h += "<p>Nearest chamber OSAP knows of: <b>" + esc(C.far.name) + "</b>, " + esc(C.far.place) + ", " + km(C.far.m) + " / " + nmi(C.far.m) + " at " + Math.round(C.far.b) + "° true" + (C.far.tels.length ? ". Tel " + C.far.tels.map(function (t) { return telHtml(t, print); }).join(", ") : "") +
+        '. <span class="obs">Source: ' + C.far.srcs.map(function (x) { return linkHtml(x.u, x.t, print); }).join("; ") + "</span></p>";
+      return h + foot + "</p>";
+    }
+    var n0 = C.list[0];
+    h += '<p>Nearest known chamber: <b>' + esc(n0.name) + "</b>, " + km(n0.m) + " / " + nmi(n0.m) + " at " + Math.round(n0.b) + "° true" + (n0.dir ? n0.tels.length ? ". Tel " + n0.tels.map(function (t) { return telHtml(t, print); }).join(", ") : ". No phone in the source" : n0.tel ? ". Tel " + telHtml({ n: n0.tel }, print) : ". No phone in OpenStreetMap") + ".</p>";
     h += '<div class="tw"><table><thead><tr><th></th><th>Chamber</th><th>Military or civilian</th><th>Hours</th><th>Distance</th><th>Flight (' + r.rw + " kn / " + r.fw + " kn)</th><th>Road</th><th>Grid</th></tr></thead><tbody>" +
       C.list.map(function (c, i) {
         var rd = c.road ? dur(c.road.s / 60) + ", " + km(c.road.m) + (c.road.est ? " (estimate)" : "") : ST.gnd.busy ? "…" : "-";
-        return "<tr><td><b>C" + (i + 1) + "</b></td><td><b>" + esc(c.name) + "</b>" + (c.local ? "<br>" + esc(c.local) : "") + (c.op && c.op !== c.name ? '<br><span class="obs">Operator: ' + esc(c.op) + "</span>" : "") +
-          (c.tel ? "<br>Tel " + (print ? esc(c.tel) : '<a href="tel:' + esc(c.tel.replace(/[^+\d]/g, "")) + '">' + esc(c.tel) + "</a>") : '<br><span class="obs">No phone in OpenStreetMap</span>') +
-          (c.em ? '<br><span class="obs">' + esc(c.em) + "</span>" : "") + '<br><span class="obs">Listed by ' + esc(c.why) + ", " + (print ? esc(c.url) : '<a href="' + esc(c.url) + '" target="_blank" rel="noopener">OpenStreetMap</a>') + "</span></td>" +
+        return "<tr><td><b>C" + (i + 1) + "</b></td><td class=\"chc\">" + chNameHtml(c, print) + "</td>" +
           "<td>" + esc(c.mil.k) + (c.mil.why ? '<br><span class="obs">' + esc(c.mil.why) + "</span>" : "") + "</td><td>" + (c.hours ? esc(c.hours) : '<span class="obs">Not stated</span>') + "</td>" +
           "<td>" + km(c.m) + " / " + nmi(c.m) + "<br>" + Math.round(c.b) + "° true</td><td>" + dur(flightMin(c.m, r.rw)) + " / " + dur(flightMin(c.m, r.fw)) + "</td><td>" + rd + "</td><td><code>" + esc(grid(c.p)) + "</code></td></tr>";
       }).join("") + "</tbody></table></div>";
-    h += '<p class="obs">OpenStreetMap contributors (ODbL): OSAP\'s stored copy' + (C.storedAt ? " of " + esc(String(C.storedAt).slice(0, 10)) : "") + (C.live ? " plus a live check" : ", live check failed (" + esc(C.liveErr) + ")") + ". Only places mapped with a hyperbaric chamber, a hyperbaric or diving speciality, or named as a hyperbaric or recompression center. Military or civilian and hours only where the map says so. Flight times are straight-line distance at the stated speeds, with no launch or loading time. " +
+    h += foot + "Military or civilian and hours only where the source or the map says so. Flight times are straight-line distance at the stated speeds, with no launch or loading time. " +
       (ST.gnd.err ? "Road times: " + esc(ST.gnd.err) + ". " : ST.gnd.host ? "Road times from " + esc(ST.gnd.host) + ", no traffic. " : W.OSAP_MEDPLAN ? "" : "Road times appear once the medical plan has loaded on this page. ") +
       "A listing is not a staffed, working chamber: call ahead (and DAN) before moving a diver.</p>";
     return h;
