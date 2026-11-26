@@ -838,6 +838,8 @@ html.phone .rvpkg{max-height:none}
 .rvhead .rvseg{display:none;box-shadow:none}
 .shell.rv-list .rvhead .rvseg{display:flex}
 #cf-asum{position:fixed;right:calc(var(--railw,372px) + 16px);width:min(420px,calc(100vw - var(--railw,372px) - 80px));overflow-y:auto;z-index:1500;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.3);padding:0 14px 14px}#cf-asum[hidden],html:not([data-cf]) #cf-asum{display:none}#cf-asum .pkghead{position:sticky;top:0;background:var(--surface);padding-top:10px;display:flex;align-items:center}
+.pkghead .pkgsee{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font:inherit;font-size:12px;font-weight:600;color:var(--accent);background:none;border:1px solid var(--line);border-radius:14px;padding:2px 9px;cursor:pointer;white-space:nowrap}.pkghead .pkgsee:hover{background:var(--accent-soft,#d6e3ee)}.pkghead .pkgsee ~ .osh{margin-left:6px}.pkghead .pkgsee + .x{margin-left:6px}
+html.phone .pkghead .pkgsee{min-height:36px;padding:4px 12px;font-size:13px}
 .pkghead .x{margin-left:auto;font:inherit;font-size:18px;line-height:1;background:none;border:none;color:var(--muted);cursor:pointer;padding:0 4px}
 .pkgt{font-size:16px;font-weight:700;margin:6px 0 6px}
 .pkgchips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
@@ -4292,12 +4294,71 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   function mgrsFor(r) { return window.MGRS_OF(r.lat, r.lon, r.prec === "exact" ? 5 : r.prec === "province" ? 2 : 3); }
   var PREC = { exact: "Point given by the source or mapped exactly", approx: "Approximate, placed from the described location",
                province: "Province centroid; the bulletin names the province only", none: "No location" };
+  /* SEE ON MAP (Shane 2026-11-26: "I want a see on map button for the stories when viewing from the today window"). On a phone the
+     report sheet covers the map, so the button closes the sheet, drops the panel to its bar, flies to the story and rings its point;
+     the small info box there has "Full details" to open the report again. A point is ringed even when its data set is not drawn.
+     A story with no place given shows its country instead, and the info box says so. On a desktop the report stays open beside
+     the map. The ring fades after 8 seconds. */
+  function seeBtn(r) {
+    var has = r.lat != null && isFinite(r.lat) && isFinite(r.lon);
+    var cc = r.xcc && CBY[r.xcc] ? r.xcc : null;
+    if (!has && !(cc ? CBY[cc].bounds : C && C.bounds)) return "";
+    return '<button type="button" class="pkgsee" data-seemap="1" title="' + (has ? "Show this story's place on the map" : "No exact place given: shows " + esc(cName(cc || CC)) + " on the map") + '">' +
+      '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>' +
+      "<span>See on map</span></button>";
+  }
+  if (!map.getPane("seepane")) { map.createPane("seepane"); map.getPane("seepane").style.zIndex = 655; map.getPane("seepane").style.pointerEvents = "none"; }
+  var seeRing = null, seeTimer = 0;
+  function seeClear() { clearTimeout(seeTimer); if (seeRing) { map.removeLayer(seeRing); seeRing = null; } }
+  function seeOnMap(r, boxId) {
+    var phone = window.ASAP_PHONE && window.ASAP_PHONE.on();
+    if (phone) { window.ASAP_PHONE.close(); window.ASAP_PHONE.setSheet("bar"); }
+    seeClear(); map.closePopup();
+    var has = r.lat != null && isFinite(r.lat) && isFinite(r.lon), ll;
+    if (has) {
+      ll = L.latLng(r.lat, r.lon);
+      var mk = (boxId === "cl-pkg" ? CM : markers)[r.id];
+      if (mk && mk.setStyle && map.hasLayer(mk)) { mk.setStyle({ weight: 3, color: tok("--ink") }); setTimeout(function () { if (mk.setStyle) mk.setStyle(mk.__evStyle || (boxId === "cl-pkg" ? cStyle(r) : markerStyle(r))); }, 8000); }
+      seeRing = L.layerGroup([
+        L.circleMarker(ll, { pane: "seepane", radius: 16, color: tok("--accent"), weight: 3, fill: false, interactive: false }),
+        L.circleMarker(ll, { pane: "seepane", radius: 6, color: tok("--surface"), weight: 2, fillColor: tok("--accent"), fillOpacity: 1, interactive: false })
+      ]).addTo(map);
+      /* the map draws on a canvas, so the ring pulses by script: it grows and settles three times (not with reduced motion) */
+      var ring = seeRing.getLayers()[0];
+      if (!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) (function pulse(k) {
+        if (!seeRing) return; if (k > 36) { ring.setRadius(16); ring.setStyle({ opacity: 1 }); return; } ring.setRadius(16 + 10 * ((k % 12) / 12)); ring.setStyle({ opacity: 1 - 0.6 * ((k % 12) / 12) });
+        setTimeout(function () { pulse(k + 1); }, 60);
+      })(0);
+      seeTimer = setTimeout(seeClear, 8000);
+      /* the zoom: a point the source gave goes close in; a placed or province point less so */
+      var z = Math.max(map.getZoom(), r.prec === "exact" ? 13 : r.prec === "province" ? 9 : 11);
+      if (phone) {
+        /* the info box opens once the sheet has dropped, so it sits above the point in the map that can be seen; the point goes to
+           the middle of the map left of the tool column (#atk-tools) so the box is not hidden under it */
+        setTimeout(function () {
+          var mr = map.getContainer().getBoundingClientRect(), tc = document.getElementById("atk-tools"), tr = tc && tc.getClientRects().length ? tc.getBoundingClientRect() : null;
+          var free = tr && tr.left > mr.left + mr.width / 2 ? tr.left - mr.left : mr.width, dx = (mr.width - free) / 2;
+          map.setView(map.unproject(map.project(ll, z).add(L.point(dx, 0)), z), z, { animate: false });
+          quickCard(r, { getLatLng: function () { return ll; } }, boxId, { maxWidth: Math.max(200, Math.min(280, free - 56)), padR: mr.width - free + 6 });
+        }, 60);
+      } else mapCenterOn(ll, z);
+      return;
+    }
+    var cc = r.xcc && CBY[r.xcc] ? r.xcc : null, b = L.latLngBounds(cc ? CBY[cc].bounds : C.bounds);
+    map.fitBounds(b, { padding: [10, 10] });
+    if (phone) setTimeout(function () {
+      L.popup({ maxWidth: 240, className: "qpop", autoPan: false }).setLatLng(b.getCenter()).setContent(
+        '<div class="pop qcard" data-keep-pop="1"><div class="tier">No exact place given</div><h3>' + esc(r.title.length > 160 ? r.title.slice(0, 157) + "\u2026" : r.title) + "</h3>" +
+        '<p class="obs">The source names no place for this story, so the map shows ' + esc(cName(cc || CC)) + ".</p>" +
+        '<button type="button" class="full" data-full="' + esc(r.id) + '" data-box="' + esc(boxId || "") + '">Full details</button></div>').openOn(map);
+    }, 400);
+  }
   /* on a phone, a tap on a map point opens a small info box beside it; "Full details" opens the whole package as a sheet */
   var fullNext = false;
-  function quickCard(r, mk, boxId) {
+  function quickCard(r, mk, boxId, keep) {
     var st = STATE[r.type] || [r.type, ""];
-    L.popup({ maxWidth: 280, autoPanPaddingTopLeft: [10, 50], className: "qpop" }).setLatLng(mk.getLatLng()).setContent(
-      '<div class="pop qcard"><div class="tier">' + esc(LBY[r.layer].name + " · " + r.type + " · " + st[0]) + "</div><h3>" + esc(r.title.length > 160 ? r.title.slice(0, 157) + "…" : r.title) + "</h3>" +
+    L.popup({ maxWidth: keep && keep.maxWidth || 280, autoPanPaddingTopLeft: [10, 50], autoPanPaddingBottomRight: keep && keep.padR ? [keep.padR, 5] : [5, 5], offset: keep ? [0, -12] : [0, 7], className: "qpop" }).setLatLng(mk.getLatLng()).setContent(
+      '<div class="pop qcard"' + (keep ? ' data-keep-pop="1"' : "") + '><div class="tier">' + esc(LBY[r.layer].name + " · " + r.type + " · " + st[0]) + "</div><h3>" + esc(r.title.length > 160 ? r.title.slice(0, 157) + "…" : r.title) + "</h3>" +
       '<p class="obs">' + esc([fmtTs(r), [r.place, r.prov].filter(Boolean).join(", "), r.src.name].filter(Boolean).join(" · ")) + "</p>" +
       '<button type="button" class="full" data-full="' + esc(r.id) + '" data-box="' + esc(boxId || "") + '">Full details</button>' +
       (webUrl(r.url) ? " " + outA(webUrl(r.url), (r.news || r.lf ? "Read article" : "Original") + ' <span aria-hidden="true">\u2197</span>', "qsrc") : "") + "</div>").openOn(map);
@@ -4436,7 +4497,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     var box = document.getElementById(boxId || "tl-pkg");
     box.hidden = false;
     box.innerHTML =
-      '<div class="pkghead"><h2>Report</h2><button type="button" class="x" aria-label="Close">×</button></div>' +
+      '<div class="pkghead"><h2>Report</h2>' + seeBtn(r) + '<button type="button" class="x" aria-label="Close">×</button></div>' +
       '<div class="pkgtabs" role="tablist"><button type="button" role="tab" data-pkgtab="rep" aria-selected="true">Report</button><button type="button" role="tab" data-pkgtab="rel" aria-selected="false">Related reports (' + (rs.length + rs.social.length) + ")</button></div>" +
       '<div class="pkgpane" data-pane="rel" hidden>' + relatedHtml(rs) + "</div>" +
       '<div class="pkgpane" data-pane="rep">' +
@@ -4504,6 +4565,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     });
     var ftb = box.querySelector("[data-ftread]");
     if (ftb) ftb.addEventListener("click", function () { window.OSAP_READER.open(ftb.getAttribute("data-ftread"), { title: r.title, src: s.name }); });
+    var smb = box.querySelector("[data-seemap]");
+    if (smb) smb.addEventListener("click", function () { seeOnMap(r, boxId); });
     document.querySelector(".rail").scrollTop = 0;
     /* on a phone the package opens as a sheet over the page; on a tablet the rail sits below the map, so it is scrolled into view */
     if (!(window.ASAP_PHONE && window.ASAP_PHONE.sheet(box))) {
