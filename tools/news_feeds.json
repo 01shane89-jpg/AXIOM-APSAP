@@ -470,6 +470,8 @@
     {"cc":"tw","outlet":"Bing News search: Taiwan PLA aircraft","url":"https://www.bing.com/news/search?q=Taiwan%20PLA%20aircraft&format=rss","lang":"en","search":true,"nc":true,"tier":"specialist"},
     {"cc":"tz","outlet":"Daily News","url":"https://dailynews.co.tz/feed/","lang":"en","state":true},
     {"cc":"ua","outlet":"Ukrainska Pravda (English)","url":"https://www.pravda.com.ua/eng/rss/","lang":"en"},
+    {"cc":"ua","outlet":"LB.ua (English)","url":"https://lb.ua/rss/eng/news.xml","lang":"en"},
+    {"cc":"ua","outlet":"LB.ua","url":"https://lb.ua/rss/ukr/news.xml","lang":"uk"},
     {"cc":"ua","outlet":"Ukrinform","url":"https://www.ukrinform.net/rss/block-lastnews","lang":"en","state":true},
     {"cc":"ua","outlet":"Kyiv Post","url":"https://www.kyivpost.com/feed","lang":"en"},
     {"cc":"ua","outlet":"Euromaidan Press","url":"https://euromaidanpress.com/feed/","lang":"en"},
