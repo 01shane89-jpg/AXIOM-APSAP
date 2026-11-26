@@ -83,6 +83,8 @@ jobs:
       - run: node tests/ukmto_incidents.test.mjs
       # new dense feeds of 8 Nov (tools/dense_nov8.mjs): PortWatch, RFJ, VAAC, UNSC, USGS blasts, BfS, RIPE, UN PKO, EU regimes, satellite passes
       - run: node tests/dense_nov8.test.mjs
+      # official air monitor readings from incident responses (tools/dense_airmon.mjs): EPA Region 7 Iowa Army Ammunition Plant
+      - run: node tests/dense_airmon.test.mjs
       - run: node tests/uk_sanctions.test.mjs
       # open-licence full text for the in-app reader (tools/fulltext_lib.mjs): which addresses, safe text, no script
       - run: node tests/fulltext.test.mjs
