@@ -2,11 +2,11 @@
 // Overpass answer from a phone. Run by .github/workflows/refresh-medfac.yml, or by hand with Node 20+:
 //   node tools/build_medfac.mjs [cc ...]        (no codes: the countries never built first, then the stalest, until the budget)
 //   MEDFAC_BUDGET_MIN=45 (minutes to spend)  MEDFAC_MAX_AGE_D=28 (rebuild a country older than this)  MEDFAC_DEBUG=1
-//   MEDFAC_PARTS=.medfac-parts (answered US states kept between runs)  MEDFAC_PART_AGE_D=21 (ask a kept state again after this)
 // For each country (the 28 hand-researched first, then every other in data/basemap/world-countries.js) one Overpass query by
 // the country's ISO 3166-1 boundary reads hospitals, clinics, helipads, heliports, airfields and ambulance and air rescue
 // stations, keeping only the tags the plan reads. A country too big for one answer is asked in bounding-box parts (still
-// clipped to its boundary); the United States is asked state by state (SUBAREAS). Elements are written into 2-degree tiles shared by all countries:
+// clipped to its boundary); when Overpass gives no whole answer (and always for the United States) the same tags are read
+// through Geofabrik's Postpass SQL API instead (fetchPostpass). Elements are written into 2-degree tiles shared by all countries:
 //   data/medfac/t/<lat>_<lon>.json   [["n123", lat, lon, "th", {tags}], ...]   (lat, lon: the tile's south-west corner)
 //   data/medfac/index.json          { v, tile, countries: { th: { at, base, n: {h,c,l,e}, x: {b,d,r}, tiles: [...] } }, tiles: { key: count } }
 // The same query also reads blood banks and donation centres, hyperbaric (dive decompression) chambers and air rescue bases;
@@ -20,12 +20,11 @@
 // pharmacies and the like) are left out.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
+import { ccsAt } from "./geo_cc.mjs";
 
 const OUT = process.env.MEDFAC_OUT || "data/medfac", TDIR = join(OUT, "t"), XDIR = join(OUT, "x"), TILE = 2;
 const BUDGET = (+process.env.MEDFAC_BUDGET_MIN || 45) * 60000, MAX_AGE = (+process.env.MEDFAC_MAX_AGE_D || 28) * 864e5;
 const DEBUG = !!process.env.MEDFAC_DEBUG, T0 = Date.now();
-/* answered subdivisions of a country asked part by part (SUBAREAS), kept between runs; a part is asked again after PART_AGE */
-const PARTS = process.env.MEDFAC_PARTS || ".medfac-parts", PART_AGE = (+process.env.MEDFAC_PART_AGE_D || 21) * 864e5;
 const UA = "AXIOM-OSAP medical-plan facility snapshot (https://github.com/01shane89-jpg/AXIOM-APSAP)";
 const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -81,18 +80,10 @@ async function overpass(q) {
   }
   throw new Error(errs.join("; "));
 }
-/* A country too big for Overpass even in bounding-box parts is asked one first-level subdivision (ISO 3166-2) at a time.
-   The United States timed out on every daily run (whole country and every split), so it was never stored. Every part
-   must answer, or nothing for the country is written, so a stored country is still a whole one. */
-const SUBAREAS = {
-  us: ("AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI " +
-    "SC SD TN TX UT VT VA WA WV WI WY").split(" ").map((s) => "US-" + s)
-};
 /* a smaller declared timeout and memory size: a busy Overpass server turns away big declared queries (HTTP 504 or 429) */
-function query(cc, bbox, sub) {
+function query(cc, bbox) {
   const f = bbox ? `(${bbox.flat().map((x) => (+x).toFixed(4)).join(",")})` : "";
-  const area = sub ? `area["ISO3166-2"="${sub}"]` : `area["ISO3166-1"="${cc.toUpperCase()}"][admin_level=2]`;
-  return `[out:json][timeout:${bbox || sub ? 120 : 180}][maxsize:536870912];${area}->.a;.a out ids;(` +
+  return `[out:json][timeout:${bbox ? 120 : 180}][maxsize:536870912];area["ISO3166-1"="${cc.toUpperCase()}"][admin_level=2]->.a;.a out ids;(` +
     `nwr(area.a)${f}["amenity"~"^(hospital|clinic)$"];nwr(area.a)${f}["healthcare"~"^(hospital|clinic)$"];` +
     `nwr(area.a)${f}["aeroway"~"^(helipad|heliport|aerodrome)$"];nwr(area.a)${f}["emergency"~"^(ambulance_station|air_rescue_service)$"];` +
     `nwr(area.a)${f}["healthcare"~"^blood_(bank|donation)$"];nwr(area.a)${f}["amenity"="blood_bank"];` +
@@ -120,42 +111,64 @@ async function fetchCountry(c) {
     }
   }
   /* Overpass bbox filters are (south,west,north,east) */
-  if (!SUBAREAS[c.id]) return part(null, 0);
-  /* One subdivision at a time, up to 40 minutes a run. Overpass answers only some states a run (21 Nov: 14 asked in 40 min,
-     10 of them failed on every mirror), so each answered state is kept in PARTS (the workflow's Actions cache, never
-     published) and later runs ask only the states still missing or older than PART_AGE. The country is written only when
-     every state has an answer, so a stored country is still a whole one; its "at" is the oldest state's, so it is rebuilt
-     when that one ages. */
-  const dir = join(PARTS, c.id), subUntil = Date.now() + 40 * 60000, out = { els: [], base: null, at: null }, missing = [];
-  mkdirSync(dir, { recursive: true });
-  const fresh = (code) => { const j = readJSON(join(dir, code + ".json"), null); return j && j.at && Date.now() - Date.parse(j.at) < PART_AGE ? j : null; };
-  const todo = SUBAREAS[c.id].filter((code) => !fresh(code)), retry = [];
-  log(`  ${c.id}: ${SUBAREAS[c.id].length - todo.length} of ${SUBAREAS[c.id].length} parts kept from earlier runs, ${todo.length} to ask`);
-  async function sub(code) {
-    const j = await overpass(query(c.id, null, code));
-    if (!(j.elements || []).some((e) => e.type === "area")) throw new Error("no boundary for " + code + " in OpenStreetMap");
-    const rec = { at: new Date().toISOString().slice(0, 19) + "Z", base: (j.osm3s && j.osm3s.timestamp_osm_base) || null, els: j.elements.filter((e) => e.type !== "area") };
-    writeFileSync(join(dir, code + ".json"), JSON.stringify(rec));
-    if (DEBUG) log("   ", code, rec.els.length);
+  return part(null, 0);
+}
+
+/* ---------- Postpass (Geofabrik's keyless SQL API over a live OpenStreetMap database; tools/build_infra.mjs reads it too) ----------
+   Used when Overpass gives no whole answer for a country, and first for the United States, which no public Overpass server has
+   answered on any daily run (whole country, bounding-box parts or state by state). The same tags are read, clipped to the same
+   ISO 3166-1 boundary, in 5-degree tiles; every tile must answer or nothing for the country is written. */
+const POSTPASS = "https://postpass.geofabrik.de/api/interpreter", PP_FIRST = new Set(["us"]), PP_TILE = 5;
+const ppWhere = "(p.tags->>'amenity' IN ('hospital','clinic','blood_bank') OR p.tags->>'healthcare' IN ('hospital','clinic','blood_bank','blood_donation')" +
+  " OR p.tags->>'aeroway' IN ('helipad','heliport','aerodrome') OR p.tags->>'emergency' IN ('ambulance_station','air_rescue_service')" +
+  " OR p.tags->>'healthcare:speciality' ~* '(hyperbaric|diving|decompression)' OR (p.tags ? 'healthcare' AND p.tags->>'name' ~* '(hyperbaric|decompression|recompression)'))";
+async function pp(sql) {
+  let err;
+  for (let k = 0; k < 3; k++) {
+    try {
+      const j = await post(POSTPASS, sql, 300000);
+      if (!Array.isArray(j.features)) throw new Error("Postpass: no features");
+      return j;
+    } catch (e) { err = e; if (DEBUG) log("    postpass", e.message.slice(0, 120)); await sleep(15000 * (k + 1)); }
   }
-  for (const code of todo) {
-    if (Date.now() > subUntil) break;
-    try { await sub(code); } catch (e) { log("  part", code, "failed, asked again later (" + e.message.slice(0, 80) + ")"); retry.push(code); }
-    await sleep(4000);
+  throw err;
+}
+/* Which country a point is in: OSAP's own outlines (tools/geo_cc.mjs) settle points well inside one country, and points on its
+   coast or offshore when that country's outline is the nearest. A point within about 15 km of another country's outline is asked
+   of the OpenStreetMap boundary itself, a few hundred at a time (the boundary test is slow, so only those points take it). */
+function side(cc, lat, lon) {
+  const here = ccsAt(lat, lon, 0.5);
+  if (here[0] !== cc) return here.length ? "out" : "ask";
+  for (const [dy, dx] of [[0.15, 0], [-0.15, 0], [0, 0.15], [0, -0.15]]) { const o = ccsAt(lat + dy, lon + dx, 0)[0]; if (o && o !== cc) return "ask"; }
+  return "in";
+}
+async function fetchPostpass(c) {
+  const iso = c.id.toUpperCase(), bnd = `b.tags->>'ISO3166-1' = '${iso}' AND b.tags->>'admin_level' = '2'`;
+  /* (a country with no ISO 3166-1 boundary has already been turned away by Overpass, which answers that quickly) */
+  const [[s0, w0], [n0, e0]] = c.b, out = { els: [], base: null };
+  const el = (f) => { const q = f.properties || {}, g = f.geometry && f.geometry.coordinates;
+    return g ? { type: { N: "node", W: "way", R: "relation" }[q.osm_type] || "node", id: q.osm_id, lat: g[1], lon: g[0], tags: q.tags || {} } : null; };
+  let asked = 0, kept = 0;
+  for (let la = Math.floor(s0 / PP_TILE) * PP_TILE; la < n0; la += PP_TILE) for (let lo = Math.floor(w0 / PP_TILE) * PP_TILE; lo < e0; lo += PP_TILE) {
+    const env = `ST_MakeEnvelope(${lo}, ${la}, ${lo + PP_TILE}, ${la + PP_TILE}, 4326)`;
+    const j = await pp(`SELECT p.osm_type, p.osm_id, p.tags, ST_PointOnSurface(p.geom) AS geom FROM postpass_pointpolygon p WHERE ${ppWhere} AND p.geom && ${env}`);
+    out.base = out.base || (j.postpass_properties && j.postpass_properties.timestamp) || null;
+    const ask = [];
+    for (const f of j.features) { const e = el(f); if (!e) continue; const w = side(c.id, e.lat, e.lon); if (w === "in") { out.els.push(e); kept++; } else if (w === "ask") ask.push(e); }
+    for (let i = 0; i < ask.length; i += 300) {
+      const part = ask.slice(i, i + 300), ids = new Set(part.map((e) => e.type[0] + e.id));
+      const byType = (t) => part.filter((e) => e.type[0] === t).map((e) => e.id);
+      const idw = ["N", "W", "R"].map((T) => { const L = byType(T.toLowerCase()); return L.length ? `(p.osm_type = '${T}' AND p.osm_id IN (${L.join(",")}))` : ""; }).filter(Boolean).join(" OR ");
+      const k = await pp(`SELECT p.osm_type, p.osm_id, ST_PointOnSurface(p.geom) AS geom FROM postpass_pointpolygon p WHERE (${idw}) AND p.geom && ${env}` +
+        ` AND EXISTS (SELECT 1 FROM postpass_polygon b WHERE ${bnd} AND ST_Intersects(b.geom, p.geom))`);
+      const yes = new Set(k.features.map((f) => { const q = f.properties || {}; return String(q.osm_type || "").toLowerCase() + q.osm_id; }));
+      for (const e of part) if (ids.has(e.type[0] + e.id) && yes.has(e.type[0] + e.id)) { out.els.push(e); kept++; }
+      asked += part.length;
+    }
+    if (DEBUG) log("   ", la, lo, j.features.length, "read,", ask.length, "near a border");
+    await sleep(1000);
   }
-  for (const code of retry) {
-    if (Date.now() > subUntil) break;
-    await sleep(20000);
-    try { await sub(code); } catch (e) { log("  part", code, "failed twice (" + e.message.slice(0, 80) + ")"); }
-  }
-  for (const code of SUBAREAS[c.id]) {
-    const j = fresh(code);
-    if (!j) { missing.push(code); continue; }
-    out.els.push(...j.els);
-    if (!out.base || (j.base && j.base < out.base)) out.base = j.base || out.base;
-    if (!out.at || j.at < out.at) out.at = j.at;
-  }
-  if (missing.length) throw new Error(`${SUBAREAS[c.id].length - missing.length} of ${SUBAREAS[c.id].length} parts answered so far (kept for the next run); still missing ${missing.join(" ")}`);
+  log(`  ${c.id}: Postpass ${kept} kept, ${asked} checked against the OpenStreetMap boundary`);
   return out;
 }
 
@@ -204,14 +217,10 @@ async function main() {
   const all = countries(), byId = Object.fromEntries(all.map((c) => [c.id, c]));
   const idx = readJSON(join(OUT, "index.json"), null) || { v: 1, tile: TILE, countries: {}, tiles: {} };
   const asked = process.argv.slice(2).map((x) => x.toLowerCase()).filter((x) => byId[x]);
-  /* a country asked by subdivision takes up to 40 minutes, so when it is due it goes first, inside the run's budget */
-  const due = (c) => !idx.countries[c.id] || !idx.countries[c.id].x || Date.now() - Date.parse(idx.countries[c.id].at) > MAX_AGE;
-  const big = all.filter((c) => SUBAREAS[c.id] && due(c)), rest = all.filter((c) => !SUBAREAS[c.id]);
   const todo = asked.length ? asked.map((x) => byId[x]) : [
-    ...big,
-    ...rest.filter((c) => !idx.countries[c.id]),
-    ...rest.filter((c) => idx.countries[c.id] && !idx.countries[c.id].x),
-    ...rest.filter((c) => idx.countries[c.id] && idx.countries[c.id].x && Date.now() - Date.parse(idx.countries[c.id].at) > MAX_AGE).sort((a, b) => Date.parse(idx.countries[a.id].at) - Date.parse(idx.countries[b.id].at))
+    ...all.filter((c) => !idx.countries[c.id]),
+    ...all.filter((c) => idx.countries[c.id] && !idx.countries[c.id].x),
+    ...all.filter((c) => idx.countries[c.id] && idx.countries[c.id].x && Date.now() - Date.parse(idx.countries[c.id].at) > MAX_AGE).sort((a, b) => Date.parse(idx.countries[a.id].at) - Date.parse(idx.countries[b.id].at))
   ];
   log(`medfac: ${todo.length} countries to build, budget ${Math.round(BUDGET / 60000)} min`);
   let done = 0, failed = [];
@@ -219,7 +228,13 @@ async function main() {
     if (Date.now() - T0 > BUDGET) { log("budget spent"); break; }
     const t0 = Date.now();
     try {
-      const r = await fetchCountry(c);
+      let r, via = "Overpass";
+      if (PP_FIRST.has(c.id)) { r = await fetchPostpass(c); via = "Postpass"; }
+      else try { r = await fetchCountry(c); } catch (e) {
+        if (/no boundary/.test(e.message)) throw e;
+        log(`  ${c.id}: Overpass failed (${e.message.slice(0, 100)}); asking Postpass`);
+        r = await fetchPostpass(c); via = "Postpass";
+      }
       const seen = new Set(), byTile = {};
       const n = { h: 0, c: 0, l: 0, e: 0 }, x = { b: 0, d: 0, r: 0 }, xrows = [];
       for (const e of r.els) {
@@ -239,10 +254,10 @@ async function main() {
       }
       xrows.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
       writeFileSync(join(XDIR, c.id + ".json"), "[" + xrows.map((q) => JSON.stringify(q)).join(",\n") + "]\n");
-      idx.countries[c.id] = { at: r.at || new Date().toISOString().slice(0, 19) + "Z", base: r.base || null, n, x, tiles: Object.keys(byTile).sort() };
+      idx.countries[c.id] = { at: new Date().toISOString().slice(0, 19) + "Z", base: r.base || null, via, n, x, tiles: Object.keys(byTile).sort() };
       writeFileSync(join(OUT, "index.json"), JSON.stringify(idx, null, 0) + "\n");
       done++;
-      log(`${c.id} ${c.name}: ${n.h} hospitals, ${n.c} clinics, ${n.l} landing sites, ${n.e} ambulance/air rescue, ${x.b} blood, ${x.d} chambers, ${Object.keys(byTile).length} tiles, ${Math.round((Date.now() - t0) / 1000)} s`);
+      log(`${c.id} ${c.name}: ${n.h} hospitals, ${n.c} clinics, ${n.l} landing sites, ${n.e} ambulance/air rescue, ${x.b} blood, ${x.d} chambers, ${Object.keys(byTile).length} tiles, ${Math.round((Date.now() - t0) / 1000)} s, via ${via}`);
     } catch (e) { failed.push(c.id); log(`${c.id} ${c.name}: FAILED ${e.message.slice(0, 200)}`); }
     await sleep(10000);
   }

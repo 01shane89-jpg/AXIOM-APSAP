@@ -38,26 +38,11 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 20
-      # US states answered in earlier runs (tools/build_medfac.mjs SUBAREAS); a build artefact only, never committed
-      - name: Restore answered US states
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        with:
-          path: .medfac-parts
-          key: medfac-parts-${{ github.ref_name }}-${{ github.run_id }}
-          restore-keys: |
-            medfac-parts-${{ github.ref_name }}-
-            medfac-parts-main-
       - name: Build
         env:
           MEDFAC_BUDGET_MIN: ${{ inputs.budget || '45' }}
           COUNTRIES: ${{ inputs.countries }}
         run: node tools/build_medfac.mjs $COUNTRIES
-      - name: Keep answered US states for the next run
-        if: ${{ always() && hashFiles('.medfac-parts/**') != '' }}
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        with:
-          path: .medfac-parts
-          key: medfac-parts-${{ github.ref_name }}-${{ github.run_id }}
       - name: Commit
         run: |
           git add -A data/medfac
