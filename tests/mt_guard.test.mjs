@@ -117,7 +117,7 @@ t("a headline already in English under another label is shown as written", () =>
 t("a month the original does not give is rejected", () => {
   assert.match(mtSuspect("ข่าวดึก | 5 พ.ย. 69", "Late News | 5th of July, 69", n8), /month July/);
   assert.match(mtSuspect("ปภ. เตือน 61 จังหวัด เตรียมรับมือฝนตกหนักมาก ช่วง 5-9 พ.ย.นี้", "61 provinces are warned of heavy rainfall from July 5 to 9.", n8), /month July/);
-  assert.match(mtSuspect("２３～２４日に先島諸島接近か 大型台風３０号", "Typhoon 30 approaches Senkaku Islands on June 23-24", n8), /month June/);
+  assert.match(mtSuspect("２３～２４日に先島諸島接近か 大型台風３０号", "Typhoon 30 approaches Senkaku Islands on June 23-24", n8), /(?:month|date) June/);
   assert.match(mtSuspect("ອຸຕຸເຕືອນ! ວັນທີ 5-6 ພະຈິກ 2026 ຈະມີຝົນຕົກ", "Weather Alert! October 5-6, 2026 Rainfall", n8), /month October/);
   assert.match(mtSuspect("Kantipur Samachar | कान्तिपुर समाचार, १९ कार्तिक २०८३", "Kantipur Samachar | Kantip News, 19th of March 2083", n8), /month March/);
 });

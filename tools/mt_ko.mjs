@@ -98,3 +98,19 @@ export function koNameWrong(orig, en) {
   }
   return "";
 }
+
+// cjkMonthAdded(orig, en): a Korean, Chinese or Japanese headline that gives only a day (28일, 6日) or no date at all, written
+// in English with a month. On the 24 Nov news index 70 of 70 such lines had an invented month: 6日 as "June 6", 28일 as
+// "28th of July", 8旬翁 (a man in his eighties) as "8th of June", and 九合一選舉 (Taiwan's nine-in-one local elections, 26 Nov
+// 2026, 蕃新聞) as "the elections of September 1". Only judged when the original names no month (月, 월, 6·25, 11/26).
+// Returns the English date, or "".
+const MONTHS = "January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec";
+const EN_DATE = new RegExp(`\\b(?:${MONTHS})\\.?\\s+\\d{1,2}(?:st|nd|rd|th)?\\b(?!\\s*(?:people|persons|dead|killed|injured|%|percent|per cent))|\\b\\d{1,2}(?:st|nd|rd|th)?\\s+(?:of\\s+)?(?:${MONTHS})\\b`);
+const CJK_TEXT = /[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]/;
+const ORIG_MONTH = /[月월]|[0-9０-９]{1,2}\s*[/.\-·・･／．]\s*[0-9０-９]{1,2}|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i;
+export function cjkMonthAdded(orig, en) {
+  orig = String(orig || ""); en = String(en || "");
+  if (!CJK_TEXT.test(orig) || ORIG_MONTH.test(orig)) return "";
+  const m = en.match(EN_DATE);
+  return m ? m[0] : "";
+}
