@@ -189,6 +189,23 @@ export function groundLine(line, refs, ctx = {}) {
     if (ns.length) trace.push([hit[0], ns]); else if (!own && !any.test(extra)) gap("name", hit[0]);
     rest2 = rest2.replace(re, (x) => " ".repeat(x.length));
   }
+  // a name spelled out before its own abbreviation, "The Disaster Prevention and Mitigation Department (DDPM)": when the sources give the
+  // abbreviation, the spelled-out name is theirs too. Its words' initials must be the abbreviation's letters, in any order, since an
+  // official name is often abbreviated in another word order (Department of Disaster Prevention and Mitigation). The line showed "Not
+  // in its sources: Disaster Prevention Mitigation" (Thailand daily summary, 26 Nov 2026) though its source's headline says "DDPM".
+  rest2 = rest2.replace(/((?:[\p{Lu}][\p{L}\p{M}'’-]*\s+(?:(?:of|and|the|for|&)\s+)*){1,8}[\p{Lu}][\p{L}\p{M}'’-]*)\s*\(\s*([\p{Lu}]{2,8})\s*\)/gu, (all, long, acr) => {
+    const words = long.split(/\s+/).filter((w) => !/^(?:of|and|the|for|&)$/i.test(w)), key = [...acr].sort().join("");
+    for (let k = Math.min(words.length, acr.length); k >= 2; k--) {
+      const part = words.slice(-k);
+      if (part.map((w) => w[0]).sort().join("") !== key) continue;
+      const ns = inSrc(acr);
+      if (!ns.length) return all;
+      trace.push([acr, ns]);
+      const from = long.indexOf(part[0]);
+      return long.slice(0, from) + " ".repeat(all.length - from);
+    }
+    return all;
+  });
   // the outlets of the whole day: a name that is one of them, but not of a cited source, is an outlet the line does not cite
   const dayOutlets = nf((refs || []).map((r) => r && r.outlet).filter(Boolean).join(" \n "));
   for (const run of nameRuns(rest2)) {
