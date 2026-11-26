@@ -6,6 +6,7 @@
 // Before this fix a stale "osap-last-cc" of Thailand (saved by an earlier open that fell back to it), an old bare "#timeline"
 // link, or the sign-in bookkeeping keys that the sign-in screen saves before the first real open all put people on Thailand
 // even after they had picked their countries.
+// Fixes: #916 (pins and stale last country), #934 (Map start screen), #942 (old default Thailand becomes World once).
 // Run from the repo root: node tests/home_country_smoke.mjs   (needs the playwright package and Chromium)
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
