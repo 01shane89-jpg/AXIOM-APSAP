@@ -77,7 +77,11 @@
       if (last === "th" && !pins.length) { last = "ww"; try { localStorage.setItem("osap-last-cc", JSON.stringify("ww")); } catch (e) {} }
     }
     var chosen = last && (!pins.length || pins.indexOf(last) >= 0) ? last : pins[0] || "";
-    return mine || chosen || (h0[0] ? "th" : newDevice() ? "ww" : "th");
+    var cc = mine || chosen || (h0[0] ? "th" : newDevice() ? "ww" : "th");
+    /* an open that falls back to Thailand now saves it as the last country; that is the fallback working as meant, not the old
+       default, so the one-time step above is marked done (this device already has OSAP settings, so the key is harmless) */
+    if (mig == null && cc === "th" && !chosen) try { localStorage.setItem(MIG, "1"); } catch (e) {}
+    return cc;
   }
   if (was == null) {
     var cc = startCc(), home = ls("osap-home") === "map";
