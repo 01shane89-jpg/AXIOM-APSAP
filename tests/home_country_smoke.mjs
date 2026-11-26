@@ -1,7 +1,8 @@
 // Home country (Shane 2026-11-23: "Users complaining that even with countries set their account still defaults to Thailand").
 // A fresh open goes, in this order, to: the country a link names ("#kh/timeline"); the person's own country when "Use my
 // location" is on; the last country viewed when it is one of My countries (or when no countries are pinned); else the first of
-// My countries; else World on a device with nothing chosen yet; Thailand only for an older device with settings but no country.
+// My countries; else World on a device with nothing chosen yet; Thailand only for an older device with settings but no country
+// ever saved. A last country of Thailand saved by the old default (no My countries) becomes World once (2026-11-26).
 // Before this fix a stale "osap-last-cc" of Thailand (saved by an earlier open that fell back to it), an old bare "#timeline"
 // link, or the sign-in bookkeeping keys that the sign-in screen saves before the first real open all put people on Thailand
 // even after they had picked their countries.
@@ -93,10 +94,11 @@ const pins = (p) => J({ pins: p, role: "analyst" });
   ok(s.cc === "ww", "setup skipped with nothing chosen opens World (" + s.cc + ")");
   await ctx.close();
 }
-// 8. Thailand stays the fallback only when nothing is chosen on an older device (a real setting saved, no country, no pins)
+// 8. an older device with a real setting but no country ever saved (in practice only test set-ups: every real open saves its
+//    country) keeps the old Thailand fallback
 {
   const { ctx, s } = await open("", { "osap-theme": J("dark") });
-  ok(s.cc === "th", "an older device with settings but no country chosen still falls back to Thailand (" + s.cc + ")");
+  ok(s.cc === "th", "an older device with settings but no country ever saved still falls back to Thailand (" + s.cc + ")");
   await ctx.close();
 }
 // 9. a person who pinned Thailand and views it keeps it
@@ -130,6 +132,27 @@ const pins = (p) => J({ pins: p, role: "analyst" });
 {
   const { ctx, s } = await open("", { "osap-home": J("map"), "osap-theme": J("dark") });
   ok(s.cc === "th", "Map start screen with nothing chosen on an older device still falls back to Thailand (" + s.cc + ")");
+  await ctx.close();
+}
+// 11. the Thailand that every open before 2026-11-15 saved by default (no My countries) is forgotten once, so those people get
+//     World (Shane 2026-11-26 "thailand is still the default location for users"); a person who then picks Thailand keeps it
+{
+  const { ctx, s } = await open("", { "osap-theme": J("dark"), "osap-last-cc": J("th") });
+  ok(s.cc === "ww", "an older device whose saved last country is the old Thailand default, no My countries, opens World (" + s.cc + ")");
+  const p2 = await ctx.newPage();
+  await p2.goto(base + "#th/timeline"); await p2.waitForFunction(() => window.TSAP && window.TSAP.country, null, { timeout: 30000 }).catch(() => {}); await p2.waitForTimeout(800); await p2.close();
+  const again = await open("", null, ctx);
+  ok(again.s.cc === "th", "after choosing Thailand, the next fresh open stays on Thailand (" + again.s.cc + ")");
+  await ctx.close();
+}
+{
+  const { ctx, s } = await open("", { "osap-theme": J("dark"), "osap-last-cc": J("th"), "osap-mycc": pins(["th"]) });
+  ok(s.cc === "th", "Thailand pinned in My countries is kept (" + s.cc + ")");
+  await ctx.close();
+}
+{
+  const { ctx, s } = await open("", { "osap-theme": J("dark"), "osap-last-cc": J("th"), "osap-start-mig1": "1" });
+  ok(s.cc === "th", "once forgotten, a later Thailand choice is kept on every open (" + s.cc + ")");
   await ctx.close();
 }
 await browser.close(); server.close();
