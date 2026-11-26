@@ -47,7 +47,7 @@ export function usaspendingItems(rows) {
     if (seen.has(key)) continue; seen.add(key);
     const text = r["Transaction Description"] || "", ps = plantsIn(text);
     out.push({ title: "Contract action: " + (r["Recipient Name"] || "recipient not given") + ", " + usd(r["Transaction Amount"]) + (r["Mod"] && r["Mod"] !== "0" ? " (modification " + r["Mod"] + ")" : "") + ", " + names(ps),
-      detail: String(text).replace(/\s+/g, " ").trim().slice(0, 420) + ". Award " + r["Award ID"] + ". " + (r["Awarding Agency"] ? "Awarded by " + r["Awarding Agency"] + ". " : "") + "A contract record, not a finding about the work.",
+      detail: String(text).replace(/\s+/g, " ").trim().slice(0, 420).replace(/[.\s]+$/, "") + ". Award " + r["Award ID"] + ". " + (r["Awarding Agency"] ? "Awarded by " + r["Awarding Agency"] + ". " : "") + "A contract record, not a finding about the work.",
       date: day(r["Action Date"]), url: r["generated_internal_id"] ? "https://www.usaspending.gov/award/" + encodeURIComponent(r["generated_internal_id"]) : "https://www.usaspending.gov/search",
       sev: 1, kind: "Contract action (USAspending)", value: r["Transaction Amount"] == null ? undefined : +r["Transaction Amount"], ...where(ps) });
   }
@@ -135,8 +135,8 @@ export function echoItems(facs, plant) {
       const viol = f.FacComplianceStatus && /violation/i.test(f.FacComplianceStatus) && !/^no /i.test(f.FacComplianceStatus);
       const progs = [["Clean Air Act", f.CAAComplianceStatus], ["Clean Water Act", f.CWAComplianceStatus], ["Hazardous waste (RCRA)", f.RCRAComplianceStatus], ["Drinking water", f.SDWAComplianceStatus]].filter(([, s]) => s).map(([k, s]) => k + ": " + s);
       return { title: "EPA ECHO record: " + f.FacName + ", " + (f.FacComplianceStatus || "status not given") + (f.FacTotalPenalties && f.FacTotalPenalties !== "$0" ? ", penalties " + f.FacTotalPenalties + " (5 years)" : ""),
-        detail: [progs.join("; "), f.FacQtrsWithNC ? f.FacQtrsWithNC + " of the last 12 quarters out of compliance" : "", f.FacInspectionCount ? f.FacInspectionCount + " inspections in 5 years" + (f.FacDateLastInspection ? ", last " + f.FacDateLastInspection : "") : "",
-          f.FacFormalActionCount && +f.FacFormalActionCount ? f.FacFormalActionCount + " formal enforcement actions" : "", f.FacDateLastPenalty ? "last penalty " + f.FacDateLastPenalty : ""].filter(Boolean).join(". ") + ". " + plant.name + ". Compliance status as logged by EPA and the state.",
+        detail: [progs.join("; "), +f.FacQtrsWithNC > 0 ? f.FacQtrsWithNC + " of the last 12 quarters out of compliance" : "", +f.FacInspectionCount > 0 ? f.FacInspectionCount + (+f.FacInspectionCount === 1 ? " inspection" : " inspections") + " in 5 years" + (f.FacDateLastInspection ? ", last " + f.FacDateLastInspection : "") : "",
+          +f.FacFormalActionCount > 0 ? f.FacFormalActionCount + (+f.FacFormalActionCount === 1 ? " formal enforcement action" : " formal enforcement actions") : "", f.FacDateLastPenalty ? "last penalty " + f.FacDateLastPenalty : ""].filter(Boolean).join(". ") + ". " + plant.name + ". Compliance status as logged by EPA and the state.",
         url: "https://echo.epa.gov/detailed-facility-report?fid=" + encodeURIComponent(f.RegistryID || ""), sev: viol ? 2 : 1, kind: "Compliance record (EPA ECHO)", ...at(plant) };
     });
 }
@@ -157,19 +157,25 @@ run("echo-ammo", async (g) => {
 // ---- Federal Register ----
 feed("fedreg-ammo", { name: "Federal Register documents naming Army ammunition plants", org: "Office of the Federal Register (National Archives)", cat: "Defense",
   lic: "Federal Register, U.S. Government work (public domain)", url: "https://www.federalregister.gov/", everyHours: 12 });
-export function fedregItems(results) {
+export function fedregItems(results, plant) {
   return results.map((r) => {
-    const ps = plantsIn((r.title || "") + " " + (r.abstract || ""));
+    const named = plantsIn((r.title || "") + " " + (r.abstract || "")), ps = plant ? [plant, ...named.filter((p) => p !== plant)] : named;
     return { title: (r.type || "Document") + ": " + (r.title || "untitled"), detail: ((r.agencies || []).map((a) => a.name || a.raw_name).filter(Boolean).join(", ") || "Agency not given") + ". " + (r.abstract ? String(r.abstract).slice(0, 380) + " " : "") + "Names " + names(ps) + " (Federal Register " + r.document_number + ").",
       date: r.publication_date, url: r.html_url, sev: 1, kind: "Federal Register document", ...where(ps) };
   });
 }
 run("fedreg-ammo", async (g) => {
   const f = ["title", "type", "publication_date", "agencies", "html_url", "document_number", "abstract"].map((x) => "&fields%5B%5D=" + x).join("");
-  const j = await g("https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=%22Army%20Ammunition%20Plant%22&order=newest&per_page=40" + f, "json", { timeout: 60000 });
-  const items = fedregItems(j.results || []);
-  if (!items.length) throw new Error("no documents");
-  return { items, note: j.count + " documents in all, newest " + items.length };
+  const items = [], seen = new Set(), notes = [];
+  for (const p of PLANTS) {
+    try {
+      const j = await g("https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=" + encodeURIComponent('"' + p.name + '"') + "&order=newest&per_page=10" + f, "json", { timeout: 60000 });
+      const fresh = (j.results || []).filter((r) => r.document_number && !seen.has(r.document_number) && seen.add(r.document_number));
+      items.push(...fedregItems(fresh, p)); notes.push(p.id + " " + (j.count || 0));
+    } catch (e) { notes.push(p.id + ": " + e.message); }
+  }
+  if (!items.length) throw new Error(notes.join("; ") || "no documents");
+  return { items, note: "documents naming each plant: " + notes.join(", ") };
 });
 
 // ---- CourtListener / RECAP ----
@@ -185,13 +191,22 @@ export function courtItems(xml, plant, what) {
       date: e.date, url: e.link, sev: 1, kind: what, ...at(plant) };
   }).filter((x) => /^https:\/\/www\.courtlistener\.com\//.test(x.url || ""));
 }
+/** docket entries -> one item per docket (or opinion): the newest entry, with how many entries the feed held */
+export function byDocket(items) {
+  const m = new Map();
+  for (const x of items) {
+    const k = (x.url.match(/courtlistener\.com\/(docket|opinion)\/(\d+)/) || [])[0] || x.url, o = m.get(k);
+    if (!o) m.set(k, { ...x, n: 1 }); else { o.n++; if (String(x.date) > String(o.date)) Object.assign(o, { ...x, n: o.n }); }
+  }
+  return [...m.values()].map(({ n, ...x }) => (n > 1 ? { ...x, detail: n + " recent entries. " + x.detail } : x)).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+}
 run("court-records", async (g) => {
   const items = [], notes = [];
   for (const p of PLANTS.filter((x) => x.courts)) for (const q of p.courts) for (const [type, what] of [["r", "Federal court docket entry (RECAP)"], ["o", "Court opinion"]]) {
     try { const its = courtItems(await g("https://www.courtlistener.com/feed/search/?type=" + type + "&q=" + encodeURIComponent(q), "text", { timeout: 60000 }), p, what); items.push(...its); notes.push(p.id + " " + type + " " + its.length); }
     catch (e) { notes.push(p.id + " " + type + ": " + e.message); }
   }
-  const seen = new Set(), uniq = items.filter((x) => !seen.has(x.url) && seen.add(x.url));
+  const uniq = byDocket(items);
   if (!uniq.length && notes.some((n) => /:/.test(n))) throw new Error(notes.join("; "));
-  return { items: uniq, note: notes.join(", ") };
+  return { items: uniq, note: notes.join(", ") + ", " + uniq.length + " cases" };
 });
