@@ -24,6 +24,8 @@ jobs:
         with:
           fetch-depth: 2
       - run: node tools/check_index.mjs
+      # link previews: <title> and the og:/twitter: tags sit inside <head> (LinkedIn showed "Flood" when they did not)
+      - run: node tests/head_meta.test.mjs
       # the map-smoke list (tests/map-smoke.txt): every file there, none twice, every shard plan runs each test once
       - run: node tools/smoke_shard.mjs --check
       # hidden areas (tools/hidden-areas.json): their files must be sealed, never plain, in the repository
