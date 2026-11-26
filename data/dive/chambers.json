@@ -1,0 +1,784 @@
+{
+ "schema": "osap-dive-chambers/1",
+ "read": "2026-11-21",
+ "about": "Recompression (hyperbaric) chambers OSAP has read in a named source, for the dive medical plan beside OpenStreetMap. Each entry names its sources, the date they were read and where its map point comes from. 'basis' says how strong the listing is: facility = the facility's own page; government_list = an embassy or government list; journal = a medical journal article that names the chamber (no current hours or phone). Phones are copied as the source prints them; 'dial' is the same number in international form, written by OSAP. A listing is not a staffed, working chamber: call ahead, and call DAN, before moving a diver. Built by hand from the sources on the date read; not called or tested by OSAP.",
+ "sources": {
+  "bph": {
+   "title": "Hyperbaric Oxygen Therapy Center | Bangkok Hospital Pattaya",
+   "url": "https://www.bangkokhospital.com/en/pattaya/center-clinic/other/hyperbaric-oxygen-therapy-bph/overview",
+   "kind": "facility",
+   "read": "2026-11-21"
+  },
+  "bsi": {
+   "title": "Hyperbaric Chamber Facility | Bangkok Hospital Siriroj",
+   "url": "https://www.bangkokhospital.com/en/siriroj/center-clinic/other/hyperbaric-chamber-facility-bsi/overview",
+   "kind": "facility",
+   "read": "2026-11-21"
+  },
+  "sss-pkt": {
+   "title": "Decompression Chamber Phuket | SSS Recompression Chamber Network",
+   "url": "https://www.ssschambernetwork.com/phuket-thailand/",
+   "kind": "facility",
+   "read": "2026-11-21"
+  },
+  "sss-tao": {
+   "title": "Hyperbaric Chamber Koh Tao | SSS Recompression Chamber Network",
+   "url": "https://www.ssschambernetwork.com/koh-tao-thailand/",
+   "kind": "facility",
+   "read": "2026-11-21"
+  },
+  "bkk": {
+   "title": "Hyperbaric Oxygen Therapy Center | Bangkok Hospital Headquarter",
+   "url": "https://www.bangkokhospital.com/en/bangkok/center-clinic/other/bangkok-hyperbaric-oxygen-therapy-center/overview",
+   "kind": "facility",
+   "read": "2026-11-21"
+  },
+  "bum": {
+   "title": "Hyperbaric Oxygen Therapy | Bumrungrad Hospital Bangkok",
+   "url": "https://www.bumrungrad.com/en/hbot-hyperbaric-oxygen-therapy",
+   "kind": "facility",
+   "read": "2026-11-21"
+  },
+  "bpk": {
+   "title": "Diving Medicine Center | Bangkok Hospital Phuket",
+   "url": "https://www.bangkokhospital.com/en/phuket/center-clinic/other/diving-medicine-center-bpk/overview",
+   "kind": "facility",
+   "read": "2026-11-21"
+  },
+  "rtnmj": {
+   "title": "Thailand's 50-Year Journey in Underwater Medicine, Royal Thai Navy Medical Journal 51(2), published 2024-08-28",
+   "url": "https://he01.tci-thaijo.org/index.php/nmdjournal/article/view/273187",
+   "kind": "journal",
+   "read": "2026-11-21"
+  },
+  "dhm": {
+   "title": "Chevasutho et al., decompression illness treated in Bangkok, Diving and Hyperbaric Medicine 52(4), 20 Dec 2022",
+   "url": "https://dhmjournal.com/images/IndividArticles/52Dec/Chevasutho_BangkokDCIStudy_2022-32(911).pdf",
+   "kind": "journal",
+   "read": "2026-11-21"
+  },
+  "sgh": {
+   "title": "Hyperbaric & Diving Medicine Centre | Singapore General Hospital",
+   "url": "https://www.sgh.com.sg/our-specialties/hyperbaric-and-diving-medicine-centre",
+   "kind": "facility",
+   "read": "2026-11-21"
+  },
+  "de-jkt": {
+   "title": "German Embassy Jakarta: list of hyperbaric chambers in Indonesia (11/2026)",
+   "url": "https://jakarta.diplo.de/blob/2641256/57a6169e709a6e41304417b0c38b75a4/liste-ueberdruckkammern-in-indonesien-data.pdf",
+   "kind": "government_list",
+   "read": "2026-11-21"
+  },
+  "mjm": {
+   "title": "Development of Underwater and Hyperbaric Medicine in Malaysia, Med J Malaysia 61(5), 2006",
+   "url": "https://mail.e-mjm.org/2006/v61n5/Underwater_Hyperbaric_Medicine.pdf",
+   "kind": "journal",
+   "read": "2026-11-21"
+  },
+  "wd-krabi": {
+   "title": "Wikidata Q51331729, phone number (via data/hospitals/th/phones.json)",
+   "url": "https://www.wikidata.org/wiki/Q51331729#P1329",
+   "kind": "phone",
+   "read": "2026-11-10"
+  },
+  "rnh": {
+   "title": "Ranong Hospital website, contacts (via data/hospitals/th/phones.json)",
+   "url": "https://www.rnh.go.th/main/index.php/contacts/travel",
+   "kind": "phone",
+   "read": "2026-11-10"
+  }
+ },
+ "chambers": [
+  {
+   "id": "th-bph",
+   "cc": "th",
+   "name": "Hyperbaric Oxygen Therapy Center, Bangkok Hospital Pattaya",
+   "place": "Pattaya, Chon Buri",
+   "lat": 12.9538,
+   "lon": 100.9055,
+   "coord": "OpenStreetMap way 226823896 (Bangkok Hospital Pattaya)",
+   "tel": [
+    {
+     "n": "+66 3825 9986",
+     "dial": "+6638259986",
+     "label": ""
+    }
+   ],
+   "hours": "",
+   "type": "monoplace",
+   "dcs": "Treat for Decompression Sickness (Caisson Disease) and ... Arterial Gas Embolism",
+   "mil": "Civilian",
+   "basis": "facility",
+   "src": [
+    "bph"
+   ]
+  },
+  {
+   "id": "th-sss-phuket",
+   "cc": "th",
+   "name": "SSS Hyperbaric Chamber Facility, Bangkok Hospital Siriroj (Phuket International Hospital)",
+   "place": "Phuket",
+   "lat": 7.89784,
+   "lon": 98.36735,
+   "coord": "OpenStreetMap way 1562103727 (Bangkok Hospital Siriroj)",
+   "tel": [
+    {
+     "n": "081-0819000",
+     "dial": "+66810819000",
+     "label": "24/7 emergency line"
+    },
+    {
+     "n": "076-209-347",
+     "dial": "+6676209347",
+     "label": ""
+    },
+    {
+     "n": "076-361-888 ext. 3100",
+     "dial": "+6676361888",
+     "label": ""
+    }
+   ],
+   "hours": "Mon-Fri 09:00-18:00; 24-hour emergency call service",
+   "type": "multiplace",
+   "dcs": "specializes in the medical care and treatment of recreational divers suffering from Decompression Sickness (DCS)",
+   "mil": "Civilian",
+   "basis": "facility",
+   "src": [
+    "bsi",
+    "sss-pkt"
+   ]
+  },
+  {
+   "id": "th-sss-kohtao",
+   "cc": "th",
+   "name": "SSS Recompression Chamber Koh Tao",
+   "place": "Koh Tao, Surat Thani",
+   "lat": 10.09218,
+   "lon": 99.83954,
+   "coord": "Koh Tao island (OpenStreetMap way 23897168): the source gives 1/124-1/125 Koh Tao, not a map point, so the distance can be a few km out",
+   "tel": [
+    {
+     "n": "+66 (0) 81 081 9777",
+     "dial": "+66810819777",
+     "label": "24/7 emergency"
+    }
+   ],
+   "hours": "24/7",
+   "type": "multiplace",
+   "dcs": "equipped to provide immediate medical care for divers suffering from Decompression Sickness (DCS)",
+   "mil": "Civilian",
+   "basis": "facility",
+   "src": [
+    "sss-tao"
+   ]
+  },
+  {
+   "id": "th-bkk-hq",
+   "cc": "th",
+   "name": "Bangkok Hyperbaric Oxygen Therapy Center, Bangkok Hospital Headquarters",
+   "place": "Bangkok (Huai Khwang)",
+   "lat": 13.74991,
+   "lon": 100.58366,
+   "coord": "OpenStreetMap way 402895256 (Bangkok Hospital)",
+   "tel": [
+    {
+     "n": "+66 2310 3491",
+     "dial": "+6623103491",
+     "label": ""
+    },
+    {
+     "n": "+66 2310 3000",
+     "dial": "+6623103000",
+     "label": ""
+    },
+    {
+     "n": "1719",
+     "dial": "1719",
+     "label": "local mobile calls only"
+    }
+   ],
+   "hours": "Daily 08:00-16:00",
+   "type": "monoplace",
+   "dcs": "The treatment of decompression sickness and air embolism found in astronauts, pilots, and sea divers",
+   "mil": "Civilian",
+   "basis": "facility",
+   "src": [
+    "bkk"
+   ]
+  },
+  {
+   "id": "th-bumrungrad",
+   "cc": "th",
+   "name": "Hyperbaric Oxygen Therapy Center, Bumrungrad International Hospital",
+   "place": "Bangkok (Sukhumvit 3)",
+   "lat": 13.74654,
+   "lon": 100.55252,
+   "coord": "OpenStreetMap entry for Bumrungrad International Hospital (data/hospitals/th/registry.json)",
+   "tel": [
+    {
+     "n": "+66 2066 8888",
+     "dial": "+6620668888",
+     "label": "contact center, 24 hours"
+    },
+    {
+     "n": "1378",
+     "dial": "1378",
+     "label": "Thailand only, 24 hours"
+    }
+   ],
+   "hours": "Center daily 08:00-16:00",
+   "type": "monoplace",
+   "dcs": "Decompression sickness is in its list of UHMS-approved conditions",
+   "mil": "Civilian",
+   "basis": "facility",
+   "src": [
+    "bum"
+   ]
+  },
+  {
+   "id": "th-bkk-phuket",
+   "cc": "th",
+   "name": "Diving Medicine Center, Bangkok Hospital Phuket",
+   "place": "Phuket",
+   "lat": 7.90395,
+   "lon": 98.37571,
+   "coord": "OpenStreetMap entry for Bangkok Hospital Phuket (data/hospitals/th/registry.json)",
+   "tel": [
+    {
+     "n": "+66 7625 4425",
+     "dial": "+6676254425",
+     "label": ""
+    }
+   ],
+   "hours": "Daily 08:00-17:00; 24-hour on-call diving physician",
+   "type": "monoplace",
+   "dcs": "Diving Medicine Center with a 24 hour on-call diving physician; operates hyperbaric oxygen therapy",
+   "mil": "Civilian",
+   "basis": "facility",
+   "src": [
+    "bpk"
+   ]
+  },
+  {
+   "id": "th-pinklao",
+   "cc": "th",
+   "name": "Centre of Hyperbaric Medicine, Somdech Phra Pinklao Hospital (Royal Thai Navy)",
+   "place": "Bangkok (Thonburi)",
+   "lat": 13.71017,
+   "lon": 100.48473,
+   "coord": "OpenStreetMap entry for Somdech Phra Pinklao Hospital (data/hospitals/th/registry.json)",
+   "tel": [],
+   "hours": "",
+   "type": "multiplace and monoplace",
+   "dcs": "treats decompression illness; the multiplace chamber takes up to 30 patients in three compartments (DHM journal 2022)",
+   "mil": "Military",
+   "basis": "journal",
+   "src": [
+    "dhm",
+    "rtnmj"
+   ]
+  },
+  {
+   "id": "th-apakorn",
+   "cc": "th",
+   "name": "Underwater medicine unit, Apakorn Kiatiwong Hospital (Royal Thai Navy, Sattahip Naval Base)",
+   "place": "Sattahip, Chon Buri",
+   "lat": 12.6624,
+   "lon": 100.89573,
+   "coord": "OpenStreetMap entry for Abhakornkiatiwong Hospital (data/hospitals/th/registry.json)",
+   "tel": [],
+   "hours": "",
+   "type": "",
+   "dcs": "underwater medicine unit with a recompression chamber since 1979 (Royal Thai Navy Medical Journal 2024)",
+   "mil": "Military",
+   "basis": "journal",
+   "src": [
+    "rtnmj"
+   ]
+  },
+  {
+   "id": "th-sirikit",
+   "cc": "th",
+   "name": "Hyperbaric centre, Queen Sirikit Naval Hospital (Royal Thai Navy)",
+   "place": "Sattahip, Chon Buri",
+   "lat": 12.68872,
+   "lon": 100.98119,
+   "coord": "OpenStreetMap way 720036098 (Queen Sirikit Naval Hospital)",
+   "tel": [],
+   "hours": "",
+   "type": "",
+   "dcs": "hyperbaric centre opened 4 Feb 2013 (Royal Thai Navy Medical Journal 2024)",
+   "mil": "Military",
+   "basis": "journal",
+   "src": [
+    "rtnmj"
+   ]
+  },
+  {
+   "id": "th-vachira",
+   "cc": "th",
+   "name": "Hyperbaric unit, Vachira Phuket Hospital",
+   "place": "Phuket",
+   "lat": 7.89743,
+   "lon": 98.38324,
+   "coord": "OpenStreetMap entry for Vachiraphuket Hospital (data/hospitals/th/registry.json)",
+   "tel": [],
+   "hours": "",
+   "type": "",
+   "dcs": "underwater and hyperbaric medicine unit set up in 2002, the first outside the Navy (Royal Thai Navy Medical Journal 2024)",
+   "mil": "Civilian",
+   "basis": "journal",
+   "src": [
+    "rtnmj"
+   ]
+  },
+  {
+   "id": "th-phiphi",
+   "cc": "th",
+   "name": "Phi Phi Island Hospital (chamber)",
+   "place": "Koh Phi Phi, Krabi",
+   "lat": 7.73809,
+   "lon": 98.76773,
+   "coord": "OpenStreetMap entry for Phi Phi Island Hospital (data/hospitals/th/registry.json)",
+   "tel": [],
+   "hours": "",
+   "type": "",
+   "dcs": "named as having acquired a chamber (Royal Thai Navy Medical Journal 2024); current service not stated",
+   "mil": "Civilian",
+   "basis": "journal",
+   "src": [
+    "rtnmj"
+   ]
+  },
+  {
+   "id": "th-krabi",
+   "cc": "th",
+   "name": "Krabi Hospital (chamber)",
+   "place": "Krabi",
+   "lat": 8.07586,
+   "lon": 98.91521,
+   "coord": "OpenStreetMap entry for Krabi Hospital (data/hospitals/th/registry.json)",
+   "tel": [
+    {
+     "n": "075 626 700",
+     "dial": "+6675626700",
+     "label": "hospital switchboard"
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "named as having acquired a chamber (Royal Thai Navy Medical Journal 2024); current service not stated",
+   "mil": "Civilian",
+   "basis": "journal",
+   "src": [
+    "rtnmj",
+    "wd-krabi"
+   ]
+  },
+  {
+   "id": "th-ranong",
+   "cc": "th",
+   "name": "Ranong Hospital (chamber)",
+   "place": "Ranong",
+   "lat": 9.96383,
+   "lon": 98.64315,
+   "coord": "OpenStreetMap entry for Ranong Hospital (data/hospitals/th/registry.json)",
+   "tel": [
+    {
+     "n": "077-811150",
+     "dial": "+6677811150",
+     "label": "hospital switchboard"
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "named as having acquired a chamber (Royal Thai Navy Medical Journal 2024); current service not stated",
+   "mil": "Civilian",
+   "basis": "journal",
+   "src": [
+    "rtnmj",
+    "rnh"
+   ]
+  },
+  {
+   "id": "sg-sgh",
+   "cc": "sg",
+   "name": "Hyperbaric & Diving Medicine Centre, Singapore General Hospital",
+   "place": "Singapore (Outram Road, Block 4 Level 1)",
+   "lat": 1.28549,
+   "lon": 103.83966,
+   "coord": "OpenStreetMap relation 19910285 (Singapore General Hospital)",
+   "tel": [
+    {
+     "n": "6222 3322",
+     "dial": "+6562223322",
+     "label": "24 hours, diving emergencies"
+    },
+    {
+     "n": "6321 3427",
+     "dial": "+6563213427",
+     "label": ""
+    }
+   ],
+   "hours": "Mon-Fri 08:00-17:00; 24-hour service for diving emergencies",
+   "type": "",
+   "dcs": "Decompression sickness (diving injuries) is listed under conditions treated",
+   "mil": "Civilian",
+   "basis": "facility",
+   "src": [
+    "sgh"
+   ]
+  },
+  {
+   "id": "id-kasihibu-saba",
+   "cc": "id",
+   "name": "Hyperbaric & Diving Medicine Centre, Kasih Ibu Hospital Saba",
+   "place": "Saba, Gianyar, Bali",
+   "lat": -8.60521,
+   "lon": 115.31318,
+   "coord": "OpenStreetMap way 459988602 (Rumah Sakit Umum Kasih Ibu, Saba)",
+   "tel": [
+    {
+     "n": "+62 361 3003028",
+     "dial": "+623613003028",
+     "label": ""
+    },
+    {
+     "n": "+62 361 3003333",
+     "dial": "+623613003333",
+     "label": ""
+    },
+    {
+     "n": "+62 811-3883-028",
+     "dial": "+628113883028",
+     "label": "WhatsApp"
+    }
+   ],
+   "hours": "24/7 emergency care",
+   "type": "multiplace",
+   "dcs": "listed by the German Embassy Jakarta as a diving medicine centre with 24/7 emergency care",
+   "mil": "Not stated",
+   "basis": "government_list",
+   "src": [
+    "de-jkt"
+   ]
+  },
+  {
+   "id": "id-ngoerah",
+   "cc": "id",
+   "name": "RSUP Prof. Dr. I.G.N.G. Ngoerah (formerly Sanglah General Hospital)",
+   "place": "Denpasar, Bali",
+   "lat": -8.67561,
+   "lon": 115.21168,
+   "coord": "OpenStreetMap way 311442210 (RSUP Sanglah Denpasar)",
+   "tel": [
+    {
+     "n": "+62 361 227912",
+     "dial": "+62361227912",
+     "label": ""
+    },
+    {
+     "n": "+62 361 227911",
+     "dial": "+62361227911",
+     "label": ""
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "listed as a hyperbaric chamber by the German Embassy Jakarta; diving injuries not stated",
+   "mil": "Civilian",
+   "basis": "government_list",
+   "src": [
+    "de-jkt"
+   ]
+  },
+  {
+   "id": "id-mintohardjo",
+   "cc": "id",
+   "name": "Dr. Mintohardjo Naval Hospital",
+   "place": "Jakarta Pusat",
+   "lat": -6.21088,
+   "lon": 106.81196,
+   "coord": "OpenStreetMap node 11878714650 (RSAL dr. Mintohardjo)",
+   "tel": [
+    {
+     "n": "+62 21 5703081",
+     "dial": "+62215703081",
+     "label": "to -85"
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "listed as a hyperbaric chamber by the German Embassy Jakarta; diving injuries not stated",
+   "mil": "Military",
+   "basis": "government_list",
+   "src": [
+    "de-jkt"
+   ]
+  },
+  {
+   "id": "id-yarsi",
+   "cc": "id",
+   "name": "Rumah Sakit Yarsi",
+   "place": "Jakarta Pusat",
+   "lat": -6.16984,
+   "lon": 106.86905,
+   "coord": "OpenStreetMap node 11878621854 (RS YARSI Jakarta)",
+   "tel": [
+    {
+     "n": "+62 21 80618618",
+     "dial": "+622180618618",
+     "label": ""
+    },
+    {
+     "n": "+62 21 80618619",
+     "dial": "+622180618619",
+     "label": ""
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "listed as a hyperbaric chamber by the German Embassy Jakarta; diving injuries not stated",
+   "mil": "Not stated",
+   "basis": "government_list",
+   "src": [
+    "de-jkt"
+   ]
+  },
+  {
+   "id": "id-ramelan",
+   "cc": "id",
+   "name": "RSPAL dr. Ramelan Hospital",
+   "place": "Surabaya",
+   "lat": -7.30958,
+   "lon": 112.7384,
+   "coord": "OpenStreetMap way 446524876 (Rumah Sakit Angkatan Laut Dr. Ramelan)",
+   "tel": [
+    {
+     "n": "+62 31 8420958",
+     "dial": "+62318420958",
+     "label": ""
+    },
+    {
+     "n": "+62 31 8404062",
+     "dial": "+62318404062",
+     "label": ""
+    },
+    {
+     "n": "085704357357",
+     "dial": "+6285704357357",
+     "label": "WhatsApp"
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "listed as a hyperbaric chamber by the German Embassy Jakarta; diving injuries not stated",
+   "mil": "Military",
+   "basis": "government_list",
+   "src": [
+    "de-jkt"
+   ]
+  },
+  {
+   "id": "id-pertamina-bpn",
+   "cc": "id",
+   "name": "RS Pertamina Balikpapan",
+   "place": "Balikpapan, East Kalimantan",
+   "lat": -1.2785,
+   "lon": 116.81792,
+   "coord": "OpenStreetMap way 613801359 (Rumah Sakit Pertamina Balikpapan)",
+   "tel": [
+    {
+     "n": "+62 542 734020 ext. 777-0",
+     "dial": "+62542734020",
+     "label": ""
+    },
+    {
+     "n": "085246555000",
+     "dial": "+6285246555000",
+     "label": "WhatsApp"
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "listed as a hyperbaric chamber by the German Embassy Jakarta; diving injuries not stated",
+   "mil": "Not stated",
+   "basis": "government_list",
+   "src": [
+    "de-jkt"
+   ]
+  },
+  {
+   "id": "id-siloam-lbj",
+   "cc": "id",
+   "name": "Siloam Hospital Labuan Bajo",
+   "place": "Labuan Bajo, Flores (Komodo)",
+   "lat": -8.49614,
+   "lon": 119.88424,
+   "coord": "OpenStreetMap node 4160364489 (Siloam, Jalan Gabriel Gampur)",
+   "tel": [
+    {
+     "n": "+62 385 2381900",
+     "dial": "+623852381900",
+     "label": ""
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "listed as a hyperbaric chamber by the German Embassy Jakarta; diving injuries not stated",
+   "mil": "Not stated",
+   "basis": "government_list",
+   "src": [
+    "de-jkt"
+   ]
+  },
+  {
+   "id": "id-mataram",
+   "cc": "id",
+   "name": "Rumah Sakit Kota Mataram",
+   "place": "Mataram, Lombok",
+   "lat": -8.59996,
+   "lon": 116.11411,
+   "coord": "OpenStreetMap way 166314110 (RSUD Kota Mataram)",
+   "tel": [
+    {
+     "n": "+62 370 640774",
+     "dial": "+62370640774",
+     "label": ""
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "listed as a hyperbaric chamber by the German Embassy Jakarta; diving injuries not stated",
+   "mil": "Not stated",
+   "basis": "government_list",
+   "src": [
+    "de-jkt"
+   ]
+  },
+  {
+   "id": "id-wahidin",
+   "cc": "id",
+   "name": "RSUP Dr. Wahidin Sudirohusodo",
+   "place": "Makassar",
+   "lat": -5.13503,
+   "lon": 119.49342,
+   "coord": "OpenStreetMap way 766428809 (RSUP Dr. Wahidin Sudirohusodo)",
+   "tel": [
+    {
+     "n": "+62 411 583333 ext. 196",
+     "dial": "+62411583333",
+     "label": ""
+    },
+    {
+     "n": "082188350884",
+     "dial": "+6282188350884",
+     "label": "WhatsApp"
+    },
+    {
+     "n": "081241092996",
+     "dial": "+6281241092996",
+     "label": "WhatsApp"
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "listed as a hyperbaric chamber by the German Embassy Jakarta; diving injuries not stated",
+   "mil": "Not stated",
+   "basis": "government_list",
+   "src": [
+    "de-jkt"
+   ]
+  },
+  {
+   "id": "id-bhayangkara-mdo",
+   "cc": "id",
+   "name": "RS Bhayangkara Manado (hyperbaric chamber unit)",
+   "place": "Manado (Lembeh Strait, Bunaken)",
+   "lat": 1.45498,
+   "lon": 124.83695,
+   "coord": "OpenStreetMap way 446241176 (Instalasi Hyperbaric Chamber RS Bhayangkara Manado)",
+   "tel": [
+    {
+     "n": "+62 431 840455",
+     "dial": "+62431840455",
+     "label": ""
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "listed as a hyperbaric chamber by the German Embassy Jakarta; diving injuries not stated",
+   "mil": "Not stated",
+   "basis": "government_list",
+   "src": [
+    "de-jkt"
+   ]
+  },
+  {
+   "id": "id-siloam-mdo",
+   "cc": "id",
+   "name": "Siloam Hospital Manado",
+   "place": "Manado",
+   "lat": 1.48752,
+   "lon": 124.83767,
+   "coord": "OpenStreetMap way 1296549853 (RS. Siloam Hospitals Manado)",
+   "tel": [
+    {
+     "n": "+62 431 7290900",
+     "dial": "+624317290900",
+     "label": ""
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "listed as a hyperbaric chamber by the German Embassy Jakarta; diving injuries not stated",
+   "mil": "Not stated",
+   "basis": "government_list",
+   "src": [
+    "de-jkt"
+   ]
+  },
+  {
+   "id": "id-rajaampat",
+   "cc": "id",
+   "name": "RSUD Raja Ampat",
+   "place": "Waisai, Raja Ampat",
+   "lat": -0.41072,
+   "lon": 130.83547,
+   "coord": "OpenStreetMap way 527118596 (RSUD Raja Ampat)",
+   "tel": [
+    {
+     "n": "+62 813 44717931",
+     "dial": "+6281344717931",
+     "label": ""
+    }
+   ],
+   "hours": "",
+   "type": "",
+   "dcs": "listed as a hyperbaric chamber by the German Embassy Jakarta; diving injuries not stated",
+   "mil": "Not stated",
+   "basis": "government_list",
+   "src": [
+    "de-jkt"
+   ]
+  },
+  {
+   "id": "my-lumut",
+   "cc": "my",
+   "name": "Institute of Underwater and Hyperbaric Medicine, Armed Forces Hospital Lumut",
+   "place": "Lumut, Perak",
+   "lat": 4.2223,
+   "lon": 100.61702,
+   "coord": "OpenStreetMap way 607346892 (Hospital Angkatan Tentera TLDM Lumut)",
+   "tel": [],
+   "hours": "",
+   "type": "multiplace",
+   "dcs": "three-compartment multiplace chamber that treats DCI, AGE and barotrauma, with a 24-hour hotline for injured divers (Med J Malaysia 2006: an old source)",
+   "mil": "Military",
+   "basis": "journal",
+   "src": [
+    "mjm"
+   ]
+  }
+ ]
+}
