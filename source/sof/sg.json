@@ -30,13 +30,13 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Singapore.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "https://en.wikipedia.org/wiki/Embassy_of_the_United_States,_Singapore",
-   "fp": "bc3a3026a90a36742f8d2ce465bfbf69bf44e95ce28a5ae98a6b910945585d3c",
+   "fp": "19a975ff5921758c8f742261fcd360833e707725e1e957278a3f59c4ef809af4",
    "web": "https://sg.usembassy.gov/",
    "phone": "(65) 6476-9100",
    "phone_after_hours": "6476-9100",
    "phone_src": "https://sg.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-09"
+   "phone_asof": "2026-11-26"
   }
  ],
  "airports": [
@@ -389,8 +389,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/1375254867",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "673465c2fae4d539e6ee73d3cbdcdc18022cf44784befc9d3d09864f72387b9c"
+   "asof": "2026-11-26",
+   "fp": "7e06f80cd3d809c5deee66fcf467c4842269f9bbac527b0dd4989c3292d2f8b2"
   },
   {
    "id": "sof:sg:xing:node-1375254908",
@@ -406,8 +406,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/1375254908",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "df7c05f82f5cbe64bc18b249a350f8a2bc61749c7cad57d885968ee3c13d8e01"
+   "asof": "2026-11-26",
+   "fp": "22b4776d06c0dd7469bdc363a52d47c2b13a4b5b509ecf8fd8816d087c41f101"
   },
   {
    "id": "sof:sg:xing:node-7084413162",
@@ -423,8 +423,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/7084413162",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "138d7f53e6dd7a8eaaec641963dabe880eec92048620d776002809837ff735b9"
+   "asof": "2026-11-26",
+   "fp": "2bbfe62194a65088934b896403c7983104df1aebf27adb12c6fa8dffb9ca2129"
   },
   {
    "id": "sof:sg:xing:node-7122632650",
@@ -440,8 +440,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/7122632650",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "f46cb6ddb49b6b1cc1b74f70ccbd57561bb9a264a3be3a15d75f7a9740e6df57"
+   "asof": "2026-11-26",
+   "fp": "1e88203780aa51fb60a6336ebd56fdb4456131fe74735a3507564dd74f1831b2"
   },
   {
    "id": "sof:sg:xing:way-842171838",
@@ -457,13 +457,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/842171838",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "72dc5163724466683adb5c333c918f8a39d49bfd5f57d07021a961648d7d8dac"
+   "asof": "2026-11-26",
+   "fp": "1e93ee7a3b4ba583dcc31fe2aa34525b16ee53225582b34377b4fda9d7a3c3bd"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-26"
 }

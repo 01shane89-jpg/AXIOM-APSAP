@@ -78,7 +78,8 @@ function kindOf(t) {
 const KNAME = { embassy: "U.S. Embassy", consulate_general: "U.S. Consulate General", consulate: "U.S. Consulate", consular_agency: "U.S. Consular Agency", liaison_office: "U.S. office" };
 
 /* ---------- 1. U.S. posts mapped in OpenStreetMap ---------- */
-async function osmPosts() {
+async function osmPosts(hosts) {
+  const noCc = [];
   const el = await overpass('[out:json][timeout:400];(nwr["office"="diplomatic"]["country"="US"];nwr["amenity"="embassy"]["country"="US"];);out center tags;');
   const out = [];
   for (const e of el) {
@@ -87,13 +88,17 @@ async function osmPosts() {
     if (/residence|marine house|warehouse|annex|housing/i.test(t.name || "") || t.diplomatic === "ambassadors_residence") continue;
     /* an honorary consul is a private person acting part-time; their office and number are not published by the post */
     if (/honorary/i.test([t.name, t["name:en"], t.consulate, t.diplomatic].join(" "))) continue;
-    const cc = ccsAt(lat, lon, 0.05)[0];
-    if (!cc) { if (DEBUG) log("  post outside every country", t.name, lat, lon); continue; }
+    /* the simplified borders miss some seafront capitals (the embassy in Luanda sat outside every country), so the host
+       country the post itself is tagged with ("target", ISO 3166-1) is used when the point falls in none; where the point is
+       in a country, that country wins */
+    const tg = /^[A-Z]{2}$/.test(t.target || "") ? t.target.toLowerCase() : "";
+    const cc = ccsAt(lat, lon, 0.05)[0] || (tg && hosts.has(tg) ? tg : "");
+    if (!cc) { if (DEBUG) log("  post outside every country", t.name, lat, lon); noCc.push((t["name:en"] || t.name || "?") + " " + lat.toFixed(3) + "," + lon.toFixed(3)); continue; }
     out.push({ cc, osm: e.type + "/" + e.id, lat: +lat.toFixed(6), lon: +lon.toFixed(6), kind, t });
   }
   /* the best-mapped object first, so a second "embassy" far from the first (a mis-tag) is the one dropped */
   out.sort((a, b) => Object.keys(b.t).length - Object.keys(a.t).length);
-  log("OSM U.S. posts", el.length, "kept", out.length);
+  log("OSM U.S. posts", el.length, "kept", out.length, noCc.length ? "; outside every country: " + noCc.join("; ") : "");
   return out;
 }
 
@@ -201,7 +206,7 @@ async function main() {
   // a hidden area's research is sealed (tools/seal_hidden.mjs): this job cannot read it, so that country is left as it is
   const files = readdirSync(SRC).filter((f) => /^[a-z]{2,3}\.json$/.test(f) && f !== "exercises-outside.json" && !readFileSync(SRC + "/" + f, "utf8").startsWith("/*osap-sealed:"));
   const SOF = Object.fromEntries(files.map((f) => [f.slice(0, -5), JSON.parse(readFileSync(SRC + "/" + f, "utf8"))]));
-  const posts = await osmPosts();
+  const posts = await osmPosts(new Set(Object.keys(SOF)));
   await sleep(10000);
   const xings = await osmCrossings();
   const stats = { matched: 0, added: 0, phones: 0, after: 0, site: 0, xings: 0, newCountries: [] };
