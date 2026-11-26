@@ -24,7 +24,28 @@
   "srcname": "U.S. Department of State, travel.state.gov",
   "fp": "2747b8ffc1ec570bd610234069ed652c6c9fd6de7b755abc9d45df4a55ba6fb8"
  },
- "posts": [],
+ "posts": [
+  {
+   "id": "sof:gq:post:u-s-embassy-equatorial-guinea",
+   "name": "U.S. Embassy, Equatorial Guinea",
+   "kind": "embassy",
+   "city": null,
+   "address": null,
+   "services_note": null,
+   "lat": 3.73904,
+   "lon": 8.739648,
+   "prec": "exact",
+   "src": "https://www.openstreetmap.org/node/3070502029",
+   "srcname": "OpenStreetMap (ODbL)",
+   "coord_basis": "OpenStreetMap",
+   "phone": "(+240) 333 09 57 41",
+   "phone_after_hours": "(240) 555 516 008",
+   "phone_src": "https://gq.usembassy.gov/",
+   "phone_srcname": "the post's own website",
+   "phone_asof": "2026-11-26",
+   "fp": "f537365959bf0bb4392d70802052e5f7faf1ca1ef2517bce43a6824462114f36"
+  }
+ ],
  "airports": [
   {
    "id": "sof:gq:airport:fgbt",
@@ -237,13 +258,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/1169397949",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "80ef9d340c955546eca3a2376b577bd2bc510cc2a37ebeea4262ddab52ed35f3"
+   "asof": "2026-11-26",
+   "fp": "eab856fe1e08eb4452409d4c2112524ee59217a6db25ac92266881b93a4ec32f"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-26"
 }

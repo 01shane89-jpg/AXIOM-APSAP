@@ -34,12 +34,12 @@
    "src": "https://www.wikidata.org/entity/Q109335369",
    "srcname": "Wikidata",
    "coord_basis": "OpenStreetMap node/6617348740",
-   "fp": "d588261b54c8e3bb7745da4f7566e9e0780eef88438b676f7feeb8530077052c",
+   "fp": "ecd3cbc00dd116086320322f6e5d59cba93a717c333da419877c0b9898146023",
    "web": "https://bb.usembassy.gov/embassy/grenada/",
    "phone": "(+1 473) 444-1173 6",
    "phone_src": "https://www.openstreetmap.org/node/6617348740",
    "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
-   "phone_asof": "2026-11-09"
+   "phone_asof": "2026-11-26"
   }
  ],
  "airports": [
@@ -99,5 +99,5 @@
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-26"
 }

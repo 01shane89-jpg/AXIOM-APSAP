@@ -115,13 +115,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/361451962",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "5a31e596da5ea130191932a83130eef9776c5053dafdf3ec4060bb7155feaf3d"
+   "asof": "2026-11-26",
+   "fp": "fe43ab9881176ca3f9151c30956c83b615104bbf8cad0721907a6c492c26aed9"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-26"
 }

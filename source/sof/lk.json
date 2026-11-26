@@ -32,18 +32,19 @@
    "city": "Colombo",
    "address": "210 Galle Road, Colombo 03, Sri Lanka",
    "services_note": "Also serves Maldives (per travel.state.gov Maldives page)",
-   "lat": 6.9063,
-   "lon": 79.85,
-   "prec": "approx",
+   "lat": 6.913619,
+   "lon": 79.848304,
+   "prec": "exact",
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/SriLanka.html",
    "srcname": "travel.state.gov country information page",
-   "coord_basis": "estimated from published address",
-   "fp": "6d6476821b167ee629efbbc70e150d816b539f4f8e7023f9c998701c3d524bbd",
+   "coord_basis": "OpenStreetMap way/1348127365",
+   "fp": "ad4a57583b6fa0abf6bd1bb33fda883a0275d785f9782db635fde61c96b5b838",
    "phone": "+94 (11) 202-8500",
    "phone_after_hours": "011-202-8500",
    "phone_src": "https://lk.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-09"
+   "phone_asof": "2026-11-26",
+   "web": "https://lk.usembassy.gov"
   }
  ],
  "airports": [
@@ -419,8 +420,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/5722655131",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "0ddac33c40cdec38bf227b331caa3bd9a6735b1f5c349f1e9ac5944331907200"
+   "asof": "2026-11-26",
+   "fp": "b606b8512d3c5f0c8cf25d1455de29d65d0ea7282f9f8d62f512b17de6a1c340"
   },
   {
    "id": "sof:lk:xing:node-5722655151",
@@ -436,13 +437,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/5722655151",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-09",
-   "fp": "afceaee4f937d08c5d16c967fecb429e471e85bc476d5c356b60a19f3b7fab82"
+   "asof": "2026-11-26",
+   "fp": "8897b5dc60cd6d9d94d34c96e33110ad2dc6f98630dc5077058b1d87112fdde5"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-09"
+ "evac_asof": "2026-11-26"
 }
