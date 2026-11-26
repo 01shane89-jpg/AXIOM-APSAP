@@ -2,7 +2,7 @@
 // tools/mt_guard.mjs mtSuspect). The rejected lines are real MADLAD-400 output from the news index, 2026-11-21 to 23.
 // Run: node tests/mt_ko.test.mjs
 import assert from "node:assert/strict";
-import { cjkAmounts, cjkAmountWrong, koNameWrong } from "../tools/mt_ko.mjs";
+import { cjkAmounts, cjkAmountWrong, koNameWrong, cjkMonthAdded } from "../tools/mt_ko.mjs";
 import { mtSuspect } from "../tools/mt_guard.mjs";
 
 const now = Date.parse("2026-11-23T09:00:00Z");
@@ -42,4 +42,14 @@ t("a Korean name must be the original's", () => {
   assert.equal(koNameWrong("도쿄돔 10개 크기", "Tokyo Dome-size island"), "");
 });
 
+t("a day-only date does not get a month (蕃新聞 九合一 as \"September 1\", 2026-11-26)", () => {
+  assert.equal(cjkMonthAdded("九合一選舉前強化國境維安 中部海巡陸海空聯手大規模掃蕩", "Joint sweep before the elections of September 1"), "September 1");
+  assert.equal(cjkMonthAdded("消費減税、６日にも衆院通過", "Consumer tax cut to pass the lower house on June 6"), "June 6");
+  assert.equal(cjkMonthAdded("도로공사, 28일 재난대응 안전 훈련", "28th of July, emergency response drill"), "28th of July");
+  assert.equal(cjkMonthAdded("澎湖8旬翁頭部外傷", "Head injury in Penghu, 8th of June."), "8th of June");
+  assert.equal(cjkMonthAdded("因應九合一選舉 立院11月23日至27日停開", "Legislature adjourns November 23 to 27 for the elections"), "", "the original gives the month");
+  assert.equal(cjkMonthAdded("北, 中 6·25 참전 76주년", "North Korea marks 76 years since China joined the June 25 war"), "", "6·25 is a month and day");
+  assert.equal(cjkMonthAdded("消費減税、６日にも衆院通過", "Consumer tax cut to pass the lower house on the 6th"), "");
+  assert.equal(cjkMonthAdded("Le 6 juin", "On June 6"), "", "not Chinese, Japanese or Korean");
+});
 console.log(ok + " passed");

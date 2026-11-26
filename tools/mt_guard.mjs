@@ -47,7 +47,7 @@ import { extraCount, extraHarm, numberWordValues } from "./mt_facts.mjs";
 import { missingThaiPlace } from "./th_places.mjs";
 import { thaiDeathAdded, thaiCurrencyAdded, thaiCountryAdded } from "./mt_thai.mjs";
 import { zhCombinedCountLost, zhCarrierAdded } from "./mt_zh.mjs";
-import { cjkAmountWrong, koNameWrong } from "./mt_ko.mjs";
+import { cjkAmountWrong, koNameWrong, cjkMonthAdded } from "./mt_ko.mjs";
 import { termMissing, countryAdded, hedgeLost, verdictAdded } from "./mt_glossary.mjs";
 
 // any script's decimal digits as ASCII ("২০০১" -> "2001"), so a year written in Bengali or Thai digits is recognised
@@ -132,6 +132,9 @@ export function mtSuspect(orig, en, now = Date.now(), lang = "") {
   if (am) return "amount " + am + " not in the original";
   const kn = koNameWrong(orig, en);
   if (kn) return "name " + kn + " not in the original";
+  // a month for a day-only date (6日 as "June 6"): extraMonth below accepts any number in the original that equals the month
+  const cm = cjkMonthAdded(orig, en);
+  if (cm) return "date " + cm + " not in the original (no month given)";
   const pl = missingThaiPlace(orig, en);
   if (pl) return "place " + pl + " left out";
   const tm = termMissing(orig, en);

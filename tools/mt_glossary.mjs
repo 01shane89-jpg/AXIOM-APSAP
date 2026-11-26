@@ -75,6 +75,11 @@ const KEEP = [
   // "nuclear-powered satellite". 核搭載 and 核弾頭搭載 are about weapons on board, not the power source (原子力).
   [/核弾頭搭載/g, "carrying nuclear warheads", NUKE_ARMED, "nuclear-armed (核弾頭搭載)"],
   [/核(?:兵器)?搭載/g, "nuclear-armed", NUKE_ARMED, "nuclear-armed (核搭載)"],
+  // 2026-11-26, Taiwan (蕃新聞, flagged by Shane): 九合一選舉 (the nine-in-one local elections) came out as "the elections of
+  // September 1" (30 of 32 stored lines lost it: "9-1", "September 1", "28 September"), and 海巡 (Taiwan's Coast Guard) as
+  // "Sea, Land and Air Forces", "the Australian Navy" or "the Chinese Navy" (96 of 150). Each changes the event or who acts.
+  [/九合一/g, "nine-in-one local", /nine[- ]in[- ]one|9[- ]in[- ]1|local elections?|municipal elections?/i, "nine-in-one local elections (九合一)"],
+  [/海巡(?:署)?/g, "Coast Guard", /^(?![\s\S]*\b(?:Navy|naval)\b)[\s\S]*(?:coast ?guard|\bCGA\b|\b(?:marine|maritime|sea|coastal) (?:patrol|guard|police)\b)/i, "Taiwan's Coast Guard (海巡)"],
 ];
 // Iraq and Syria named in the English when the original names neither (Newtalk's 伊, Iran, read as "Iraqi forces" and
 // "Syria"; Korean 이란 as "Iraq"; a Croatian "Russians fired on a school" as "a Syrian attack"). Measured on the stored
