@@ -1,4 +1,4 @@
-// Probe 9 (26 Nov 2026): SAM.gov site search shape, GAO/EPA/Iowa/Illinois alternatives.
+// Probe 10 (26 Nov 2026): newsroom link shapes, SAM.gov public extract stream, ECHO fields, Federal Register fields.
 import { UA } from "./dense_lib.mjs";
 const H = { "User-Agent": UA, Accept: "*/*" };
 async function p(label, url, opt = {}, show = 600) {
@@ -11,25 +11,30 @@ async function p(label, url, opt = {}, show = 600) {
     return t;
   } catch (e) { console.log("P", label, "ERR", String(e.cause?.code || e.message)); return ""; }
 }
-for (const q of ["%22Iowa%20Army%20Ammunition%20Plant%22", "Iowa%20Army%20Ammunition%20Plant", "IAAAP"]) {
-  const t = await p("sam " + q, "https://sam.gov/api/prod/sgs/v1/search/?index=opp&q=" + q + "&page=0&size=10&sort=-modifiedDate&mode=search&is_active=true&qMode=ALL", {}, 0);
-  try { const j = JSON.parse(t); console.log("P sam total", j.page && j.page.totalElements); for (const r of (j._embedded || {}).results || []) console.log("P sam r", JSON.stringify({ id: r._id, t: r.title, sol: r.solicitationNumber, d: r.publishDate, ty: r.type && r.type.value, org: (r.organizationHierarchy || []).map((o) => o.name).join(" > "), pop: r.placeOfPerformance, keys: Object.keys(r).join(",") }).slice(0, 700)); } catch (e) { console.log("P sam parse", e.message); }
-}
-await p("sam-terms", "https://sam.gov/about/terms-of-use", { grep: /(automated|scrap|robot|crawl|API key)[^<.]{0,160}/gi });
-await p("sam-robots", "https://sam.gov/robots.txt", {}, 800);
-await p("gao-reports", "https://www.gao.gov/rss/reports.xml", {}, 300);
-await p("gao-robots", "https://www.gao.gov/robots.txt", {}, 600);
-await p("fr-epa", "https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=%22Iowa%20Army%20Ammunition%20Plant%22&order=newest&per_page=5", {}, 1200);
-await p("govdel-epa", "https://content.govdelivery.com/accounts/USAEPA/bulletins.rss", {}, 600);
-await p("epa-news2", "https://www.epa.gov/newsreleases", {}, 200);
-await p("epa-r7page", "https://www.epa.gov/aboutepa/epa-region-7-midwest", {}, 200);
-await p("echo-qid", "https://echodata.epa.gov/echo/echo_rest_services.get_qid?output=JSON&qid=514&pageno=1", {}, 3000);
-await p("echo-cases", "https://echodata.epa.gov/echo/case_rest_services.get_cases?output=JSON&p_fn=Iowa%20Army%20Ammunition&p_st=IA", {}, 1500);
-for (const u of ["https://hhs.iowa.gov/news-releases", "https://hhs.iowa.gov/about/news", "https://hhs.iowa.gov/press-releases", "https://hhs.iowa.gov/media-center", "https://hhs.iowa.gov/"]) await p("ia " + u, u, { grep: /href="[^"]*(news|press|release|rss|feed)[^"]*"/gi });
-await p("ia-govdel", "https://content.govdelivery.com/accounts/IACIO/bulletins.rss", {}, 400);
-await p("ia-gov", "https://governor.iowa.gov/", { grep: /href="[^"]*(news|press|release|rss|feed)[^"]*"/gi });
-const il = await p("il-dph", "https://dph.illinois.gov/search.html?contentType=news", { grep: /(\/[a-zA-Z0-9_\/.-]*(json|search|bin|api)[a-zA-Z0-9_\/.?=&-]*)/g });
-await p("il-dph-home", "https://dph.illinois.gov/", { grep: /href="[^"]*(news|press|release|rss|feed)[^"]*"/gi });
-await p("il-gov-news", "https://gov-pritzker-newsroom.prezly.com/", { grep: /href="[^"]*(rss|feed|\.xml)[^"]*"/gi });
-await p("il-newsroom", "https://www.illinois.gov/news.html", { grep: /(\/[a-zA-Z0-9_\/.-]*(json|bin|api)[a-zA-Z0-9_\/.?=&-]*)/g });
-await p("il-rss", "https://www.illinois.gov/news/rss.html", {}, 400);
+await p("ia-hhs-newsroom", "https://hhs.iowa.gov/about/newsroom", { grep: /href="\/[^"]*(news|press|release)[^"]*"/gi });
+await p("ia-hhs-pr", "https://hhs.iowa.gov/about/newsroom/news-releases", { grep: /href="\/[^"]*(news|press|release)[^"]*"/gi });
+await p("ia-gov-newsroom", "https://governor.iowa.gov/newsroom", { grep: /href="\/press-release\/[^"]+"/g });
+await p("il-dph-news", "https://dph.illinois.gov/resource-center/communications/news-releases.html", { grep: /href="[^"]*news[^"]*"/gi });
+await p("il-dph-recent", "https://dph.illinois.gov/recent-news.html", { grep: /href="[^"]*news[^"]*"/gi });
+await p("il-prezly", "https://gov-pritzker-newsroom.prezly.com/feed", {}, 700);
+await p("epa-browse", "https://www.epa.gov/newsroom/browse-news-releases", { grep: /href="[^"]*\/newsreleases\/[^"]+"/g });
+await p("epa-browse-r7", "https://www.epa.gov/newsroom/browse-news-releases?field_press_office_target_id=226", { grep: /href="[^"]*\/newsreleases\/[^"]+"/g });
+const e = await p("echo-qid", "https://echodata.epa.gov/echo/echo_rest_services.get_qid?output=JSON&qid=514&pageno=1", {}, 0);
+try { const f = JSON.parse(e).Results.Facilities; for (const x of f) console.log("P echo fac", JSON.stringify(x).slice(0, 2500)); } catch (er) { console.log("P echo parse", er.message); }
+await p("echo-geo", "https://echodata.epa.gov/echo/echo_rest_services.get_facilities?output=JSON&p_lat=40.80&p_long=-91.26&p_radius=8", {}, 500);
+const fr = await p("fr", "https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=%22Army%20Ammunition%20Plant%22&order=newest&per_page=5&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=publication_date&fields%5B%5D=agencies&fields%5B%5D=html_url&fields%5B%5D=document_number&fields%5B%5D=abstract", {}, 0);
+try { const j = JSON.parse(fr); console.log("P fr count", j.count); for (const r of j.results) console.log("P fr r", JSON.stringify(r).slice(0, 500)); } catch (er) { console.log("P fr parse", er.message); }
+// SAM.gov official public extract (data.gov): stream it, count rows mentioning an Army ammunition plant
+const t0 = Date.now();
+try {
+  const r = await fetch("https://s3.amazonaws.com/falextracts/Contract%20Opportunities/datagov/ContractOpportunitiesFullCSV.csv", { headers: H, signal: AbortSignal.timeout(300000) });
+  console.log("P sam-csv", r.status, r.headers.get("content-length"), r.headers.get("last-modified"));
+  const dec = new TextDecoder("latin1"); let buf = "", head = null, n = 0, hit = [];
+  for await (const ch of r.body) {
+    buf += dec.decode(ch, { stream: true });
+    if (!head) { const i = buf.indexOf("\n"); if (i > 0) { head = buf.slice(0, i); console.log("P sam-csv head", head.slice(0, 1500)); } }
+    let k; while ((k = buf.indexOf("\n")) >= 0) { const line = buf.slice(0, k); buf = buf.slice(k + 1); n++; if (/ammunition plant|IAAAP|\bAAP\b/i.test(line) && hit.length < 400) hit.push(line); }
+  }
+  console.log("P sam-csv lines", n, "hits", hit.length, "secs", (Date.now() - t0) / 1000);
+  for (const h of hit.filter((h) => /iowa|IAAAP|middletown/i.test(h)).slice(0, 6)) console.log("P sam-csv hit", h.slice(0, 900));
+} catch (er) { console.log("P sam-csv ERR", er.message, (Date.now() - t0) / 1000); }
