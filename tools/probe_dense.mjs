@@ -1,9 +1,11 @@
-// Probe 19 (26 Nov 2026): run the orbit census feed for real.
-process.env.ONLY = "orbit-census";
-const { runAll, RESULTS } = await import("./dense_lib.mjs");
-await import("./dense_space.mjs");
-await runAll(1);
-for (const [id, r] of Object.entries(RESULTS)) {
-  console.log("P", id, r.ok ? "ok" : "FAIL " + r.error, r.items ? r.items.length : "", r.note || "");
-  for (const it of [...(r.globals || []), ...(r.items || []).sort((a, b) => b.value - a.value).slice(0, 8)]) console.log("P  ", JSON.stringify({ t: it.title, x: it.detail, ccs: it.ccs }).slice(0, 700));
+// Probe 20 (26 Nov 2026): is the Kremlin English news feed reachable and keyless?
+const { UA } = await import("./dense_lib.mjs");
+for (const u of ["https://en.kremlin.ru/events/president/news/feed", "http://en.kremlin.ru/events/president/news/feed", "http://kremlin.ru/events/president/news/feed"]) {
+  try {
+    const r = await fetch(u, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(30000) });
+    const t = await r.text();
+    const items = t.split(/<item>|<entry>/).slice(1);
+    console.log("P", u, r.status, r.headers.get("content-type"), "len", t.length, "items", items.length);
+    for (const it of items.slice(0, 4)) console.log("P   ", (it.match(/<title>([\s\S]*?)<\/title>/) || [])[1]?.slice(0, 120), "|", (it.match(/<(pubDate|published|updated)>([^<]+)/) || [])[2], "|", (it.match(/<link>([^<]+)|href="([^"]+)"/) || []).slice(1).find(Boolean));
+  } catch (e) { console.log("P", u, "ERR", e.message); }
 }
