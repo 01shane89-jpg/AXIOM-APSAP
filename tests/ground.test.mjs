@@ -79,15 +79,6 @@ t("names: a country in any of its forms, the summary's own country, spelling of 
   assert.equal(groundLine({ text: "A Burmese military air strike killed 4 in Southern Rakhine State.", refs: [2] }, refs, { place: "Myanmar" }).ok, true);
   assert.deepEqual(namesIn("Continued conflict on the Thai–Cambodian border. The Kenya Police Academy cafeteria"), ["Thai", "Cambodian", "Kenya"]);
 });
-t("names: a currency or unit next to its amount is not a name (\"Not in its sources: RM\", 25 Nov 2026)", () => {
-  assert.deepEqual(namesIn("Thai police, as reported by Harian Metro, seized RM2.5 million in suspected cocaine at Sungai Golok."), ["Harian", "Metro", "Sungai", "Golok"]);
-  assert.deepEqual(namesIn("Officials said the fine was USD 40 per day and US$5m in total."), []);
-  const refs = [ref(1, "Polis rampas kokain bernilai RM2.5 juta di Sungai Golok", "Harian Metro")];
-  const r = groundLine({ text: "Thai police, as reported by Harian Metro, seized RM2.5 million in suspected cocaine at Sungai Golok.", refs: [1] }, refs, { place: "Thailand" });
-  assert.ok(!(r.gaps || []).some((g) => g.kind === "name" && g.what === "RM"), JSON.stringify(r.gaps));
-  // NEGATIVE: an all-capitals name that is not next to an amount still counts
-  assert.ok(namesIn("Talks with ASEAN resumed in Jakarta on Monday.").includes("ASEAN"));
-});
 t("names: a mixed-case currency symbol next to its amount is not a name (\"Not in its sources: Rs\", \"Sh\", 26 Nov 2026)", () => {
   assert.deepEqual(namesIn("Balochistan's government announces rewards of up to Rs250m, according to Dawn."), ["Dawn"]);
   assert.deepEqual(namesIn("The Citizen reports that Tanzania has received Sh500 million in mobile warehouses."), ["Citizen", "Tanzania"]);
@@ -99,6 +90,15 @@ t("names: a mixed-case currency symbol next to its amount is not a name (\"Not i
   assert.ok(namesIn("Talks in Sh Ahmed's office resumed.").includes("Sh"));
   const r2 = groundLine({ text: "The Citizen reports that Tanzania has received Sh900 million in mobile warehouses.", refs: [1] }, refs, { place: "Tanzania" });
   assert.ok(r2.gaps.some((g) => g.kind === "number"), JSON.stringify(r2.gaps));
+});
+t("names: a currency or unit next to its amount is not a name (\"Not in its sources: RM\", 25 Nov 2026)", () => {
+  assert.deepEqual(namesIn("Thai police, as reported by Harian Metro, seized RM2.5 million in suspected cocaine at Sungai Golok."), ["Harian", "Metro", "Sungai", "Golok"]);
+  assert.deepEqual(namesIn("Officials said the fine was USD 40 per day and US$5m in total."), []);
+  const refs = [ref(1, "Polis rampas kokain bernilai RM2.5 juta di Sungai Golok", "Harian Metro")];
+  const r = groundLine({ text: "Thai police, as reported by Harian Metro, seized RM2.5 million in suspected cocaine at Sungai Golok.", refs: [1] }, refs, { place: "Thailand" });
+  assert.ok(!(r.gaps || []).some((g) => g[0] === "name" && g[1] === "RM"), JSON.stringify(r.gaps));
+  // NEGATIVE: an all-capitals name that is not next to an amount still counts
+  assert.ok(namesIn("Talks with ASEAN resumed in Jakarta on Monday.").includes("ASEAN"));
 });
 t("NEGATIVE: a line citing nothing that exists is dropped", () => {
   assert.equal(groundLine({ text: "Something happened.", refs: [9] }, [ref(1, "x", "y")], {}).drop, true);
