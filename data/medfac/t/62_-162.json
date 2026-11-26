@@ -1,0 +1,6 @@
+[["n11225972869",62.90661,-160.0662,"us",{"name":"YKHC Health Clinic","amenity":"clinic","healthcare":"clinic"}],
+["n11225972889",62.65227,-160.19944,"us",{"amenity":"clinic","healthcare":"clinic"}],
+["n369144124",62.65611,-160.20528,"us",{"name":"Anvik Seaplane Base","name:en":"Anvik Seaplane Base","aeroway":"aerodrome","aerodrome:type":"seaplane"}],
+["w1093471509",62.64609,-160.19154,"us",{"name":"Anvik Airport","name:en":"Anvik Airport","operator":"Erik Weingarth","aeroway":"aerodrome","icao":"PANV","iata":"ANV","aerodrome:type":"airfield","wikidata":"Q2060150"}],
+["w424769915",62.88903,-160.06732,"us",{"name":"Grayling Airport","aeroway":"aerodrome","icao":"PAGX","iata":"KGX","wikidata":"Q3914146"}],
+["w507868672",63.89089,-160.80107,"us",{"name":"Unalakleet Airport","name:en":"Unalakleet Airport","operator":"State of Alaska DOT&PF","aeroway":"aerodrome","icao":"PAUN","iata":"UNK","wikidata":"Q4475609"}]]

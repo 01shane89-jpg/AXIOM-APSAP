@@ -406,7 +406,7 @@
 ["w539597051",36.66795,137.16898,"jp",{"name":"うさかクリニック","amenity":"clinic","healthcare":"clinic"}],
 ["w541380702",36.95967,137.56183,"jp",{"amenity":"hospital","healthcare":"hospital"}],
 ["w543028714",36.68151,137.18468,"jp",{"name":"吉本レディースクリニック","amenity":"clinic","healthcare":"clinic"}],
-["w544316038",36.30304,137.90838,"jp",{"amenity":"hospital","healthcare":"hospital"}],
+["w544316038",36.30304,137.90838,"jp",{"name":"安曇野赤十字病院","amenity":"hospital","healthcare":"hospital","wikidata":"Q11450796"}],
 ["w550119092",36.30345,137.90392,"jp",{"amenity":"hospital","healthcare":"hospital"}],
 ["w554790793",36.49052,137.45631,"jp",{"aeroway":"helipad"}],
 ["w555618472",36.70673,137.27764,"jp",{"aeroway":"helipad"}],

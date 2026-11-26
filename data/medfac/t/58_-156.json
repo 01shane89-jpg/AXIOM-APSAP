@@ -1,0 +1,10 @@
+[["n11176796506",59.75488,-154.90776,"us",{"name":"Iliamna Aiport Building","aeroway":"aerodrome"}],
+["n11432505340",58.55673,-155.77681,"us",{"name":"Lake Brooks Seaplane Base","aeroway":"aerodrome"}],
+["n369144277",59.43483,-154.79675,"us",{"name":"Kakhanok Airport","aeroway":"aerodrome","icao":"PFKK","iata":"KNK","wikidata":"Q6426598"}],
+["n369144285",59.32553,-155.89803,"us",{"name":"Igiugig Airport","aeroway":"aerodrome","icao":"PAIG","iata":"IGG","aerodrome:type":"public","wikidata":"Q3084586"}],
+["n369144543",59.79621,-154.12988,"us",{"name":"Pedro Bay Airport","aeroway":"aerodrome","iata":"PDB","aerodrome:type":"public","wikidata":"Q7159475"}],
+["n369144566",59.97889,-154.83944,"us",{"name":"Nondalton Airport","aeroway":"aerodrome","iata":"NNL","wikidata":"Q7049256"}],
+["n5209924238",58.98191,-155.12134,"us",{"name":"Kulik Lake Airport","aeroway":"aerodrome","iata":"LKK","wikidata":"Q6442992"}],
+["w1095052775",59.36236,-155.26142,"us",{"name":"Big Mountain Airport","aeroway":"aerodrome","icao":"PABM","iata":"BMX","military":"airfield","wikidata":"Q619607"}],
+["w1206226641",59.75426,-154.86958,"us",{"amenity":"clinic","healthcare":"clinic"}],
+["w530986577",59.75607,-154.91138,"us",{"name":"Iliamna Airport","aeroway":"aerodrome","icao":"PAIL","iata":"ILI","aerodrome:type":"public","wikidata":"Q3085740"}]]

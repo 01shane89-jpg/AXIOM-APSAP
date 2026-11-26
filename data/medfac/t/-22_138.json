@@ -12,10 +12,10 @@
 ["n291568908",-20.66615,139.48896,"au",{"name":"Mount Isa Airport","name:en":"Mount Isa Airport","operator":"Queensland Airports Corporation","aeroway":"aerodrome","icao":"YBMA","iata":"ISA","aerodrome:type":"public","wikidata":"Q3885354"}],
 ["n314981305",-20.11984,139.71125,"au",{"name":"Lake Julius Airstrip","aeroway":"aerodrome"}],
 ["n3234197173",-21.33562,139.88067,"au",{"name":"Duchess Airstrip","aeroway":"aerodrome"}],
-["w1155934148",-20.6665,139.48836,"au",{"name":"Mount Isa Airport","operator":"Queensland Airports Corporation","operator:type":"public","aeroway":"aerodrome","icao":"YBMA","iata":"ISA","wikidata":"Q3885354"}],
-["w1173855419",-21.70436,139.5341,"au",{"name":"Dajarra Aerodrome","aeroway":"aerodrome","icao":"YDAJ","wikidata":"Q21924132"}],
+["w1155934148",-20.66636,139.48851,"au",{"name":"Mount Isa Airport","operator":"Queensland Airports Corporation","operator:type":"public","aeroway":"aerodrome","icao":"YBMA","iata":"ISA","wikidata":"Q3885354"}],
+["w1173855419",-21.70182,139.53463,"au",{"name":"Dajarra Aerodrome","aeroway":"aerodrome","icao":"YDAJ","wikidata":"Q21924132"}],
 ["w1435278166",-20.72972,139.49451,"au",{"aeroway":"helipad"}],
-["w1566824907",-21.59526,138.36566,"au",{"name":"Urandangi Airport","aeroway":"aerodrome","icao":"YUDG"}],
-["w265523681",-20.73055,139.49389,"au",{"name":"Mount Isa Base Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Queensland Health","operator:type":"government","phone":"+61 7 4744 4444","website":"https://www.health.qld.gov.au/services/northwest/nwest_mtisa_hosp","addr:housenumber":"30","addr:street":"Camooweal Street","wikidata":"Q81045878"}],
-["w272390660",-21.64986,139.1941,"au",{"name":"Ardmore Airpstrip","aeroway":"aerodrome"}],
-["w304825332",-21.80916,139.92145,"au",{"name":"The Monument Airport","aeroway":"aerodrome","icao":"YTMO","iata":"PHQ","wikidata":"Q7752137"}]]
+["w1566824907",-21.59565,138.36567,"au",{"name":"Urandangi Airport","aeroway":"aerodrome","icao":"YUDG"}],
+["w265523681",-20.73046,139.49393,"au",{"name":"Mount Isa Base Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Queensland Health","operator:type":"government","phone":"+61 7 4744 4444","website":"https://www.health.qld.gov.au/services/northwest/nwest_mtisa_hosp","addr:housenumber":"30","addr:street":"Camooweal Street","wikidata":"Q81045878"}],
+["w272390660",-21.64982,139.19404,"au",{"name":"Ardmore Airpstrip","aeroway":"aerodrome"}],
+["w304825332",-21.80924,139.9216,"au",{"name":"The Monument Airport","aeroway":"aerodrome","icao":"YTMO","iata":"PHQ","wikidata":"Q7752137"}]]

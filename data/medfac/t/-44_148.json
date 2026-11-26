@@ -2,7 +2,7 @@
 ["n1042093668",-42.57288,148.06988,"au",{"name":"Darlington Airport","aeroway":"aerodrome","wikidata":"Q97700821"}],
 ["n1042098738",-42.09928,148.06987,"au",{"name":"Swansea Airfield","aeroway":"aerodrome","wikidata":"Q97703231"}],
 ["w1103122741",-42.12461,148.28679,"au",{"emergency":"ambulance_station"}],
-["w1408537982",-42.14657,148.27617,"au",{"name":"Freycinet Peninsula Medical","operator":"Tasmania Parks and Wildlife Service","aeroway":"helipad","surface":"gravel"}],
+["w1408537982",-42.14656,148.27618,"au",{"name":"Freycinet Peninsula Medical","operator":"Tasmania Parks and Wildlife Service","aeroway":"helipad","surface":"gravel"}],
 ["w1421937254",-42.34057,148.29853,"au",{"name":"Chicken Point Light Helipad","aeroway":"helipad","surface":"concrete"}],
-["w450960126",-43.23949,148.00399,"au",{"name":"Tasman Island Lighthouse Helipad","aeroway":"helipad","icao":"YTSI","surface":"asphalt"}],
-["w463175506",-42.12761,148.07711,"au",{"name":"May Shaw Health and Aged Care for Living","amenity":"hospital","healthcare":"hospital","addr:housenumber":"37","addr:street":"Wellington Street","addr:postcode":"7190"}]]
+["w450960126",-43.2395,148.00399,"au",{"name":"Tasman Island Lighthouse Helipad","aeroway":"helipad","icao":"YTSI","surface":"asphalt"}],
+["w463175506",-42.12769,148.07711,"au",{"name":"May Shaw Health and Aged Care for Living","amenity":"hospital","healthcare":"hospital","addr:housenumber":"37","addr:street":"Wellington Street","addr:postcode":"7190"}]]

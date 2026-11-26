@@ -1,0 +1,13 @@
+[["n1042018350",62.27998,-145.35853,"us",{"name":"Jacobus Field","aeroway":"aerodrome"}],
+["n10861357867",62.10893,-145.54093,"us",{"name":"Cross Road Medical Center","amenity":"clinic","healthcare":"clinic","beds":"4","phone":"+1 907 822 3203","website":"https://www.crossroadmc.org","addr:housenumber":"187","addr:street":"Glenn Highway","addr:city":"Glennallen","addr:postcode":"99588"}],
+["n10861359480",63.97166,-145.71343,"us",{"name":"Fort Greely Army Medical Home","amenity":"clinic","healthcare":"clinic","phone":"+1 907 873 4975","website":"https://bassett-wainwright.tricare.mil/Clinics/Fort-Greely-AMH","addr:housenumber":"655","addr:street":"East 5th Street","addr:city":"Fort Greely","addr:postcode":"99731"}],
+["n369143857",63.53306,-145.86049,"us",{"name":"Black Rapids Airport","aeroway":"aerodrome","wikidata":"Q49745180"}],
+["n369143939",62.60803,-144.62911,"us",{"name":"Barnhart Airport","aeroway":"aerodrome"}],
+["n369143941",62.56363,-144.66977,"us",{"name":"Chistochina Airport","aeroway":"aerodrome","iata":"CZO","wikidata":"Q49745585"}],
+["n369144244",62.06833,-145.42722,"us",{"name":"Brenwicks Airport","aeroway":"aerodrome"}],
+["n369144359",63.86064,-145.09971,"us",{"name":"Sparkys Field","aeroway":"aerodrome"}],
+["n369144542",63.02582,-145.49827,"us",{"name":"Paxson Airport","aeroway":"aerodrome","wikidata":"Q7156510"}],
+["n369144706",62.98972,-144.47972,"us",{"name":"Mankomen Lake Airport","aeroway":"aerodrome","wikidata":"Q49747809"}],
+["w1093462293",63.94522,-145.42138,"us",{"name":"All West Airport","name:en":"All West Airport","operator":"Barbie Foster","aeroway":"aerodrome","aerodrome:type":"private","wikidata":"Q49744865"}],
+["w259582991",62.15454,-145.45182,"us",{"name":"Gulkana Airport","name:en":"Gulkana Airport","operator":"State of Alaska DOT&PF","aeroway":"aerodrome","icao":"PAGK","iata":"GKN","wikidata":"Q4151856"}],
+["w504409539",63.99735,-145.72241,"us",{"name":"Allen Army Air Field","name:en":"Allen Army Air Field","operator":"United States Army","aeroway":"aerodrome","icao":"PABI","iata":"BIG","military":"airfield","wikidata":"Q4731515"}]]

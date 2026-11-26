@@ -7,6 +7,6 @@
 ["n3287653515",-27.67011,140.09431,"au",{"name":"Tirrawarra Airport","aeroway":"aerodrome","icao":"YTIW"}],
 ["n5000955886",-27.62125,141.07217,"au",{"name":"Dig Tree Airstrip","aeroway":"aerodrome"}],
 ["n8548274364",-27.74646,140.73668,"au",{"name":"RFDS Clinic Innamincka","amenity":"clinic","healthcare":"clinic","operator":"Royal Flying Doctor Service","operator:type":"ngo"}],
-["w1155949340",-26.74517,140.63784,"au",{"name":"Cordillo Downs Airport","aeroway":"aerodrome","icao":"YCOD","iata":"ODL"}],
-["w1448400730",-26.69089,141.04968,"au",{"name":"Arrabury Airport","operator":"m","aeroway":"aerodrome","icao":"YARY","iata":"AAB","wikidata":"Q1433485"}],
-["w1450169699",-27.54846,141.16114,"au",{"name":"Nappa Merrie Airport","aeroway":"aerodrome","icao":"YNAP","iata":"NMR","wikidata":"Q21924036"}]]
+["w1155949340",-26.74451,140.63775,"au",{"name":"Cordillo Downs Airport","aeroway":"aerodrome","icao":"YCOD","iata":"ODL"}],
+["w1448400730",-26.69086,141.04697,"au",{"name":"Arrabury Airport","operator":"m","aeroway":"aerodrome","icao":"YARY","iata":"AAB","wikidata":"Q1433485"}],
+["w1450169699",-27.54711,141.16399,"au",{"name":"Nappa Merrie Airport","aeroway":"aerodrome","icao":"YNAP","iata":"NMR","wikidata":"Q21924036"}]]

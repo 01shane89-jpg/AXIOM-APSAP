@@ -1,6 +1,10 @@
 [["n1042093844",-20.24902,142.43911,"au",{"name":"Gladevale","aeroway":"aerodrome"}],
 ["n1042098736",-20.59804,143.07759,"au",{"name":"Silver Hills Airport","aeroway":"aerodrome"}],
+["n14368625421",-21.20749,143.79791,"au",{"name":"Malakoff Airstrip","aeroway":"aerodrome","icao":"YMOF"}],
+["n14368641013",-20.40842,143.18743,"au",{"name":"Olga Downs Airstrip","aeroway":"aerodrome","icao":"YOGD"}],
+["n14371882800",-20.43231,143.85275,"au",{"name":"Charlotte Plains Airstrip","aeroway":"aerodrome","icao":"YCHA"}],
+["n14375744360",-20.00924,142.48473,"au",{"name":"Saxby Downs Airstrip","aeroway":"aerodrome","icao":"YSXB"}],
 ["n293806036",-20.70111,143.1169,"au",{"name":"Richmond Aerodrome","aeroway":"aerodrome","icao":"YRMD","iata":"RCM","wikidata":"Q7330761"}],
 ["n6975637454",-20.09305,142.69856,"au",{"name":"Solway Downs","aeroway":"aerodrome"}],
 ["n6979680437",-20.89354,142.14828,"au",{"name":"Proa","aeroway":"aerodrome"}],
-["w28611663",-20.73882,143.15078,"au",{"name":"Richmond Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Queensland Health","operator:type":"government","wikidata":"Q81095592"}]]
+["w28611663",-20.7387,143.15075,"au",{"name":"Richmond Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Queensland Health","operator:type":"government","wikidata":"Q81095592"}]]

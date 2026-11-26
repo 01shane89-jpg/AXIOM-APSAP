@@ -1,0 +1,11 @@
+[["n12044017771",60.81325,-164.50184,"us",{"name":"Mertarvik Airport","aeroway":"aerodrome","icao":"PAEW"}],
+["n369143902",60.13808,-164.28225,"us",{"name":"Chefornak Airport","aeroway":"aerodrome","icao":"PACK","iata":"CYF","wikidata":"Q1708562"}],
+["n369144483",60.93257,-164.62793,"us",{"name":"Newtok Seaplane Base","aeroway":"aerodrome"}],
+["n369144800",60.53793,-165.08771,"us",{"name":"Toksook Bay Airport","aeroway":"aerodrome","icao":"PAOO","iata":"OOK","wikidata":"Q4459632"}],
+["w202093250",61.84242,-165.57891,"us",{"amenity":"clinic","healthcare":"clinic"}],
+["w202093265",61.84471,-165.58016,"us",{"name":"Scammon Bay Airport","aeroway":"aerodrome","icao":"PACM","iata":"SCM","wikidata":"Q4421544"}],
+["w203879330",61.54165,-165.59992,"us",{"name":"Chevak Airport","aeroway":"aerodrome","icao":"PAVA","iata":"VAK","wikidata":"Q1707627"}],
+["w203879387",61.537,-165.60414,"us",{"aeroway":"helipad"}],
+["w204300382",60.93988,-164.64217,"us",{"name":"Newtok Airport","aeroway":"aerodrome","icao":"PAEW","iata":"WWT","wikidata":"Q4328379"}],
+["w204436836",60.57534,-165.2693,"us",{"name":"Tununak Airport","operator":"State of Alaska DOT&PF - Central Region","aeroway":"aerodrome","iata":"TNK","aerodrome:type":"public","wikidata":"Q4465556"}],
+["w771723276",60.46985,-164.70299,"us",{"name":"Nightmute Airport","aeroway":"aerodrome","icao":"PAGT","iata":"NME","wikidata":"Q4312465"}]]

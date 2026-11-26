@@ -6,5 +6,6 @@
 ["n2820965330",-17.52142,126.12287,"au",{"name":"Mornington Wilderness Airport","aeroway":"aerodrome"}],
 ["n8707414133",-17.6129,126.74292,"au",{"name":"Lansdowne Station Airport","aeroway":"aerodrome","iata":"LDW"}],
 ["w1502415969",-16.00861,127.9802,"au",{"name":"El Questro Helipad","aeroway":"helipad","surface":"grass"}],
-["w187994422",-16.41874,126.44448,"au",{"name":"Gibb River Airport","aeroway":"aerodrome","icao":"YGIB","iata":"GBV"}],
-["w188004870",-16.40031,126.11625,"au",{"name":"Mount Elizabeth Airport","aeroway":"aerodrome"}]]
+["w1578541075",-16.44594,127.78258,"au",{"aeroway":"aerodrome"}],
+["w187994422",-16.41866,126.44459,"au",{"name":"Gibb River Airport","aeroway":"aerodrome","icao":"YGIB","iata":"GBV"}],
+["w188004870",-16.40039,126.11625,"au",{"name":"Mount Elizabeth Airport","aeroway":"aerodrome"}]]

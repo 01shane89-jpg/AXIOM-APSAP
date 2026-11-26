@@ -23,6 +23,7 @@
 ["n4511725168",35.46645,139.62,"jp",{"name":"横浜Leaf献血ルーム","healthcare":"blood_donation","opening_hours":"09:30-17:30 open \"成分献血(Plasma, Platelets)\" || 09:30-18:30 open \"全血(Whole)\""}],
 ["n4623168725",43.02701,144.36087,"jp",{"name":"ぷらっと946献血ルーム","healthcare":"blood_donation","operator":"日本赤十字社"}],
 ["n4807613468",34.6455,135.5132,"jp",{"name":"あべの献血ルームKiZooNa","name:en":"Abeno Blood Donation Room KiZooNa","healthcare":"blood_donation"}],
+["n5241429310",26.21331,127.67843,"jp",{"name":"くもじ献血ルーム","healthcare":"blood_donation","operator":"日本赤十字社","website":"https://www.bc9.org/place/okinawa/kumoji","opening_hours":"Mo-Fr 09:30-17:30; Sa-Su 09:00-17:00"}],
 ["n5487499506",37.50696,139.94798,"jp",{"name":"福島県赤十字血液センター会津出張所","healthcare":"blood_donation","phone":"0242-24-6650"}],
 ["n5631817522",35.44128,139.36588,"jp",{"name":"本厚木献血ルーム","healthcare":"blood_donation"}],
 ["n5751835508",31.56189,130.55636,"jp",{"name":"献血プラザ　かもいけクロス","healthcare":"blood_donation"}],

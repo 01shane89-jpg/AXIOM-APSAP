@@ -1,1 +1,6 @@
-[["w142564637",65.81025,-169.02922,"ru",{"aeroway":"helipad"}]]
+[["w1110177921",65.75837,-168.95369,"us",{"name":"Diomede Heliport","operator":"Alaska Department of Transportation","operator:type":"public","addr:city":"Diomede","addr:postcode":"99762","aeroway":"helipad","icao":"PPDM","iata":"DIO"}],
+["w142564637",65.81025,-169.02922,"ru",{"aeroway":"helipad"}],
+["w142564637",65.81025,-169.02922,"us",{"aeroway":"helipad"}],
+["w1485347733",65.75833,-168.95369,"us",{"aeroway":"aerodrome"}],
+["w249169550",65.62302,-168.0948,"us",{"name":"Wales Airport","aeroway":"aerodrome","icao":"PAIW","iata":"WAA","aerodrome:type":"public","wikidata":"Q4479769"}],
+["w335841002",65.75741,-168.95138,"us",{"name":"IRA Building","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"community","addr:city":"Diomede","addr:postcode":"99762"}]]

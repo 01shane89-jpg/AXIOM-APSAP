@@ -2,13 +2,13 @@
 ["n1042095347",-21.99396,115.04817,"au",{"name":"Minderoo Station Airport","aeroway":"aerodrome"}],
 ["n1042095421",-21.21118,115.96096,"au",{"name":"Mardi Station Airport","aeroway":"aerodrome"}],
 ["n694077952",-21.66721,115.11124,"au",{"name":"Onslow Airport","aeroway":"aerodrome","icao":"YOLW","iata":"ONS","wikidata":"Q7094553"}],
-["w1183687121",-21.67152,115.11341,"au",{"aeroway":"aerodrome","icao":"YOLW","iata":"ONS"}],
-["w1184719753",-21.45964,115.01418,"au",{"name":"Thevenard Island Airport","aeroway":"aerodrome","icao":"YTHV"}],
+["w1183687121",-21.67163,115.11239,"au",{"aeroway":"aerodrome","icao":"YOLW","iata":"ONS"}],
+["w1184719753",-21.45963,115.01652,"au",{"name":"Thevenard Island Airport","aeroway":"aerodrome","icao":"YTHV"}],
 ["w1184719777",-21.47946,115.00818,"au",{"aeroway":"helipad"}],
 ["w1252947812",-21.78585,114.86419,"au",{"aeroway":"helipad"}],
 ["w1259031110",-21.44713,115.95241,"au",{"aeroway":"helipad"}],
 ["w1422258331",-20.65448,115.57705,"au",{"aeroway":"helipad"}],
-["w187088351",-21.92813,114.11993,"au",{"name":"Exmouth Hospital","amenity":"hospital","healthcare":"hospital","website":"https://www.exmouth.wa.gov.au/health-care.aspx"}],
+["w187088351",-21.9281,114.11999,"au",{"name":"Exmouth Hospital","amenity":"hospital","healthcare":"hospital","website":"https://www.exmouth.wa.gov.au/health-care.aspx"}],
 ["w187088363",-21.92785,114.11965,"au",{"aeroway":"helipad"}],
-["w242803277",-21.64329,115.1152,"au",{"name":"Onslow Hospital","amenity":"hospital","healthcare":"hospital","wikidata":"Q81123298"}],
-["w319943846",-20.86139,115.4065,"au",{"name":"Barrow Island Airport","aeroway":"aerodrome","icao":"YBWX","iata":"BWB","wikidata":"Q4863892"}]]
+["w242803277",-21.64331,115.11522,"au",{"name":"Onslow Hospital","amenity":"hospital","healthcare":"hospital","wikidata":"Q81123298"}],
+["w319943846",-20.86091,115.40673,"au",{"name":"Barrow Island Airport","aeroway":"aerodrome","icao":"YBWX","iata":"BWB","wikidata":"Q4863892"}]]

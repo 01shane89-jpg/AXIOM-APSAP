@@ -1,0 +1,12 @@
+[["n12861907852",60.52552,-145.69019,"us",{"aeroway":"helipad"}],
+["n369143937",61.58335,-144.4322,"us",{"name":"Chitina Airport","aeroway":"aerodrome","iata":"CXC","wikidata":"Q49745586"}],
+["n369143971",61.94786,-145.30407,"us",{"name":"Copper Center 2 Airport","aeroway":"aerodrome","iata":"CZC","wikidata":"Q1657420"}],
+["n369144796",61.66151,-145.18114,"us",{"name":"Tonsina-Upper Airport","aeroway":"aerodrome"}],
+["w1251569161",60.49622,-145.48063,"us",{"aeroway":"helipad"}],
+["w304718963",60.49175,-145.47389,"us",{"name":"Merle K. (Mudhole) Smith Airport","operator":"State of Alaska DOT&PF","aeroway":"aerodrome","icao":"PACV","iata":"CDV","aerodrome:type":"public","wikidata":"Q652306"}],
+["w408013494",60.54052,-145.75005,"us",{"aeroway":"helipad","surface":"concrete"}],
+["w408034626",60.54375,-145.72519,"us",{"name":"Cordova Municipal Airport","operator":"State of Alaska","aeroway":"aerodrome","icao":"KCKU","iata":"CKU","wikidata":"Q1658244"}],
+["w580287248",60.54092,-145.75065,"us",{"name":"Cordova Community Medical Center","amenity":"hospital","healthcare":"hospital","emergency":"yes","beds":"23","phone":"+1 907 424 8000","website":"https://www.cdvcmc.com/","addr:housenumber":"602","addr:street":"Chase Avenue","addr:city":"Cordova","addr:postcode":"99574","opening_hours":"24/7"}],
+["w690882877",60.54257,-145.75748,"us",{"name":"Ilanka Community Health Center","amenity":"clinic","healthcare":"clinic","contact:phone":"+1 907 4243622","website":"http://nveyak.com/ilanka-community-health-center/","addr:housenumber":"705","addr:street":"Second Street","addr:city":"Cordova","addr:postcode":"99574"}],
+["w758452970",61.17719,-145.68631,"us",{"name":"Thompson Pass Airport","aeroway":"aerodrome","wikidata":"Q49751432"}],
+["w804082164",60.58013,-145.71785,"us",{"aeroway":"helipad"}]]

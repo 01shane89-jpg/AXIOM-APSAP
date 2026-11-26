@@ -1,3 +1,7 @@
 [["n1042024216",59.77498,-136.59664,"ca",{"name":"Mule Creek Airport","aeroway":"aerodrome"}],
+["n14334189331",59.40374,-136.00848,"us",{"name":"Airkat Airpark","aeroway":"aerodrome","aerodrome:type":"private"}],
 ["n2460615176",59.61215,-136.49045,"ca",{"aeroway":"helipad"}],
-["w636722596",59.77414,-136.59629,"ca",{"name":"Mule Creek Airport","aeroway":"aerodrome"}]]
+["n369144326",58.1952,-136.3474,"us",{"name":"Elfin Cove Seaplane Base","operator":"State of Alaska DOT&PF","aeroway":"aerodrome","icao":"PAEL","iata":"ELV","wikidata":"Q4531357"}],
+["n4817364069",59.43663,-136.23021,"us",{"name":"35 Mile Lodge Heliport","aeroway":"helipad","surface":"gravel","aerodrome:type":"private","wikidata":"Q61670952"}],
+["w636722596",59.77414,-136.59629,"ca",{"name":"Mule Creek Airport","aeroway":"aerodrome"}],
+["w694786412",58.19931,-136.64006,"us",{"name":"Cape Spencer Coast Guard Heliport","operator":"U.S. Coast Guard","aeroway":"helipad","icao":"PACA","surface":"wood","wikidata":"Q61670871"}]]
