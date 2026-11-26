@@ -124,7 +124,8 @@ t("a radioactive bomb made into a nuclear one is rejected", () => {
 // 2026-11-19, Russian aircraft near Japan, Korea and Taiwan: real output from the stored index
 t("an intrusion turned into an attack, and an intercept into a rescue, are rejected", () => {
   assert.match(mtSuspect("APEC前夕俄軍機侵擾日韓台 國防部譴責批威脅區域穩定", "Russian military aircraft attacked Japan and Korea on the eve of APEC", now, "zh"), /intrusion/);
-  assert.match(termMissing("風強浪大仍闖金門！中國海警4船編隊侵擾 海巡2小時全數驅離", "Four Chinese police boats attacked, two hours of patrols and all were driven out"), /intrusion/);
+  assert.match(termMissing("風強浪大仍闖金門！中國海警4船編隊侵擾 海巡2小時全數驅離", "Four Chinese police boats attacked, two hours of patrols and all were driven out"), /intrusion|Coast Guard/);
+  assert.match(termMissing("風強浪大仍闖金門！中國海警4船編隊侵擾 海巡2小時全數驅離", "Four Chinese police boats attacked; the Coast Guard drove all of them out in two hours"), /intrusion/);
   assert.match(termMissing("リトアニアでドローン侵入、警報発令", "NATO aircraft take off from Lithuania after drone attack"), /intrusion/);
   assert.equal(termMissing("APEC前夕俄軍機侵擾日韓台", "Russian military aircraft harass Japan, South Korea and Taiwan on the eve of APEC"), "");
   assert.equal(termMissing("共機侵擾後發射飛彈", "Chinese aircraft intrude, then fire missiles in an attack drill"), "", "the original names an attack word");
@@ -185,5 +186,13 @@ t("核搭載 stays nuclear-armed, not nuclear-powered (Jiji, 2026-11-24)", () =>
   assert.match(termMissing("ロシアが年内に核弾頭搭載の衛星打ち上げ計画か", "Russia plans to launch a nuclear-powered satellite this year"), /nuclear-armed/);
   assert.equal(termMissing("ロシアが年内に核弾頭搭載の衛星打ち上げ計画か", "Russia plans to launch a satellite carrying nuclear warheads this year"), "");
   assert.equal(protectTerms(jiji), "ロシアが nuclear-armed 衛星計画か 年内打ち上げも");
+});
+t("九合一 and 海巡 are kept (蕃新聞, 2026-11-26)", () => {
+  const o = "九合一選舉前強化國境維安 中部海巡陸海空聯手大規模掃蕩";
+  assert.match(termMissing(o, "Large-scale joint sweep by the Central Sea, Land and Air Forces to strengthen border security before the elections of September 1"), /nine-in-one|Coast Guard/);
+  assert.equal(termMissing(o, "Before the nine-in-one local elections, the central Coast Guard and land, sea and air units sweep to tighten border security"), "");
+  assert.equal(protectTerms(o), "nine-in-one local 選舉前強化國境維安 中部 Coast Guard 陸海空聯手大規模掃蕩");
+  assert.match(termMissing("中國海警船2度侵擾金門水域 海巡驅離", "Chinese ships enter Kinmen waters twice; the Navy drives them off"), /Coast Guard/);
+  assert.equal(termMissing("中國海警船2度侵擾金門水域 海巡驅離", "Chinese coast guard ships enter Kinmen waters twice; Taiwan's Coast Guard drives them off"), "");
 });
 console.log(ok + " passed");
