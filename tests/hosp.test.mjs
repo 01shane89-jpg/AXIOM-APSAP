@@ -202,6 +202,10 @@ ok(ob && !ob.ok && /registry offline/.test(ob.err) && of && of.ok && of.n === 1 
   ok(by["11645"].osm === "n2" && /km apart; OpenStreetMap used/.test(by["11645"].coord_note || "") && doc.stats.coord_conflict === 1, "registry: when the MOPH location is more than 5 km from the named OpenStreetMap entry, the entry is kept and the gap noted");
   ok(by["11645"].programs.length === 1 && by["11645"].programs[0].caps.join() === "spec.stroke" && doc.stats.programmes_unmatched === 1, "registry: a certificate joins the one hospital of that name and province; others are counted as unmatched");
   ok(R.key("คณะแพทยศาสตร์โรงพยาบาลรามาธิบดี") === "รามาธิบดี" && R.ekey("Bangkok 8 Hospital") === "bangkok8" && R.ekey("Bangkok Hospital") === "bangkok", "registry: name keys drop generic words, never digits");
+  ok(R.lic("โรงพยาบาลทั่วไปขนาดกลางกรุงเทพหัวหิน") === "กรุงเทพหัวหิน" && R.key(R.lic("โรงพยาบาลกรุงเทพเมืองราช โรงพยาบาลทั่วไปขนาดใหญ่")) === "กรุงเทพเมืองราช" &&
+    R.lic("สถานพยาบาลรวมแพทย์ทุ่งสง") === "รวมแพทย์ทุ่งสง" && R.lic("โรงพยาบาลศิริราช") === "โรงพยาบาลศิริราช", "registry: a private hospital's licence class is left out of one more short key");
+  ok(R.osmEntry("w9", 12.93, 100.88, { name: "โรงพยาบาลพัทยาเมโมเรียล", "addr:province": "Chonburi" }).prov === "" &&
+    R.osmEntry("w8", 12.93, 100.88, { name: "x", "addr:province": "จังหวัดชลบุรี" }).prov === "ชลบุรี", "registry: a province mapped in English counts as not given (taken from the nearest MOPH facility), never as another province");
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
