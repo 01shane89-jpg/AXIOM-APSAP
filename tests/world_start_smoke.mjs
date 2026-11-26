@@ -68,13 +68,13 @@ async function open(hash, opt = {}) {
   ok(await page.evaluate(() => location.hash === "#fr/timeline" && window.TSAP.country === "fr"), "a returning user opens on the last country viewed (France)");
   await ctx.close();
 }
-// 2b. a device that has used OSAP before (a setting saved) but never saved a country stays on Thailand, where it always opened
+// 2b. a device that has used OSAP before (a setting saved) but never saved a country opens World too (Shane 2026-11-26)
 {
   const ctx = await browser.newContext({ serviceWorkers: "block" }), page = await ctx.newPage();
   await page.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   await page.addInitScript(() => { if (!sessionStorage.getItem("osap-today")) localStorage.setItem("osap-theme", JSON.stringify("dark")); });
   await page.goto(base); await page.waitForFunction(() => window.TSAP, null, { timeout: 30000 }).catch(() => {});
-  ok(await page.evaluate(() => window.TSAP.country === "th"), "a device that used OSAP before, with no country saved, stays on Thailand");
+  ok(await page.evaluate(() => window.TSAP.country === "ww"), "a device that used OSAP before, with no country saved, opens World");
   await ctx.close();
 }
 // 3. a link that names a country keeps it; an old bare "#tab" link is Thailand

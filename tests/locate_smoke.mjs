@@ -36,7 +36,7 @@ const cc = (p) => p.evaluate(() => window.TSAP && window.TSAP.country);
 {
   const { ctx, errors } = await ctxWith({ latitude: -33.8688, longitude: 151.2093 });
   const p = await ctx.newPage(); await p.goto(base); await settle(p);
-  ok(await cc(p) === "th", "off: opens the default country (th)");
+  ok(await cc(p) === "ww", "off: opens the default area (World; Thailand is no longer the default, 2026-11-26)");
   ok(await p.evaluate(() => !!document.querySelector(".locctl button") && !!document.querySelector(".tdloc")), "off: map button and Today button present");
   ok(await p.evaluate(() => !document.querySelector(".leaflet-mylocpane-pane") || !document.querySelector(".leaflet-mylocpane-pane").children.length), "off: no dot drawn");
   ok(errors.length === 0, "off: no page errors " + errors.join(" | "));
@@ -103,7 +103,7 @@ const cc = (p) => p.evaluate(() => window.TSAP && window.TSAP.country);
   const { ctx, errors, urls } = await ctxWith({ latitude: 1, longitude: 1 }, false);
   const p = await ctx.newPage(); await p.goto(base); await settle(p);
   await p.click(".tdloc"); await settle(p, 2500);
-  ok(await cc(p) === "th", "denied: country unchanged");
+  ok(await cc(p) === "ww", "denied: country unchanged (World)");
   ok(await p.evaluate(() => localStorage.getItem("osap-loc")) === null, "denied: stays off");
   const note = await p.evaluate(() => document.getElementById("locnote")?.textContent || "");
   ok(/blocked/.test(note), "denied: note shown: " + note);
