@@ -9,11 +9,11 @@
 ["n1042094996",-15.18319,144.34665,"au",{"name":"New Laura Airport","aeroway":"aerodrome","icao":"YLRS","iata":"LUT","surface":"unpaved","wikidata":"Q21924066"}],
 ["n5106547806",-15.49071,145.26414,"au",{"name":"Mount Cook Helipad","aeroway":"helipad"}],
 ["w1075379128",-14.9673,145.30859,"au",{"aeroway":"helipad"}],
-["w1156154408",-14.67277,145.45394,"au",{"name":"Lizard Island Airport","operator":"Lizard Island Resort Pty Ltd","aeroway":"aerodrome","icao":"YLZI","iata":"LZR","wikidata":"Q6660515"}],
+["w1156154408",-14.67281,145.45399,"au",{"name":"Lizard Island Airport","operator":"Lizard Island Resort Pty Ltd","aeroway":"aerodrome","icao":"YLZI","iata":"LZR","wikidata":"Q6660515"}],
 ["w1231699473",-15.47768,145.25015,"au",{"aeroway":"helipad"}],
-["w1376939609",-15.2929,145.10739,"au",{"aeroway":"helipad"}],
-["w1530021748",-14.97067,145.31138,"au",{"name":"Cape Flattery Airport","aeroway":"aerodrome","icao":"YCFL","iata":"CQP","wikidata":"Q21924147"}],
-["w1552444400",-15.29434,145.10617,"au",{"name":"Hope Vale Primary Health Care Centre","amenity":"hospital","healthcare":"hospital","operator":"Queensland Health","operator:type":"government","website":"https://www.torres-cape.health.qld.gov.au/hospitals-and-health-centres/hope-vale-primary-health-care-centre","addr:street":"Aerodrome Road","addr:postcode":"4895"}],
-["w280076195",-15.56133,144.45197,"au",{"name":"Laura Airport","aeroway":"aerodrome","icao":"YLRA","iata":"LUU","wikidata":"Q21924065"}],
-["w316384292",-15.47772,145.25038,"au",{"name":"Cooktown Multipurpose Health Service","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Torres and Cape Hospital and Health Service","operator:type":"government","phone":"+61 7 4043 0100","website":"https://www.torres-cape.health.qld.gov.au/hospitals-and-health-centres/cooktown-multipurpose-health-service","addr:housenumber":"48","addr:street":"Hope Street","addr:postcode":"4895"}],
-["w95284705",-15.44359,145.18228,"au",{"name":"Cooktown Airport","aeroway":"aerodrome","icao":"YCKN","iata":"CTN","wikidata":"Q1655144"}]]
+["w1376939609",-15.29294,145.10738,"au",{"aeroway":"helipad"}],
+["w1530021748",-14.97105,145.31176,"au",{"name":"Cape Flattery Airport","aeroway":"aerodrome","icao":"YCFL","iata":"CQP","wikidata":"Q21924147"}],
+["w1552444400",-15.29422,145.10618,"au",{"name":"Hope Vale Primary Health Care Centre","amenity":"hospital","healthcare":"hospital","operator":"Queensland Health","operator:type":"government","website":"https://www.torres-cape.health.qld.gov.au/hospitals-and-health-centres/hope-vale-primary-health-care-centre","addr:street":"Aerodrome Road","addr:postcode":"4895"}],
+["w280076195",-15.55884,144.4503,"au",{"name":"Laura Airport","aeroway":"aerodrome","icao":"YLRA","iata":"LUU","wikidata":"Q21924065"}],
+["w316384292",-15.47772,145.25039,"au",{"name":"Cooktown Multipurpose Health Service","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Torres and Cape Hospital and Health Service","operator:type":"government","phone":"+61 7 4043 0100","website":"https://www.torres-cape.health.qld.gov.au/hospitals-and-health-centres/cooktown-multipurpose-health-service","addr:housenumber":"48","addr:street":"Hope Street","addr:postcode":"4895"}],
+["w95284705",-15.44333,145.18195,"au",{"name":"Cooktown Airport","aeroway":"aerodrome","icao":"YCKN","iata":"CTN","wikidata":"Q1655144"}]]

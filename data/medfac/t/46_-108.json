@@ -1,0 +1,13 @@
+[["n369147667",47.13722,-106.48865,"us",{"name":"Pluhar Airport","aeroway":"aerodrome","wikidata":"Q49749563"}],
+["n369147705",46.13304,-107.55119,"us",{"name":"Ruff Airport","aeroway":"aerodrome","wikidata":"Q49750328"}],
+["n369148398",47.10396,-107.50152,"us",{"name":"Sand Springs Strip","operator":"Sand Springs Store, LLC","operator:type":"private_for_profit","aeroway":"aerodrome","wikidata":"Q61674904"}],
+["n369148571",46.29378,-107.19791,"us",{"name":"Hysham Airport","operator":"Treasure County","operator:type":"public","aeroway":"aerodrome","wikidata":"Q49746982"}],
+["n369148577",47.83497,-106.47349,"us",{"name":"Hoolie Airport","aeroway":"aerodrome","wikidata":"Q49746899"}],
+["n369148589",47.76461,-106.19239,"us",{"name":"Nelson Airport","aeroway":"aerodrome","wikidata":"Q49748593"}],
+["w1392204181",46.27084,-106.62135,"us",{"name":"Tillitt Field","operator":"Rosebud County","operator:type":"public","aeroway":"aerodrome","wikidata":"Q61674794"}],
+["w192402372",47.32858,-106.95164,"us",{"name":"Jordan Airport","operator":"Garfield County","operator:type":"public","aeroway":"aerodrome","icao":"KJDN","iata":"JDN","wikidata":"Q14704571"}],
+["w192406859",47.31888,-106.91126,"us",{"name":"Garfield County Health Center","amenity":"clinic","healthcare":"clinic","operator":"Garfield County","operator:type":"government","phone":"+1 406 557 2500","website":"http://www.garfieldco.us/garfield-county-health-center.html","addr:housenumber":"332","addr:street":"Leavitt Avenue","addr:city":"Jordan","addr:postcode":"59337","opening_hours":"24/7"}],
+["w334070000",46.26683,-106.67666,"us",{"name":"Rosebud County Child and Family Services","amenity":"clinic","addr:housenumber":"121","addr:street":"North 11th Avenue","addr:city":"Forsyth","addr:postcode":"59327"}],
+["w499989056",46.27165,-106.67015,"us",{"name":"Rosebud Health Care Center","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+1 406 346 2161","website":"https://www.rosebudhcc.org/","addr:housenumber":"383","addr:street":"North 17th Avenue","addr:city":"Forsyth","addr:postcode":"59327","opening_hours":"24/7"}],
+["w761122842",46.26666,-106.677,"us",{"name":"Eastern Montana Mental Health","amenity":"clinic","website":"https://www.rehab.com/montana/forsyth","addr:housenumber":"1093","addr:street":"Main Street","addr:city":"Forsyth","addr:postcode":"59327"}],
+["w844470028",46.27247,-106.6706,"us",{"aeroway":"helipad","surface":"concrete"}]]

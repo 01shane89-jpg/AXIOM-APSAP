@@ -15,4 +15,6 @@
 ["n14242345356",-33.7306,142.3253,"au",{"aeroway":"aerodrome"}],
 ["n14242345359",-33.80753,142.00566,"au",{"aeroway":"aerodrome"}],
 ["n14242345372",-33.07489,142.03006,"au",{"aeroway":"aerodrome"}],
-["w1019853503",-32.39032,142.41501,"au",{"name":"Menindee Health Service","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"Perry Street","addr:postcode":"2879"}]]
+["n14368669409",-33.83773,142.65147,"au",{"name":"Petro Station Airstrip","aeroway":"aerodrome","icao":"YPET"}],
+["n14371969838",-33.37833,142.13359,"au",{"name":"Manilla Station Airstrip","aeroway":"aerodrome","icao":"YMAS"}],
+["w1019853503",-32.39049,142.41492,"au",{"name":"Menindee Health Service","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"Perry Street","addr:postcode":"2879"}]]

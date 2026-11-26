@@ -13,6 +13,6 @@
 ["n3814798764",-17.54455,128.30763,"au",{"aeroway":"helipad"}],
 ["n4647694786",-16.62331,128.56301,"au",{"name":"Lissadell","aeroway":"aerodrome","icao":"YLDL","iata":"LLL","wikidata":"Q21957696"}],
 ["n4647700707",-16.04891,129.26436,"au",{"name":"Newry","aeroway":"aerodrome","iata":"NRY","wikidata":"Q21957743"}],
-["w1282655965",-16.63591,128.45021,"au",{"name":"Argyle Airport","aeroway":"aerodrome","icao":"YARG","iata":"GYL","aerodrome:type":"private","wikidata":"Q4068770"}],
-["w981913692",-16.42743,129.6199,"au",{"name":"Amanbidji Health Centre","amenity":"clinic","healthcare":"clinic","operator":"Katherine West Health Board","operator:type":"community"}],
-["w981913693",-16.43017,129.61462,"au",{"name":"Kildurk Airport","aeroway":"aerodrome"}]]
+["w1282655965",-16.63033,128.45249,"au",{"name":"Argyle Airport","aeroway":"aerodrome","icao":"YARG","iata":"GYL","aerodrome:type":"private","wikidata":"Q4068770"}],
+["w981913692",-16.42742,129.61989,"au",{"name":"Amanbidji Health Centre","amenity":"clinic","healthcare":"clinic","operator":"Katherine West Health Board","operator:type":"community"}],
+["w981913693",-16.43062,129.61504,"au",{"name":"Kildurk Airport","aeroway":"aerodrome"}]]

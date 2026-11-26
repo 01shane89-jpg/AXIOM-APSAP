@@ -10,6 +10,6 @@
 ["n1042100142",-29.57664,134.53645,"au",{"name":"Wirrida Siding Airport","aeroway":"aerodrome"}],
 ["n4340946396",-29.99292,135.39752,"au",{"name":"The Twins Station","aeroway":"aerodrome"}],
 ["n9408953489",-28.2699,134.14953,"au",{"name":"Matheson Bore Airstrip","aeroway":"aerodrome"}],
-["w1155955976",-29.7165,135.52495,"au",{"name":"Prominent Hill Airport","aeroway":"aerodrome","icao":"YPMH","iata":"PXH"}],
-["w1303808772",-29.00506,134.76227,"au",{"name":"Coober Pedy Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"SA Health","addr:housenumber":"Lot 89","addr:street":"Hospital Road","wikidata":"Q81095735"}],
-["w826524608",-29.04012,134.71989,"au",{"name":"Coober Pedy Airport","aeroway":"aerodrome","icao":"YCBP","iata":"CPD","wikidata":"Q14316"}]]
+["w1155955976",-29.7146,135.52471,"au",{"name":"Prominent Hill Airport","aeroway":"aerodrome","icao":"YPMH","iata":"PXH"}],
+["w1303808772",-29.00502,134.76233,"au",{"name":"Coober Pedy Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"SA Health","addr:housenumber":"Lot 89","addr:street":"Hospital Road","wikidata":"Q81095735"}],
+["w826524608",-29.04128,134.72259,"au",{"name":"Coober Pedy Airport","aeroway":"aerodrome","icao":"YCBP","iata":"CPD","wikidata":"Q14316"}]]

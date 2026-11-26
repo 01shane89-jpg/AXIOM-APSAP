@@ -3,6 +3,7 @@
 ["n12988527098",28.02551,-105.29378,"mx",{"name":"Hospital y Clínica de Especialidades Sta. Martha","healthcare":"clinic","phone":"+52 639 284 6828","website":"https://www.facebook.com/profile.php?id=61551603461970","addr:housenumber":"52","addr:street":"Avenida Séptima"}],
 ["n13174756978",28.19394,-105.4804,"mx",{"name":"Clínica Plateros","amenity":"clinic","healthcare":"clinic"}],
 ["n3643385013",28.84994,-105.87872,"mx",{"name":"Escuela de Aviación Base","aeroway":"aerodrome","military":"airfield"}],
+["n369121990",29.89336,-104.26852,"us",{"name":"Cibolo Creek Ranch Airport","aeroway":"aerodrome","wikidata":"Q35249540"}],
 ["n5357855840",28.02862,-105.29438,"mx",{"name":"IMSS","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:housenumber":"123","addr:street":"Calle Cristóbal Colón","addr:city":"Saucillo","addr:postcode":"33620"}],
 ["n5357855862",28.02897,-105.29875,"mx",{"name":"Cruz Roja","amenity":"hospital","healthcare":"hospital","operator":"ciudadania","addr:housenumber":"123","addr:street":"Calle Cristóbal Colón","addr:city":"saucillo","addr:postcode":"33620"}],
 ["n5457683355",28.60563,-105.87448,"mx",{"name":"Unidad Medica Familiar","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"IMMS","operator:type":"government_facility-public"}],
@@ -16,6 +17,7 @@
 ["w1446528485",29.10086,-105.10996,"mx",{"healthcare":"clinic"}],
 ["w193411837",28.70244,-105.96285,"mx",{"name":"Aeropuerto Internacional General Roberto Fierro Villalobos","name:en":"General Roberto Fierro Villalobos International Airport","operator":"Grupo Aeroporturio Centro Norte (OMA)","website":"https://www.oma.aero/es/aeropuertos/chihuahua/","aeroway":"aerodrome","icao":"MMCU","iata":"CUU","aerodrome:type":"military/public","wikidata":"Q732278"}],
 ["w193411911",28.70073,-105.96999,"mx",{"aeroway":"helipad"}],
+["w203685767",29.56415,-104.3713,"us",{"name":"Presidio Medical Center","amenity":"clinic","healthcare":"clinic","addr:housenumber":"400","addr:street":"North Erma Avenue","addr:city":"Presidio","addr:postcode":"79845"}],
 ["w544414129",28.19558,-105.47697,"mx",{"name":"Hospital Regional Delicias","amenity":"hospital","healthcare":"hospital"}],
 ["w544414130",28.19603,-105.47578,"mx",{"name":"Clínica ISSSTE","amenity":"clinic","healthcare":"clinic"}],
 ["w549528424",29.55949,-104.39917,"mx",{"name":"Instituto Mexicano del Seguro Social","amenity":"hospital","healthcare":"hospital","operator":"Instituto Mexicano del Seguro Social","operator:type":"government","addr:city":"Ojinaga"}],
@@ -23,4 +25,5 @@
 ["w656707660",28.7071,-105.96769,"mx",{"aeroway":"helipad"}],
 ["w656707661",28.70685,-105.96785,"mx",{"aeroway":"helipad"}],
 ["w656707662",28.70682,-105.9676,"mx",{"aeroway":"helipad"}],
-["w656707663",28.69975,-105.97171,"mx",{"aeroway":"helipad"}]]
+["w656707663",28.69975,-105.97171,"mx",{"aeroway":"helipad"}],
+["w710302702",29.63764,-104.36159,"us",{"name":"Presidio Lely International Airport","aeroway":"aerodrome","icao":"KPRS","aerodrome:type":"public","wikidata":"Q35290802"}]]

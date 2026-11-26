@@ -2,7 +2,6 @@
 ["n1042093202",-30.28866,134.52919,"au",{"name":"Birthday Siding Airport","aeroway":"aerodrome"}],
 ["n1042093441",-30.1867,134.903,"au",{"name":"Bulgunnia Airport","aeroway":"aerodrome"}],
 ["n1042093494",-31.05315,135.86447,"au",{"name":"Coondambo Airport","aeroway":"aerodrome"}],
-["n1042093518",-31.7,134.83299,"au",{"name":"Childra Airport","aeroway":"aerodrome"}],
 ["n1042093858",-30.98209,135.77916,"au",{"name":"Glendambo Airport","aeroway":"aerodrome"}],
 ["n1042094334",-30.91408,135.30466,"au",{"name":"Kingoonya Airport","aeroway":"aerodrome"}],
 ["n1042094344",-31.2917,135.242,"au",{"name":"Kokatha Airport","aeroway":"aerodrome"}],
@@ -15,4 +14,4 @@
 ["n1042099456",-30.58844,135.70217,"au",{"name":"Mount Vivian Airport","aeroway":"aerodrome"}],
 ["n1042099995",-30.7667,134.73,"au",{"name":"Wilgena Airport","aeroway":"aerodrome"}],
 ["w1012945383",-30.51377,135.96743,"au",{"aeroway":"helipad"}],
-["w493146070",-30.20929,135.2311,"au",{"name":"Royal Flying Doctor Service Emergency Airstrip Stuart Highway","aeroway":"aerodrome","military":"airfield"}]]
+["w493146070",-30.20937,135.23122,"au",{"name":"Royal Flying Doctor Service Emergency Airstrip Stuart Highway","aeroway":"aerodrome","military":"airfield"}]]

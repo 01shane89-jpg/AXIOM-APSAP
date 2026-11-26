@@ -1,6 +1,7 @@
 // Headless check of the Medical plan when OpenStreetMap does not answer (Shane 2026-10-20: a plan in Louisiana with Thailand
 // selected read "RED: blocking error · still reading" for five minutes with nothing moving, and offered Thailand's 1669).
-// Overpass never answers here; the U.S. is outside OSAP's stored copy. Checks: the plan is the U.S. plan, a spinner says it is
+// Overpass never answers here; the U.S. is taken out of OSAP's stored copy (data/medfac/index.json is served without it, since
+// the U.S. is stored now), so the plan must ask live and fail cleanly. Checks: the plan is the U.S. plan, a spinner says it is
 // still reading (no red error while reading), and the hospital lookup ends with a clear failure within 75 s.
 // Run from the repo root: node tests/medplan_hang_smoke.mjs   (needs the playwright package and Chromium)
 import { createServer } from "node:http";
@@ -35,6 +36,11 @@ async function open(o) {
   const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1400, height: 900 } });
   const errors = [], calls = { origins: [], iso: 0, nearest: 0, alt: [] };
   const J = (r, b) => r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(b) });
+  /* the stored copy without the U.S., so this point has nothing stored and depends on the hanging live lookup */
+  await ctx.route(/\/data\/medfac\/index\.json/, async (r) => {
+    const ix = JSON.parse(await readFile(join(root, "data/medfac/index.json"), "utf8")); delete ix.countries.us; return J(r, ix);
+  });
+  await ctx.route(/\/data\/medfac\/x\/us\.json/, (r) => r.fulfill({ status: 404, body: "" }));
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => {
     const u = r.request().url();
     if (/overpass|interpreter/.test(u)) { calls.op = (calls.op || 0) + 1; return; } if (0) return J(r, /air_rescue_service|"country"="US"/.test(decodeURIComponent(r.request().postData() || "")) ? { elements: [] } : OSM);

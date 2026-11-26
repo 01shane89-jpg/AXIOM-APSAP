@@ -1,0 +1,13 @@
+[["n1042016740",64.46676,-144.91976,"us",{"name":"Pogo Mine Airstrip","aeroway":"aerodrome","wikidata":"Q49749584"}],
+["n1042019557",64.13066,-145.80475,"us",{"name":"Delta Daves Airport","aeroway":"aerodrome","wikidata":"Q49745901"}],
+["n1042134191",64.02815,-145.67893,"us",{"name":"Trophy Lodge Heliport","aeroway":"helipad"}],
+["n11900551957",64.03464,-145.52088,"us",{"aeroway":"aerodrome"}],
+["n369144347",64.04888,-145.71719,"us",{"name":"Delta Junction Airport","operator":"City of Delta Junction","phone":"+1 907 460 6688","aeroway":"aerodrome","wikidata":"Q1655193"}],
+["n369144365",64.00201,-145.50249,"us",{"name":"Delta Airmotive Airport","aeroway":"aerodrome","wikidata":"Q49750209"}],
+["w1093471825",64.13751,-145.82917,"us",{"name":"Arctic Angel Airport","aeroway":"aerodrome","aerodrome:type":"private","wikidata":"Q49744937"}],
+["w1193290840",65.82788,-144.07446,"us",{"name":"Circle City Airport","name:en":"Circle City Airport","operator":"State of Alaska DOT&PF","aeroway":"aerodrome","icao":"PACR","iata":"IRC","wikidata":"Q3275353"}],
+["w1509235851",64.00217,-145.59294,"us",{"name":"Hilton Field","aeroway":"aerodrome"}],
+["w355125079",65.57366,-144.7779,"us",{"name":"Central Airport","name:en":"Central Airport","operator":"State of Alaska DOT&PF","aeroway":"aerodrome","icao":"PACE","iata":"CEM","wikidata":"Q1961366"}],
+["w406466840",65.48584,-144.61613,"us",{"name":"Circle Hot Springs Airport","aeroway":"aerodrome","iata":"CHP","wikidata":"Q3274722"}],
+["w627010919",64.05531,-145.731,"us",{"name":"Family Medical Center","amenity":"clinic","healthcare":"clinic","phone":"+1 907-895-5100","website":"https://www.fmcak.com/","addr:housenumber":"2360","addr:street":"Remington Road","addr:city":"Delta Junction","addr:postcode":"99737","opening_hours":"Mo-Th 08:00-17:00; Fr 08:00-12:00"}],
+["w757490002",64.03953,-145.73997,"us",{"name":"Buffalo Row Heliport","aeroway":"helipad"}]]

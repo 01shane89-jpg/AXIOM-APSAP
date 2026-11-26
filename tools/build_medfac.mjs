@@ -5,7 +5,8 @@
 // For each country (the 28 hand-researched first, then every other in data/basemap/world-countries.js) one Overpass query by
 // the country's ISO 3166-1 boundary reads hospitals, clinics, helipads, heliports, airfields and ambulance and air rescue
 // stations, keeping only the tags the plan reads. A country too big for one answer is asked in bounding-box parts (still
-// clipped to its boundary). Elements are written into 2-degree tiles shared by all countries:
+// clipped to its boundary); when Overpass gives no whole answer (and always for the United States) the same tags are read
+// through Geofabrik's Postpass SQL API instead (fetchPostpass). Elements are written into 2-degree tiles shared by all countries:
 //   data/medfac/t/<lat>_<lon>.json   [["n123", lat, lon, "th", {tags}], ...]   (lat, lon: the tile's south-west corner)
 //   data/medfac/index.json          { v, tile, countries: { th: { at, base, n: {h,c,l,e}, x: {b,d,r}, tiles: [...] } }, tiles: { key: count } }
 // The same query also reads blood banks and donation centres, hyperbaric (dive decompression) chambers and air rescue bases;
@@ -19,6 +20,7 @@
 // pharmacies and the like) are left out.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
+import { ccsAt } from "./geo_cc.mjs";
 
 const OUT = process.env.MEDFAC_OUT || "data/medfac", TDIR = join(OUT, "t"), XDIR = join(OUT, "x"), TILE = 2;
 const BUDGET = (+process.env.MEDFAC_BUDGET_MIN || 45) * 60000, MAX_AGE = (+process.env.MEDFAC_MAX_AGE_D || 28) * 864e5;
@@ -112,6 +114,64 @@ async function fetchCountry(c) {
   return part(null, 0);
 }
 
+/* ---------- Postpass (Geofabrik's keyless SQL API over a live OpenStreetMap database; tools/build_infra.mjs reads it too) ----------
+   Used when Overpass gives no whole answer for a country, and first for the United States, which no public Overpass server has
+   answered on any daily run (whole country, bounding-box parts or state by state). The same tags are read, clipped to the same
+   ISO 3166-1 boundary, in 5-degree tiles; every tile must answer or nothing for the country is written. */
+const POSTPASS = "https://postpass.geofabrik.de/api/interpreter", PP_FIRST = new Set(["us"]), PP_TILE = 5;
+const ppWhere = "(p.tags->>'amenity' IN ('hospital','clinic','blood_bank') OR p.tags->>'healthcare' IN ('hospital','clinic','blood_bank','blood_donation')" +
+  " OR p.tags->>'aeroway' IN ('helipad','heliport','aerodrome') OR p.tags->>'emergency' IN ('ambulance_station','air_rescue_service')" +
+  " OR p.tags->>'healthcare:speciality' ~* '(hyperbaric|diving|decompression)' OR (p.tags ? 'healthcare' AND p.tags->>'name' ~* '(hyperbaric|decompression|recompression)'))";
+async function pp(sql) {
+  let err;
+  for (let k = 0; k < 3; k++) {
+    try {
+      const j = await post(POSTPASS, sql, 300000);
+      if (!Array.isArray(j.features)) throw new Error("Postpass: no features");
+      return j;
+    } catch (e) { err = e; if (DEBUG) log("    postpass", e.message.slice(0, 120)); await sleep(15000 * (k + 1)); }
+  }
+  throw err;
+}
+/* Which country a point is in: OSAP's own outlines (tools/geo_cc.mjs) settle points well inside one country, and points on its
+   coast or offshore when that country's outline is the nearest. A point within about 15 km of another country's outline is asked
+   of the OpenStreetMap boundary itself, a few hundred at a time (the boundary test is slow, so only those points take it). */
+function side(cc, lat, lon) {
+  const here = ccsAt(lat, lon, 0.5);
+  if (here[0] !== cc) return here.length ? "out" : "ask";
+  for (const [dy, dx] of [[0.15, 0], [-0.15, 0], [0, 0.15], [0, -0.15]]) { const o = ccsAt(lat + dy, lon + dx, 0)[0]; if (o && o !== cc) return "ask"; }
+  return "in";
+}
+async function fetchPostpass(c) {
+  const iso = c.id.toUpperCase(), bnd = `b.tags->>'ISO3166-1' = '${iso}' AND b.tags->>'admin_level' = '2'`;
+  /* (a country with no ISO 3166-1 boundary has already been turned away by Overpass, which answers that quickly) */
+  const [[s0, w0], [n0, e0]] = c.b, out = { els: [], base: null };
+  const el = (f) => { const q = f.properties || {}, g = f.geometry && f.geometry.coordinates;
+    return g ? { type: { N: "node", W: "way", R: "relation" }[q.osm_type] || "node", id: q.osm_id, lat: g[1], lon: g[0], tags: q.tags || {} } : null; };
+  let asked = 0, kept = 0;
+  for (let la = Math.floor(s0 / PP_TILE) * PP_TILE; la < n0; la += PP_TILE) for (let lo = Math.floor(w0 / PP_TILE) * PP_TILE; lo < e0; lo += PP_TILE) {
+    const env = `ST_MakeEnvelope(${lo}, ${la}, ${lo + PP_TILE}, ${la + PP_TILE}, 4326)`;
+    const j = await pp(`SELECT p.osm_type, p.osm_id, p.tags, ST_PointOnSurface(p.geom) AS geom FROM postpass_pointpolygon p WHERE ${ppWhere} AND p.geom && ${env}`);
+    out.base = out.base || (j.postpass_properties && j.postpass_properties.timestamp) || null;
+    const ask = [];
+    for (const f of j.features) { const e = el(f); if (!e) continue; const w = side(c.id, e.lat, e.lon); if (w === "in") { out.els.push(e); kept++; } else if (w === "ask") ask.push(e); }
+    for (let i = 0; i < ask.length; i += 300) {
+      const part = ask.slice(i, i + 300), ids = new Set(part.map((e) => e.type[0] + e.id));
+      const byType = (t) => part.filter((e) => e.type[0] === t).map((e) => e.id);
+      const idw = ["N", "W", "R"].map((T) => { const L = byType(T.toLowerCase()); return L.length ? `(p.osm_type = '${T}' AND p.osm_id IN (${L.join(",")}))` : ""; }).filter(Boolean).join(" OR ");
+      const k = await pp(`SELECT p.osm_type, p.osm_id, ST_PointOnSurface(p.geom) AS geom FROM postpass_pointpolygon p WHERE (${idw}) AND p.geom && ${env}` +
+        ` AND EXISTS (SELECT 1 FROM postpass_polygon b WHERE ${bnd} AND ST_Intersects(b.geom, p.geom))`);
+      const yes = new Set(k.features.map((f) => { const q = f.properties || {}; return String(q.osm_type || "").toLowerCase() + q.osm_id; }));
+      for (const e of part) if (ids.has(e.type[0] + e.id) && yes.has(e.type[0] + e.id)) { out.els.push(e); kept++; }
+      asked += part.length;
+    }
+    if (DEBUG) log("   ", la, lo, j.features.length, "read,", ask.length, "near a border");
+    await sleep(1000);
+  }
+  log(`  ${c.id}: Postpass ${kept} kept, ${asked} checked against the OpenStreetMap boundary`);
+  return out;
+}
+
 /* ---------- slimming ---------- */
 function slim(e, cc) {
   const t = e.tags || {}, lat = e.lat != null ? e.lat : e.center && e.center.lat, lon = e.lon != null ? e.lon : e.center && e.center.lon;
@@ -168,7 +228,13 @@ async function main() {
     if (Date.now() - T0 > BUDGET) { log("budget spent"); break; }
     const t0 = Date.now();
     try {
-      const r = await fetchCountry(c);
+      let r, via = "Overpass";
+      if (PP_FIRST.has(c.id)) { r = await fetchPostpass(c); via = "Postpass"; }
+      else try { r = await fetchCountry(c); } catch (e) {
+        if (/no boundary/.test(e.message)) throw e;
+        log(`  ${c.id}: Overpass failed (${e.message.slice(0, 100)}); asking Postpass`);
+        r = await fetchPostpass(c); via = "Postpass";
+      }
       const seen = new Set(), byTile = {};
       const n = { h: 0, c: 0, l: 0, e: 0 }, x = { b: 0, d: 0, r: 0 }, xrows = [];
       for (const e of r.els) {
@@ -188,10 +254,10 @@ async function main() {
       }
       xrows.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
       writeFileSync(join(XDIR, c.id + ".json"), "[" + xrows.map((q) => JSON.stringify(q)).join(",\n") + "]\n");
-      idx.countries[c.id] = { at: new Date().toISOString().slice(0, 19) + "Z", base: r.base || null, n, x, tiles: Object.keys(byTile).sort() };
+      idx.countries[c.id] = { at: new Date().toISOString().slice(0, 19) + "Z", base: r.base || null, via, n, x, tiles: Object.keys(byTile).sort() };
       writeFileSync(join(OUT, "index.json"), JSON.stringify(idx, null, 0) + "\n");
       done++;
-      log(`${c.id} ${c.name}: ${n.h} hospitals, ${n.c} clinics, ${n.l} landing sites, ${n.e} ambulance/air rescue, ${x.b} blood, ${x.d} chambers, ${Object.keys(byTile).length} tiles, ${Math.round((Date.now() - t0) / 1000)} s`);
+      log(`${c.id} ${c.name}: ${n.h} hospitals, ${n.c} clinics, ${n.l} landing sites, ${n.e} ambulance/air rescue, ${x.b} blood, ${x.d} chambers, ${Object.keys(byTile).length} tiles, ${Math.round((Date.now() - t0) / 1000)} s, via ${via}`);
     } catch (e) { failed.push(c.id); log(`${c.id} ${c.name}: FAILED ${e.message.slice(0, 200)}`); }
     await sleep(10000);
   }

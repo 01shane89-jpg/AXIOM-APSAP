@@ -1,0 +1,4 @@
+[["n369144505",60.37501,-166.26395,"us",{"name":"Mekoryuk Airport","website":"https://nfdc.faa.gov/nfdcApps/services/ajv5/airportDisplay.jsp?airportId=MYU","addr:street":"Mekoryuk Airport Road","addr:city":"Mekoryuk","addr:postcode":"99630","aeroway":"aerodrome","icao":"PAMY","iata":"MYU","wikidata":"Q650218"}],
+["w203423931",61.52699,-166.11255,"us",{"name":"Hooper Bay Sub Regional Clinic","amenity":"clinic","healthcare":"clinic"}],
+["w203423943",61.52475,-166.1478,"us",{"name":"Hooper Bay Airport","aeroway":"aerodrome","icao":"PAHP","iata":"HPB","wikidata":"Q3206872"}],
+["w203511219",61.78035,-166.0404,"us",{"name":"Cape Romanzof Long Range Radar Site Airport","aeroway":"aerodrome","icao":"PACZ","iata":"CZF","military":"airfield","wikidata":"Q3274341"}]]

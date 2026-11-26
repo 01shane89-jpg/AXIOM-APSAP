@@ -16,11 +16,13 @@
 ["n1042100020",-27.125,121.333,"au",{"name":"Wonganoo Airport","aeroway":"aerodrome"}],
 ["n12895424892",-27.84259,120.70284,"au",{"name":"Leinster Airport","aeroway":"aerodrome","icao":"YLST"}],
 ["n13005582107",-27.28426,120.55048,"au",{"name":"Mount Keith Airport","aeroway":"aerodrome","icao":"YMNE","iata":"WME","wikidata":"Q6921620"}],
+["n14376465464",-27.56727,120.53017,"au",{"name":"Yackabindie Airstrip","aeroway":"aerodrome","icao":"YYAB"}],
 ["n6536999426",-27.87934,121.2755,"au",{"name":"Darlot Mine Airport","operator":"Barrick (Darlot) NL","aeroway":"aerodrome","icao":"YDLO","wikidata":"Q5224031"}],
-["w1055062846",-26.6326,120.22216,"au",{"name":"Wiluna Airport","aeroway":"aerodrome","icao":"YWLU","iata":"WUN","wikidata":"Q8023466"}],
-["w1237421117",-27.6124,120.59454,"au",{"name":"Bellevue Airport","aeroway":"aerodrome","icao":"YBLU","iata":"QBU","wikidata":"Q4883910"}],
+["w1055062846",-26.63498,120.22386,"au",{"name":"Wiluna Airport","aeroway":"aerodrome","icao":"YWLU","iata":"WUN","wikidata":"Q8023466"}],
+["w1237421117",-27.61147,120.59458,"au",{"name":"Bellevue Airport","aeroway":"aerodrome","icao":"YBLU","iata":"QBU","wikidata":"Q4883910"}],
 ["w1302397186",-26.59514,120.22806,"au",{"name":"Ngangganawili Aboriginal Health Service","amenity":"hospital","healthcare":"hospital","phone":"+61 8 9981 8600","addr:housenumber":"44","addr:street":"Scotia Street","addr:postcode":"6646"}],
-["w1452267056",-27.91326,120.69776,"au",{"name":"BHP Leinster Medical Centre","amenity":"hospital","healthcare":"hospital"}],
+["w1452267056",-27.91332,120.69774,"au",{"name":"BHP Leinster Medical Centre","amenity":"hospital","healthcare":"hospital"}],
 ["w1463699183",-27.91351,120.69801,"au",{"name":"Leinster Subcentre","emergency":"ambulance_station","operator":"St John Ambulance WA"}],
 ["w1463701613",-27.79473,120.72782,"au",{"operator":"APA","aeroway":"helipad"}],
-["w426104979",-26.57393,120.31049,"au",{"aeroway":"helipad"}]]
+["w426104979",-26.57393,120.31049,"au",{"aeroway":"helipad"}],
+["w545834157",-27.83878,120.70382,"au",{"name":"Leinster Airport","aeroway":"aerodrome","icao":"YLST","iata":"LER","wikidata":"Q4258606"}]]

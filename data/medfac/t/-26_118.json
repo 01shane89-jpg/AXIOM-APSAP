@@ -10,8 +10,8 @@
 ["n1042098859",-25.13566,119.11495,"au",{"name":"Three Rivers Homestead Airport","aeroway":"aerodrome"}],
 ["n5433307806",-25.55997,119.29779,"au",{"name":"DeGrussa Aerodrome","operator":"Sandfire Resources","aeroway":"aerodrome","icao":"YDGU","wikidata":"Q97700882"}],
 ["w1198883663",-25.29795,119.62244,"au",{"aeroway":"helipad"}],
-["w1222817821",-25.31724,119.42344,"au",{"name":"Plutonic Airport","aeroway":"aerodrome"}],
+["w1222817821",-25.31709,119.42267,"au",{"name":"Plutonic Airport","aeroway":"aerodrome"}],
 ["w1246812332",-24.43304,119.70469,"au",{"aeroway":"helipad"}],
 ["w1246812408",-25.59435,119.75405,"au",{"aeroway":"helipad"}],
-["w1282654584",-24.62479,118.62008,"au",{"name":"Abra Mine Airport","aeroway":"aerodrome","icao":"YABR"}],
-["w731533348",-25.20197,119.60902,"au",{"aeroway":"aerodrome"}]]
+["w1282654584",-24.62479,118.62017,"au",{"name":"Abra Mine Airport","aeroway":"aerodrome","icao":"YABR"}],
+["w731533348",-25.20203,119.60903,"au",{"aeroway":"aerodrome"}]]
