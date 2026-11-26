@@ -10,6 +10,7 @@ import { get, unhtml, isoMin, ageDays, csvRows, csvObjects, rssItems, feed, run,
 import "./thinktanks.mjs";
 import "./dense_nov8.mjs";
 import "./dense_airmon.mjs";
+import "./dense_records.mjs";
 import { ukSanctionsItems } from "./uk_sanctions.mjs";
 import { COUNTRIES, ccsAt, ccFromName, ccFromA2, ccFromA3, ccsInText, withOki } from "./geo_cc.mjs";
 
