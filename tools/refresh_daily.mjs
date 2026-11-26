@@ -12,15 +12,56 @@
 // Env: GITHUB_TOKEN, DAILY_MODEL, DAILY_FORCE=1 (build today again), DAILY_CONTINUE=1 (carry on today's AI drafts now, where the
 // runner's own model is up: .github/workflows/refresh-ai.yml), DAILY_AI_PER_RUN, DAILY_AI_BUDGET_MIN (stop starting new
 // drafts after this many minutes), DAILY_ONLY=cc,cc (test), DAILY_END (ISO, test), OSAP_LOCAL_LLM + OSAP_LOCAL_MODEL, OSAP_AI_ORDER.
+// Shards (.github/workflows/refresh-daily-ai.yml): DAILY_CONTINUE=1 DAILY_SHARD=k/n drafts one shard of today's queue (from
+// the back, tools/daily_lib.mjs shardQueue) and DAILY_OUT=<dir> copies each country file it drafted there; DAILY_REINDEX=1,
+// after tools/daily_merge.mjs has put the shards' drafts in place, rewrites data/live/daily.js from the country files and
+// drafts nothing.
+// Claude (Shane 2026-11-23): with ANTHROPIC_API_KEY and "anthropic" first in OSAP_AI_ORDER, the drafts come from Claude Haiku 5.5
+// (tools/ai_gateway.mjs) up to DAILY_ANTHROPIC_CAP_USD a UTC day (default 1.00; a shard may spend its share of what is left).
+// Today's spend is counted from the country files themselves (each AI draft records its provider, model, tokens and cost),
+// so every run and shard sees the same total. Past the cap, or if Claude fails, the free providers carry on.
 import fs from "node:fs";
-import { gateway, parseJsonReply } from "./ai_gateway.mjs";
+
+import { gateway, parseJsonReply, anthropicCost } from "./ai_gateway.mjs";
 import { compileRelevance } from "./topics_lib.mjs";
-import { buildRules, buildWorld, validateAi, fromRow, fromConflict, fingerprint, scrubDay, dropOverclaims, softSection, aiQueue, SCHEMA, WW } from "./daily_lib.mjs";
+import { makeJudge } from "./ground_judge.mjs";
+import { retryDropped, RUN_CAP as RETRY_CAP } from "./ground_retry.mjs";
+import { buildRules, buildWorld, validateAiFull, fromRow, fromConflict, fingerprint, scrubDay, dropOverclaims, groundDay, groundCtx, softSection, aiQueue, shardQueue, SCHEMA, WW } from "./daily_lib.mjs";
+
+// What Claude has already cost today. Two records, the larger wins: the country files' newest days (each Claude draft records
+// its tokens and cost) and the index's running total, which also counts calls whose draft was thrown away (no valid citation).
+// A reindex after the shards adds the shards' own totals (spend-<k>.json beside their drafts, DAILY_SPEND_DIR).
+function anthropicSpentToday(dir, day) {
+  let usd = 0, idx = 0;
+  try { const t = fs.readFileSync("data/live/daily.js", "utf8"), w = {}; new Function("window", t)(w); const i = w.OSAP_DAILY_INDEX || {};
+    if (i.date === day) idx = +(i.ai && i.ai.claude && i.ai.claude.spent_today_usd) || 0; } catch (e) {}
+  try {
+    for (const f of fs.readdirSync(dir).filter((f) => /^[a-z]{2,3}\.js$/.test(f))) {
+      const t = fs.readFileSync(`${dir}/${f}`, "utf8"), d0 = (/"days":\[(\{.*?"date":"(\d{4}-\d{2}-\d{2})")/.exec(t) || [])[2];
+      if (d0 !== day || !/"provider":"anthropic"/.test(t)) continue;
+      try { const w = {}; new Function("window", t)(w); const x = Object.values(w.OSAP_DAILY || {})[0]?.days?.[0];
+        if (x && x.date === day && x.provider === "anthropic") usd += x.cost_usd ?? anthropicCost(x.model, { input_tokens: x.tokens?.in, output_tokens: x.tokens?.out }); } catch (e) {}
+    }
+  } catch (e) {}
+  return { files: usd, index: idx };
+}
 
 const DIR = "data/live/daily", INDEX = "data/live/daily.js", KEEP = 7, PROMPT_V = "daily/3";
 const MODEL = process.env.DAILY_MODEL || "openai/gpt-4.1-mini";
-const AI_PER_RUN = +(process.env.DAILY_AI_PER_RUN || 45), AI_BUDGET_MS = +(process.env.DAILY_AI_BUDGET_MIN || 0) * 60e3;
-const AI = gateway({ githubModel: MODEL });
+const REINDEX = !!process.env.DAILY_REINDEX, SHARD = process.env.DAILY_SHARD || "", OUT = process.env.DAILY_OUT || "";
+const AI_PER_RUN = REINDEX ? 0 : +(process.env.DAILY_AI_PER_RUN || 45);
+const AI_BUDGET_MS = +(process.env.DAILY_AI_BUDGET_MIN || 0) * 60e3;
+const CAP_USD = Math.max(0, +(process.env.DAILY_ANTHROPIC_CAP_USD ?? 1));
+const SPENT = anthropicSpentToday(DIR, new Date(process.env.DAILY_END ? Date.parse(process.env.DAILY_END) : Date.now()).toISOString().slice(0, 10));
+const SPENT_USD = Math.max(SPENT.files, SPENT.index);
+const SHARD_N = (/^\d+\/(\d+)$/.exec(process.env.DAILY_SHARD || "") || [, 1])[1];
+// a shard may spend its share of what is left today, so 4 shards at once still stay under the day's cap
+const RUN_CAP = Math.max(0, CAP_USD - SPENT_USD) / Math.max(1, +SHARD_N);
+const usd = (x) => +(+x).toFixed(6);
+const AI = gateway({ githubModel: MODEL, anthropicCapUsd: RUN_CAP });
+// Claude answers in seconds where the runner's model takes minutes, so a run with Claude may reach every country
+const CLAUDE = AI.status().providers.includes("anthropic");
+const PER_RUN = CLAUDE && !REINDEX ? Math.max(AI_PER_RUN, +(process.env.DAILY_AI_PER_RUN_CLAUDE || 250)) : AI_PER_RUN;
 const LABEL = "Draft, AI-generated from the cited sources, not analyst-approved";
 // AI goes first to World (the area a new user opens on), then the originally researched areas and the countries with an active conflict tab,
 // then every other country by its number of reports (tools/daily_lib.mjs aiQueue). A country the day's runs don't reach keeps the rules summary.
@@ -39,10 +80,14 @@ const retryDue = oldIdx.ai && oldIdx.ai.retry && oldIdx.ai.due > 0 && Date.now()
 // DAILY_CONTINUE skips the 3-hour wait (the news lane's own retries have no model to draft with: GitHub Models answers "OK"),
 // but still only when today's queue has countries left
 const continueDue = !!process.env.DAILY_CONTINUE && oldIdx.date === today && oldIdx.ai && oldIdx.ai.retry && oldIdx.ai.due > 0;
-if (process.env.DAILY_CONTINUE && !continueDue) {
+// a reindex only rewrites today's index after the shards' drafts were merged; a new day is the news lane's to build
+if (REINDEX && oldIdx.date !== today) {
+  console.log(`daily: the index is for ${oldIdx.date}, not today (${today}); nothing to reindex`); process.exit(0);
+}
+if (process.env.DAILY_CONTINUE && !continueDue && !REINDEX) {
   console.log(`daily: no AI drafts left to carry on today (${today}); nothing to do`); process.exit(0);
 }
-if (!process.env.DAILY_FORCE && !process.env.DAILY_ONLY && oldIdx.date === today && !retryDue && !continueDue) {
+if (!process.env.DAILY_FORCE && !process.env.DAILY_ONLY && oldIdx.date === today && !retryDue && !continueDue && !REINDEX) {
   console.log(`daily: today's summaries (${today}) are already built; nothing to do`); process.exit(0);
 }
 
@@ -116,13 +161,36 @@ async function ask(user) {
 }
 const prev = {};
 for (const cc of only || ccs) { const p = readWin(`${DIR}/${cc}.js`, "OSAP_DAILY"); prev[cc] = p && p[cc]; }
-// a retry (not forced) skips the countries an earlier run already drafted today, so it carries on down the list
+// every run, forced or not, skips the countries an earlier run (or a shard) already drafted today, so it carries on down the
+// list: the forced morning pass rebuilt every country from its rules summary and so threw away the shards' drafts (24 Nov
+// 2026: 68 AI drafts by 03:21Z, 30 after the 02:37Z daily pass committed at 06:30Z)
 const draftedToday = (cc) => { const o = prev[cc] && prev[cc].days && prev[cc].days[0]; return !!(o && o.date === today && o.method === "ai"); };
-const focus = aiQueue((only || ccs).filter((cc) => built[cc].refs.length >= 2 && built[cc].events.length), {
-  priority: PRIORITY, conflict: (cc) => !!confByCc[cc], reports: (cc) => built[cc].basis.reports, doneToday: draftedToday, skipDone: !process.env.DAILY_FORCE });
+const queue = aiQueue((only || ccs).filter((cc) => built[cc].refs.length >= 2 && built[cc].events.length), {
+  priority: PRIORITY, conflict: (cc) => !!confByCc[cc], reports: (cc) => built[cc].basis.reports, doneToday: draftedToday, skipDone: true });
+const focus = shardQueue(queue, SHARD);
+const JUDGE = makeJudge();
+// Retry, not repair (tools/ground_retry.mjs): a line the source check drops is written once more, fresh, from the sources it cited,
+// and kept only if the new one passes every check; at most DAILY_RETRY_PER_RUN attempts a run, through the same AI gateway.
+const RETRY_BUDGET = { left: REINDEX ? 0 : Math.max(0, Number.isFinite(+process.env.DAILY_RETRY_PER_RUN) && process.env.DAILY_RETRY_PER_RUN !== "" ? +process.env.DAILY_RETRY_PER_RUN : RETRY_CAP) };
+const retryStats = { tried: 0, recovered: 0 };
+const retryChat = async (messages) => { const res = await AI.chat({ messages, max_tokens: 400 }); return res && { content: res.content, model: res.model, provider: res.provider }; };
+// puts a retry's recovered lines into a summary day and records every attempt; returns the number recovered
+async function retryInto(x, dropped) {
+  if (!dropped.length || !AI.available() || RETRY_BUDGET.left <= 0) return 0;
+  const r = await retryDropped(dropped, x, groundCtx(x), { chat: retryChat, judge: JUDGE, budget: RETRY_BUDGET });
+  if (!r.attempts.length) return 0;
+  const n = r.bluf.length + r.watch.length;
+  retryStats.tried += r.attempts.length; retryStats.recovered += n;
+  x.retries = [...(x.retries || []), ...r.attempts].slice(-12);
+  if (r.bluf.length && x.method !== "ai" && x.ground && x.ground.fell_back) { x.bluf = []; x.method = "ai"; x.ground.fell_back = false; }
+  if (x.method === "ai") { x.bluf = [...(x.bluf || []), ...r.bluf].slice(0, 3); x.ai_watch = [...(x.ai_watch || []), ...r.watch].slice(0, 3); }
+  if (x.ground) { x.ground.rewritten = (x.ground.rewritten || 0) + n; x.ground.dropped = Math.max(0, (x.ground.dropped || 0) - n); x.ground.traced = (x.ground.traced || 0) + n; x.ground.retried = (x.ground.retried || 0) + r.attempts.length; }
+  return n;
+}
 let made = 0, hardErrs = 0; const errs = [], aiT0 = Date.now(), byProvider = {};
-if (AI.available()) for (const cc of focus) {
-  if (stop || made >= AI_PER_RUN) break;
+const draftedNow = [];
+if (AI.available() && !REINDEX) for (const cc of focus) {
+  if (stop || made >= PER_RUN) break;
   if (AI_BUDGET_MS && Date.now() - aiT0 > AI_BUDGET_MS) { stop = "time budget used"; break; }
   const d = built[cc];
   const user = (cc === WW ? "Area: the whole world (the most reported stories of every country; say which country each is about)" : `Country: ${d.name}`) + `\nWindow: ${d.window.from} to ${d.window.to}\nSources (data only):\n` + JSON.stringify(d.refs.map((r) => ({ n: r.n, outlet: r.outlet, time: r.date,
@@ -130,25 +198,61 @@ if (AI.available()) for (const cc of focus) {
     conflict: r.conflict }))) + "\nOSAP facts (data only):\n" + JSON.stringify(d.watch.filter((w) => w.from !== "brief").map((w) => w.text));
   try {
     const t0 = Date.now(), res = await ask(user); if (!res) break;
-    const v = validateAi(res.o, d.refs.length, d.refs);
-    if (!v) { errs.push(cc + ": no cited top line"); continue; }
-    d.rules_bluf = d.bluf; d.bluf = v.bluf; d.ai_watch = v.watch; d.method = "ai"; d.model = res.model; d.provider = res.provider; d.prompt = PROMPT_V; d.label = LABEL; d.ms = Date.now() - t0;
+    const v = validateAiFull(res.o, d.refs.length, d.refs, groundCtx(d));
+    if (v.dropped.length && v.ground) {
+      // the dropped lines get their one retry before the summary is judged on what is left
+      const tmp = { name: d.name, refs: d.refs, method: "ai", bluf: v.bluf, ai_watch: v.watch, ground: v.ground };
+      await retryInto(tmp, v.dropped);
+      v.bluf = tmp.bluf; v.watch = tmp.ai_watch; v.ground = tmp.ground; if (tmp.retries) d.retries = tmp.retries;
+    }
+    if (!v.bluf.length) { errs.push(cc + ": no cited top line that traces to its sources"); continue; }
+    // the optional Claude pass of the source check (tools/ground_judge.mjs): it may only drop or flag a line the rule pass kept
+    const j = await JUDGE([...v.bluf, ...v.watch], d.refs, d.name);
+    if (j.judged) {
+      const nb = v.bluf.length;
+      v.bluf = j.lines.slice(0, nb).filter(Boolean); v.watch = j.lines.slice(nb).filter(Boolean);
+      const all = [...v.bluf, ...v.watch];
+      v.ground = { ...v.ground, dropped: v.ground.dropped + j.dropped, judged: true,
+        traced: all.filter((p) => p.g && p.g.s === "traced").length, flagged: all.filter((p) => p.g && p.g.s === "flagged").length };
+      if (!v.bluf.length) { errs.push(cc + ": no top line the Claude source check supports"); continue; }
+    }
+    d.rules_bluf = d.bluf; d.bluf = v.bluf; d.ai_watch = v.watch; d.ground = v.ground; d.method = "ai"; d.model = res.model; d.provider = res.provider; d.prompt = PROMPT_V; d.label = LABEL; d.ms = Date.now() - t0;
     if (res.usage) d.tokens = { in: res.usage.prompt_tokens, out: res.usage.completion_tokens };
-    made++; byProvider[res.provider] = (byProvider[res.provider] || 0) + 1;
+    if (res.usage && res.usage.cost_usd != null) d.cost_usd = res.usage.cost_usd;
+    made++; draftedNow.push(cc); byProvider[res.provider] = (byProvider[res.provider] || 0) + 1;
   } catch (e) {
     // a reply that is not JSON costs that country its AI line, not the run: only failures of the model itself stop it
     errs.push(cc + ": " + e.message.slice(0, 120)); if (!e.soft && ++hardErrs > 5) { stop = "too many errors"; break; }
   }
 }
-index.ai.made = made; index.ai.due = focus.length - made; index.ai.stopped = stop || (AI.available() ? "" : aiStop()); index.ai.errors = errs.slice(0, 5);
-index.ai.providers = byProvider; if (process.env.OSAP_LOCAL_LLM) index.ai.local = process.env.OSAP_LOCAL_MODEL || "local";
+// a shard's due counts only its own part; the reindex after the shards counts the whole queue again
+index.ai.made = made; index.ai.due = focus.length - made; if (SHARD) index.ai.shard = SHARD; index.ai.stopped = REINDEX ? "reindexed after the shards" : stop || (AI.available() ? "" : aiStop()); index.ai.errors = errs.slice(0, 5);
+index.ai.providers = byProvider;
+{
+  // the day's running Claude total, kept in the index even on runs without Claude (a free-only run must not forget it)
+  const sp = AI.status().spend, dir = process.env.DAILY_SPEND_DIR;
+  let shards = 0, shardCalls = 0, shardDropped = "";
+  if (REINDEX && dir) try { for (const f of fs.readdirSync(dir).filter((f) => /^spend-\d+\.json$/.test(f))) {
+    const x = JSON.parse(fs.readFileSync(`${dir}/${f}`, "utf8")); shards += +x.usd || 0; shardCalls += +x.calls || 0;
+    if (x.dropped && !shardDropped) shardDropped = String(x.dropped).slice(0, 240); } } catch (e) {}
+  // after the shards, their drafts are in the country files already, so the index's earlier total plus what the shards spent
+  // is set against the files' sum (not added to it)
+  const total = REINDEX ? Math.max(SPENT.files, SPENT.index + shards) : SPENT_USD + sp.usd;
+  // why Claude stopped is kept through the shards' reindex too, so the index (and the run log) say it rather than nothing
+  const dropped = REINDEX ? shardDropped : AI.status().dropped.anthropic || "";
+  if (CLAUDE || total > 0 || dropped) index.ai.claude = { cap_usd: CAP_USD, spent_today_usd: usd(total), this_run_usd: usd(REINDEX ? shards : sp.usd), calls: REINDEX ? shardCalls : sp.calls, dropped };
+  if (OUT && SHARD) { fs.mkdirSync(OUT, { recursive: true }); fs.writeFileSync(`${OUT}/spend-${SHARD.split("/")[0]}.json`, JSON.stringify({ usd: usd(sp.usd), calls: sp.calls, dropped })); }
+} if (process.env.OSAP_LOCAL_LLM) index.ai.local = process.env.OSAP_LOCAL_MODEL || "local";
 // a later run today tries the AI step again for the countries not yet drafted, whether this run stopped or used its per-run
 // share (the rules summaries stay meanwhile)
-index.ai.retry = made < focus.length;
+index.ai.retry = REINDEX ? queue.length > 0 : made < focus.length;
 
 // ---------- write ----------
 fs.mkdirSync(DIR, { recursive: true });
-let mtScrubbed = 0, ocDropped = 0;
+let mtScrubbed = 0, ocDropped = 0, groundDropped = 0;
+// today's grounding counts over every country's AI draft, for the index (and the page's "What OSAP did" line)
+const groundToday = { countries: 0, checked: 0, traced: 0, flagged: 0, dropped: 0, retried: 0, rewritten: 0 };
+const addGround = (x) => { if (!x || x.date !== today || !x.ground || (x.method !== "ai" && !x.ground.fell_back)) return; groundToday.countries++; for (const k of ["checked", "traced", "flagged", "dropped", "retried", "rewritten"]) groundToday[k] += x.ground[k] || 0; };
 for (const cc of only || ccs) {
   const d = built[cc]; d.fp = fingerprint(d);
   // a retry keeps the morning's rules summary unless this run added an AI draft
@@ -156,21 +260,37 @@ for (const cc of only || ccs) {
   // the kept days are checked again with today's machine translation guard (tools/daily_lib.mjs scrubDay)
   // and with the rules that an AI line may not call a report confirmed on its own authority, give an institution the wrong
   // country or stop mid-sentence (dropOverclaims)
-  const mtN = old.reduce((n, x) => n + scrubDay(x), 0), ocN = old.reduce((n, x) => n + dropOverclaims(x), 0), scrubbed = mtN + ocN;
-  mtScrubbed += mtN; ocDropped += ocN;
+  // and claim by claim against the sources each AI line cites (groundDay, tools/ground.mjs), once per version of that check
+  const ungrounded = old.filter((x) => x && x.method === "ai" && [...(x.bluf || []), ...(x.ai_watch || [])].some((p) => !(p.g && p.g.v))).length;
+  // today's kept AI draft (not older days, and not on a shard, whose writes other than its own drafts are not kept) gets its dropped
+  // lines retried once (tools/ground_retry.mjs)
+  const sink = [], today0 = old[0] && old[0].date === today && !SHARD;
+  const mtN = old.reduce((n, x) => n + scrubDay(x), 0), ocN = old.reduce((n, x) => n + dropOverclaims(x), 0), grN = old.reduce((n, x, i) => n + groundDay(x, i === 0 && today0 ? sink : null), 0);
+  const reN = sink.length ? await retryInto(old[0], sink) : 0;
+  const scrubbed = mtN + ocN + grN + ungrounded + reN + sink.length;
+  mtScrubbed += mtN; ocDropped += ocN; groundDropped += grN;
   const same = old[0] && old[0].date === today;
-  if (same && d.method !== "ai" && !process.env.DAILY_FORCE) {
-    index.countries[cc] = { method: old[0].method, reports: old[0].basis.reports };
+  // a forced run rebuilds today's rules summaries, but keeps a country's AI draft of today
+  if (same && d.method !== "ai" && (!process.env.DAILY_FORCE || old[0].method === "ai")) {
+    index.countries[cc] = { method: old[0].method, reports: old[0].basis.reports }; addGround(old[0]);
     if (scrubbed) fs.writeFileSync(`${DIR}/${cc}.js`, `window.OSAP_DAILY=window.OSAP_DAILY||{};window.OSAP_DAILY[${JSON.stringify(cc)}]=` + JSON.stringify({ cc, name: old[0].name, days: old }) + ";\n");
     continue;
   }
   const daysOut = [d, ...old.filter((x) => x.date !== today)].slice(0, KEEP);
   fs.writeFileSync(`${DIR}/${cc}.js`, `window.OSAP_DAILY=window.OSAP_DAILY||{};window.OSAP_DAILY[${JSON.stringify(cc)}]=` + JSON.stringify({ cc, name: d.name, days: daysOut }) + ";\n");
-  index.countries[cc] = { method: d.method, reports: d.basis.reports };
+  index.countries[cc] = { method: d.method, reports: d.basis.reports }; addGround(d);
 }
+index.ai.ground = groundToday;
 if (mtScrubbed) console.log(`daily: ${mtScrubbed} source headlines in kept summaries failed the machine translation guard and now show their original words`);
 if (ocDropped) console.log(`daily: ${ocDropped} AI lines in kept summaries were dropped or cut back (a report called confirmed with no cited headline saying so, an institution given the wrong country, or a line stopping mid-sentence)`);
+if (!REINDEX && AI.available()) console.log(JUDGE.summary());
+if (retryStats.tried) console.log(`daily: retry, not repair: ${retryStats.tried} dropped AI lines written once more from their sources, ${retryStats.recovered} passed every check and are back (tools/ground_retry.mjs)`);
+index.ai.retry_lines = retryStats;
+if (groundDropped) console.log(`daily: ${groundDropped} AI lines in kept summaries were dropped: a number, casualty or date none of their cited sources gives (tools/ground.mjs)`);
 index.ai.total = Object.values(index.countries).filter((c) => c.method === "ai").length;   // countries whose summary today is an AI draft
+if (OUT) { fs.mkdirSync(OUT, { recursive: true }); for (const cc of draftedNow) fs.copyFileSync(`${DIR}/${cc}.js`, `${OUT}/${cc}.js`); }
 if (!only) fs.writeFileSync(INDEX, "window.OSAP_DAILY_INDEX=" + JSON.stringify(index) + ";\n");
 const n = Object.values(built), quiet = n.filter((d) => !d.basis.reports).length;
 console.log(`daily ${today}: ${n.length} countries, ${n.length - quiet} with reports, ${quiet} quiet; AI top lines ${made} this run, ${index.ai.total} of ${n.length} today, ${focus.length - made} still due` + (stop ? `; AI stopped: ${stop}` : "") + (errs.length ? `; errors: ${errs.join(" | ")}` : ""));
+if (index.ai.claude) { const c = index.ai.claude; console.log(`claude: ${c.calls} calls, $${c.this_run_usd} this run, $${c.spent_today_usd} of $${c.cap_usd} today` + (c.dropped ? `; dropped: ${c.dropped}` : "")); }
+else if (process.env.ANTHROPIC_API_KEY && !REINDEX) console.log(`claude: not set up (OSAP_AI_ORDER ${process.env.OSAP_AI_ORDER || "unset"}, run cap $${RUN_CAP.toFixed(4)})`);

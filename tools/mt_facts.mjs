@@ -229,7 +229,7 @@ export function harmLanguages(orig, lang) {
   const s = SCRIPTS.find(([re]) => re.test(orig));
   return s ? s[1] : [];
 }
-const EN_HARM = /\b(kill(?:s|ed|ing)?|dead|deaths?|died|dies|dying|wounded|wounding|injur(?:ed|ies|y|ing|es)|casualt(?:y|ies)|fatalit(?:y|ies)|slain|death toll|murder(?:s|ed)?|massacre[sd]?)\b/i;
+export const EN_HARM = /\b(kill(?:s|ed|ing)?|dead|deaths?|died|dies|dying|wounded|wounding|injur(?:ed|ies|y|ing|es)|casualt(?:y|ies)|fatalit(?:y|ies)|slain|death toll|murder(?:s|ed)?|massacre[sd]?)\b/i;
 // "dead" and "death" in names and set phrases that say nothing about a casualty
 const EN_HARM_IDIOM = /\b(?:dead\s*(?:line|lock|sea|end|heat|ly)|death\s*(?:penalty|sentence|row|metal|star)|(?:sudden|brain)\s+death|killer\s+app|kill\s+switch|injury\s+time|black\s+death)\b/gi;
 export function extraHarm(orig, en, lang) {

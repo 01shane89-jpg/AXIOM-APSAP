@@ -286,7 +286,7 @@
 ["w647742365",40.09943,71.71732,"kg",{"name":"Профилактория","amenity":"clinic"}],
 ["w652166109",40.05259,71.73153,"kg",{"name":"санаторя","amenity":"clinic"}],
 ["w687005990",41.61217,70.01983,"uz",{"aeroway":"helipad"}],
-["w693895273",40.36585,71.77849,"uz",{"amenity":"hospital","healthcare":"hospital","addr:street":"Аэропорт","addr:postcode":"150115"}],
+["w693895273",40.36585,71.77849,"uz",{"amenity":"hospital","healthcare":"hospital","addr:housenumber":"5","addr:street":"Аэропорт","addr:postcode":"150115"}],
 ["w698789929",41.95465,70.45867,"uz",{"aeroway":"helipad"}],
 ["w700045671",40.48975,71.73949,"uz",{"name":"Силга қарши кураш диспансери","name:en":"tuberkuleznyy dispanser","amenity":"hospital","addr:street":"Гагарина"}],
 ["w702371652",41.11861,70.09138,"uz",{"name":"3-sonli poliklinika Yangiobod filiali","amenity":"clinic","healthcare":"clinic","addr:city":"Yangiobod"}],

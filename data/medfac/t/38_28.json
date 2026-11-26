@@ -67,6 +67,8 @@
 ["w1544980758",38.93888,28.27933,"tr",{"name":"Gördes Yangın Helikopter Helipad","operator":"Orman Genel Müdürlüğü","aeroway":"helipad","surface":"concrete"}],
 ["w1548800733",38.65005,29.15652,"tr",{"name":"Güre Aİle Sağlığı Merkezi","amenity":"clinic","healthcare":"clinic","operator":"Sağlık Bakanlığı","operator:type":"government"}],
 ["w1550415745",38.66083,29.4405,"tr",{"name":"Uşak Orman Yangın Helikopter Helipad","operator":"Orman Genel Müdürlüğü","aeroway":"helipad","surface":"asphalt"}],
+["w1572290319",38.64563,29.38998,"tr",{"name":"Fevzi Dülgeroğlu Aile Sağlığı Merkezi","amenity":"clinic","healthcare":"clinic","operator":"Sağlık Bakanlığı","operator:type":"government"}],
+["w1578376071",38.78915,28.51365,"tr",{"name":"Saraycık Yangın Helikopter Helipad","operator":"Orman Genel Müdürlüğü","aeroway":"helipad","surface":"concrete"}],
 ["w317021355",39.42434,29.9633,"tr",{"name":"KSBÜ Evliya Çelebi Eğitim ve Araştırma Hastanesi","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator":"Sağlık Bakanlığı","phone":"+90 274 2316660","website":"https://ecd.saglik.gov.tr/","addr:housenumber":"2","addr:street":"Okmeydanı Caddesi","addr:district":"Merkez","addr:city":"Kütahya","addr:postcode":"43040"}],
 ["w317021618",39.4175,29.99008,"tr",{"name":"DPÜ Kütahya Evliya Çelebi Eğitim ve Araştırma Hastanesi Ek Bina","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+90 274 2236053","website":"https://ecd.saglik.gov.tr/"}],
 ["w326002168",39.91629,28.15122,"tr",{"name":"Susurluk Eski Devlet Hastanesi","amenity":"hospital","healthcare":"hospital","operator":"Sağlık Bakanlığı","operator:type":"government"}],

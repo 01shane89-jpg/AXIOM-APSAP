@@ -59,6 +59,22 @@ export function outletBook(feeds, owners, seen) {
   return { of };
 }
 
+/** Countries a headline names through a national institution rather than the country's name (Shane, 24 Nov 2026 UTC: AP's "An
+ *  unclassified CIA system was breached in a cyberattack" was carried by 50+ outlets in 25 countries within two hours, and
+ *  almost none said "United States", so the US Story coverage counted 4 outlets and World never showed it). Whole words, case
+ *  as written: acronyms in capitals only, so "nsa" or "gru" inside other words never count. Only bodies that stand for one
+ *  state ("Congress" is left out: India has one too). */
+const INSTITUTIONS = [
+  ["us", /\b(CIA|FBI|NSA|ODNI|DHS|CISA|Pentagon|White House|State Department|Department of (War|Homeland Security)|Justice Department|Capitol Hill)\b/],
+  ["gb", /\b(MI5|MI6|GCHQ|Downing Street|Whitehall)\b/],
+  ["ru", /\b(Kremlin|FSB|GRU|SVR)\b/],
+  ["il", /\b(Mossad|Shin Bet|Knesset)\b/],
+  ["cn", /\b(Zhongnanhai|Ministry of State Security)\b/]];
+export function ccsOfInstitutions(text) {
+  const t = String(text || "");
+  return INSTITUTIONS.filter(([, rx]) => rx.test(t)).map(([cc]) => cc);
+}
+
 /** a pool row -> a report. [ccs, date, title_en, title_orig, outlet, link, summary, flags, topics, views] */
 export function fromRow(r) {
   return { ccs: String(r[0] || "").split(",").filter(Boolean), date: String(r[1] || ""), title: unent(r[2]).trim(), orig: unent(r[3]).trim(),

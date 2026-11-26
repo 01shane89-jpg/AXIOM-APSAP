@@ -2,6 +2,7 @@
 // Overpass answer from a phone. Run by .github/workflows/refresh-medfac.yml, or by hand with Node 20+:
 //   node tools/build_medfac.mjs [cc ...]        (no codes: the countries never built first, then the stalest, until the budget)
 //   MEDFAC_BUDGET_MIN=45 (minutes to spend)  MEDFAC_MAX_AGE_D=28 (rebuild a country older than this)  MEDFAC_DEBUG=1
+//   MEDFAC_PARTS=.medfac-parts (answered US states kept between runs)  MEDFAC_PART_AGE_D=21 (ask a kept state again after this)
 // For each country (the 28 hand-researched first, then every other in data/basemap/world-countries.js) one Overpass query by
 // the country's ISO 3166-1 boundary reads hospitals, clinics, helipads, heliports, airfields and ambulance and air rescue
 // stations, keeping only the tags the plan reads. A country too big for one answer is asked in bounding-box parts (still
@@ -23,6 +24,8 @@ import { join } from "node:path";
 const OUT = process.env.MEDFAC_OUT || "data/medfac", TDIR = join(OUT, "t"), XDIR = join(OUT, "x"), TILE = 2;
 const BUDGET = (+process.env.MEDFAC_BUDGET_MIN || 45) * 60000, MAX_AGE = (+process.env.MEDFAC_MAX_AGE_D || 28) * 864e5;
 const DEBUG = !!process.env.MEDFAC_DEBUG, T0 = Date.now();
+/* answered subdivisions of a country asked part by part (SUBAREAS), kept between runs; a part is asked again after PART_AGE */
+const PARTS = process.env.MEDFAC_PARTS || ".medfac-parts", PART_AGE = (+process.env.MEDFAC_PART_AGE_D || 21) * 864e5;
 const UA = "AXIOM-OSAP medical-plan facility snapshot (https://github.com/01shane89-jpg/AXIOM-APSAP)";
 const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -118,23 +121,41 @@ async function fetchCountry(c) {
   }
   /* Overpass bbox filters are (south,west,north,east) */
   if (!SUBAREAS[c.id]) return part(null, 0);
-  /* one subdivision at a time; a part that fails is asked once more at the end; up to 40 minutes for the whole country */
-  const subUntil = Date.now() + 40 * 60000, out = { els: [], base: null }, retry = [];
+  /* One subdivision at a time, up to 40 minutes a run. Overpass answers only some states a run (21 Nov: 14 asked in 40 min,
+     10 of them failed on every mirror), so each answered state is kept in PARTS (the workflow's Actions cache, never
+     published) and later runs ask only the states still missing or older than PART_AGE. The country is written only when
+     every state has an answer, so a stored country is still a whole one; its "at" is the oldest state's, so it is rebuilt
+     when that one ages. */
+  const dir = join(PARTS, c.id), subUntil = Date.now() + 40 * 60000, out = { els: [], base: null, at: null }, missing = [];
+  mkdirSync(dir, { recursive: true });
+  const fresh = (code) => { const j = readJSON(join(dir, code + ".json"), null); return j && j.at && Date.now() - Date.parse(j.at) < PART_AGE ? j : null; };
+  const todo = SUBAREAS[c.id].filter((code) => !fresh(code)), retry = [];
+  log(`  ${c.id}: ${SUBAREAS[c.id].length - todo.length} of ${SUBAREAS[c.id].length} parts kept from earlier runs, ${todo.length} to ask`);
   async function sub(code) {
     const j = await overpass(query(c.id, null, code));
     if (!(j.elements || []).some((e) => e.type === "area")) throw new Error("no boundary for " + code + " in OpenStreetMap");
-    out.els.push(...j.elements.filter((e) => e.type !== "area")); out.base = out.base || (j.osm3s && j.osm3s.timestamp_osm_base);
+    const rec = { at: new Date().toISOString().slice(0, 19) + "Z", base: (j.osm3s && j.osm3s.timestamp_osm_base) || null, els: j.elements.filter((e) => e.type !== "area") };
+    writeFileSync(join(dir, code + ".json"), JSON.stringify(rec));
+    if (DEBUG) log("   ", code, rec.els.length);
   }
-  for (const code of SUBAREAS[c.id]) {
-    if (Date.now() > subUntil) throw new Error("subdivisions not all answered in 40 minutes");
-    try { await sub(code); if (DEBUG) log("   ", code, out.els.length); } catch (e) { log("  part", code, "failed, asked again later (" + e.message.slice(0, 80) + ")"); retry.push(code); }
+  for (const code of todo) {
+    if (Date.now() > subUntil) break;
+    try { await sub(code); } catch (e) { log("  part", code, "failed, asked again later (" + e.message.slice(0, 80) + ")"); retry.push(code); }
     await sleep(4000);
   }
   for (const code of retry) {
-    if (Date.now() > subUntil) throw new Error("subdivisions not all answered in 40 minutes");
+    if (Date.now() > subUntil) break;
     await sleep(20000);
-    try { await sub(code); } catch (e) { throw new Error(code + " failed twice: " + e.message); }
+    try { await sub(code); } catch (e) { log("  part", code, "failed twice (" + e.message.slice(0, 80) + ")"); }
   }
+  for (const code of SUBAREAS[c.id]) {
+    const j = fresh(code);
+    if (!j) { missing.push(code); continue; }
+    out.els.push(...j.els);
+    if (!out.base || (j.base && j.base < out.base)) out.base = j.base || out.base;
+    if (!out.at || j.at < out.at) out.at = j.at;
+  }
+  if (missing.length) throw new Error(`${SUBAREAS[c.id].length - missing.length} of ${SUBAREAS[c.id].length} parts answered so far (kept for the next run); still missing ${missing.join(" ")}`);
   return out;
 }
 
@@ -218,7 +239,7 @@ async function main() {
       }
       xrows.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
       writeFileSync(join(XDIR, c.id + ".json"), "[" + xrows.map((q) => JSON.stringify(q)).join(",\n") + "]\n");
-      idx.countries[c.id] = { at: new Date().toISOString().slice(0, 19) + "Z", base: r.base || null, n, x, tiles: Object.keys(byTile).sort() };
+      idx.countries[c.id] = { at: r.at || new Date().toISOString().slice(0, 19) + "Z", base: r.base || null, n, x, tiles: Object.keys(byTile).sort() };
       writeFileSync(join(OUT, "index.json"), JSON.stringify(idx, null, 0) + "\n");
       done++;
       log(`${c.id} ${c.name}: ${n.h} hospitals, ${n.c} clinics, ${n.l} landing sites, ${n.e} ambulance/air rescue, ${x.b} blood, ${x.d} chambers, ${Object.keys(byTile).length} tiles, ${Math.round((Date.now() - t0) / 1000)} s`);

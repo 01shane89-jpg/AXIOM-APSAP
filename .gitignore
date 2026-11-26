@@ -10,3 +10,4 @@ _site/
 netlify/node_modules/
 android/project/
 out/briefs/
+.medfac-parts/

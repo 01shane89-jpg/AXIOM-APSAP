@@ -69,6 +69,15 @@ jobs:
             if [ "$aw" = "0" ]; then
               gh workflow run refresh-ai.yml --ref main -f task=cycle && echo "$(date -u +%H:%MZ) started the AI drafts round" || echo "$(date -u +%H:%MZ) could not start the AI drafts round"
             fi
+            # the 3-hourly fact checks (refresh-factchecks.yml, about 3 min a run): its "23 */3" schedule started 7 runs (1 cancelled)
+            # in the 72 h to 25 Nov 2026 14:30Z (24 due), and the late-job restart below only steps in at 420 min, the same moment the
+            # fact-check feed itself runs out of time, so the Fact checks panel sat 6 to 7 h old between rounds. When no run of it has
+            # been created in the last 3 h 20 min, start one by hand, as for the AI drafts.
+            since=$(date -u -d '200 minutes ago' +%Y-%m-%dT%H:%M:%SZ)
+            fw=$(gh run list --workflow refresh-factchecks.yml --branch main --limit 20 --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 1)
+            if [ "$fw" = "0" ]; then
+              gh workflow run refresh-factchecks.yml --ref main && echo "$(date -u +%H:%MZ) started the fact checks" || echo "$(date -u +%H:%MZ) could not start the fact checks"
+            fi
             # the daily AI pass (refresh-ai.yml task=daily, due on its 01:23Z schedule after the news lane has built the day's rules
             # summaries). GitHub skipped that schedule on 25 Oct 2026, leaving every country's daily summary rules-only. From 02:30Z, when
             # no daily (or both) run of it has been created today, start one by hand; at most one a day, so a failed pass is not retried.
@@ -98,6 +107,22 @@ jobs:
                 echo "$(date -u +%H:%MZ) a $wf run is still waiting; skipping this round"
               fi
             done
+            # radiation near nuclear sites (refresh-rad.yml, about 1.5 min a run): its "every 30 min" schedule fired 16 times in the
+            # 48 h to 23 Nov 2026 15:00Z (96 due), 3 to 4 h apart, and the late-job restart only steps in at 4 h, so each sensor's
+            # hourly readings in state.json had gaps of 3 h and more. Every second round (about every 30 minutes), start one unless
+            # one is already waiting. Airfield weather (refresh-avwx.yml, about 1.5 min a run) the same way: its "every 20 min"
+            # schedule fired at 01:15Z and not again by 08:45Z on 24 Nov 2026, so the late-job restart below (at most every 2 h,
+            # and only once it is 220 min late) left METARs, issued hourly, about 4 h old in the Weather view.
+            if [ $(( round % 2 )) = 1 ]; then
+              for wf in refresh-rad.yml refresh-avwx.yml; do
+                rq=$(( $(gh run list --workflow $wf --branch main --status queued --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 1) + $(gh run list --workflow $wf --branch main --status pending --json createdAt --jq "[.[]|select(.createdAt > \"$since\")]|length" || echo 1) ))
+                if [ "$rq" = "0" ]; then
+                  gh workflow run $wf --ref main && echo "$(date -u +%H:%MZ) started $wf" || echo "$(date -u +%H:%MZ) could not start $wf"
+                else
+                  echo "$(date -u +%H:%MZ) a $wf run is still waiting; skipping this round"
+                fi
+              done
+            fi
             # any other scheduled data job that is late (data/live/health.json jobs; tools/late_jobs.mjs): start it again, at most
             # once per 2 hours each, so a job whose own schedule GitHub skips does not sit late (refresh-avwx.yml "every 20 min" and
             # refresh-darkships.yml "every 15 min" fired only every 4 to 9 h in the week to 20 Nov 2026). The live health file is

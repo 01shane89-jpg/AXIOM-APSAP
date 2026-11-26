@@ -28,7 +28,7 @@
 ["n3023535443",-5.46415,122.60859,"id",{"name":"Puskesmas Bataraguru","amenity":"clinic","healthcare":"clinic"}],
 ["n3037104767",-5.45828,122.61282,"id",{"name":"RS Bhayangkari","amenity":"hospital","healthcare":"hospital"}],
 ["n3088748616",-5.26016,122.02995,"id",{"name":"Pustu","amenity":"clinic","healthcare":"clinic"}],
-["n3116448422",-4.79535,122.05822,"id",{"name":"RSUD Bombana","amenity":"hospital"}],
+["n3116448422",-4.79535,122.05822,"id",{"name":"RSUD Bombana","amenity":"hospital","healthcare":"hospital"}],
 ["n3204024992",-5.46646,122.62041,"id",{"name":"Puskesmas Wolio","amenity":"clinic","healthcare":"clinic"}],
 ["n3204915417",-5.46984,122.59985,"id",{"name":"Puskesmas Wajo","amenity":"clinic","healthcare":"clinic"}],
 ["n3207149115",-5.47344,122.58702,"id",{"name":"Puskemas Katobengke","amenity":"clinic","healthcare":"clinic"}],

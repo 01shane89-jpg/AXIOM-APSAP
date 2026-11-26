@@ -1322,6 +1322,12 @@
   },
   {
    "cc": "ua",
+   "channel": "serhii_flash",
+   "kind": "government (defense adviser)",
+   "lang": "uk"
+  },
+  {
+   "cc": "ua",
    "channel": "V_Zelenskiy_official",
    "kind": "government (head of state)",
    "lang": "uk"
@@ -7269,13 +7275,6 @@
    "name": "TV1 Rwanda",
    "kind": "news desk",
    "lang": "rw"
-  },
-  {
-   "cc": "rw",
-   "channel_id": "UCr2OimtV-wuMk-3BxdHzrGw",
-   "name": "Rwanda Ministry of Defence",
-   "kind": "government (military)",
-   "lang": "en"
   },
   {
    "cc": "rw",

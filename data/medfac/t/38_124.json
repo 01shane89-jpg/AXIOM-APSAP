@@ -133,6 +133,7 @@
 ["w1506494799",39.12846,125.47174,"kp",{"aeroway":"aerodrome","military":"airfield"}],
 ["w1566611588",39.98228,125.25095,"kp",{"name":"구성시병원","name:en":"Kusong City Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes"}],
 ["w1566625595",38.85359,125.41742,"kp",{"name":"룡강군병원","name:en":"Ryonggang County Hospital","amenity":"hospital","healthcare":"hospital","addr:city":"룡강군"}],
+["w1580284685",39.05219,125.73905,"kp",{"name":"평양시서성구역인민병원","name:en":"Pyongyang Sosong District People's Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w178630680",38.55202,124.8326,"kp",{"name":"초도비행장","name:en":"Chodo Airport","aeroway":"aerodrome","military":"airfield","wikidata":"Q2384481"}],
 ["w195819469",38.98482,125.73833,"kp",{"name":"보건성구강종합병원","name:en":"Ministry of Health Oral General Hospital","amenity":"hospital","healthcare":"hospital","operator":"보건성"}],
 ["w195956354",39.91853,124.84033,"kp",{"aeroway":"helipad","surface":"concrete"}],

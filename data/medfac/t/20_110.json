@@ -26,7 +26,7 @@
 ["w1009237772",21.26708,110.3674,"cn",{"name":"湛江市赤坎区妇幼保健院","amenity":"hospital","healthcare":"hospital"}],
 ["w1009237773",21.26812,110.36034,"cn",{"name":"湛江市赤坎中医院南桥分院","amenity":"hospital","healthcare":"hospital"}],
 ["w1013719563",20.04426,110.18064,"cn",{"name":"海南省肿瘤医院","amenity":"hospital","healthcare":"hospital"}],
-["w1034363537",20.00657,110.2834,"cn",{"name":"海南省人民医院","amenity":"hospital","healthcare":"hospital"}],
+["w1034363537",20.00657,110.2834,"cn",{"name":"海南省人民医院","name:en":"Hainan Province People's Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w1060041157",20.00508,110.40998,"cn",{"name":"海南省中医院（江东院区）","amenity":"hospital","healthcare":"hospital"}],
 ["w1100629578",21.94239,110.3388,"cn",{"name":"陆川县古城镇卫生院","amenity":"hospital","healthcare":"hospital"}],
 ["w1126061671",21.51478,111.00577,"cn",{"name":"电白区人民医院","amenity":"hospital","healthcare":"hospital"}],

@@ -10,6 +10,9 @@
 // the rejection).
 // A headline already in English under another language's label (mt_guard.mjs looksEnglish) is passed through as written: the
 // model rewrote such headlines, moving their dates and cutting them short.
+// A translation that passed the rule checks is then checked by Claude (tools/mt_verify.mjs) when ANTHROPIC_API_KEY is set: one it
+// finds with other numbers, names, places, hedges or negations than the original is rejected the same way, so the original shows.
+// Claude never writes a translation. Without the key or past its daily cap, the rule checks alone decide, as before.
 // Results are cached in data/live/translation-cache*.json (one file per refresh lane) so the same text is never translated twice.
 import fs from "node:fs";
 import crypto from "node:crypto";
@@ -19,6 +22,8 @@ import path from "node:path";
 import { protectThaiPlaces } from "./th_places.mjs";
 import { protectTerms } from "./mt_glossary.mjs";
 import { mtSuspect, looksEnglish, lowConfidence } from "./mt_guard.mjs";
+import { verifyPairs, loadState, saveState, enHash } from "./mt_verify.mjs";
+import { retryRejected } from "./mt_retry.mjs";
 
 // One cache file per refresh lane. The fast lane (warnings) and the news lane (news, Deep South, social) run at the same time and
 // both committed data/live/translation-cache.json, and the later push kept only its own copy (tools/push_rebase.sh "theirs" on a
@@ -74,8 +79,9 @@ export function forget(text, lang) { delete cache[key(decodeEntities(text), lang
 
 // items: [{ text, lang }] -> [{ en, tool }] (en null when not translated). English and empty texts pass through.
 // opts.model === false skips the local model (there is no other service since 2026-10-17, so nothing is translated).
+// opts.verify: false skips the Claude check; an object is passed to tools/mt_verify.mjs verifyPairs (tests: { key, client, state }).
 export async function translateAll(items, opts = {}) {
-  const orig = items;   // English passes through exactly as given
+  const orig = items, runStart = Date.now();   // English passes through exactly as given
   items = items.map((it) => ({ ...it, text: it.text ? decodeEntities(it.text) : it.text }));
   const out = items.map((it, i) => {
     if (!it.text || /^en\b/i.test(it.lang || "") || looksEnglish(it.text)) return { en: orig[i].text || "", tool: null };
@@ -95,7 +101,41 @@ export async function translateAll(items, opts = {}) {
     const retry = [...again, ...bad].slice(0, MT_BEAM_LIMIT);
     if (retry.length) localModel(items, retry, out, { MT_BEAM: "4" });
   }
+  if (opts.verify !== false && process.env.MT_VERIFY !== "0") await claudeCheck(items, out, opts.verify || {}, runStart);
   return out.map((o) => o || { en: null, tool: null });
+}
+// The Claude check over this call's translations (new ones first, then cached ones not yet checked). A translation Claude fails is
+// taken out of out[] and cached as rejected: it gets one more try with beam search on a later run (that new English is checked
+// again), and after a second fail, or when the same English comes back, it is not asked again and the original stays.
+let vstate = null;
+async function claudeCheck(items, out, vopts, runStart) {
+  const st = vopts.state || (vstate = vstate || loadState());
+  const reject = (i, k, final) => { out[i] = null; put(k, { en: null, rejected: MT_TOOL, beam: final ? 4 : undefined, claude: 1, at: Date.now() }); };
+  const fresh = [], old = [];
+  items.forEach((it, i) => {
+    const o = out[i]; if (!o || !o.tool || !o.en) return;
+    const k = key(it.text, it.lang), r = st.records[k];
+    if (r && r.h === enHash(o.en)) { if (r.v === "fail") reject(i, k, true); return; }
+    const c = cache[k];
+    (c && c.at && c.at >= runStart ? fresh : old).push({ i, key: k, text: it.text, lang: it.lang, en: o.en });
+  });
+  const pairs = [...fresh, ...old];
+  if (pairs.length) {
+    const res = await verifyPairs(pairs, { ...vopts, state: st });
+    for (const [j, v] of res) if (!v.ok) reject(pairs[j].i, pairs[j].key, (st.records[pairs[j].key].f || 0) >= 2);
+  }
+  // Retry, not repair (tools/mt_retry.mjs): a headline whose translation was rejected, by the rule checks or by Claude, gets one
+  // fresh translation from Claude, written from the original. It is used only if it passes both checks; otherwise the original stays.
+  if (vopts.retry === false || process.env.MT_RETRY === "0") return;
+  const flagged = [];
+  items.forEach((it, i) => {
+    if (out[i] || !it.text || looksEnglish(it.text) || /^en\b/i.test(it.lang || "")) return;
+    const k = key(it.text, it.lang), c = cache[k];
+    if (c && c.rejected) flagged.push({ i, key: k, text: it.text, lang: it.lang });
+  });
+  if (!flagged.length) return;
+  const got = await retryRejected(flagged, { ...vopts, state: st });
+  for (const [j, r] of got) { const f = flagged[j]; out[f.i] = { en: r.en, tool: r.tool }; put(f.key, { en: r.en, tool: r.tool, model: r.model, retry: 1, at: Date.now() }); }
 }
 export const MT_TOOL = "MADLAD-400 (Google open model, run in the refresh job)";
 const MT_DIR = process.env.MT_DIR || path.join(os.homedir(), ".cache/osap-mt/madlad400-3b-mt-ct2-int8");
@@ -145,4 +185,5 @@ export function saveCache() {
   const ents = Object.entries(cache).filter((e) => !e[1].seeded && !foreign.has(e[0])).sort((a, b) => (b[1].at || 0) - (a[1].at || 0)).slice(0, MAX_CACHE);
   fs.mkdirSync("data/live", { recursive: true });
   fs.writeFileSync(CACHE_FILE, JSON.stringify(Object.fromEntries(ents)));
+  saveState(vstate);
 }

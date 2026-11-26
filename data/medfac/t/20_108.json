@@ -3,6 +3,8 @@
 ["n12543663710",21.64549,108.35035,"cn",{"name":"汇宁诊所","amenity":"clinic","healthcare":"clinic"}],
 ["n12628500768",21.62389,108.31669,"cn",{"aeroway":"helipad"}],
 ["n13700802329",21.05535,109.09136,"cn",{"amenity":"clinic","healthcare":"clinic"}],
+["n14340570500",21.75163,108.60272,"cn",{"aeroway":"helipad"}],
+["n14393516280",21.25534,109.79226,"cn",{"aeroway":"aerodrome","military":"airfield"}],
 ["n2035970984",21.48509,109.1375,"cn",{"name":"北海军人复退医院","amenity":"hospital"}],
 ["n2035971000",21.48503,109.13363,"cn",{"name":"第四人民医院","amenity":"hospital"}],
 ["n2036005502",21.42606,109.12292,"cn",{"name":"侨港医院","amenity":"hospital"}],

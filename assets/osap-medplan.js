@@ -1106,6 +1106,21 @@
 
   /* ---------- the plan ---------- */
   var CSS =
+    /* the edit card on a hospital's map mark (a Leaflet popup, outside the plan panel) */
+    ".mppop .mpedit{display:grid;gap:3px;font:13px/1.35 system-ui,sans-serif}.mppop .mpedit .sub{display:block;color:#56626F;font-size:12px}.mppop .mpeb{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}" +
+    ".mppop .mpeb button{min-height:36px;padding:2px 10px;font-size:13px}.mppop .mpeb button[aria-pressed=true]{background:#8b0010;color:#fff;border-color:#8b0010;opacity:1}" +
+    /* the flow (2026-11-21): folded sections and the At a glance card */
+    "#medplan details.mpsec{border-top:1px solid var(--line-soft,#e3e7eb)}#medplan details.mpsec>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;min-height:44px}" +
+    "#medplan details.mpsec>summary::-webkit-details-marker{display:none}#medplan details.mpsec>summary::before{content:'';flex:none;width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);margin:0 4px 0 2px;transition:transform .15s}" +
+    "#medplan details.mpsec[open]>summary::before{transform:rotate(45deg)}#medplan details.mpsec>summary h3{margin:0;flex:1}#medplan details.mpsec[open]{padding-bottom:8px}" +
+    "#medplan details.mpwhy>summary{cursor:pointer;font-size:12px;color:var(--muted,#56626F);min-height:28px;display:list-item}#medplan details.mpmore{margin:6px 0}" +
+    "#medplan .mpq{border:1px solid var(--line,#d5dbe1);border-left:4px solid #8b0010;border-radius:6px;padding:8px 12px;margin:8px 0}#medplan .mpq:empty{display:none}#medplan .mpqt{margin:0 0 4px}" +
+    "#medplan .mpqs{margin:0;padding-left:22px}#medplan .mpqs>li{margin:6px 0;line-height:1.4}#medplan .mpqs>li::marker{font-weight:700;color:var(--muted,#56626F)}#medplan .mpqs .sub{display:block;color:var(--muted,#56626F);font-size:12px}" +
+    "#medplan .mpqh{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted,#56626F)}#medplan .mpqbtn{min-height:32px;padding:2px 10px;font-size:12px;text-transform:none;letter-spacing:0}" +
+    "#medplan .mpxt{display:none}@media (max-width:700px){#medplan .mpxt{display:inline-block}#medplan .mphead:not(.mpxo) .mpx{display:none}}" +
+    "#medplan .mppace{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2px 12px;font-size:12.5px}#medplan .mppace b{display:inline-block;min-width:16px;color:#8b0010}:root[data-map=grey] #medplan .mppace b,:root[data-map=dark] #medplan .mppace b{color:#FF9C9C}" +
+    ":root[data-map=grey] #medplan .mplyr.mplya,:root[data-map=dark] #medplan .mplyr.mplya{color:var(--ink,#E6EDF3)}" +
+    "#medplan .mpqp{list-style:none;padding:0;margin:2px 0}#medplan .mpqp>li{padding:5px 0;border-bottom:1px solid var(--line-soft,#e3e7eb)}#medplan .mpqp>li:last-child{border-bottom:0}#medplan .mpqs a{overflow-wrap:anywhere}" +
     "#medplan{position:fixed;inset:0;z-index:4000;background:rgba(10,16,24,.45);display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:16px}" +
     "#medplan[hidden]{display:none}#medplan .mpbox{background:var(--surface,#fff);color:var(--ink,#1b2733);max-width:1040px;width:100%;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.35);padding:12px 16px 18px;box-sizing:border-box}" +
     "#medplan .mphead{display:flex;gap:8px;align-items:center;flex-wrap:wrap;position:sticky;top:-16px;background:var(--surface,#fff);padding:6px 0;z-index:1;border-bottom:1px solid var(--line,#d5dbe1)}" +
@@ -1213,6 +1228,8 @@
       el = D.createElement("div"); el.id = "medplan"; el.hidden = true; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Medical plan");
       D.body.appendChild(el);
       el.addEventListener("click", onClick); el.addEventListener("input", onInput); el.addEventListener("change", onChange);
+      /* a section folded or unfolded is remembered on this device (toggle does not bubble, so it is caught on the way down) */
+      el.addEventListener("toggle", function (e) { var d = e.target; if (d && d.getAttribute && d.hasAttribute("data-sec")) secSet(d.getAttribute("data-sec"), d.open); }, true);
       el.addEventListener("keydown", function (e) {
         if (e.key === "Escape") close();
         if (e.key === "Enter" && e.target && e.target.id === "mpf-poi") { e.preventDefault(); setPoi(); }
@@ -1352,38 +1369,131 @@
     if (W.OSAP_LEGEND) W.OSAP_LEGEND.set("medplan", "");
   }
 
+  /* ---------- the plan as a flow (Shane 2026-11-21: "easier to use. Less wordy and more direct facts"; "there should be a flow
+     to the process. Identify what is closest, what is most capable, and assign PACE. User can adjust as needed. Then the routes")
+     On screen every section folds under its heading, and a short card at the top walks the steps with the plain facts:
+     closest, most capable, the planned hospitals (each with its distance, drive, flight, published phone and blood), the routes,
+     then the numbers and places for the evacuation. Nothing is worked out again here: the card reads the same picks, times
+     and lists as the sections, and each fact keeps its source link. Print and PDF unfold every section as before. */
+  var SEC_KEY = KEY + "open", SEC_OPEN = { pst: 1, rt: 1 };
+  function secOpen(k) { var v = lsGet(SEC_KEY); return v && typeof v === "object" && k in v ? !!v[k] : !!SEC_OPEN[k]; }
+  function secSet(k, on) { var v = lsGet(SEC_KEY); v = v && typeof v === "object" ? v : {}; v[k] = on ? 1 : 0; lsSet(SEC_KEY, v); }
+  function sec(k, title, body, noPrintHead) {
+    return '<details class="mpsec" data-sec="' + k + '"' + (noPrintHead ? ' data-nohead="1"' : "") + (secOpen(k) ? " open" : "") + '><summary><h3>' + esc(title) + "</h3></summary>" + body + "</details>";
+  }
+  /* opens a folded section (a step's "Change" or "Show") and brings it into view */
+  function secShow(k, focusSel) {
+    var d = D.querySelector('#medplan details.mpsec[data-sec="' + k + '"]'); if (!d) return;
+    if (!d.open) { d.open = true; secSet(k, true); }
+    var t = focusSel && d.querySelector(focusSel); try { d.scrollIntoView({ block: "start", behavior: "smooth" }); } catch (e) { d.scrollIntoView(); }
+    if (t) t.focus({ preventScroll: true }); else { var sm = d.querySelector("summary"); if (sm) sm.focus({ preventScroll: true }); }
+  }
+  function qPhone(f) {
+    if (f.ephone) return '<a href="tel:' + esc(f.ephone.replace(/[^0-9+]/g, "")) + '">' + esc(f.ephone) + "</a> emergency" + phNote(f.ephs);
+    if (f.phone) return '<a href="tel:' + esc(f.phone.replace(/[^0-9+]/g, "")) + '">' + esc(f.phone) + "</a>" + (f.phs ? phNote(f.phs) : wdNote(f, "phone") || (f.osm ? " (" + link(f.osm, "OpenStreetMap") + ")" : ""));
+    if (f.hot) return '<a href="tel:' + esc(f.hot.n) + '">' + esc(f.hot.n) + "</a> call center" + phNote(f.hot);
+    return '<span class="obs">No published phone</span>';
+  }
+  function qBlood(f) {
+    var v = capOk(f, "blood.bank");
+    return v === "yes" ? "Blood bank documented" : hasBlood(f) ? "Blood listed (OpenStreetMap, not documented)" : "Blood not documented";
+  }
+  /* distance, drive and flight from the plan's start, in one short line */
+  function qTimes(f) {
+    var b = [], rw = num("rwkn");
+    b.push(esc(km(f.rm != null ? f.rm : f.m)) + (f.rm != null ? " by road" : " straight line"));
+    if (f.s != null) b.push("<b>" + esc(mins(f.s)) + "</b> drive" + (f.est ? " (estimate)" : ""));
+    var a = airOn() ? airTotal(f) : null;
+    if (a != null) b.push("<b>" + esc(mins(a)) + "</b> by your confirmed aircraft");
+    /* no confirmed aircraft: the planning estimate from the aircraft base, launch and time on the ground included (POTENTIAL) */
+    else if (airOn() && rw) b.push("~" + esc(mins(potTotal(f))) + " air estimate");
+    return b.join(" · ");
+  }
+  function qLvl(f) { return esc(clip(tierLabel(f), 80)); }
+  function quickRender() {
+    var el = D.getElementById("mp-quick"), s = ST; if (!el || !s) return;
+    if (!s.fac) { el.innerHTML = '<p class="obs mpwait">Finding the closest and most capable hospitals…</p>'; return; }
+    if (failed(s)) { el.innerHTML = '<p class="obs mpwarn">The hospital lookup failed (' + esc(clip(lookupErr(s), 160)) + '). <button type="button" class="refresh" data-mp="retry">Try again</button></p>'; return; }
+    var H = s.fac.H.filter(function (f) { return !isOff(f) && f.s != null; });
+    var near = H.slice().sort(function (a, b) { return a.s - b.s; })[0];
+    var top = H.filter(function (f) { return f.trauma || (f.eq && f.eq.level); }).sort(function (a, b) { return rankOf(b) - rankOf(a) || a.s - b.s; })[0];
+    var P = picks(s), h = '<ol class="mpqs">';
+    function hn(f) { return "<b>" + esc(facTag(s, f) || "") + " " + esc(f.name) + "</b>"; }
+    h += '<li><span class="mpqh">Closest hospital</span>' + (near ? hn(near) + '<span class="sub">' + qTimes(near) + " · " + qLvl(near) + "</span>" : '<span class="obs">No hospital with a drive time yet.</span>') + "</li>";
+    h += '<li><span class="mpqh">Most capable in reach</span>' + (top ? hn(top) + '<span class="sub">' + qLvl(top) + " · " + qTimes(top) + "</span>" : '<span class="obs">No hospital in reach has a documented or assessed trauma level.</span>') + "</li>";
+    h += '<li><span class="mpqh">Planned hospitals, major trauma <button type="button" class="refresh mpqbtn" data-mp-sec="pst" data-mp-focus="[data-mp-sel]">Change</button></span>' +
+      (P.length ? '<ul class="mpqp">' + P.map(function (p) {
+        var f = p.f, rw = p.row;
+        return '<li data-mp-q="' + esc(p.role) + '"><span class="mprole r-' + p.role.slice(0, 3).toLowerCase() + '">' + esc(p.why.join(" + ")) + "</span>" + (rw && rw.analyst ? '<span class="mpmine">Your choice</span>' : "") + " " + hn(f) +
+          '<span class="sub">' + qLvl(f) + "</span>" + '<span class="sub">' + qTimes(f) + "</span>" +
+          '<span class="sub">' + qPhone(f) + " · " + esc(qBlood(f)) + (f.pad ? " · helipad on site" : "") + "</span></li>"; }).join("") + "</ul>"
+        : '<span class="obs mpwarn">No Primary, Secondary or Tertiary documented by a credible source. The closest hospital above is for reference only.</span>') + "</li>";
+    var R = (s.rts || []).filter(function (x) { return x.r; });
+    h += '<li><span class="mpqh">Routes <button type="button" class="refresh mpqbtn" data-mp-sec="rt">Show</button></span>' +
+      (s.rts ? (R.length ? R.map(function (x) { return '<span class="sub">' + esc(x.why.join(" + ")) + ": " + esc(km(x.r.m)) + ", " + esc(mins(x.r.s)) + (x.r.roads && x.r.roads.length ? " via " + esc(x.r.roads[0].n) : "") + "</span>"; }).join("") : '<span class="obs">Reading the road routes…</span>') : '<span class="obs">Waiting for the hospitals.</span>') + "</li>";
+    /* the evacuation facts: who to call, what flies, blood, chamber and where to land */
+    var ev = [];
+    if (s.ems && s.ems.nums.length) { var n = s.ems.nums[0]; ev.push("Emergency number <b><a href=\"tel:" + esc(n.n) + '">' + esc(n.n) + "</a></b>" + (n.uses.length ? " (" + esc(clip(n.uses.join(", "), 60)) + ")" : "") + ", " + link("https://www.wikidata.org/wiki/" + (s.ems.q || "") + "#P2852", "Wikidata")); }
+    var mb = mbase(s); if (mb && mb.b) ev.push("Air base <b>" + esc(mb.b.name) + "</b>, " + esc(km(mb.b.m)) + (mb.b.phone ? ', <a href="tel:' + esc(String(mb.b.phone).replace(/[^0-9+]/g, "")) + '">' + esc(mb.b.phone) + "</a>" : "") + (mb.b.osm ? " (" + link(mb.b.osm, "OpenStreetMap") + ")" : ""));
+    if (s.x) {
+      var B = s.x.B.filter(function (b) { return b.bank; })[0] || s.x.B[0], Dc = s.x.D[0];
+      ev.push(B ? "Blood <b>" + esc(B.name) + "</b>, " + esc(km(B.m)) + (B.bank ? "" : " (donation center)") + (B.osm ? " (" + link(B.osm, "OpenStreetMap") + ")" : "") : '<span class="obs">No blood bank within 200 km in OpenStreetMap</span>');
+      ev.push(Dc ? "Chamber <b>" + esc(Dc.name) + "</b>, " + esc(km(Dc.m)) + (Dc.osm ? " (" + link(Dc.osm, "OpenStreetMap") + ")" : "") : '<span class="obs">No decompression chamber within 500 km in OpenStreetMap</span>');
+    }
+    var hlz = parseGrid(fieldVals().hlz1), Lz = s.fac.L.filter(function (l) { return l.kind !== "aerodrome"; })[0] || s.fac.L[0];
+    if (hlz) ev.push("Your HLZ <code>" + esc(grid(hlz[0], hlz[1])) + "</code>");
+    else if (Lz) ev.push("Nearest landing site <b>" + esc(Lz.name || "Helipad") + "</b>, " + esc(km(Lz.m)) + (Lz.osm ? " (" + link(Lz.osm, "OpenStreetMap") + ")" : ""));
+    /* CASEVAC PACE (Shane 2026-11-21 chose: P/S/T stay for hospitals, PACE is for the means of evacuation): the planner's own
+       PACE from the briefing slide when set; otherwise a suggestion from this plan's facts, labelled as one, never a decision */
+    var mine = (function () { try { var v = JSON.parse(localStorage.getItem("osap-medslide") || "null"); return v && Array.isArray(v.evac) ? v.evac.map(function (x) { return clip(x, 120); }) : []; } catch (e) { return []; } })();
+    var setP = mine.some(Boolean), pri = P.filter(function (p) { return p.role === "Primary"; })[0];
+    var sug = [s.ems && s.ems.nums[0] ? "Ground ambulance, call " + s.ems.nums[0].n : "Local ground ambulance",
+      mb && mb.b ? "Air medevac from " + mb.b.name : "Air medevac (no base found)",
+      "Team vehicle to " + (pri ? pri.f.name + (pri.f.s != null ? ", " + mins(pri.f.s) + " by road" : "") : "the nearest hospital"),
+      near ? "Nearest hospital " + near.name + (near.s != null ? ", " + mins(near.s) : "") : "Nearest hospital"];
+    h += '<li><span class="mpqh">CASEVAC PACE' + (W.OSAP_MEDSLIDE ? ' <button type="button" class="refresh mpqbtn" data-mp="pace" title="Your CASEVAC PACE, kept with the briefing slide">' + (setP ? "Edit" : "Set yours") + "</button>" : "") + "</span>" +
+      '<span class="mppace">' + ["P", "A", "C", "E"].map(function (t, i) { var v = setP ? mine[i] : sug[i]; return '<span><b>' + t + "</b> " + (v ? esc(v) : '<span class="obs">not set</span>') + "</span>"; }).join("") + "</span>" +
+      (setP ? "" : '<span class="sub">Suggested from this plan, not set by you.</span>') + "</li>";
+    h += '<li><span class="mpqh">Evacuation <button type="button" class="refresh mpqbtn" data-mp-sec="ems">Contacts</button><button type="button" class="refresh mpqbtn" data-mp-sec="air">Landing sites</button></span>' +
+      (ev.length ? ev.map(function (x) { return '<span class="sub">' + x + "</span>"; }).join("") : '<span class="obs mpwait">Looking up numbers and landing sites…</span>') + "</li>";
+    el.innerHTML = '<h3 class="mpqt">At a glance</h3>' + h + "</ol>" +
+      '<p class="obs">Facts from the sections below, each linked to its source. Drive times assume open roads. Air estimates count the launch, the flight from the aircraft base at ' + esc(num("rwkn")) + ' kn and time on the ground, in straight lines; only a confirmed aircraft you record gives a real air time. Confirm by phone before relying on any of them.</p>';
+  }
+
   function render() {
     var el = box(), s = ST, km2 = s.P ? areaKm2(s.P) : 0, v = fieldVals();
     el.innerHTML = '<div class="mpbox">' +
       '<div class="mphead"><h2>Medical plan <span class="mpcc">' + esc(s.name) + '</span></h2><span class="aitag" tabindex="0" title="Draft built by fixed rules from open data on this device. Not AI and not analyst-approved. Confirm every facility\'s capability, contacts, access and status before use.">Automatic draft</span>' +
-      '<button type="button" class="refresh noprint" data-mp="printc" title="The operational plan as it prints: the CONOP, the map, destinations, routes, air, sites and contacts">CONOP (PDF)</button>' + (W.OSAP_MEDSLIDE ? '<button type="button" class="refresh noprint" data-mp="slide" title="One landscape briefing slide: receiving facilities, PACE plans, the routes on a satellite map, times and contacts. PDF or PowerPoint">Briefing slide</button>' : "") +
-      '<button type="button" class="refresh noprint" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Intelligence annex (PDF)</button>' + (W.OSAP_TAK ? '<button type="button" class="refresh noprint" data-mp="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + (W.OSAP_PLACES && W.OSAP_PLACES.saveTo ? '<button type="button" class="refresh noprint" data-mp="places" title="Save the injury point, chosen hospitals, your sites and the road routes as your own points and routes in a My places folder">Save to folder</button>' : "") + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button><div id="mp-layers" class="mplayers noprint" role="group" aria-label="Medical plan objects on the map"></div></div>' +
+      /* on a phone the five export buttons fold behind one, so the plan starts near the top of the screen */
+      '<button type="button" class="refresh noprint mpxt" data-mp="exp" aria-expanded="false">Export</button>' +
+      '<button type="button" class="refresh noprint mpx" data-mp="printc" title="The operational plan as it prints: the CONOP, the map, destinations, routes, air, sites and contacts">CONOP (PDF)</button>' + (W.OSAP_MEDSLIDE ? '<button type="button" class="refresh noprint mpx" data-mp="slide" title="One landscape briefing slide: receiving facilities, PACE plans, the routes on a satellite map, times and contacts. PDF or PowerPoint">Briefing slide</button>' : "") +
+      '<button type="button" class="refresh noprint mpx" data-mp="print" title="Every page as it prints: the map, every section, the sources and each hospital\'s assessment">Intelligence annex (PDF)</button>' + (W.OSAP_TAK ? '<button type="button" class="refresh noprint mpx" data-mp="tak" title="' + esc(W.OSAP_TAK.tip) + '">TAK package</button>' : "") + (W.OSAP_PLACES && W.OSAP_PLACES.saveTo ? '<button type="button" class="refresh noprint mpx" data-mp="places" title="Save the injury point, chosen hospitals, your sites and the road routes as your own points and routes in a My places folder">Save to folder</button>' : "") + dockBtn() + '<button type="button" class="refresh noprint" data-mp="close">Close</button><div id="mp-layers" class="mplayers noprint" role="group" aria-label="Medical plan objects on the map"></div></div>' +
       '<p class="obs">' + (s.P ? "Drawn area of about " + esc(km2 >= 100 ? Math.round(km2).toLocaleString("en-GB") : km2.toFixed(1)) + " km², center " : "Planned from a point, no drawn area needed. Opened at ") + esc(grid(s.c[0], s.c[1])) + " · built " + esc(dual(s.at, true)) + "</p>" +
       '<div class="mppoi"><label for="mpf-poi">Anticipated point of injury (POI): MGRS or lat, lon<input id="mpf-poi" data-mpf="poi" maxlength="60" autocomplete="off" placeholder="Tap Pick on map, or type a grid" value="' + esc(v.poi || "") + '"></label>' +
       '<button type="button" class="refresh pri noprint" data-mp="pick">Pick on map</button><button type="button" class="refresh noprint" data-mp="setpoi">Set</button>' +
       '<label class="noprint" for="mp-from">Plan centered on<select id="mp-from" data-mp-from="1">' + startOpts() + "</select></label>" + envSel() + "</div>" +
       '<p><b>Centered on ' + esc(fieldLabel(s.from)) + ":</b> <code>" + esc(grid(s.o[0], s.o[1])) + "</code> (" + s.o[0].toFixed(5) + ", " + s.o[1].toFixed(5) + "). Every distance, drive, flight and route below is from here." +
       (s.from !== "poi" ? ' <span class="obs noprint">Set the anticipated point of injury above to center the plan on it.</span>' : "") + "</p>" +
-      '<div id="mp-sea"></div><div id="mp-conop"></div>' +
-      '<h3>Operational picture</h3><div id="mp-pic"><p class="obs">Reading the routes, forecast and data dates…</p></div>' +
-      '<h3>Plan status</h3><div id="mp-val"></div>' +
-      '<h3>Primary, Secondary and Tertiary hospitals</h3><div id="mp-pst"><p class="obs mpwait">Looking up hospitals…</p></div>' +
-      '<h3>1. Golden hour</h3><div id="mp-gh"></div>' +
-      '<h3>2. Receiving hospitals, most capable first</h3>' +
-      '<div id="mp-fac"><p class="obs mpwait">Looking up hospitals and clinics…</p></div>' +
-      '<h3>3. Routes to the identified hospitals</h3><div id="mp-rt"><p class="obs">Waiting for the hospital list…</p></div>' +
-      '<h3>4. Emergency contacts: local EMS and medevac</h3><div id="mp-ems"><p class="obs mpwait">Looking up emergency numbers…</p></div><div id="mp-mev"></div>' +
-      '<h3>5. Evacuation landing sites</h3><div id="mp-air"><p class="obs mpwait">Looking up helipads and airfields…</p></div>' +
-      '<h3>6. Evacuate out of country</h3><div id="mp-oc"></div>' +
-      '<h3>7. Health threats</h3><div id="mp-thr"></div>' +
-      '<h3>8. Evacuation weather and ground</h3><div id="mp-wx"><p class="obs">Reading the forecast…</p></div>' +
-      '<h3>9. Unit and evacuation details</h3><p class="obs noprint">Fill these in. They stay on this device only. The receiving facilities, CCPs, AXP and HLZs belong to this place: a plan opened more than 25 km away starts without them. The unit, mission, providers and frequencies are the same for every plan in this country. Grids can be MGRS or lat, lon.</p>' +
-      legacyHtml() + '<div class="mpgrid">' + fieldsHtml() + "</div>" + '<div id="mp-sites"></div>' +
-      '<h3>10. Sources and fingerprint</h3><div id="mp-src"></div>' +
+      '<div id="mp-sea"></div><div id="mp-quick" class="mpq noprint" aria-live="polite"></div>' +
+      sec("conop", "CONOP summary", '<div id="mp-conop"></div>', true) +
+      sec("pic", "Operational picture", '<div id="mp-pic"><p class="obs">Reading the routes, forecast and data dates…</p></div>') +
+      sec("val", "Plan status", '<div id="mp-val"></div>') +
+      sec("pst", "Primary, Secondary and Tertiary hospitals", '<div id="mp-pst"><p class="obs mpwait">Looking up hospitals…</p></div>') +
+      sec("gh", "1. Golden hour", '<div id="mp-gh"></div>') +
+      sec("fac", "2. Receiving hospitals, most capable first", '<div id="mp-fac"><p class="obs mpwait">Looking up hospitals and clinics…</p></div>') +
+      sec("rt", "3. Routes to the identified hospitals", '<div id="mp-rt"><p class="obs">Waiting for the hospital list…</p></div>') +
+      sec("ems", "4. Emergency contacts: local EMS and medevac", '<div id="mp-ems"><p class="obs mpwait">Looking up emergency numbers…</p></div><div id="mp-mev"></div>') +
+      sec("air", "5. Evacuation landing sites", '<div id="mp-air"><p class="obs mpwait">Looking up helipads and airfields…</p></div>') +
+      sec("oc", "6. Evacuate out of country", '<div id="mp-oc"></div>') +
+      sec("thr", "7. Health threats", '<div id="mp-thr"></div>') +
+      sec("wx", "8. Evacuation weather and ground", '<div id="mp-wx"><p class="obs">Reading the forecast…</p></div>') +
+      sec("unit", "9. Unit and evacuation details", '<p class="obs noprint">Fill these in. They stay on this device only. The receiving facilities, CCPs, AXP and HLZs belong to this place: a plan opened more than 25 km away starts without them. The unit, mission, providers and frequencies are the same for every plan in this country. Grids can be MGRS or lat, lon.</p>' +
+        legacyHtml() + '<div class="mpgrid">' + fieldsHtml() + "</div>" + '<div id="mp-sites"></div>') +
+      sec("src", "10. Sources and fingerprint", '<div id="mp-src"></div>') +
       '<p class="obs">Automatic draft built by fixed rules from open data: not analyst-approved and not AI. Phone numbers are only the published numbers of institutions (hospitals, ambulance and air rescue services, embassies), each linked to where it is published; call to confirm before relying on any of them. ' +
       "Primary, Secondary and Tertiary are chosen per casualty type from capabilities documented by a credible source; OpenStreetMap and Wikipedia are shown but never qualify. Official trauma designations appear only as a source states them. Observed classes T1 to T5 are inferred from capability flags and are not official levels. Drive times assume open roads with no traffic, checkpoints or damage; flight times are straight-line estimates at the stated cruise speed. Weather flags are prompts to check, not flying or movement limits.</p>" +
       "</div>";
-    ghRender(); ocRender(); thrRender(); siteRender();
+    ghRender(); ocRender(); thrRender(); siteRender(); quickRender();
   }
 
   function build() {
@@ -2095,8 +2205,10 @@
       var rw = p.row, lab = '<span class="mprole r-' + p.role.slice(0, 3).toLowerCase() + '">' + esc(p.why.join(" + ")) + "</span>" +
         '<span class="mprl">major trauma · ' + esc(mins(rw.choice.time_to_required_care.s)) + " by " + esc(rw.choice.way) + (rw.role !== "stabilization" && !rw.stop ? " · bypassed" : "") + "</span>";
       return '<tr data-mp-role="' + esc(p.role) + '"><td><span class="mprow">' + lab + "</span><b>" + esc(facTag(s, f) || "H" + (H + 1)) + " " + esc(f.name) + "</b>" +
-        (rw.analyst ? '<span class="mpmine">Your choice</span>' : "") + '<span class="sub">' + esc(p.reason) + "</span>" +
-        (rw.analyst && rw.analyst.not_documented.length ? '<span class="sub mpwarn">Not documented by a credible source for ' + esc(ROLE_NAME[rw.role]) + ": " + esc(andList(capNames(rw.analyst.not_documented))) + ". Confirm with the hospital.</span>" : "") + lowTag(f) + '<span class="sub mptcls">' + esc(tcText(f)) + "</span>" + '<span class="sub">' + (cap.length ? "Listed: " + esc(cap.join(", ")) : "No services listed") + "</span>" + ctHtml(f) +
+        (rw.analyst ? '<span class="mpmine">Your choice</span>' : "") + '<span class="sub">' + qLvl(f) + " · " + qTimes(f) + "</span>" +
+        (rw.analyst && rw.analyst.not_documented.length ? '<span class="sub mpwarn">Not documented by a credible source for ' + esc(ROLE_NAME[rw.role]) + ": " + esc(andList(capNames(rw.analyst.not_documented))) + ". Confirm with the hospital.</span>" : "") + lowTag(f) + ctHtml(f) +
+        /* the reasoning folds under the facts (Shane 2026-11-21: "less wordy"); print unfolds it */
+        '<details class="mpwhy"><summary>Why this hospital</summary><span class="sub">' + esc(p.reason) + "</span>" + '<span class="sub mptcls">' + esc(tcText(f)) + "</span>" + '<span class="sub">' + (cap.length ? "Listed: " + esc(cap.join(", ")) : "No services listed") + "</span></details>" +
         '<span class="mpact noprint"><button type="button" class="refresh" data-mp-assess="' + esc(f.id) + '" title="Full assessment of this hospital, as printable pages">Assessment</button>' +
         '<button type="button" class="refresh" data-mp-go="' + esc(f.id) + '">Map</button>' +
         '<button type="button" class="refresh" data-mp-offbtn="' + esc(f.id) + '" title="Leave this hospital out of the plan; the next one is picked">Turn off</button></span></td></tr>';
@@ -2105,8 +2217,8 @@
     if (!P.some(function (p) { return p.role !== "Stabilization"; })) { el.innerHTML = '<p class="obs mpwarn">' + (failed(s) ? "No hospitals could be chosen: the hospital lookup failed (" + esc(clip(lookupErr(s), 160)) + "). This does not mean there is no hospital."
       : "No Primary, Secondary or Tertiary for major trauma: no hospital within " + Math.round(s.radii.h / 1000) + " km" + (s.fac.H.some(function (f) { return f.far; }) ? ", nor OSAP's documented hospitals farther out (up to " + FAR_KM + " km)," : " (and OSAP has no documented hospital farther out, up to " + FAR_KM + " km)") + " has the needed capabilities documented by a credible source" + (s.fac.H.some(isOff) ? " (or the ones that do are turned off)" : "") +
         ". The hospitals in section 2 are listed for reference only and are not eligible. Confirm a receiving facility through national or unit medical channels.") + "</p>" + (failed(s) ? "" : selHtml(s) + cards(P) + altsHtml(s) + rolesHtml(s)); return; }
-    el.innerHTML = selHtml(s) + cards(P) + altsHtml(s) + rolesHtml(s) +
-      headHtml(s) +
+    el.innerHTML = selHtml(s) + cards(P) + altsHtml(s) + '<details class="mpwhy mpmore" data-sec="pstmore"' + (secOpen("pstmore") ? " open" : "") + '><summary>Head injury, burn and limb plans, and the timing behind each choice</summary>' + rolesHtml(s) +
+      headHtml(s) + "</details>" +
       '<p class="obs">Above: the major trauma Primary, Secondary and Tertiary, which carry the routes, map and print. Times are from injury' + (airOn() ? " (road, or air at " + num("rwkn") + " kn)" : " (road; air evacuation is off)") +
       ". Confirm each by phone before relying on it.</p>";
   }
@@ -2717,6 +2829,7 @@
     return li;
   }
   function srcRender() {
+    quickRender();
     var el = D.getElementById("mp-src"), s = ST; if (!el) return;
     var li = srcList(s).map(function (x) { return srcLi(x[0], x[1]); });
     valRender();
@@ -2774,10 +2887,14 @@
      able to easily turn on/off the objects on the map"). What is hidden is a view choice kept on this device; the road and
      air reach rings keep their section 1 settings (the same switch). Only the live map follows the chips: the printed plan
      and the PDF always carry every object. */
-  var MAP_GROUPS = [["poi", "Point of injury"], ["mtf", "Planned hospitals"], ["alt", "Alternates"], ["rt", "Routes"], ["gr", "Road reach"], ["ar", "Air reach"],
+  var MAP_GROUPS = [["poi", "Point of injury"], ["mtf", "Planned hospitals"], ["alt", "Alternates"], ["oh", "Other hospitals"], ["rt", "Routes"], ["gr", "Road reach"], ["ar", "Air reach"],
     ["air", "Air: pads, airfields, rescue"], ["cp", "Unit points"], ["bl", "Blood"], ["dc", "Chambers"], ["cl", "Clinics"], ["em", "Ambulance"], ["ev", "Evacuation out"]];
-  var HIDE_KEY = KEY + "hide";
-  function hiddenGroups() { var h = lsGet(HIDE_KEY); return Array.isArray(h) ? h : []; }
+  /* the map starts with only the point of injury, the planned hospitals, the routes and the unit's own points: clinics,
+     landing sites, ambulance, blood, chambers, alternates and the evacuation out are turned on when wanted (Shane 2026-11-21:
+     "Clinics should not be automatically turned on, and the airfields and helicopter LZs shouldn't be automatically turned on
+     either"). A new key, so a choice saved under the old everything-on default does not carry over. */
+  var HIDE_KEY = KEY + "layers", HIDE_DEFAULT = ["alt", "oh", "air", "bl", "dc", "cl", "em", "ev"];
+  function hiddenGroups() { var h = lsGet(HIDE_KEY); return Array.isArray(h) ? h : HIDE_DEFAULT.slice(); }
   function groupOn(g) { return g === "gr" || g === "ar" ? ringsOn(g) : hiddenGroups().indexOf(g) < 0; }
   function setGroup(g, on) {
     if (g === "gr" || g === "ar") { var v = fieldVals(); v[g] = on ? 1 : 0; saveVals(v); return; }
@@ -2821,8 +2938,11 @@
       s.fac.AF.forEach(function (l, i) { add("air", ["mk", [l.lat, l.lon], "A" + (i + 1), "air", l.name]); });
       /* only the hospitals the plan uses (Shane 2026-10-06): its picks, stabilization stops and documented alternates; the
          rest stay listed in section 2 for reference but are not drawn */
-      s.fac.H.forEach(function (f, i) { if (isOff(f)) return; var r = pk(f), a = !r && AM[f.id]; if (!r && !a) return;
-        add(r ? "mtf" : "alt", ["mk", [f.lat, f.lon], r ? PK_TXT[r] : a ? a.t : "H" + (i + 1), r === "Stabilization" ? "stb" : r ? "pk" : a ? "alt" : "", (r ? r + ": " : a ? a.tip + ": " : "") + "H" + (i + 1) + " " + f.name + " · " + tierLabel(f) + (r || a ? "" : " · reference only, not a planned MTF"), !!(r || a)]); });
+      s.fac.H.forEach(function (f, i) { var off = isOff(f), r = !off && pk(f), a = !off && !r && AM[f.id];
+        /* the other hospitals (and those turned off) are their own map object, off to start, so a planner can find one on the
+           map and make it Primary, Secondary or Tertiary there (Shane 2026-11-21: "being able to make the edits on the map") */
+        if (!r && !a) { if (f.lat != null) add("oh", ["mk", [f.lat, f.lon], "H" + (i + 1), off ? "off" : "", "H" + (i + 1) + " " + f.name + " · " + tierLabel(f) + (off ? " · turned off" : " · reference only, not a planned MTF"), false, f.id]); return; }
+        add(r ? "mtf" : "alt", ["mk", [f.lat, f.lon], r ? PK_TXT[r] : a.t, r === "Stabilization" ? "stb" : r ? "pk" : "alt", (r ? r + ": " : a.tip + ": ") + "H" + (i + 1) + " " + f.name + " · " + tierLabel(f), true, f.id]); });
       /* a stabilization stop from the hospitals with no details listed */
       P.forEach(function (p) { if (s.fac.H.indexOf(p.f) < 0) add("mtf", ["mk", [p.f.lat, p.f.lon], PK_TXT[p.role] || "H", p.role === "Stabilization" ? "stb" : "pk", p.role + ": " + facTag(s, p.f) + " " + p.f.name, true]); });
     }
@@ -2851,7 +2971,8 @@
     var RL = { PRI: ["Primary MTF", "Quickest hospital giving a real step up in care"], SEC: ["Secondary MTF", "Surgery, blood, CT and ICU documented"], TER: ["Tertiary MTF", "Definitive specialty care documented"] };
     ["PRI", "SEC", "TER"].forEach(function (t) { if (roles.indexOf(t) >= 0) o.push(["mk", "#8b0010", t, RL[t][0], RL[t][1] + " (major trauma)"]); });
     if (has("alt")) o.push(["mka", "#8a4b00", "ALT", "Alternate MTF", "Also qualifies on documented care, if the planned one cannot take the casualty"]);
-    if (has("", /^H\d/)) o.push(["mk", "#D7141A", "H", "Other hospital", "Reference only: not eligible without credible documentation"]);
+    if (has("", /^H\d/)) o.push(["mk", "#D7141A", "H", "Other hospital", "Reference only: not eligible without credible documentation. Tap one to make it part of the plan"]);
+    if (has("off")) o.push(["mk", "#7a8590", "H", "Hospital turned off", "Left out of the plan; tap it to turn it back on"]);
     if (has("", /^C\d/)) o.push(["mk", "#D7141A", "C", "Clinic or first-aid post", ""]);
     if (has("e")) o.push(["mk", "#b35c00", "E", "Ambulance station", ""]);
     if (has("pt")) o.push(["mk", "#0b4f8a", "PORT", "Landing port", "Where the casualty is landed from the sea; the dotted line is the boat leg, straight, not a navigation route"]);
@@ -2886,7 +3007,7 @@
   }
   /* each plan mark as its NATO (2525D) symbol with its label: hospitals, clinics and chambers keep the red cross; landing zones,
      unit points, ports and airfields their control-measure or installation symbol; the role colour is the dot */
-  var MPCOL = { "": "#D7141A", e: "#b35c00", pt: "#0b4f8a", air: "#1d5fa8", o: "#111", bl: "#a4005b", dc: "#00727a", pk: "#8b0010", stb: "#b34700", alt: "#8a4b00", cp: "#1e7a3a", sw: "#7a1fa2", se: "#0b6e4f" };
+  var MPCOL = { off: "#7a8590", "": "#D7141A", e: "#b35c00", pt: "#0b4f8a", air: "#1d5fa8", o: "#111", bl: "#a4005b", dc: "#00727a", pk: "#8b0010", stb: "#b34700", alt: "#8a4b00", cp: "#1e7a3a", sw: "#7a1fa2", se: "#0b6e4f" };
   function mpKey(t, c) {
     t = String(t || "");
     if (c === "air") return /^L/.test(t) ? "g_medevac" : /^M/.test(t) ? "i_heli" : "i_air";
@@ -2905,9 +3026,44 @@
       html: '<span style="position:absolute;left:-9px;top:-9px;width:18px;height:18px;display:block">' + W.OSAP_REDCROSS(18) + '</span><b class="msym-l" style="left:11px;top:0' + (c && MPCOL[c] && c !== "" ? ";box-shadow:0 0 0 2px " + MPCOL[c] : "") + '">' + esc(t) + "</b>" });
     return L.divIcon({ className: "mpicon " + c, html: t, iconSize: [w, 20], iconAnchor: [w / 2, 10] });
   }
+  /* ---------- edit the plan on the map (Shane 2026-11-21) ----------
+     A hospital's mark opens a small card: its facts and buttons to make it the Primary, Secondary or Tertiary for major trauma,
+     go back to the computed pick, or turn it off or on. Each press is the same analyst decision the "Choose your own" list
+     records (setSel: who replaced what, when; the computed pick kept beside it), never a change to the evidence. A hospital
+     the role's capabilities are not documented for can still be chosen; the card and the plan say what is not documented. */
+  function editPop(id) {
+    var s = ST, f = s && s.fac && find(id); if (!f) return "<p>Not in this plan any more.</p>";
+    var R = planRoles(s).filter(function (r) { return r.casualty_category === "cat.major_trauma" && r.role !== "stabilization"; }), st0 = CATS[0].stages, off = isOff(f);
+    var mine = R.filter(function (r) { return r.choice && r.choice.f === f; }).map(function (r) { return ROLE_NAME[r.role] + (r.analyst ? " (your choice)" : ""); });
+    var h = '<div class="mpedit" data-keep-pop="1" data-mpe-id="' + esc(id) + '"><b>' + esc(facTag(s, f) + " " + f.name) + "</b>" +
+      '<span class="sub">' + esc(clip(tierLabel(f), 80)) + "</span>" + (f.s != null ? '<span class="sub">' + esc(km(f.rm != null ? f.rm : f.m)) + " · " + esc(mins(f.s)) + " drive</span>" : "") +
+      '<span class="sub">' + (off ? "Turned off" : mine.length ? "Now: " + esc(mine.join(", ")) : "Not in the plan") + "</span>";
+    if (!off) h += '<span class="mpeb">' + R.map(function (r) {
+      var fit = stageFit(f, st0[r.role]), nd = fit.byDesig ? [] : st0[r.role].required.filter(function (k) { return fit.met.indexOf(k) < 0; }), cur = r.choice && r.choice.f === f;
+      return '<button type="button" class="refresh" data-mpe="' + r.role + '"' + (cur ? ' aria-pressed="true" disabled' : "") + ' title="' + esc(nd.length ? "Not documented for " + ROLE_NAME[r.role] + ": " + andList(capNames(nd)) : "Documented for " + ROLE_NAME[r.role]) + '">' +
+        esc(ROLE_NAME[r.role]) + (nd.length ? " *" : "") + "</button>"; }).join("") + "</span>";
+    var sel = selOf(), back = Object.keys(sel).filter(function (k) { return sel[k] && sel[k].id === id; });
+    h += '<span class="mpeb">' + (back.length ? '<button type="button" class="refresh" data-mpe="reset">Back to computed</button>' : "") +
+      '<button type="button" class="refresh" data-mpe="' + (off ? "on" : "off") + '">' + (off ? "Turn on" : "Turn off") + "</button></span>";
+    if (!off && R.some(function (r) { var fit = stageFit(f, st0[r.role]); return !fit.byDesig && st0[r.role].required.some(function (k) { return fit.met.indexOf(k) < 0; }); })) h += '<span class="sub">* What that role needs is not all documented by a credible source here. You can still choose it; the plan says so.</span>';
+    return h + "</div>";
+  }
+  function editClick(e) {
+    var b = e.target.closest && e.target.closest(".mpedit [data-mpe]"); if (!b || !ST || !ST.fac) return;
+    var id = b.closest(".mpedit").getAttribute("data-mpe-id"), k = b.getAttribute("data-mpe");
+    if (k === "off" || k === "on") setOff(id, k === "off");
+    else if (k === "reset") { var sel = selOf(); Object.keys(sel).forEach(function (r) { if (sel[r] && sel[r].id === id) setSel(r, ""); }); }
+    else { var row = planRoles(ST).filter(function (r) { return r.casualty_category === "cat.major_trauma" && r.role === k; })[0], cp = row && (row.analyst ? row.computed : row.choice);
+      setSel(k, id, null, cp ? { id: cp.f.id, name: cp.f.name } : null); }
+    if (W.__asapMap) W.__asapMap.closePopup();
+    offChanged();
+  }
+  D.addEventListener("click", editClick);
   function mapShow() {
     var map = W.__asapMap; if (!map || !W.L || !ST) return;
     var el0 = D.getElementById("medplan"); if (W.OSAP_LEGEND && el0 && !el0.hidden) W.OSAP_LEGEND.set("medplan", legendHtml(true), el0);
+    /* a hospital's edit card open on the map stays open when the plan redraws (routes and times arrive after a change) */
+    var keep = null; if (layer) layer.eachLayer(function (l) { if (l._mpId && l.isPopupOpen && l.isPopupOpen()) keep = l._mpId; });
     if (layer) layer.remove();
     /* the plan draws in its own panes, so a view that hides the page's other layers (a conflict tab such as Deep South,
        assets/osap-conflicts.js) still shows it (Shane 2026-10-20: a plan from the Deep South tab drew nothing) */
@@ -2919,9 +3075,12 @@
       if (it[0] === "iso") L.polygon(it[1], Object.assign({ color: it[2], weight: 2, dashArray: "6 4", fillOpacity: 0.04, interactive: false }, vp)).addTo(layer);
       else if (it[0] === "ring") L.circle(it[1], Object.assign({ radius: it[2], color: it[3], weight: 2, dashArray: it[4] < GOLDEN_MIN ? "4 6" : null, fill: false, interactive: false }, vp)).addTo(layer);
       else if (it[0] === "line") L.polyline(it[1], Object.assign({ opacity: 0.85, interactive: false }, it[2], vp)).addTo(layer);
-      else L.marker(it[1], { pane: "mpmkpane", icon: mpIcon(it[2], it[3], it[2].length > 4 ? it[2].length * 7 + 6 : it[2].length > 2 ? 32 : 26), keyboard: false, zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(esc(it[4])).addTo(layer); /* names come from OpenStreetMap and Wikidata: text, never markup */
+      else { var mk = L.marker(it[1], { pane: "mpmkpane", icon: mpIcon(it[2], it[3], it[2].length > 4 ? it[2].length * 7 + 6 : it[2].length > 2 ? 32 : 26), keyboard: !!it[6], zIndexOffset: it[5] ? 1000 : 900 }).bindTooltip(esc(it[4]));
+        if (it[6]) { mk._mpId = it[6]; mk.bindPopup(function () { return editPop(it[6]); }, { className: "mppop", minWidth: 220, maxWidth: 300, autoPan: !keep, noCenter: true }); }
+        mk.addTo(layer); } /* names come from OpenStreetMap and Wikidata: text, never markup */
     });
     layer.addTo(map);
+    if (keep) layer.eachLayer(function (l) { if (l._mpId === keep) l.openPopup(); });
   }
 
   /* ---------- the printed map: OpenStreetMap tiles and the plan drawn on a canvas, so it prints on every device ---------- */
@@ -3262,6 +3421,12 @@
     var el = D.getElementById("brief"), src = D.querySelector("#medplan .mpbox"), s = ST; if (!el || !src) return false;
     var c = src.cloneNode(true), conop = mode === "conop";
     s.printMode = conop ? "conop" : "";
+    /* the folded sections print unfolded and as before: the heading, then the section */
+    [].forEach.call(c.querySelectorAll("details.mpsec"), function (d) {
+      var f = D.createDocumentFragment(), sm = d.querySelector("summary");
+      if (sm) { if (!d.hasAttribute("data-nohead")) while (sm.firstChild) f.appendChild(sm.firstChild); sm.remove(); }
+      while (d.firstChild) f.appendChild(d.firstChild); d.replaceWith(f);
+    });
     if (conop) {
       CONOP_DROP.forEach(function (id) { var d = c.querySelector("#" + id); if (!d) return; var h = d.previousElementSibling; if (h && h.tagName === "H3") h.remove(); d.remove(); });
       [].forEach.call(c.querySelectorAll("#mp-src > ul"), function (x) { x.remove(); });
@@ -3932,6 +4097,7 @@
   }
   function onClick(e) {
     if (e.target.id === "medplan") { close(); return; }
+    var qb = e.target.closest && e.target.closest("[data-mp-sec]"); if (qb) { secShow(qb.getAttribute("data-mp-sec"), qb.getAttribute("data-mp-focus")); return; }
     var lb = e.target.closest && e.target.closest("[data-mp-lyr]"); if (lb) { layerClick(lb.getAttribute("data-mp-lyr")); return; }
     var b = e.target.closest && e.target.closest("[data-mp],[data-mp-go],[data-mp-route],[data-mp-set],[data-mp-assess],[data-mp-offbtn],[data-mp-siteroute],[data-mpa-add],[data-mpa-del],[data-mpa-conf],[data-mp-cat],[data-mp-seatr]"); if (!b) return;
     if (b.hasAttribute("data-mp-seatr")) { var o = ST && ST.o; close(); W.OSAP_SEATRANSIT.open(o ? { at: o } : {}); return; }
@@ -3946,8 +4112,9 @@
     if (k === "setpoi") { setPoi(); return; }
     if (k === "legacyuse" || k === "legacydrop") { legacyMove(k === "legacyuse"); render(); build(); return; }
     if (k === "print") { printView(); return; }
+    if (k === "exp") { var hd = b.closest(".mphead"), on = !hd.classList.contains("mpxo"); hd.classList.toggle("mpxo", on); b.setAttribute("aria-expanded", String(on)); return; }
     if (k === "printc") { printView("conop"); return; }
-    if (k === "slide") { slideOpen(); return; }
+    if (k === "slide" || k === "pace") { slideOpen(); return; }
     if (k === "tak") { takExport(); return; }
     if (k === "places") { placesSave(); return; }
     if (k === "airfit") { if (!dockOn()) close(); mapShow(); airFit(); return; }

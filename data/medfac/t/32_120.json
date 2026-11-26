@@ -5,6 +5,7 @@
 ["n13866004815",32.00501,120.86283,"cn",{"name":"急诊部","amenity":"hospital","healthcare":"emergency","emergency":"yes"}],
 ["n14152951647",32.00625,120.86126,"cn",{"name":"南通市第三人民医院","amenity":"hospital","healthcare":"hospital"}],
 ["n14152951648",32.0095,120.86023,"cn",{"name":"南通大学附属医院","amenity":"hospital","healthcare":"hospital"}],
+["n14365295294",32.02887,120.82092,"cn",{"name":"越江诊所","amenity":"clinic","healthcare":"clinic"}],
 ["n1772569873",32.26168,120.49757,"cn",{"aeroway":"helipad"}],
 ["n1772569887",32.26257,120.49676,"cn",{"aeroway":"helipad"}],
 ["n2692380701",32.02233,120.86176,"cn",{"name":"南通中医院","amenity":"hospital","healthcare":"hospital"}],

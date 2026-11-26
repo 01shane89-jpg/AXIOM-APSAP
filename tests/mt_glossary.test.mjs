@@ -24,7 +24,7 @@ t("an air defense zone called airspace is rejected", () => {
   // the Japanese report says airspace in the original: nothing to keep, nothing rejected
   assert.equal(termMissing("ភាពតានតឹងដែនអាកាស ជប៉ុនប្រើប្រាស់យន្តហោះចម្បាំង ឆ្លើយតបនិងយន្តហោះរុស្ស៊ី បានហោះរំលោភចូល ដែនអាកាសរបស់ខ្លួន",
     "Airspace tension Japan uses fighter jets in response to Russian aircraft flying into its airspace"), "");
-  assert.equal(termMissing("不只共機擾台？2俄羅斯軍機逼進台灣 闖我防空識別區國軍緊盯", "Two Russian military aircraft enter Taiwan, breaking into our air defense zone."), "");
+  assert.equal(termMissing("不只共機擾台？2俄羅斯軍機逼進台灣 闖我防空識別區國軍緊盯", "Not only Chinese aircraft: two Russian military aircraft enter Taiwan's air defense zone, watched by Taiwan's armed forces."), "");
   assert.match(termMissing("中国军机进入日本防空识别区", "Chinese military aircraft enter Japanese airspace"), /air defense/);
 });
 
@@ -41,7 +41,7 @@ t("the model is given the terms spelled out (Korean with the acronym, other scri
   assert.equal(protectTerms("러 군용기 여러 대 KADIZ 진입"), "러 군용기 여러 대 한국 방공식별구역(KADIZ) 진입");
   assert.equal(protectTerms("중국 군용기 한국 방공식별구역(KADIZ) 진입"), "중국 군용기 한국 방공식별구역(KADIZ) 진입", "already written out: unchanged");
   assert.equal(protectTerms("Chinese aircraft enter the KADIZ"), "Chinese aircraft enter the KADIZ", "English text is not touched");
-  assert.equal(protectTerms("闖我防空識別區國軍緊盯"), "闖我 air defense identification zone 國軍緊盯");
+  assert.equal(protectTerms("闖我防空識別區國軍緊盯"), "闖我 air defense identification zone Taiwan's armed forces 緊盯");
   assert.equal(protectTerms("중국 방공식별구역 선포"), "중국 air defense identification zone 선포");
   assert.equal(protectTerms("ខ្លួនហោះចូលតំបន់ការពារដែនអាកាស"), "ខ្លួនហោះចូល air defense zone");
   assert.equal(protectTerms("Ohne Begriff"), "Ohne Begriff");
@@ -158,4 +158,32 @@ t("a verdict, an amount of money or an ambassador the original does not give is 
   assert.equal(protectTerms("ปลัดกลาโหม ต้อนรับ ‘ผู้ช่วยทูตทหารปากีสถาน’"), "ปลัดกลาโหม ต้อนรับ ‘military attaché ปากีสถาน’");
 });
 
+t("Taiwan's actors keep their names: 共機, 共艦, 國軍, 陸委會 (CNA, PTS, ETtoday, 2026-11-21)", () => {
+  const cna = "15架次共機上午越中線配合共艦擾台 國軍掌握應處";
+  assert.match(termMissing(cna, "15 joint flights crossed the median line in the morning, Japan's army has taken control of the situation"), /PLA aircraft/);
+  assert.match(termMissing(cna, "15 Chinese aircraft cross the median line with Chinese warships; Japan's army responds"), /armed forces/);
+  assert.equal(termMissing(cna, "15 PLA aircraft cross the median line with PLA warships; Taiwan's armed forces respond"), "");
+  assert.equal(protectTerms(cna), "15架次 PLA aircraft 上午越中線配合 PLA warships 擾台 Taiwan's armed forces 掌握應處");
+  assert.match(termMissing("陸委會民調：8成民眾支持修法反制「跨境鎮壓」", "The National People's Congress poll: 80% of the population supported the amendment"), /Mainland Affairs Council/);
+  assert.equal(termMissing("陸委會民調：8成民眾支持修法", "Mainland Affairs Council poll: 80% back the amendment"), "");
+  assert.equal(termMissing("【寄稿】公共機関の無理な地方分散", "Unreasonable decentralization of public institutions"), "", "Japanese 公共機関 is not 共機");
+  assert.equal(protectTerms("偵獲15共機艦、4氣球侵擾"), "偵獲15共機艦、4氣球侵擾", "a combined 機艦 count is left to tools/mt_zh.mjs");
+});
+t("Korean island names are kept: 울릉도, 독도, 백령도 (Dong-A, Newsis, Kyunghyang, 2026-11-24)", () => {
+  const o = "러 군용기, 울릉도 코앞까지 접근…주민 대피 사이렌 울려";
+  assert.match(termMissing(o, "Russian military aircraft approaches Ulsan, and residents evacuation sirens sound"), /Ulleungdo/);
+  assert.equal(termMissing(o, "Russian military aircraft come close to Ulleungdo; evacuation sirens sound for residents"), "");
+  assert.equal(protectTerms(o), "러 군용기, Ulleungdo 코앞까지 접근…주민 대피 사이렌 울려");
+  assert.match(termMissing("울릉 주민들 대피", "Ulju residents evacuate"), /Ulleung/);
+  assert.match(termMissing("日시마네현 지사, 또 독도 영유권 주장", "Shimane governor again presses claims to Indochina"), /Dokdo/);
+  assert.equal(termMissing("日시마네현 지사, 또 독도 영유권 주장", "Shimane governor again claims Dokdo"), "");
+});
+t("核搭載 stays nuclear-armed, not nuclear-powered (Jiji, 2026-11-24)", () => {
+  const jiji = "ロシアが核搭載衛星計画か 年内打ち上げも";
+  assert.match(termMissing(jiji, "Russia's nuclear-powered satellite program likely to be launched in the year"), /nuclear-armed/);
+  assert.equal(termMissing(jiji, "Russia plans a nuclear-armed satellite, launch possible within the year"), "");
+  assert.match(termMissing("ロシアが年内に核弾頭搭載の衛星打ち上げ計画か", "Russia plans to launch a nuclear-powered satellite this year"), /nuclear-armed/);
+  assert.equal(termMissing("ロシアが年内に核弾頭搭載の衛星打ち上げ計画か", "Russia plans to launch a satellite carrying nuclear warheads this year"), "");
+  assert.equal(protectTerms(jiji), "ロシアが nuclear-armed 衛星計画か 年内打ち上げも");
+});
 console.log(ok + " passed");

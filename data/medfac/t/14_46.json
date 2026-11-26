@@ -70,12 +70,12 @@
 ["n1225471562",14.32682,46.99478,"ye",{"name":"الوحدة الصحية السفال","name:en":"Al Wahdah as Sihhiyah as Sifal","amenity":"clinic","healthcare":"clinic"}],
 ["n1225471584",14.57382,47.08367,"ye",{"name":"الوحدة الصحية ثرة","name:en":"Al Wahdah as Sihhiyah Tharah","amenity":"clinic","healthcare":"clinic"}],
 ["n1225471692",14.37812,46.84188,"ye",{"name":"المركز الصحي مقبلة","name:en":"Al Markaz as Sihhiy Maqbilah","amenity":"clinic","healthcare":"clinic"}],
-["n1225471705",14.53493,46.8376,"ye",{"name":"مستشفى بانافع التخصصي","name:en":"Mustashfa Banafi` at Takhassusi","amenity":"hospital","healthcare":"hospital"}],
+["n1225471705",14.53493,46.8376,"ye",{"name":"مستشفى بانافع التخصصي","name:en":"Banafa Specialized Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["n1225471706",14.42325,46.84225,"ye",{"name":"الوحدة الصحية المحظرة","name:en":"Al Wahdah as Sihhiyah al Mahzarah","amenity":"clinic","healthcare":"clinic"}],
-["n1225471708",14.53915,46.83087,"ye",{"name":"مستشفى عتق المركزي","name:en":"Mustashfa `Ataq al Markazi","amenity":"hospital","healthcare":"hospital"}],
-["n1225471710",14.53432,46.83715,"ye",{"name":"مستوصف السلام الطبي","name:en":"Mustawsaf as Salam at Tibbi","amenity":"clinic","healthcare":"clinic"}],
-["n1225471718",14.53195,46.83907,"ye",{"name":"مستوصف دار الحكمة الطبي","name:en":"Mustawsaf Dar al Hikmah at Tibbi","amenity":"clinic","healthcare":"clinic"}],
-["n1225471719",14.53165,46.83892,"ye",{"name":"مستوصف با مخشب الطبي","name:en":"Mustawsaf Ba Makhshab at Tibbi","amenity":"clinic","healthcare":"clinic"}],
+["n1225471708",14.53915,46.83087,"ye",{"name":"مستشفى عتق المركزي","name:en":"Ataq Central Hospital","amenity":"hospital","healthcare":"hospital"}],
+["n1225471710",14.53432,46.83715,"ye",{"name":"مستوصف السلام الطبي","name:en":"Al Salam Medical Clinic","amenity":"clinic","healthcare":"clinic"}],
+["n1225471718",14.53195,46.83907,"ye",{"name":"مستوصف دار الحكمة الطبي","name:en":"Dar Al Hikma Medical Clinic","amenity":"clinic","healthcare":"clinic"}],
+["n1225471719",14.53165,46.83892,"ye",{"name":"مستوصف با مخشب الطبي","name:en":"Ba Makhshab Medical Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["n1225471721",14.4463,46.82165,"ye",{"name":"الوحدة الصحية قوبان","name:en":"Al Wahdah as Sihhiyah Qawban","amenity":"clinic","healthcare":"clinic"}],
 ["n1225471757",14.45007,46.91147,"ye",{"name":"الوحدة الصحية قرى آل مهدي","name:en":"Al Wahdah as Sihhiyah Qura Al Mahdi","amenity":"clinic","healthcare":"clinic"}],
 ["n1225471767",14.46008,46.91667,"ye",{"name":"الوحدة الصحية خمر","name:en":"Al Wahdah as Sihhiyah Khamir","amenity":"clinic","healthcare":"clinic"}],
@@ -138,4 +138,4 @@
 ["n7934751482",14.06421,47.99472,"ye",{"amenity":"clinic"}],
 ["n8558015081",15.15497,47.40233,"ye",{"name":"مركز الصحي الطلح","name:en":"Markaz Sihhi at Talh","amenity":"clinic","healthcare":"clinic"}],
 ["r17287268",15.48529,47.59081,"ye",{"amenity":"hospital"}],
-["w996814128",14.55539,46.82258,"ye",{"name":"مطار عتق الدولي","name:en":"Ataq international Airport","aeroway":"aerodrome","icao":"OYAT","iata":"AXK","aerodrome:type":"regional","military":"airfield","wikidata":"Q2584031"}]]
+["w996814128",14.55539,46.82258,"ye",{"name":"مطار عتق الدولي","name:en":"Ataq International Airport","aeroway":"aerodrome","icao":"OYAT","iata":"AXK","aerodrome:type":"regional","military":"airfield","wikidata":"Q2584031"}]]

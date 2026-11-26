@@ -125,6 +125,9 @@ jobs:
             --n_ctx 8192 --n_threads 4 > llm.log 2>&1 &
           for i in $(seq 1 90); do curl -sf http://127.0.0.1:8080/v1/models >/dev/null && { echo "server up after ${i}x2 s"; exit 0; }; sleep 2; done
           tail -30 llm.log; exit 1
+      # the official SDK for Claude (the same version as netlify/package.json); only the daily summaries call it
+      - name: Install the Anthropic SDK
+        run: npm install --no-save --no-audit --no-fund --no-package-lock @anthropic-ai/sdk@1.5.0 >/dev/null 2>&1 || echo "SDK not installed; the daily summaries use the free providers"
       - name: Redraft the daily summaries' top lines
         if: ${{ (github.event_name == 'schedule' && github.event.schedule == '23 1 * * *' && steps.today.outputs.done != '1') || (github.event_name != 'schedule' && (inputs.task == 'daily' || inputs.task == 'both' || inputs.task == '')) }}
         timeout-minutes: 90
@@ -136,6 +139,11 @@ jobs:
           DAILY_ONLY: ${{ inputs.only }}
           DAILY_AI_PER_RUN: ${{ inputs.per_run || '45' }}
           DAILY_AI_BUDGET_MIN: "80"
+          # Claude Haiku 5.5 first when the owner's key is a repository secret (Shane 2026-11-23), up to $1.00 a UTC day across
+          # every run and shard (tools/refresh_daily.mjs); without the secret, or past the cap, the free providers as before
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OSAP_AI_ORDER: anthropic,github,local
+          DAILY_ANTHROPIC_CAP_USD: "1.00"
         run: node tools/refresh_daily.mjs
       # One daily pass reaches about 30 to 45 countries in its 80 minutes, and the news lane's retries can't draft (GitHub Models
       # answers "OK"), so 18 Nov 2026 stopped at 26 of 175. Every other run with the model up (the 3-hourly rounds, and a late
@@ -151,6 +159,11 @@ jobs:
           DAILY_CONTINUE: "1"
           DAILY_AI_PER_RUN: ${{ inputs.per_run || '45' }}
           DAILY_AI_BUDGET_MIN: "15"
+          # Claude Haiku 5.5 first when the owner's key is a repository secret (Shane 2026-11-23), up to $1.00 a UTC day across
+          # every run and shard (tools/refresh_daily.mjs); without the secret, or past the cap, the free providers as before
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OSAP_AI_ORDER: anthropic,github,local
+          DAILY_ANTHROPIC_CAP_USD: "1.00"
         run: node tools/refresh_daily.mjs
       - name: Draft incident summaries
         if: ${{ github.event_name == 'schedule' || (inputs.task != 'daily' && inputs.task != 'osir' && inputs.task != 'digest') }}
@@ -253,6 +266,16 @@ jobs:
           if git diff --quiet -- data/live/daily.js data/live/daily data/live/evsum_ai.js data/live/osirdraft.js data/live/conflicts/suggest.js data/live/digest.js; then echo "no change"; exit 0; fi
           git config user.name "asap-ai-refresh[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # this run checked out main hours ago; a country the shards (refresh-daily-ai.yml) drafted since then keeps that AI
+          # draft, as the rebase below takes this run's side of every conflict (24 Nov 2026: 38 shard drafts lost that way)
+          # --refmap= leaves origin/main where the checkout put it: tools/push_rebase.sh replays the commits after that ref, and
+          # when this fetch moved it, the replay took this depth-1 checkout's whole tree with "theirs" and rolled main's newer code
+          # back (24 Nov 2026 12:07Z: #920, #921 and #922 undone). Only FETCH_HEAD is read here.
+          if git fetch -q --depth=1 --refmap= origin main && mkdir -p "$RUNNER_TEMP/main" && git archive FETCH_HEAD data/live/daily | tar -x -C "$RUNNER_TEMP/main"; then
+            # the index is rewritten only when a draft was taken, so this run's own AI notes (made, stopped, Claude) stay otherwise
+            m=$(node tools/daily_merge.mjs "$RUNNER_TEMP/main/data/live/daily" || true); echo "$m"
+            echo "$m" | grep -q ": [1-9][0-9]* shard drafts taken" && { DAILY_REINDEX=1 node tools/refresh_daily.mjs || echo "could not rewrite the index"; }
+          fi
           git add data/live/daily.js data/live/daily
           [ -f data/live/evsum_ai.js ] && git add data/live/evsum_ai.js
           git add data/live/osirdraft.js

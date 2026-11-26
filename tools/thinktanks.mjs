@@ -14,6 +14,7 @@ import { rssItems, feed, run, ageDays } from "./dense_lib.mjs";
 import { ccsInText, ccFromA2, withOki } from "./geo_cc.mjs";
 import { robotsAllow, unwrap } from "./news_fetch.mjs";
 import { bingDate } from "./news_date.mjs";
+import { parseList } from "./feedparse.mjs";
 
 const TT = [
   // id, institute, home page, candidate feed addresses
@@ -23,9 +24,10 @@ const TT = [
   ["lowy", "Lowy Institute", "https://www.lowyinstitute.org/the-interpreter", ["https://www.lowyinstitute.org/the-interpreter/rss.xml", "https://www.lowyinstitute.org/rss.xml"]],
   ["aspi", "ASPI", "https://www.aspistrategist.org.au/", ["https://www.aspistrategist.org.au/feed/", "https://www.aspi.org.au/rss.xml"]],
   ["carnegie", "Carnegie Endowment", "https://carnegieendowment.org/", ["https://carnegieendowment.org/rss/solr/?fa=pubs", "https://carnegieendowment.org/rss", "https://carnegieendowment.org/rss.xml"]],
-  ["iiss", "IISS", "https://www.iiss.org/", ["https://www.iiss.org/rss/", "https://www.iiss.org/en/rss/online-analysis/", "https://www.iiss.org/rss.xml"]],
+  // iiss retired 23 Nov 2026: iiss.org answers HTTP 403 to GitHub's runners on every address (a deliberate block, every run since 13 Nov)
   ["isw", "Institute for the Study of War", "https://understandingwar.org/", ["https://understandingwar.org/feed/", "https://www.understandingwar.org/rss.xml", "https://www.understandingwar.org/backgrounder/rss.xml"]],
-  ["criticalthreats", "Critical Threats (AEI)", "https://www.criticalthreats.org/", ["https://www.criticalthreats.org/rss", "https://www.criticalthreats.org/feed", "https://www.criticalthreats.org/rss.xml"]],
+  // criticalthreats: its feeds went (HTTP 404, 2026); the analysis list page is read instead (LISTS below)
+  ["criticalthreats", "Critical Threats (AEI)", "https://www.criticalthreats.org/", []],
   ["brookings", "Brookings", "https://www.brookings.edu/", ["https://www.brookings.edu/feed/"]],
   ["stimson", "Stimson Center", "https://www.stimson.org/", ["https://www.stimson.org/feed/"]],
   ["38north", "38 North (Stimson)", "https://www.38north.org/", ["https://www.38north.org/feed/"]],
@@ -53,8 +55,8 @@ const TT = [
   ["fulcrum", "ISEAS Fulcrum", "https://fulcrum.sg/", ["https://fulcrum.sg/feed/"]],
   ["eaf", "East Asia Forum", "https://eastasiaforum.org/", ["https://eastasiaforum.org/feed/", "https://www.eastasiaforum.org/feed/"]],
   ["swp", "SWP Berlin", "https://www.swp-berlin.org/en/", ["https://www.swp-berlin.org/en/rss", "https://www.swp-berlin.org/en/rss.xml"]],
-  ["ifri", "Ifri", "https://www.ifri.org/en", ["https://www.ifri.org/en/rss.xml", "https://www.ifri.org/rss.xml"]],
-  ["clingendael", "Clingendael", "https://www.clingendael.org/", ["https://www.clingendael.org/rss.xml", "https://www.clingendael.org/feed"]],
+  // ifri retired 23 Nov 2026: ifri.org answers HTTP 403 to GitHub's runners on every address (a deliberate block, every run since 13 Nov)
+  // clingendael retired 23 Nov 2026: clingendael.org answers HTTP 403 to GitHub's runners on every address (a deliberate block, every run since 13 Nov)
   ["gmf", "German Marshall Fund", "https://www.gmfus.org/", ["https://www.gmfus.org/rss.xml", "https://www.gmfus.org/feed"]],
   ["fpri", "Foreign Policy Research Institute", "https://www.fpri.org/", ["https://www.fpri.org/feed/"]],
   ["quincy", "Quincy Institute", "https://quincyinst.org/", ["https://quincyinst.org/feed/"]],
@@ -92,7 +94,7 @@ const TT = [
   ["devpolicy", "Devpolicy Blog (ANU)", "https://devpolicy.org/", ["https://devpolicy.org/feed/"]],
   ["caci", "CACI Analyst", "https://www.cacianalyst.org/", ["https://www.cacianalyst.org/publications/analytical-articles.html?format=feed&type=rss"]],
   ["caspian", "Caspian Policy Center", "https://www.caspianpolicy.org/", ["https://www.caspianpolicy.org/rss.xml"]],
-  ["cabar", "CABAR.asia", "https://cabar.asia/en", ["https://cabar.asia/en/feed"]],
+  // cabar retired 23 Nov 2026: cabar.asia refuses connections from GitHub's runners (ECONNREFUSED on every run since 30 Oct)
   ["ewb", "European Western Balkans", "https://europeanwesternbalkans.com/", ["https://europeanwesternbalkans.com/feed/"]],
   ["cepa", "CEPA", "https://cepa.org/", ["https://cepa.org/feed/"]],
   ["icds", "ICDS Estonia", "https://icds.ee/en/", ["https://icds.ee/en/feed/"]],
@@ -201,6 +203,10 @@ const TT = [
   ["crs", "Congressional Research Service (via EveryCRSReport)", "https://www.everycrsreport.com/", ["https://www.everycrsreport.com/rss.xml"]],
 ];
 
+// An institute with no feed left: its own list page, read for the links matching the pattern (tools/feedparse.mjs parseList)
+const LISTS = { criticalthreats: ["https://www.criticalthreats.org/analysis", "^/analysis/[a-z0-9]+(?:-[a-z0-9]+){2,}$"] };
+// How often an institute is read when hourly is too often for it (CESPAD answered HTTP 429, too many requests, 19-23 Nov 2026)
+const EVERY = { cespad: 12 };
 // Pages that list an institute's feeds, searched when none of the candidate addresses answers.
 const PAGES = { carnegie: ["https://carnegieendowment.org/rss/"], chatham: ["https://www.chathamhouse.org/rss-feeds"], sipri: ["https://www.sipri.org/rss"] };
 
@@ -344,7 +350,7 @@ const OPEN_LIC = { issafrica: "CC BY 4.0 (issafrica.org/terms-of-use); headline 
 const UA_FEED = { accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*" };
 for (const [id, org, home, urls] of TT) {
   const fid = "tt-" + id;
-  feed(fid, { name: org + " analysis", org, cat: "Analysis", lic: OPEN_LIC[id] || "Publisher copyright; headline and link only", nc: !OPEN_LIC[id], url: home, everyHours: 1 });
+  feed(fid, { name: org + " analysis", org, cat: "Analysis", lic: OPEN_LIC[id] || "Publisher copyright; headline and link only", nc: !OPEN_LIC[id], url: home, everyHours: EVERY[id] || 1 });
   run(fid, async (g) => {
     let entries = null, used = "", why = [];
     // A feed counts only if it holds something from the last 60 days (several institutes left a dead feed behind).
@@ -358,6 +364,13 @@ for (const [id, org, home, urls] of TT) {
       } catch (e) { why.push(u + ": " + e.message); } return false;
     };
     for (const u of urls) if (await tryUrl(u)) break;
+    if (!entries && LISTS[id]) {
+      const [pg, match] = LISTS[id];
+      try {
+        const es = parseList(await g(pg, "text", { timeout: 20e3 }), pg, match).filter((x) => !x.date || ageDays(x.date) <= 60);
+        if (es.length) { entries = es; used = pg + " (list page)"; } else why.push(pg + ": no links matched");
+      } catch (e) { why.push(pg + ": " + e.message); }
+    }
     if (!entries) { // fall back to feeds the home page (or the institute's feed list page) links to
       for (const pg of [home, ...(PAGES[id] || [])]) {
         try {

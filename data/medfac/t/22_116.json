@@ -125,6 +125,7 @@
 ["w1557284297",23.55946,116.34723,"cn",{"name":"慈云医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1557762880",23.58574,116.42378,"cn",{"name":"揭东区中医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1557771963",23.60474,116.32221,"cn",{"name":"揭阳市第三人民医院","amenity":"hospital","healthcare":"hospital"}],
+["w1579208981",23.48585,116.00317,"cn",{"name":"李开都纪念医院","amenity":"hospital","healthcare":"hospital"}],
 ["w292128278",23.98591,116.82468,"cn",{"name":"饶平县三饶卫生院","name:en":"Sanrao Hospital","amenity":"hospital","healthcare":"hospital","phone":"+86 768 835 1530","addr:housenumber":"1","addr:street":"三饶镇城基北路","addr:district":"饶平县","addr:city":"潮州市","addr:province":"广东省","addr:postcode":"515735"}],
 ["w409671884",23.42782,116.75942,"cn",{"name":"汕头外砂机场","name:en":"Shantou Waisha Airport","aeroway":"aerodrome","military":"airfield","wikidata":"Q3234808"}],
 ["w525078027",23.26709,116.16648,"cn",{"name":"卫生院","amenity":"hospital"}],

@@ -9,6 +9,9 @@ import { COMMERCIAL } from "./nc_strip.mjs";
 import { get, unhtml, isoMin, ageDays, csvRows, csvObjects, rssItems, feed, run, runAll, writeAll, sleep, FEEDS } from "./dense_lib.mjs";
 import "./thinktanks.mjs";
 import "./dense_nov8.mjs";
+import "./dense_airmon.mjs";
+import "./dense_trade.mjs";
+import "./dense_records.mjs";
 import { ukSanctionsItems } from "./uk_sanctions.mjs";
 import { COUNTRIES, ccsAt, ccFromName, ccFromA2, ccFromA3, ccsInText, withOki } from "./geo_cc.mjs";
 
@@ -689,7 +692,10 @@ run("de-travel", async (g) => {
 
 feed("au-travel", { name: "Australian Smartraveller advice levels", org: "Australian Government DFAT", cat: "Advisories", lic: "CC BY 4.0", url: "https://www.smartraveller.gov.au/", everyHours: 3 });
 run("au-travel", async (g) => {
-  const xml = await g("https://www.smartraveller.gov.au/countries/documents/index.rss", "text", { timeout: 120000 });
+  // one more try after a pause: from GitHub's runners the site answers in under a second most times but sometimes never
+  // connects (ETIMEDOUT on every 3-hourly run 20-23 Nov 2026, while a probe on 23 Nov read it twice in 0.3 s)
+  const U = "https://www.smartraveller.gov.au/countries/documents/index.rss";
+  const xml = await g(U, "text", { timeout: 60000 }).catch(async () => { await sleep(20000); return g(U, "text", { timeout: 60000 }); });
   return { items: rssItems(xml).map((x) => { const lvl = (x.summary.match(/(Exercise normal safety precautions|Exercise a high degree of caution|Reconsider your need to travel|Do not travel)/i) || [])[1] || "";
     return { title: "Australia: " + (lvl || x.title), detail: x.summary.slice(0, 400), date: x.date, url: x.link, sev: /do not travel|reconsider/i.test(lvl) ? 3 : /high degree/i.test(lvl) ? 2 : 1, kind: "Travel advisory", ccs: withOki(ccsInText(x.title)) }; }) };
 });

@@ -73,7 +73,10 @@ const pick = (p, id, v) => p.evaluate(([id, v]) => { const s = document.getEleme
   await tick(p, "night", true); await p.waitForTimeout(1500);
   const latest = await p.evaluate(() => window.OSAP_REF_LAYERS._t.latestNight());
   ok(asked.night.length > 0 && asked.night.every((d) => d === latest), "night lights ask NASA GIBS for the newest night (" + latest + ", " + asked.night.length + " tiles)");
-  await pick(p, "rl-nd", "2026-06-01"); asked.night.length = 0; await p.waitForTimeout(1200);
+  // clear before the pick: tiles the pick asks for at once must count (clearing after it raced them on slow runners)
+  asked.night.length = 0; await pick(p, "rl-nd", "2026-06-01");
+  for (let i = 0; i < 50 && !asked.night.includes("2026-06-01"); i++) await p.waitForTimeout(200);
+  await p.waitForTimeout(300);
   ok(asked.night.length > 0 && asked.night.every((d) => d === "2026-06-01"), "picking a night asks for that night");
   await pick(p, "rl-cmp", "30"); await p.waitForTimeout(300);
   ok(await p.evaluate(() => !document.getElementById("rl-flip").hidden && /2026-05-02/.test(document.getElementById("rl-flip").textContent)), "Compare one month earlier offers Flip to 2026-05-02");

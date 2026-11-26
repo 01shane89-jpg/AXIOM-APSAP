@@ -101,7 +101,7 @@
 ["n9807736668",3.57465,98.68809,"id",{"amenity":"clinic","healthcare":"clinic","osap:withheld":"1"}],
 ["n9841065726",3.51984,98.61867,"id",{"name":"Klinik Rawat Inap Bukit Permai","amenity":"clinic","healthcare":"clinic"}],
 ["n9843284318",3.62886,98.65829,"id",{"name":"Klinik Dewi Sri","amenity":"clinic","healthcare":"clinic"}],
-["r12738712",3.63124,98.87506,"id",{"name":"Bandar Udara Internasional Kualanamu","name:en":"Kualanamu International Airport","operator":"Angkasa Pura","website":"https://directorsdirectory.com/kualanamu-international-airport-medan/","aeroway":"aerodrome","icao":"WIMM","iata":"KNO","aerodrome:type":"international","wikidata":"Q4273083"}],
+["r12738712",3.63124,98.87506,"id",{"name":"Bandar Udara Internasional Kualanamu","name:en":"Kualanamu International Airport","operator":"Angkasa Pura","website":"https://directorsdirectory.com/kualanamu-international-airport-medan/","addr:street":"Jl. Bandar Udara Kualanamu","addr:subdistrict":"Pasar Enam Kuala Namu","addr:district":"Beringin","addr:city":"Deli Serdang","addr:province":"Sumatera Utara","addr:postcode":"20552","aeroway":"aerodrome","icao":"WIMM","iata":"KNO","aerodrome:type":"international","wikidata":"Q4273083"}],
 ["r12919657",3.59977,98.67264,"id",{"name":"RS Putri Hijau Medan","amenity":"hospital","healthcare":"hospital"}],
 ["r8759835",3.57164,98.67752,"id",{"name":"RS Tni Angkatan ara dr Abdul Malik Mdn","amenity":"hospital","healthcare":"hospital"}],
 ["r8780690",3.61459,98.68164,"id",{"name":"Puskesmas Glugur Darat","amenity":"clinic","healthcare":"clinic","operator":"Ministry of Health"}],

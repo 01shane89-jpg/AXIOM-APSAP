@@ -150,6 +150,8 @@
 ["n14077224886",13.95405,43.90244,"ye",{"name":"مستوصف الرميد الصحي","name:en":"Al Rumaid Health Clinic","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"اسعافات_اوليه","operator":"عام","operator:type":"public","addr:street":"سوق الرميد","addr:city":"شرقي عردن"}],
 ["n14077240728",13.93636,43.88874,"ye",{"name":"مستوصف شرقي عردن الصحي","name:en":"Sharqi Urdan Health Clinic","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"first_aid","operator":"عام","operator:type":"public","addr:city":"شرقي عردن"}],
 ["n14097955815",13.94728,43.86944,"ye",{"name":"المركز الصحي حود","name:en":"Al Markaz as Sihhiy Hawd","amenity":"clinic","healthcare":"clinic"}],
+["n14364173064",13.91063,43.55999,"ye",{"name":"وحدة الفش الصحية","amenity":"clinic"}],
+["n14403593703",13.33798,43.26087,"ye",{"name":"مستشفى ٢ ديسمبر","name:en":"2D Hospital","amenity":"hospital","opening_hours":"24/7"}],
 ["n2528146184",12.16816,42.46618,"dj",{"name":"Aérodrome de Dorra مطار درة","name:en":"Dorra Airport","aeroway":"aerodrome","icao":"HDDO","iata":"DOZ","wikidata":"Q19401280"}],
 ["n4298021261",13.58707,43.98006,"ye",{"name":"Albrehe Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["n4298024532",13.58186,43.9927,"ye",{"name":"Orthopedic Specialist Hospital","amenity":"hospital","healthcare":"hospital"}],

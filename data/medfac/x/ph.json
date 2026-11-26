@@ -4,6 +4,7 @@
 ["n12869968105",7.22136,124.24375,"ph",{"name":"PRC Cotabato Regional Blood Center","healthcare":"blood_donation","operator":"Philippine Red Cross","addr:street":"T. V. Juliano Avenue","addr:city":"Cotabato City","addr:province":"Maguindanao del Norte","addr:postcode":"9600"}],
 ["n12963595918",16.52451,121.51941,"ph",{"name":"Philippine Red Cross","healthcare":"blood_donation"}],
 ["n13064762386",14.64683,121.04556,"ph",{"name":"Hyperbaric Medicine Facility and Wound Center","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"hyperbaric_chamber","operator":"Lung Center of the Philippines","contact:phone":"+63289246101, 1952"}],
+["n14393937476",8.05635,123.80957,"ph",{"healthcare":"blood_donation","operator":"Philippine Red Cross - Lanao del Norte Chapter"}],
 ["n2153569636",14.42821,121.02668,"ph",{"name":"Philippine National Red Cross Muntinlupa Chapter","healthcare":"blood_donation","addr:street":"Prime Street","addr:city":"Muntinlupa","addr:postcode":"1780"}],
 ["n3574288064",14.6473,121.04337,"ph",{"name":"Philippine Blood Center","healthcare":"blood_bank","operator":"Department of Health"}],
 ["n4211986438",14.58798,120.97617,"ph",{"name":"Red Cross Blood Bank","healthcare":"blood_donation","operator":"Philippine Red Cross","addr:street":"General Luna Street"}],

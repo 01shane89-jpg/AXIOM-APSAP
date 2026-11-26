@@ -62,6 +62,7 @@
 ["w1552180015",24.78028,102.82244,"cn",{"name":"云南省干细胞库","healthcare":"blood_bank","operator":"云南新生命干细胞有限公司"}],
 ["w1558335603",25.13827,113.39709,"cn",{"name":"乐昌市单采血浆站","amenity":"blood_bank","healthcare":"blood_bank"}],
 ["w1561991121",23.62092,102.82077,"cn",{"name":"建水爱心献血屋","healthcare":"blood_donation"}],
+["w1582818009",38.72898,112.70813,"cn",{"name":"原平市献血站","healthcare":"blood_donation"}],
 ["w248167906",25.05564,102.65755,"cn",{"name":"云南省血液中心","name:en":"Yunnan Provincial Blood Center","amenity":"blood_bank","healthcare":"blood_bank"}],
 ["w308039476",23.14457,113.27844,"cn",{"name":"广州血液中心","name:en":"Guangzhou Blood Center","healthcare":"blood_donation","phone":"+86 20 8357 8941","website":"https://www.gzbc.org/","addr:housenumber":"31","addr:street":"麓苑路","addr:district":"越秀区","addr:city":"广州市","addr:province":"广东省","wikidata":"Q18111679","opening_hours":"Mo-Su,PH 09:00-17:00"}],
 ["w359305537",22.37295,114.11668,"cn",{"name":"紅十字會捐血中心 Red Cross Blood Donor Centre","name:en":"Red Cross Blood Donor Centre","healthcare":"blood_donation","addr:housenumber":"8","addr:street":"大河道 Tai Ho Road","addr:city":"荃灣"}],

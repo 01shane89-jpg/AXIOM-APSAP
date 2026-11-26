@@ -1,6 +1,8 @@
 [["n12244537816",28.65973,93.3718,"cn",{"name":"扎日乡卫生院","amenity":"hospital"}],
 ["n12250833358",28.43962,92.28269,"cn",{"name":"日当镇卫生院","amenity":"hospital"}],
 ["n12250835024",28.48736,92.28437,"cn",{"name":"曲古塘村卫生室","amenity":"hospital"}],
+["n14344247417",29.88657,93.2428,"cn",{"name":"工布江达县人民医院","amenity":"hospital"}],
+["n14344247436",29.88738,93.24261,"cn",{"name":"工布江达县藏医院","amenity":"hospital"}],
 ["n4071205415",29.06959,92.19612,"cn",{"name":"曲松县人民医院","name:en":"Qusong Xian Renmin Yiyuan","amenity":"hospital"}],
 ["w1013149910",28.10836,93.30299,"in",{"name":"Huri Helipad","name:en":"Huri Helipad","aeroway":"helipad"}],
 ["w1033468090",28.4233,92.34793,"cn",{"name":"山南隆子机场","name:en":"Shannan Lhuntse","operator":"民航西藏自治区机场集团有限公司山南隆子机场分公司","addr:housenumber":"855600","aeroway":"aerodrome","icao":"ZUSH","iata":"LGZ","wikidata":"Q113212298"}],
@@ -25,7 +27,7 @@
 ["w898206153",28.75634,93.95946,"in",{"aeroway":"helipad"}],
 ["w898206192",28.67135,93.96998,"in",{"name":"Yorlung Helipad","aeroway":"helipad"}],
 ["w898225096",28.36393,93.47745,"in",{"aeroway":"helipad"}],
-["w971938384",28.41793,92.4731,"cn",{"aeroway":"helipad"}],
-["w971938385",28.41868,92.47359,"cn",{"aeroway":"helipad"}],
+["w971938384",28.41792,92.47315,"cn",{"aeroway":"helipad"}],
+["w971938385",28.41869,92.47365,"cn",{"aeroway":"helipad"}],
 ["w977283762",28.44727,93.17299,"in",{"name":"Indian helipad, Taksing circle","aeroway":"helipad"}],
 ["w977283763",28.56139,93.42575,"in",{"name":"New Maja Helipad","aeroway":"helipad"}]]

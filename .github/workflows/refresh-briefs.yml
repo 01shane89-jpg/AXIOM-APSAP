@@ -156,7 +156,9 @@ jobs:
 
   apply:
     needs: [plan, draft]
-    if: ${{ always() && needs.plan.outputs.count != '0' && needs.plan.outputs.shards != '[]' }}
+    # Runs on a plan with nothing due too: it then only re-stamps data/live/brief-refresh.js, so health sees the
+    # refresh is running (every brief checked within 6 days) instead of reading the last full run as stale.
+    if: ${{ always() && needs.plan.result == 'success' && needs.draft.result != 'cancelled' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -169,6 +171,7 @@ jobs:
         with:
           node-version: 20
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        if: ${{ needs.plan.outputs.count != '0' && needs.plan.outputs.shards != '[]' }}
         with:
           pattern: briefs-*
           path: out/briefs

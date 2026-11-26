@@ -1,4 +1,6 @@
-[["n485617329",34.03291,78.16803,"in",{"name":"Primary Health Center Tangtse","amenity":"hospital"}],
+[["n14305687572",35.24517,79.54378,"cn",{"aeroway":"helipad"}],
+["n14305691555",35.24436,79.54331,"cn",{"aeroway":"helipad"}],
+["n485617329",34.03291,78.16803,"in",{"name":"Primary Health Center Tangtse","amenity":"hospital"}],
 ["w1007818151",34.32763,79.11242,"cn",{"aeroway":"helipad"}],
 ["w1007818152",34.32742,79.11222,"cn",{"aeroway":"helipad"}],
 ["w1016154404",34.28087,78.8256,"in",{"aeroway":"helipad"}],
@@ -37,4 +39,4 @@
 ["w977802237",34.29395,78.88465,"in",{"aeroway":"helipad"}],
 ["w977802238",34.29526,78.88911,"in",{"aeroway":"helipad"}],
 ["w977802239",34.29545,78.88937,"in",{"aeroway":"helipad"}],
-["w995745990",35.24603,79.54048,"cn",{"name":"阿克赛钦","aeroway":"helipad"}]]
+["w995745990",35.24651,79.54038,"cn",{"name":"阿克赛钦","name:en":"Aksai Chin","aeroway":"aerodrome","military":"airfield"}]]

@@ -27,8 +27,14 @@
     var h = "";
     if (r.sentences && r.sentences.length) {
       h += '<ul class="askans">' + r.sentences.map(function (s) {
-        return "<li>" + esc(s.text) + " <sup>" + s.refs.map(function (n) { return '<a href="#ask-src-' + n + '" aria-label="source ' + n + '">[' + n + "]</a>"; }).join("") + "</sup></li>";
+        /* the source check (tools/ground.mjs): a traced sentence says so, with which source holds each name and number it checked;
+           a sentence naming someone or somewhere its sources don't is shown with that name, in the open */
+        var g = s.g, m = (g && g.m) || [], tr = ((g && g.t) || []).map(function (x) { return x[0] + " [" + (x[1] || []).join("][") + "]"; }).join(" · ");
+        return "<li>" + esc(s.text) + " <sup>" + s.refs.map(function (n) { return '<a href="#ask-src-' + n + '" aria-label="source ' + n + '">[' + n + "]</a>"; }).join("") + "</sup>" +
+          (g ? ' <span class="tdobs" title="' + esc(tr ? "In its sources: " + tr : "Checked against the sources it cites") + '">' + (m.length ? "Partly traced" : "Traced") + "</span>" : "") +
+          (m.length ? '<span class="tdobs" style="display:block;border-left:2px solid var(--l2,#C2792B);padding-left:6px">' + esc(m.map(function (y) { return (y[0] === "outlet" ? "Credits an outlet it doesn't cite: " : "Not in its sources: ") + y[1]; }).join("; ")) + "</span>" : "") + "</li>";
       }).join("") + "</ul>";
+      if (r.ground && r.ground.dropped) h += '<p class="tdobs">' + r.ground.dropped + " sentence" + (r.ground.dropped === 1 ? " was" : "s were") + " removed: a number, casualty or date its sources don't give.</p>";
       h += '<ol class="asksrc">' + (r.sources || []).map(function (s) {
         var u = safeUrl(s.url);
         return '<li id="ask-src-' + s.n + '" value="' + s.n + '">' + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(s.headline) + "</a>" : esc(s.headline)) +
@@ -74,8 +80,12 @@
       e.preventDefault(); ask(f.querySelector("input").value);
     });
     var t = T();
-    if (!t || !t.on || !t.on() || cc === "ww") return;   // no server (GitHub Pages), or World: no card
-    call(null).then(function (r) { st.on = !!r.on; render(); }).catch(function () {});
+    if (!t || cc === "ww") return;   // World: no card
+    /* the plan loads after Today mounts this card when the app opens on Today, so asking OSAP_TIER.on() at once found no plan
+       and left the card hidden for good (Shane could not find Ask on 24 Nov 2026): wait for the plan first. No server (GitHub
+       Pages) still means no card. */
+    var go = function () { if (!t.on || !t.on()) return; call(null).then(function (r) { st.on = !!r.on; render(); }).catch(function () {}); };
+    if (t.ready && t.ready.then) t.ready.then(go, go); else go();
   }
   W.OSAP_ASKQ = { mount: mount };
 })();

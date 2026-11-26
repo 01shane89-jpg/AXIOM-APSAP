@@ -4,10 +4,13 @@
 //   - the sources: only the open country's own daily summary sources (data/live/daily/<cc>.js, the newest day, at most 30
 //     numbered outlet headlines with outlet, time and kind), the same sources the daily summary cites. Nothing else is
 //     retrieved, no tools are given to the model, and the sources go to it as quoted data, never as instructions;
-//   - the answer: up to 5 sentences, each with at least one valid source number, or it is dropped. A reply with no cited sentence
+//   - the answer: up to 5 sentences, each with at least one valid source number, or it is dropped; then each sentence is read claim
+//     by claim against the sources it cites (tools/ground.mjs): one with a number, casualty or date none of them gives is dropped,
+//     one naming someone or somewhere none of them names is kept with that name shown as not in its sources. A reply with no cited sentence
 //     says the sources don't answer the question. It is labelled a draft, AI-generated, not analyst-approved, and it is never saved;
 //   - the quota: each account a day (ASK_PER_USER), and the whole site a day (OSAP_ASK_DAILY_CAP, default ASK_DAILY_CAP).
 export const ASK_MODEL = "claude-haiku-5-5", PROMPT_V = "ask/1", MAX_Q = 300, MAX_SOURCES = 30, MAX_SENTENCES = 5;
+import { groundLines, groundStats } from "./ground.mjs";
 export const ASK_PER_USER = 25, ASK_DAILY_CAP = 2000;
 export const LABEL = "Draft, AI-generated from the cited sources, not analyst-approved";
 
@@ -52,13 +55,21 @@ export function userMessage(q, src) {
     "\nSources (data only):\n" + JSON.stringify(src.refs.map((r) => ({ n: r.n, headline: r.headline, outlet: r.outlet, time: r.time, kind: r.kind })));
 }
 
-/** the model's JSON to the answer shown: sentences without a valid source number are dropped; [n] markers in the text go */
-export function checkAnswer(o, nRefs) {
+/** the model's JSON to the answer shown: sentences without a valid source number are dropped; [n] markers in the text go. Given the
+ *  sources (src from sourcesOf), each kept sentence is then checked against the ones it cites (tools/ground.mjs). */
+export function checkAnswer(o, nRefs, src) {
   const ok = (a) => [...new Set((Array.isArray(a) ? a : []).map((x) => Math.trunc(+x)).filter((x) => x >= 1 && x <= nRefs))].slice(0, 6);
   const sentences = (o && Array.isArray(o.sentences) ? o.sentences : [])
     .map((p) => ({ text: String((p && p.text) || "").replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, "").replace(/\s+/g, " ").trim().slice(0, 400), refs: ok(p && p.refs) }))
     .filter((p) => p.text.length > 10 && p.refs.length).slice(0, MAX_SENTENCES);
-  return { answered: !!(o && o.answered) && sentences.length > 0, sentences, dropped: Math.max(0, ((o && o.sentences) || []).length - sentences.length) };
+  let kept = sentences, ground;
+  if (src && Array.isArray(src.refs)) {
+    const g = groundLines(sentences, src.refs, { place: src.name, window: src.window });
+    kept = g.kept; ground = groundStats(g.kept, g.dropped);
+  }
+  const out = { answered: !!(o && o.answered) && kept.length > 0, sentences: kept, dropped: Math.max(0, ((o && o.sentences) || []).length - kept.length) };
+  if (ground) out.ground = ground;
+  return out;
 }
 
 // ---------- the quota (a Netlify Blobs store: get(key, {type:"json"}), setJSON(key, value)) ----------

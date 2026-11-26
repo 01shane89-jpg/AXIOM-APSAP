@@ -353,7 +353,7 @@
 ["w244443017",7.81071,-72.1928,"ve",{"name":"Ambulatorio Palo Gordo","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;dentistry;gynaecology;vaccination;community;maternity","emergency":"yes"}],
 ["w246570490",7.77306,-72.21764,"ve",{"name":"Clínica La Trinidad","amenity":"clinic"}],
 ["w246570573",7.77226,-72.2185,"ve",{"name":"Hospital Materno Infantil Los Andes","amenity":"hospital","emergency":"yes","addr:street":"Calle 14","addr:city":"San Cristóbal","addr:postcode":"5001"}],
-["w247112548",7.7518,-72.22625,"ve",{"name":"Club de Leones","amenity":"clinic","healthcare":"clinic"}],
+["w247112548",7.7518,-72.22631,"ve",{"name":"Club de Leones","amenity":"clinic","healthcare":"clinic"}],
 ["w247112563",7.7481,-72.22154,"ve",{"name":"CDI Módulo Unidad Vecinal","amenity":"hospital","healthcare":"hospital"}],
 ["w247130462",7.77866,-72.21854,"ve",{"name":"Cruz Roja","amenity":"hospital","healthcare":"hospital"}],
 ["w247130508",7.78236,-72.22578,"ve",{"name":"Clínica CEMOC","amenity":"clinic"}],

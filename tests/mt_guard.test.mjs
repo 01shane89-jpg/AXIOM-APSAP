@@ -162,4 +162,11 @@ t("weekdays the original gives, in any case ending or short form, pass", () => {
   same("Fran\ufffda registra 4\ufffd s\ufffdbado consecutivo de protestos", "France registers 4th consecutive Saturday of protests");
   same("Policia gjobit protestues gjatë tubimit", "Police fine protesters during Thursday's rally");   // no date in the original: not judged
 });
+t("a year followed by a comma is still a year (NHK, 2026-11-24: 年内 'within the year' as 'in 2015')", () => {
+  const nov = Date.parse("2026-11-24T00:00Z");
+  assert.match(mtSuspect("ロシアが年内に核弾頭搭載の衛星打ち上げ計画か ドイツ報道", "Russia plans to launch satellite with nuclear warheads in 2015, German media report", nov), /year 2015/);
+  assert.match(mtSuspect("Asesinatos de periodistas aumentaron 20% durante 2024 y 2025", "Murders of journalists increased 20% during 2024 and 2015, warns UNESCO", nov), /year 2015/);
+  assert.equal(mtSuspect("Asesinatos de periodistas aumentaron 20% durante 2024 y 2025", "Murders of journalists rose 20% in 2024 and 2025, warns UNESCO", nov), "");
+  assert.equal(mtSuspect("Il a reçu 2 015 lettres", "He received 2,015 letters", nov), "", "a thousands comma is not a year");
+});
 console.log(ok + " passed");

@@ -4,6 +4,8 @@
 //                          summary sources only, every sentence cited, labelled a draft. Not saved anywhere.
 // Off until the owner adds ANTHROPIC_API_KEY to the Netlify environment (Shane 2026-11-18): until then POST answers 503 and the
 // rest of OSAP is unchanged. OSAP_ASK_DAILY_CAP sets the site's questions a day (default tools/ask_lib.mjs ASK_DAILY_CAP).
+// Shane added the key on 23 Nov 2026 (Production context only, so deploy previews stay off). Netlify reads a new environment
+// variable only at the next deploy, which is why the change that added this line went out with "[deploy now]".
 // Logs carry the country, counts and timings only: never the question, the sources or the answer, never the key.
 import Anthropic from "@anthropic-ai/sdk";
 import { getStore } from "@netlify/blobs";
@@ -44,7 +46,8 @@ async function dailyOf(cc) {
 }
 
 export default async (req) => {
-  const key = env("ANTHROPIC_API_KEY");
+  // trimmed: a key pasted into Netlify with a stray space or line break is rejected by Anthropic as invalid (401)
+  const key = String(env("ANTHROPIC_API_KEY") || "").trim();
   if (req.method === "GET") return json({ on: !!key, model: ASK_MODEL, label: LABEL, perUser: ASK_PER_USER });
   if (req.method !== "POST") return json({ error: "method not allowed" }, 405);
   const me = await deps.who(req);
@@ -76,17 +79,21 @@ export default async (req) => {
   } catch (e) {
     const status = e instanceof Anthropic.RateLimitError ? 429 : e instanceof Anthropic.AuthenticationError ? 503 : e instanceof Anthropic.APIError ? 502 : 504;
     console.log("osap ask", cc, "model error", e instanceof Anthropic.APIError ? e.status : "network", Date.now() - t0 + " ms");
-    return json({ error: status === 429 ? "The AI service is busy. Try again in a minute." : "The AI service didn't answer. Try again later." }, status);
+    // a rejected key needs the owner, not a retry: say so plainly (the key itself is never logged or returned)
+    const error = status === 429 ? "The AI service is busy. Try again in a minute."
+      : e instanceof Anthropic.AuthenticationError ? "The AI service rejected OSAP's key. The owner needs to re-enter ANTHROPIC_API_KEY in Netlify."
+      : "The AI service didn't answer. Try again later.";
+    return json({ error, keyRejected: e instanceof Anthropic.AuthenticationError || undefined }, status);
   }
   if (res.stop_reason === "refusal") return json({ answered: false, sentences: [], sources: [], note: "The model declined to answer this question." });
   const text = (res.content || []).filter((c) => c.type === "text").map((c) => c.text).join("");
   let o = null; try { o = JSON.parse(text); } catch (e) {}
-  const a = checkAnswer(o, src.refs.length);
+  const a = checkAnswer(o, src.refs.length, src);
   const used = [...new Set(a.sentences.flatMap((s) => s.refs))].sort((x, y) => x - y);
-  console.log("osap ask", cc, "sources", src.refs.length, "sentences", a.sentences.length, "dropped", a.dropped, Date.now() - t0 + " ms",
+  console.log("osap ask", cc, "sources", src.refs.length, "sentences", a.sentences.length, "dropped", a.dropped, "flagged", (a.ground && a.ground.flagged) || 0, Date.now() - t0 + " ms",
     res.usage ? "tokens " + res.usage.input_tokens + "/" + res.usage.output_tokens : "");
   return json({
-    answered: a.answered, sentences: a.sentences,
+    answered: a.answered, sentences: a.sentences, ground: a.ground || null,
     sources: src.refs.filter((r) => used.includes(r.n)).map((r) => ({ n: r.n, headline: r.headline, outlet: r.outlet, time: r.time, kind: r.kind, url: r.url })),
     day: src.date, label: LABEL, model: res.model || ASK_MODEL, prompt: PROMPT_V, left: quota.left,
     note: a.answered ? "" : "The sources in today's summary don't answer this question.",

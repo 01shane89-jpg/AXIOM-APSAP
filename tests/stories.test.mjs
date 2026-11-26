@@ -8,7 +8,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { outletBook, outletName, fromRow, group, joinEvents, buildCountry } from "../tools/stories_lib.mjs";
+import { outletBook, outletName, fromRow, group, joinEvents, buildCountry, ccsOfInstitutions } from "../tools/stories_lib.mjs";
 
 const END = Date.parse("2026-10-23T12:00:00Z");
 const at = (h) => new Date(END - h * 36e5).toISOString().slice(0, 16);
@@ -138,6 +138,12 @@ fs.writeFileSync(path.join(ix, day + ".js"), "window.OSAP_NEWSIX_DAY=window.OSAP
   row("th", "Five killed as flood hits northern Thailand province", "Khaosod English", "https://a/2"),
   row("my", "Flood kills five in northern Thailand province, officials say", "Malay Mail", "https://a/3"),
 ]) + ";\n");
+// a headline that names a country only through one of its national bodies (the CIA breach, 24 Nov 2026) counts for that country
+assert.deepEqual(ccsOfInstitutions("Unclassified CIA system breached in a cyberattack: AP"), ["us"]);
+assert.deepEqual(ccsOfInstitutions("Cyber-hacking targets the CIA and security agencies in Washington"), ["us"]);
+assert.deepEqual(ccsOfInstitutions("MI5 issues urgent warning to UK defence companies; Kremlin denies"), ["gb", "ru"]);
+assert.deepEqual(ccsOfInstitutions("Special forces unit on social media"), [], "no acronym inside other words (special, social)");
+assert.deepEqual(ccsOfInstitutions("Congress party wins Kerala; Department of Justice in Manila files case"), [], "bodies other states also have do not count");
 const env = { ...process.env, STORIES_IX: ix, STORIES_OUT: out, STORIES_END: "2026-10-23T12:00:00Z" };
 execFileSync("node", ["tools/news_stories.mjs"], { cwd: repo, env, encoding: "utf8" });
 const read = (f) => { const w = {}; new Function("window", fs.readFileSync(f, "utf8"))(w); return w; };
