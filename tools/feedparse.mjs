@@ -28,13 +28,14 @@ function image(b) {
   const u = raw ? raw[1].replace(/&amp;/g, "&").trim() : "";
   return /^https:\/\/[^\s<>"]+$/i.test(u) && u.length < 600 && !/(pixel|spacer|1x1|blank|feedburner\.com\/~r|doubleclick)/i.test(u) ? u : "";
 }
-export function parseFeed(xml) {
+// opt.image: also return the item's own picture link (the news job asks for it; other jobs' items stay as they were)
+export function parseFeed(xml, opt) {
   const blocks = xml.match(/<(item|entry)\b[\s\S]*?<\/\1>/gi) || [];
   return blocks.map((b) => {
     const href = (b.match(/<link\b[^>]*href="([^"]+)"/i) || [])[1];
     return { title: tag(b, ["title", "headline"]), summary: tag(b, ["description", "summary", "content", "areaDesc"]).slice(0, 400),
       date: tag(b, ["pubDate", "updated", "published", "sent", "effective", "date"]), link: href || tag(b, ["link", "guid", "id"]),
-      severity: tag(b, ["severity"]), source: tag(b, ["source"]), expires: tag(b, ["expires"]) };
+      severity: tag(b, ["severity"]), source: tag(b, ["source"]), expires: tag(b, ["expires"]), ...(opt && opt.image && image(b) ? { image: image(b) } : {}) };
   }).filter((i) => i.title);
 }
 
@@ -42,9 +43,22 @@ export function parseFeed(xml) {
 // expression), each with its headline (the link's text or title, the longest one when a page links an item several times)
 // and the first date printed with it (2026-09-29, 2026.09.29, 29/09/2026, or a Thai date such as 26 กันยายน 2569).
 // An item without a printed date has date "" and the news job uses the time it first saw it.
+const EN_MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+const EN_MON = "(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)";
+const EN_DMY = new RegExp("\\b(\\d{1,2})\\s+" + EN_MON + "\\.?,?\\s+(20\\d\\d)\\b", "i"), EN_MDY = new RegExp("\\b" + EN_MON + "\\.?\\s+(\\d{1,2}),?\\s+(20\\d\\d)\\b", "i");
+// a date tacked on after the headline, not one the headline itself names after a comma ("Iran Update, November 22, 2026")
+const EN_DATE_G = new RegExp("(?<![,:])\\s+(?:\\b\\d{1,2}\\s+" + EN_MON + "\\.?,?\\s+20\\d\\d|\\b" + EN_MON + "\\.?\\s+\\d{1,2},?\\s+20\\d\\d)\\s*$", "i");
 const TH_MONTHS = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
 export function pageDate(text) {
-  const t = String(text || "");
+  const t = String(text || ""), n = numDate(t);
+  if (n) return n;
+  // English month names: "20 November 2026" (The Standard, Gambia) or "November 22, 2026" (Critical Threats)
+  const m = t.match(EN_DMY) || t.match(EN_MDY);
+  if (m) { const [d, mo] = /^\d/.test(m[1]) ? [m[1], m[2]] : [m[2], m[1]]; return m[3] + "-" + String(EN_MONTHS.indexOf(mo.toLowerCase().slice(0, 3)) + 1).padStart(2, "0") + "-" + d.padStart(2, "0"); }
+  return "";
+}
+// a numeric or Thai date (a short link text holding one is a date line or teaser, not a headline)
+function numDate(t) {
   let m = t.match(/\b(20\d\d)[.\-/](\d{1,2})[.\-/](\d{1,2})\b/);
   if (m) return m[1] + "-" + m[2].padStart(2, "0") + "-" + m[3].padStart(2, "0");
   m = t.match(/\b(\d{1,2})[.\-/](\d{1,2})[.\-/](20\d\d)\b/);
@@ -73,7 +87,7 @@ export function parseList(html, base, match) {
     byHref.set(h.link, o);
   });
   return [...byHref.values()].map((o) => {
-    const title = o.texts.map((t) => t.replace(/\b20\d\d[.\-/]\d{1,2}[.\-/]\d{1,2}\b/g, "").replace(/\s+\d+\s+(?:minute|hour|day)s?(?:\s+ago)?\s*$/i, "").trim()).filter((t) => t.length >= 12 && !pageDate(t) || t.length >= 40).sort((a, b) => b.length - a.length)[0] || "";
+    const title = o.texts.map((t) => t.replace(/\b20\d\d[.\-/]\d{1,2}[.\-/]\d{1,2}\b/g, "").replace(EN_DATE_G, "").replace(/\s+\d+\s+(?:minute|hour|day)s?(?:\s+ago)?\s*$/i, "").trim()).filter((t) => t.length >= 12 && !numDate(t) || t.length >= 40).sort((a, b) => b.length - a.length)[0] || "";
     return { title: title.slice(0, 300), summary: "", date: o.date, link: o.link, severity: "", source: "" };
   }).filter((i) => i.title);
 }
