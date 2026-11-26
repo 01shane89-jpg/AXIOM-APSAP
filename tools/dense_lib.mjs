@@ -52,7 +52,7 @@ export function rssItems(xml) {
 
 // ---- feed registry and output ----
 export const FEEDS = {};   // id -> meta
-const RESULTS = {};         // id -> { ok, items, globals, figures, error }
+export const RESULTS = {};         // id -> { ok, items, globals, figures, error }
 export function feed(id, meta) { FEEDS[id] = { id, ...meta }; }
 const ONLY = (process.env.ONLY || "").split(",").filter(Boolean);
 const SAMPLES = !!process.env.SAMPLES;
