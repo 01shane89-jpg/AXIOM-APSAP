@@ -217,7 +217,9 @@ export function extraNumber(orig, en) {
   const okTok = (x) => tokens.has(x) || words.has(x) || (x <= 12 && tokens.has(x + 12)) || (x >= 12 && x <= 24 && tokens.has(x - 12)) || (x === 12 && tokens.has(0));
   // a school or budget year written short ("2026-27" for ២០២៦-២០២៧): the short year is the year rule's job
   const enS = asciiDigits(en.normalize("NFKC")).replace(NAMED_NUMBERS, " ").replace(/\b((?:19|20)\d\d)\s*[-–/]\s*\d\d\b/g, "$1");
-  const re = /(?<![\w.])(\d+(?:,\d{3}(?!\d))*(?:\.\d+)?)(?:\s*(thousand|million|billion|trillion|lakh|crore|k|m|bn)\b)?/gi;
+  // an amount glued to a currency symbol ("RM2.5 million", "Rs250m", "Sh500 million", "Tk50 crore") is read like any other number: the
+  // letter before it used to hide it, so "RM9 million" for a source's "RM2.5 million" passed (found 26 Nov 2026)
+  const re = /(?:(?<![\w.])|(?<=(?<![\p{L}])(?:RM|Rs|Rp|Sh|Ksh|KSh|Tsh|TSh|Ush|USh|Tk)))(\d+(?:,\d{3}(?!\d))*(?:\.\d+)?)(?:\s*(thousand|million|billion|trillion|lakh|crore|k|m|bn)\b)?/giu;
   for (const m of enS.matchAll(re)) {
     const raw = m[1], v = +raw.replace(/,/g, ""), sc = m[2] ? EN_SCALE[m[2].toLowerCase()] : 1;
     const parts = raw.split(/[.,]/).map(Number);

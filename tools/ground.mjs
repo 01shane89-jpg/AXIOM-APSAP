@@ -60,7 +60,8 @@ const GENERIC = new Set(("president prime minister ministry minister government 
   "january february march april may june july august september october november december monday tuesday wednesday thursday friday saturday sunday").split(" "));
 
 // ISO and common currency codes, which stand before an amount ("USD 40", "RM 2.5 million") and are never a name there
-const CURRENCY = new Set("RM USD EUR GBP JPY CNY RMB THB MYR SGD IDR PHP VND INR PKR BDT LKR NPR KRW TWD HKD AUD NZD CAD CHF RUB UAH TRY ILS IRR SAR AED QAR KWD EGP NGN KES ZAR BRL MXN ARS COP CLP PEN Rp Rs".split(" "));
+// (mixed-case symbols too: "Rs250m" Pakistani rupees, "Sh500 million" Tanzanian or Kenyan shillings, "Ksh", "Tsh", "Ush", "Br" birr)
+const CURRENCY = new Set("RM USD EUR GBP JPY CNY RMB THB MYR SGD IDR PHP VND INR PKR BDT LKR NPR KRW TWD HKD AUD NZD CAD CHF RUB UAH TRY ILS IRR SAR AED QAR KWD EGP NGN KES ZAR BRL MXN ARS COP CLP PEN Rp Rs Sh Ksh KSh Tsh TSh Ush USh Br".split(" "));
 const WORD_RE = /[\p{Lu}][\p{L}\p{M}'’.-]*[\p{L}\p{M}]|[\p{Lu}]{2,}/gu;
 // The names of a line, as runs of capitalized words ("Trat Fisheries", "Kenya Police Academy" -> ["Kenya"]), sentence by sentence,
 // titles and kinds of place left out (GENERIC). A sentence's first word counts only when the next word is capitalized too ("Trat
@@ -79,7 +80,7 @@ export function nameRuns(text) {
       // a currency or unit glued to a number is not a name: "RM2.5 million" (Malaysian ringgit) came out as the name "RM" and the
       // line showed "Not in its sources: RM" (Thailand daily summary, 25 Nov 2026); "US$5m", "KM10" the same. Also a currency code
       // written before its number ("RM 2.5 million", "USD 40").
-      if (/^[\p{Lu}]{1,4}$/u.test(w) && (/^\$?\d/.test(sent.slice(last)) || (CURRENCY.has(w) && /^\s+\$?\d/.test(sent.slice(last))))) continue;
+      if ((/^[\p{Lu}]{1,4}$/u.test(w) || CURRENCY.has(w)) && (/^\$?\d/.test(sent.slice(last)) || (CURRENCY.has(w) && /^\s+\$?\d/.test(sent.slice(last))))) continue;
       if (!sent.slice(0, m.index).replace(/["“'‘\s]/g, "")) {
         const next = sent.slice(last).match(/^\s+([\p{L}]+)/u);
         if (!(next && /^\p{Lu}/u.test(next[1]) && !GENERIC.has(next[1].toLowerCase())) && !/^[\p{Lu}]{2,}$/u.test(w)) continue;
