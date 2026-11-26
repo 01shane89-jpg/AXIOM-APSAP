@@ -85,6 +85,8 @@ jobs:
       - run: node tests/dense_nov8.test.mjs
       # official air monitor readings from incident responses (tools/dense_airmon.mjs): EPA Region 7 Iowa Army Ammunition Plant
       - run: node tests/dense_airmon.test.mjs
+      # U.S. export-control rules and notices from BIS in the Federal Register (tools/dense_trade.mjs)
+      - run: node tests/dense_trade.test.mjs
       # public records around Army ammunition plants (tools/dense_records.mjs): USAspending, SAM.gov extract, ECHO, Federal Register, CourtListener
       - run: node tests/dense_records.test.mjs
       - run: node tests/uk_sanctions.test.mjs
