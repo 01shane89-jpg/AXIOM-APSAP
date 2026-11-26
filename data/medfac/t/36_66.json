@@ -6,6 +6,7 @@
 ["n14161632191",37.37866,66.61558,"uz",{"aeroway":"helipad"}],
 ["n14264508437",37.86247,67.39391,"uz",{"name":"Kasalxona","amenity":"hospital","healthcare":"hospital"}],
 ["n14264508438",37.86321,67.39423,"uz",{"name":"Tez yordam","amenity":"hospital","healthcare":"hospital"}],
+["n14321231180",37.24055,67.30177,"uz",{"amenity":"clinic"}],
 ["n4444992190",37.24663,67.27442,"uz",{"name":"ЗАРАВУТ","name:en":"ZARAVUT","amenity":"clinic","operator":"Xolmatov","phone":"+998936340075"}],
 ["n4591597110",36.71297,67.12005,"af",{"name:en":"Parween Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["n5359100453",37.67486,67.01722,"uz",{"name":"Evro Med Plus","amenity":"clinic"}],

@@ -47,6 +47,7 @@ const STRIP = [
   // per-country news and social items: the US page has its own (sealed) files; the source lists stay (public feed names)
   { file: "data/live/news.js", fix: (v) => dropKeys(v.items) },
   { file: "data/live/social.js", fix: (v) => dropKeys(v.items) },
+  { file: "data/live/transcripts.js", fix: (v) => dropKeys(v.items) },
   { file: "data/live/topics.js", fix: (v) => dropFromList(v.items || [], itemCodes, setItemCodes) },
   { file: "data/live/ucdp.js", fix: (v) => (Array.isArray(v.items) ? dropFromList(v.items, itemCodes, setItemCodes) : 0) },
   // event summaries: keyed by id, one country each

@@ -16,6 +16,7 @@ tests/locked_requests_smoke.mjs
 tests/start_reload_smoke.mjs
 # the first open on a device starts on World; returning users keep their last country (Shane 2026-11-15)
 tests/world_start_smoke.mjs
+tests/home_country_smoke.mjs
 tests/analyst_smoke.mjs
 tests/seal_sw_smoke.mjs
 tests/econ_smoke.mjs
@@ -100,6 +101,10 @@ tests/threads_smoke.mjs
 # Share this trail: the reporting trail of a Go deeper story as a 1080 x 1920 picture, and its ?trail= link (assets/osap-trail.js)
 tests/trail_smoke.mjs
 tests/trailmap_smoke.mjs
+# Claim ledger: a disputed story followed for up to 30 days, from Go deeper and Story coverage (assets/osap-ledger.js)
+tests/ledger_smoke.mjs
+# Same story in other languages: AI proposals beside a claim ledger, never counted in it (assets/osap-ledger.js, data/live/ledger-x)
+tests/xlang_smoke.mjs
 tests/spikes_smoke.mjs
 tests/maploading_smoke.mjs
 tests/streets_english_smoke.mjs
@@ -124,6 +129,8 @@ tests/teams_smoke.mjs
 tests/gnss_smoke.mjs
 # ships gone quiet near chokepoints, AIS gaps and position jumps (assets/osap-darkships.js)
 tests/darkships_smoke.mjs
+# shipping chokepoints against last year and World Bank prices (assets/osap-choke.js)
+tests/choke_smoke.mjs
 # military aircraft flying an orbit and emergency squawks (rules milpat-v1, tools/milpat_lib.mjs)
 tests/milpat_smoke.mjs
 # radiation near nuclear sites from Safecast sensors (assets/osap-radiation.js, rules rad-v1)
@@ -237,6 +244,8 @@ tests/reports_smoke.mjs
 tests/feeds_status_smoke.mjs
 # every report exported as a PDF on A4 and Letter: nothing cut off, header, page numbers, live source links (assets/osap-pdf.js)
 tests/pdf_export_smoke.mjs  group=pdf needs=poppler
+# Export PDF prints inside the tap (iPhone Safari ignores a later print) and says so when no print dialog opens (Shane 2026-11-21)
+tests/pdf_print_open_smoke.mjs  group=pdf
 # the medical plan as one landscape briefing slide: facilities, PACE, satellite maps, table, contacts; PDF and PowerPoint (assets/osap-medslide.js)
 tests/medslide_smoke.mjs  group=pdf needs=poppler
 # Drop zone edited on the map (move, resize, turn the run-in, phone touch), aircraft drop-down, hazards after a Refresh,
@@ -293,6 +302,8 @@ tests/daily_cites_smoke.mjs
 tests/empty_map_hint_smoke.mjs
 # daily summary: an AI line calling a report confirmed or verified when no cited headline says so is hidden; all-overclaim drafts show the rules top lines
 tests/daily_confirm_smoke.mjs
+# daily summary: each AI line shows its source check (Traced, or what is not in its sources), the trace opens on a tap, and the check's counts show
+tests/daily_ground_smoke.mjs
 tests/split_map_full_smoke.mjs
 tests/brief_report_smoke.mjs
 tests/health_ops_smoke.mjs

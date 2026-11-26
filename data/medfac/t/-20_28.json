@@ -66,7 +66,7 @@
 ["w1305603788",-18.16713,28.23487,"zw",{"name":"Sengwa Gorge Airstrip","aeroway":"aerodrome"}],
 ["w1370346067",-19.91289,28.54617,"zw",{"aeroway":"aerodrome"}],
 ["w1568964726",-18.34893,29.88663,"zw",{"name":"Rimuka Maternity Clinic","amenity":"clinic"}],
-["w213485756",-19.43927,29.86119,"zw",{"name":"Gweru-Thornhill Air Base","aeroway":"aerodrome","icao":"FVTL","iata":"GWE","wikidata":"Q5623569"}],
+["w213485756",-19.43927,29.86119,"zw",{"name":"Gweru-Thornhill Air Base","aeroway":"aerodrome","icao":"FVTL","iata":"GWE","military":"airfield","wikidata":"Q5623569"}],
 ["w213485764",-18.99952,28.89651,"zw",{"name":"Nkai Airstrip","aeroway":"aerodrome"}],
 ["w216684879",-19.02873,29.72196,"zw",{"name":"Zisco Airport","aeroway":"aerodrome","icao":"FVZC"}],
 ["w216684886",-18.16525,29.96554,"zw",{"aeroway":"aerodrome"}],

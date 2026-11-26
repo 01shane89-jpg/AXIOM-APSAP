@@ -587,8 +587,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/1922480509",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-21",
-   "fp": "91b04879d26c1b8ab3a626e3976a2ae1bda793a458016c1317cba77176c16217"
+   "asof": "2026-11-09",
+   "fp": "ac396df98f317fd285a59e2f1d99fe845d12ae1762ddffba5368d8b7717994e2"
   },
   {
    "id": "sof:eh:xing:node-2577079318",
@@ -607,15 +607,15 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/2577079318",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-21",
-   "fp": "e1acd1e63b82818fcdcd8daf7debc308f904765778ae7a2fd4a693f7febc36b4"
+   "asof": "2026-11-09",
+   "fp": "d88e223d85fe2f7e8181eaaa09be160f3d23777b9644a7dce9cb5e81cdc9a23b"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-21",
+ "evac_asof": "2026-11-09",
  "airfields": [
   {
    "ident": "GMMH",

@@ -43,7 +43,7 @@ await p.waitForFunction(() => window.OSAP_TODAY && window.OSAP_DAILYQ && window.
 await p.evaluate(() => { if (!window.OSAP_TODAY.isOpen()) window.OSAP_TODAY.show(); });
 await p.waitForFunction(() => document.querySelectorAll("#td-daily .dlbluf p").length > 1, null, { timeout: 30000 });
 const r = await p.evaluate(() => ({
-  bluf: [...document.querySelectorAll("#td-daily .dlbluf p:not(.dllbl)")].map((e) => ({ t: e.textContent, links: e.querySelectorAll("a, button").length })),
+  bluf: [...document.querySelectorAll("#td-daily .dlbluf p:not(.dllbl):not(.dlgf)")].map((e) => ({ t: e.textContent, links: e.querySelectorAll("a, button").length })),
   watch: [...document.querySelectorAll("#td-daily .dlw li")].map((e) => e.textContent).join(" | ")
 }));
 const all = r.bluf.map((b) => b.t).join(" | ");

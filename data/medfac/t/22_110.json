@@ -13,6 +13,8 @@
 ["n14268113702",23.75572,111.96732,"cn",{"name":"桥头卫生院","amenity":"clinic","healthcare":"clinic"}],
 ["n14280254847",23.37717,111.61992,"cn",{"name":"罗董中心卫生院","amenity":"clinic","healthcare":"clinic"}],
 ["n14298789347",23.27078,111.57855,"cn",{"name":"封开县长岗镇卫生院","amenity":"clinic","healthcare":"clinic"}],
+["n14305925002",23.26587,111.75675,"cn",{"name":"红中村卫生站","amenity":"clinic","healthcare":"clinic"}],
+["n14306596501",22.85824,111.46079,"cn",{"name":"新乐卫生院","amenity":"hospital","addr:street":"新乐桥"}],
 ["n4811631186",22.85832,111.46058,"cn",{"name":"新乐卫生院","amenity":"hospital","healthcare":"hospital"}],
 ["n5577703295",22.6451,111.10947,"cn",{"name":"回龙村卫生站","amenity":"clinic"}],
 ["n5671451021",22.35677,110.94795,"cn",{"name":"信宜市中医院","amenity":"hospital","healthcare":"hospital","addr:housenumber":"1号","addr:street":"竹园路"}],

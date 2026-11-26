@@ -54,6 +54,7 @@
     { "id": "factchecks", "file": "data/live/factchecks.js", "name": "Fact checks", "maxMin": 420 },
     { "id": "risk", "file": "data/live/risk/index.json", "name": "Risk rating equivalents", "maxMin": 900 },
     { "id": "econ", "file": "data/live/econ/index.json", "name": "Economic stress signals (daily)", "maxMin": 2880 },
+    { "id": "choke", "file": "data/live/choke/index.json", "name": "Shipping chokepoints and world prices (daily)", "maxMin": 2880 },
     { "id": "milref", "file": "data/live/milref/index.json", "name": "Military reference (weekly)", "maxMin": 12000 }
   ]
 }

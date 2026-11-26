@@ -24,6 +24,8 @@ jobs:
         with:
           fetch-depth: 2
       - run: node tools/check_index.mjs
+      # link previews: <title> and the og:/twitter: tags sit inside <head> (LinkedIn showed "Flood" when they did not)
+      - run: node tests/head_meta.test.mjs
       # the map-smoke list (tests/map-smoke.txt): every file there, none twice, every shard plan runs each test once
       - run: node tools/smoke_shard.mjs --check
       # hidden areas (tools/hidden-areas.json): their files must be sealed, never plain, in the repository
@@ -43,6 +45,8 @@ jobs:
       - run: node tests/sensors.test.mjs
       # ships gone quiet near chokepoints and AIS position jumps (tools/darkships_lib.mjs, rules dark-v1)
       - run: node tests/darkships.test.mjs
+      # shipping chokepoints against last year and World Bank Pink Sheet prices (tools/choke_lib.mjs, rules choke-v1)
+      - run: node tests/choke.test.mjs
       # military aircraft flying an orbit and emergency squawks (tools/milpat_lib.mjs, rules milpat-v1)
       - run: node tests/milpat.test.mjs
       # seismic check beside strike reports (tools/seismic_lib.mjs, rules seismic-v1)
@@ -51,10 +55,19 @@ jobs:
       - run: node tests/rad.test.mjs
       # sensor picture beside strike and outage reports (tools/picture_lib.mjs, rules picture-v1)
       - run: node tests/picture.test.mjs
+      # Claim ledger: disputed stories followed past 72 hours (tools/ledger_lib.mjs, tools/claim_ledger.mjs, rules ledger-v1)
+      - run: node tests/ledger.test.mjs
+      # Same story in other languages: AI proposals beside the claim ledgers, off without VOYAGE_API_KEY (tools/xlang_lib.mjs, rules xmatch-v1)
+      - run: node tests/xlang.test.mjs
       # Check it from space: next Sentinel passes over a strike report (assets/osap-space.js, rules space-v1)
       - run: node tests/space.test.mjs
       # Ask about this country (tools/ask_lib.mjs, netlify/functions/osap-ask.mjs): cited answers only, plan, quota, off without the key
       - run: node tests/ask.test.mjs
+      # Official briefing transcripts (tools/transcribe_lib.mjs, tools/refresh_transcripts.mjs): official sources only, cost caps,
+      # provenance, hallucination filter, off without the key (stand-in service, needs ffmpeg)
+      - run: |
+          command -v ffmpeg >/dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null; }
+          node tests/transcribe.test.mjs
       # team shared cases (tools/cases.mjs, netlify/functions/osap-cases.mjs): roles, case isolation, decision records
       - run: node tests/cases.test.mjs
       - run: node tests/case_vault.test.mjs
@@ -62,12 +75,20 @@ jobs:
       - run: node tests/teams.test.mjs
       # Netlify production deploys come in batches (tools/netlify_ignore.mjs): 15 credits each
       - run: node tests/netlify_ignore.test.mjs
+      # a depth-1 run whose origin/main was moved by a fetch must not roll main back (24 Nov 2026 12:07Z)
+      - run: bash tests/push_rebase_shallow.test.sh
       # IMB PRC piracy map reader, the NGA ASAM backup (tools/imb_piracy.mjs)
       - run: node tests/imb_piracy.test.mjs
       - run: node tests/recaap_incidents.test.mjs
       - run: node tests/ukmto_incidents.test.mjs
       # new dense feeds of 8 Nov (tools/dense_nov8.mjs): PortWatch, RFJ, VAAC, UNSC, USGS blasts, BfS, RIPE, UN PKO, EU regimes, satellite passes
       - run: node tests/dense_nov8.test.mjs
+      # official air monitor readings from incident responses (tools/dense_airmon.mjs): EPA Region 7 Iowa Army Ammunition Plant
+      - run: node tests/dense_airmon.test.mjs
+      # U.S. export-control rules and notices from BIS in the Federal Register (tools/dense_trade.mjs)
+      - run: node tests/dense_trade.test.mjs
+      # public records around Army ammunition plants (tools/dense_records.mjs): USAspending, SAM.gov extract, ECHO, Federal Register, CourtListener
+      - run: node tests/dense_records.test.mjs
       - run: node tests/uk_sanctions.test.mjs
       # open-licence full text for the in-app reader (tools/fulltext_lib.mjs): which addresses, safe text, no script
       - run: node tests/fulltext.test.mjs
@@ -99,6 +120,11 @@ jobs:
       - run: node tests/ref_layers.test.mjs
       # daily summary rules (tools/daily_lib.mjs): grouping, AI output checks, citations dropped from inside sentences
       - run: node tests/daily.test.mjs
+      # source check of AI text (tools/ground.mjs, tools/ground_judge.mjs): every AI summary line and Ask answer read claim by claim
+      # against the sources it cites; untraceable numbers, casualties and dates dropped, names flagged
+      - run: node tests/ground.test.mjs
+      # retry, not repair (tools/retry_once.mjs, tools/ground_retry.mjs): a dropped line is written once more from its sources and kept only if it passes
+      - run: node tests/ground_retry.test.mjs
       - run: node tests/brief_refresh.test.mjs
       - run: node tests/newimg.test.mjs
       - run: node tests/whatchanged.test.mjs
@@ -160,6 +186,10 @@ jobs:
       # flash alerts: which push alerts are flash first reports, flash-only watches, one corroboration follow-up (tools/flash_lib.mjs)
       - run: node tests/flash.test.mjs
       - run: node tests/flash_loop.test.mjs
+      # alert speed scorecard: what it reads from the flash loop's log, targets (tools/speed_scorecard.mjs)
+      - run: node tests/speed_scorecard.test.mjs
+      # fast news in the flash loop: only feeds OSAP already reads, plain OSAP name, polite polling, no copy of a story twice (tools/flash_news.mjs)
+      - run: node tests/flash_news.test.mjs
       - run: node tests/terrain.test.mjs
       - run: node tests/terrain_layers.test.mjs
       - run: node tests/facility_intel.test.mjs
@@ -174,6 +204,10 @@ jobs:
       - run: node tests/seatransit.test.mjs
       # machine translation: invented lines rejected, and a translation stays with its item
       - run: node tests/mt_guard.test.mjs
+      # Claude check of translations: verdict only, no rewrite, data not instructions, daily cap, no key = rule checks only
+      - run: node tests/mt_verify.test.mjs
+      # retry, not repair: one fresh Claude translation of a rejected headline, used only if it passes both checks
+      - run: node tests/mt_retry.test.mjs
       - run: node tests/translate_keep.test.mjs
       - run: node tests/mt_confidence.test.mjs
       - run: node tests/mt_cache_lanes.test.mjs
@@ -184,11 +218,14 @@ jobs:
       - run: node tests/mt_glossary.test.mjs
       - run: node tests/mt_thai.test.mjs
       - run: node tests/mt_zh.test.mjs
+      - run: node tests/mt_ko.test.mjs
       # licence: outlet summaries are read by the jobs but never stored
       - run: node tests/outlet_text.test.mjs
       # sold-version switch: non-commercial sources come out in one step (tools/nc_strip.mjs)
       - run: node tests/nc_strip.test.mjs
       - run: node tests/stories.test.mjs
+      # Top stories topic rules: cyberattacks, breaches and spy agencies count (index.html NTOP; the CIA breach, 24 Nov 2026)
+      - run: node tests/top_stories_rules.test.mjs
       - run: node tests/outlet_facts.test.mjs
       - run: node tests/flood_warnings.test.mjs
       - run: node tests/threads.test.mjs

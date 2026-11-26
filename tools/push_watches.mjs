@@ -238,8 +238,12 @@ for (let round = 0; round < PER_WATCH; round++) {
       if (isFlash(m)) flashSent++;
       lags.push(lagMin(m, now));
       const t0 = +m.t0, ts = msOf(m.ts);
-      if (isFinite(t0) && t0 > 0) lagS.push(Math.round((Date.now() - t0) / 1000));
-      else if (isFinite(ts)) lagS.push(Math.round((Date.now() - ts) / 1000));
+      const ls = isFinite(t0) && t0 > 0 ? Math.round((Date.now() - t0) / 1000) : isFinite(ts) ? Math.round((Date.now() - ts) / 1000) : null;
+      if (ls != null) {
+        lagS.push(ls);
+        // one line per alert for the speed scorecard (tools/speed_scorecard.mjs): seconds, flash or not, and the layer (news, quakes...)
+        console.log(`push: alert lag ${ls} s ${isFlash(m) ? "flash" : "alert"} ${String(m.layer || "-").replace(/[^\w-]/g, "").slice(0, 24) || "-"}`);
+      }
     } else failedSends++;
   }
 }

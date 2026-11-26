@@ -793,6 +793,7 @@
 ["w1552256874",1.5669,30.21769,"cd",{"aeroway":"helipad"}],
 ["w1558500626",0.94207,30.80866,"ug",{"name":"Kagadi Hospital","amenity":"hospital","healthcare":"hospital","phone":"Kagadi Hospital"}],
 ["w1558500627",0.94134,30.80851,"ug",{"name":"Kagadi HOSPITAL","amenity":"hospital","healthcare":"hospital","phone":"+256772396109"}],
+["w1578915985",1.44461,31.07529,"ug",{"name":"Kabalega International Airport","operator":"Civil Aviation Authority of Uganda","aeroway":"aerodrome"}],
 ["w311831103",1.56638,30.21839,"cd",{"name":"Aéroport de Bunia","name:en":"Bunia Airport","official_name":"Aéroport national de Murongo","aeroway":"aerodrome","icao":"FZKA","iata":"BUX","wikidata":"Q3206848"}],
 ["w367140945",1.75779,31.73646,"ug",{"name":"Masindi Airfield","aeroway":"aerodrome","icao":"HUMI","iata":"KCU","wikidata":"Q257903"}],
 ["w375025426",0.64888,30.27175,"ug",{"name":"Kabarole Hospital","amenity":"hospital","healthcare":"hospital","website":"http://kabarolehospital.org/","opening_hours":"24/7"}],

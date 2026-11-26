@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta http-equiv="content-language" content="en"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="OSAP"><meta name="apple-mobile-web-app-status-bar-style" content="default"><script src="assets/osap-carry.js"></script><script>/* AXIOM OSAP: an account is needed to use OSAP (Shane 2026-10-18), and only the Netlify site can check it: the GitHub Pages copy sends people there at once. assets/osap-tier.js does the same for a page served from an old cache. Saved work stays with the old address, so assets/osap-carry.js (just above) carries it across first and makes the move itself (Shane 2026-11-04); this line moves the page when that file could not run. */if(/\.github\.io$/.test(location.hostname)&&!(window.OSAP_CARRY&&window.OSAP_CARRY.handled))location.replace("https://axiom-osap.netlify.app/"+(location.search?location.search+"&":"?")+"from=pages"+location.hash);</script><script src="assets/osap-protect.js"></script><script src="assets/osap-install.js"></script></head><body>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="content-language" content="en"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#12324a"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="OSAP"><meta name="apple-mobile-web-app-status-bar-style" content="default"><script src="assets/osap-carry.js"></script><script>/* AXIOM OSAP: an account is needed to use OSAP (Shane 2026-10-18), and only the Netlify site can check it: the GitHub Pages copy sends people there at once. assets/osap-tier.js does the same for a page served from an old cache. Saved work stays with the old address, so assets/osap-carry.js (just above) carries it across first and makes the move itself (Shane 2026-11-04); this line moves the page when that file could not run. */if(/\.github\.io$/.test(location.hostname)&&!(window.OSAP_CARRY&&window.OSAP_CARRY.handled))location.replace("https://axiom-osap.netlify.app/"+(location.search?location.search+"&":"?")+"from=pages"+location.hash);</script><script src="assets/osap-protect.js"></script><script src="assets/osap-install.js"></script>
 <title>AXIOM OSAP</title>
 <!-- link previews (LinkedIn, X, Slack, WhatsApp, iMessage). Without these, LinkedIn titled the shared link with the first <h1>
      on the page, the Flood view's "Flood" (20 Nov 2026). The card is assets/og-card.jpg, 1200x630; URLs must be absolute. -->
@@ -47,6 +47,8 @@
 @media (orientation:portrait){#osap-boot::before{background-position:78% 50%}}
 @media (prefers-reduced-motion:reduce){.ob-coin,.ob-shadow,#osap-boot::before{animation:none}}
 </style>
+<!-- <head> ends here, after the title, link-preview tags and loading-screen style: tests/head_meta.test.mjs -->
+</head><body>
 <div id="osap-boot" role="status" aria-live="polite"><div class="ob-stage"><div class="ob-coin"><img class="ob-f" src="assets/logo-cover.webp" alt=""><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(4px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(3px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(2px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(1px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(0px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(-1px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(-2px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(-3px)"><img class="ob-e" src="assets/logo-cover.webp" alt="" style="transform:translateZ(-4px)"><img class="ob-b" src="assets/logo-cover.webp" alt=""></div></div><div class="ob-shadow"></div><div id="osap-boot-t">Loading AXIOM OSAP</div></div>
 <script>
 (function () {
@@ -3333,6 +3335,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   if (M.brief.indexOf(cc) >= 0) src.push("data/brief/" + cc + ".js");
   /* news and social posts: the refresh job writes one file per country (tools/split_country.mjs) */
   src.push("data/live/news/" + cc + ".js", "data/live/social/" + cc + ".js");
+  /* AI transcripts of official briefing videos, every country in one small file (tools/refresh_transcripts.mjs) */
+  src.push("data/live/transcripts.js");
   /* feeds that cover every country but are too big to load whole: sanctions lists and UCDP events (tools/refresh_more.mjs) */
   /* (World, "ww", reads the whole-world ucdp.js and lists no sanctions, so it asks for neither) */
   if (cc !== "ww") src.push("data/live/sanctions/" + cc + ".js", "data/live/ucdp/" + cc + ".js");
@@ -5958,7 +5962,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 
   /* ---------- official weather warnings (15-minute snapshot; non-English text machine-translated in the job, original kept) ---------- */
   var LANGN = { ja: "Japanese", th: "Thai", vi: "Vietnamese", km: "Khmer", lo: "Lao", my: "Burmese", id: "Indonesian", ms: "Malay", zh: "Chinese", ko: "Korean",
-    mn: "Mongolian", hi: "Hindi", ur: "Urdu", ne: "Nepali", dz: "Dzongkha", bn: "Bengali", si: "Sinhala", ta: "Tamil", dv: "Dhivehi", tl: "Filipino", tet: "Tetum" };
+    mn: "Mongolian", hi: "Hindi", ur: "Urdu", ne: "Nepali", dz: "Dzongkha", bn: "Bengali", si: "Sinhala", ta: "Tamil", dv: "Dhivehi", tl: "Filipino", tet: "Tetum",
+    ru: "Russian", uk: "Ukrainian", he: "Hebrew", ar: "Arabic", fa: "Persian" };
   function mtNote(i) {
     if (!i.mt) return "";
     var ln = LANGN[i.lang] || i.lang;
@@ -6109,6 +6114,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* entities decoded (twice for double-escaped feeds) and markup left in older stored summaries removed: shown as plain text */
   function unent(t) {
     if (!t) return t;
+    /* the warning records are read before the line that makes ENT runs (function hoisting), so make it on first use */
+    if (!ENT) ENT = document.createElement("textarea");
     for (var k = 0; k < 2 && /&(#x?[0-9a-f]+|[a-z]+);/i.test(t); k++) { ENT.innerHTML = t; t = ENT.value; }
     return t.indexOf("<") < 0 ? t : t.replace(/<\/?[a-z][^>]*>/gi, " ").replace(/\s{2,}/g, " ").trim();
   }
@@ -6118,7 +6125,10 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (!LBY[layer] || ((!w || !w.items) && !H.length)) return;
     if (!w || !w.items) w = { asof: (window.ASAP_HIST[CC] || {}).updated || "", items: {} };
     /* the latest snapshot plus earlier items kept by the refresh job (data/history/<cc>.js, up to 12 months), one copy per link */
-    var cur = w.items[CC] || [], seenL = {}; cur.forEach(function (i) { seenL[i.link] = 1; });
+    var cur = w.items[CC] || [], seenL = {};
+    /* AI transcripts of official briefing videos (tools/refresh_transcripts.mjs) join the social list: each is the speaker's claim */
+    if (layer === "social" && window.ASAP_TRANSCRIPTS && window.ASAP_TRANSCRIPTS.items) cur = cur.concat(window.ASAP_TRANSCRIPTS.items[CC] || []);
+    cur.forEach(function (i) { seenL[i.link] = 1; });
     var older = H.filter(function (i) { return i && i.link && !seenL[i.link] && (seenL[i.link] = 1); });
     histN[layer] = older.length;
     var all = cur.concat(older);
@@ -6140,7 +6150,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       /* a job placement read from a dateline alone (items placed before the job left datelines out) is dropped and read again here */
       if (g && namesPlace(txt, g.name) && !namesPlace(stripDatelines(txt), g.name)) g = null;
       var pl = g || placeFor(txt);
-      var ep = enParts(i, layer === "news" ? "report" : "post", i.outlet || i.account);
+      var ep = enParts(i, layer === "news" ? "report" : i.ai ? "transcript" : "post", i.outlet || i.account);
       var rec = { layer: layer, type: layer === "social" || i.state ? "claim" : "event", cat: layer === "news" ? "News report" : "Social media post", kind: "other", live: true,
         title: ep.t, detail: ep.s, untr: ep.untr || undefined, orig: ep.orig, origLang: ep.lang,
         derived: [ep.note, ep.untr ? "" : mtNote(i), pl ? "Placed at " + pl.name + (pl.prec === "province" ? " (the rough center of that region)" : pl.gn ? " (the town center, from GeoNames)" : "") + " because the headline names it; the story may be about somewhere else there." : ""].filter(Boolean).join(" ") || undefined,
@@ -6150,6 +6160,12 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
         /* the outlet's own picture (its feed's thumbnail or the article's og:image), linked, never stored */
         img: layer === "news" && /^https:\/\/[^\s<>"']{8,600}$/.test(i.img || "") ? i.img : undefined,
         leftOut: layer === "social" && i.left_out ? String(i.left_out) : undefined };
+      if (i.ai) {
+        rec.cat = "Official video transcript"; rec.aiTr = String(i.ai);
+        rec.derived = ["AI generated transcript (" + i.ai + ", " + String(i.at || "").replace("T", " ") + "Z) of " + (i.account || "the body") + "'s own video" +
+          (i.partial ? ", first part only" : "") + ". It is what the model heard the speaker say: a claim by the speaker, not verified, and the model can mishear names and numbers. Check the video before quoting." +
+          (i.sha ? " Video file SHA-256 " + i.sha + "." : ""), rec.derived].filter(Boolean).join(" ");
+      }
       rec[flag] = true; add(rec);
     });
     R.sort(function (a, b) { return a.ts < b.ts ? 1 : (a.ts > b.ts ? -1 : 0); });
@@ -6213,6 +6229,9 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     ["Scams", /\b(scam\w*|fraud\w*|money laundering|launder\w*|online gambling|call cent(er|re)s?|cyber ?crime|phishing|ponzi)\b/i],
     ["Infrastructure", /\b(power (cut|outage)s?|blackouts?|outages?|railways?|rail|trains?|airports?|flights?|seaports?|bridges?|road closures?|highways?|internet|telecom\w*|water supply|suspended|collaps\w*)\b/i],
     ["Health", /\b(outbreaks?|virus\w*|dengue|cholera|covid|influenza|bird flu|h5n1|measles|malaria|swine fever|rabies|mpox|zika|chikungunya|tuberculosis|diseases?|hospitals?|vaccin\w*|epidemic|pandemic|poison\w*)\b/i],
+    /* Cyber and intelligence (24 Nov 2026: "Unclassified CIA system breached in a cyberattack" scored 3 and missed US Top stories:
+       "cyberattack" is one word, so the Security rule's "attack" never matched, and no rule knew a breach or a spy agency) */
+    ["Cyber and intelligence", /\b(cyber\w*|hack(ed|ers?|ing)|breach(es|ed)?|data leaks?|ransomware|malware|spyware|espionage|spy|spies|spying|intelligence (agenc\w*|services?|officials?|community)|CIA|NSA|ODNI|FBI|MI5|MI6|GCHQ|FSB|GRU|Mossad)\b/i],
     ["Politics and unrest", /\b(protest\w*|rall(y|ies)|riots?|strikes?|unrest|coup|impeach\w*|elections?|parliament|minister|president|prime minister|government|senate|sanctions?|tariffs?|curfew|martial law|state of emergency)\b/i]];
   var NROUTINE = /\b(football|soccer|cricket|tennis|golf|basketball|baseball|badminton|boxing|olympic\w*|world cup|league|premier league|sprint(er)?s?|athletes?|coach|striker|fifa|nba|grand prix|celebrit\w*|actors?|actress|singers?|k-?pop|concerts?|album|movies?|films?|drama|fashion|beauty|recipes?|restaurants?|horoscope|lifestyle|sponsored|advertis\w*|promotion|giveaway|lottery|blackpink|waterworld|chess|fide|art market|promoters?|bout|heavyweight|ufc|man city|manchester|fixtures?|transfer window)\b/i;
   var NSTOP = { that: 1, this: 1, with: 1, from: 1, after: 1, over: 1, into: 1, amid: 1, says: 1, said: 1, will: 1, have: 1, been: 1, were: 1, their: 1, about: 1, more: 1, than: 1, what: 1, when: 1, where: 1, which: 1, while: 1, year: 1, years: 1, first: 1, news: 1 };
@@ -6327,7 +6346,8 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       (recs.length ? '<div class="tllist">' + recs.slice(0, layer === "news" ? 150 : 60).map(function (r) {
         var pic = r.thumb || r.img;
         return '<button type="button" class="tlrow' + (pic ? " hasthumb" : "") + '" data-openrec="' + esc(r.id) + '">' + (pic ? '<img class="ytthumb" src="' + esc(pic) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="96" height="54" onerror="this.style.visibility=\'hidden\'">' : "") + '<span class="tlt">' + esc(fmtTs(r)) + (r.thumb ? " · video" : "") + "</span><span class=\"tln\">" + esc(r.title) + "</span>" +
-          '<span class="tlm"><span class="tls">' + esc(r.src.name) + (r.orig ? " · machine translation from " + esc(r.origLang) : "") + (r.place ? " · " + esc(r.place) : "") + (r.leftOut ? " · left out (" + esc(r.leftOut) + ")" : "") + "</span></span></button>";
+          '<span class="tlm"><span class="tls">' + esc(r.src.name) + (r.aiTr ? " · official video transcript" : "") + (r.orig ? (r.untr ? " · in " : " · machine translation from ") + esc(r.origLang) : "") + (r.place ? " · " + esc(r.place) : "") + (r.leftOut ? " · left out (" + esc(r.leftOut) + ")" : "") + "</span>" +
+            (r.aiTr ? ' <span class="aitag" title="Transcript of the official video, AI-generated (' + esc(r.aiTr) + '). The speaker\'s claim, not verified." tabindex="0">AI generated</span>' : "") + "</span></button>";
       }).join("") + "</div>" : '<p class="obs">Nothing in this period.</p>') + "</div></div>";
   }
   function showSocial() {
@@ -9981,6 +10001,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-threads.js"></script>
 <script src="assets/osap-trail.js"></script>
 <script src="assets/osap-trailmap.js"></script>
+<script src="assets/osap-ledger.js"></script>
 <script src="assets/osap-outletfacts.js"></script>
 <!-- in-app reader for open-licence articles (The Conversation, GOV.UK), data/live/fulltext/ from tools/refresh_fulltext.mjs -->
 <script src="assets/osap-reader.js"></script>
@@ -10118,6 +10139,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-gnss.js"></script>
 <!-- ships gone quiet near chokepoints, AIS gaps and position jumps (Map overlays > Ships; tools/darkships_lib.mjs) -->
 <script src="assets/osap-darkships.js"></script>
+<script src="assets/osap-choke.js"></script>
 <!-- economic stress signals: the Economy card on Today and a page in the Country brief (data/live/econ, refreshed daily) -->
 <script src="assets/osap-econ.js"></script>
 <!-- risk rating equivalents: derived five-level country and city ratings, a card on Today and a page in the Country brief (data/live/risk, every 6 h) -->

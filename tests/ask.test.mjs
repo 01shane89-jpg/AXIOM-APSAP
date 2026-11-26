@@ -89,5 +89,18 @@ ok(r.status === 200 && (await r.json()).answered === false, "a refusal is shown 
 r = await post("full", { cc: "vn", q: "What happened today?" });
 ok(r.status === 200 && /no sources/.test((await r.json()).note), "a country with no summary sources: says so, no model call");
 
+/* a key Anthropic rejects: the owner is told plainly, and a key pasted with spaces is trimmed */
+const { default: Anthropic } = await import("../netlify/node_modules/@anthropic-ai/sdk/index.mjs");
+let keyUsed = null;
+useDeps({ client: (k) => { keyUsed = k; return { messages: { create: async () => { throw new Anthropic.AuthenticationError(401, { type: "error", error: { type: "authentication_error", message: "invalid x-api-key" } }, "invalid x-api-key", new Headers()); } } }; } });
+process.env.ANTHROPIC_API_KEY = "  test-key-not-real\n";
+const logs2 = []; console.log = (...a) => logs2.push(a.join(" "));
+r = await post("full", { cc: "th", q: "What happened today?" });
+console.log = log0;
+const jk = await r.json();
+ok(r.status === 503 && jk.keyRejected === true && /rejected OSAP's key/.test(jk.error) && !JSON.stringify(jk).includes("test-key"), "a rejected key: 503 that names the key problem, without the key");
+ok(keyUsed === "test-key-not-real", "spaces and line breaks around the key are trimmed");
+ok(!logs2.join("\n").includes("test-key"), "the rejected key is not logged");
+
 console.log(fails ? fails + " FAILED" : "ALL PASS");
 process.exit(fails ? 1 : 0);

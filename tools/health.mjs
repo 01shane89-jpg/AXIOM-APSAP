@@ -11,7 +11,7 @@
 //   Env: HEALTH_DRY=1 prints instead of posting; HEALTH_SITE / HEALTH_TOPIC override tools/health.json (tests).
 import fs from "node:fs";
 import vm from "node:vm";
-import { stampOf, sourcesOf, countOf, evaluate, decide, lastAnnounced, fpTag, updateSeen, quietSources, cronsOf, jobLimitMin, lateJobs } from "./health_lib.mjs";
+import { stampOf, sourcesOf, countOf, evaluate, decide, lastAnnounced, fpTag, updateSeen, quietSources, cronsOf, jobLimitMin, jobLimitFor, cronGapMin, lateJobs, jobStarted, askRunning } from "./health_lib.mjs";
 
 const cfg = JSON.parse(fs.readFileSync(new URL("./health.json", import.meta.url), "utf8"));
 const SITE = (process.env.HEALTH_SITE || cfg.site).replace(/\/?$/, "/");
@@ -32,7 +32,7 @@ async function jobs(prev) {
   if (!token) return prev || null;
   const dir = ".github/workflows", list = []; let asked = 0, failed = 0;
   for (const file of fs.readdirSync(dir).filter((f) => /\.ya?ml$/.test(f)).sort()) {
-    const yml = fs.readFileSync(`${dir}/${file}`, "utf8"), maxMin = jobLimitMin(cronsOf(yml));
+    const yml = fs.readFileSync(`${dir}/${file}`, "utf8"), maxMin = jobLimitFor(cronsOf(yml), yml, cfg.feeds, cfg.defaultMaxMin);
     if (!maxMin) continue;
     const name = (/^name:\s*(.+)$/m.exec(yml) || [])[1] || file;
     let last = null; asked++;
@@ -51,7 +51,31 @@ async function jobs(prev) {
         if (w.ok) since = (await w.json()).created_at || undefined;
       } catch (e) {}
     }
-    list.push({ file, name: name.replace(/^["']|["']$/g, "").trim(), maxMin, last, ...(since ? { since } : {}) });
+    // past its limit, or will be before this answer stops being trusted: is a run going on main right now? (the keeper runs
+    // about 5 h 20 min a time, longer than its hourly schedule's limit, so its last success is always "late" near the end of each
+    // run while it is plainly working). The list is asked hourly and read for up to SNAPSHOT_TRUST_MIN after, so a run is asked
+    // about from maxMin - SNAPSHOT_TRUST_MIN on: asked only once already late, a keeper seen at 4 h 36 min had no "running" and
+    // read as late 45 min later, while it ran fine (24 Nov 2026, 14:57Z). Its time is when its job started, not the run's
+    // run_started_at: a copy queued behind the one running (concurrency group) keeps the time it was queued, 4 h early.
+    let running;
+    if (askRunning(last, maxMin)) {
+      try {
+        const g = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/${file}/runs?branch=main&status=in_progress&per_page=1`,
+          { headers: { authorization: "Bearer " + token, accept: "application/vnd.github+json", "user-agent": "osap-health" }, signal: AbortSignal.timeout(20000) });
+        const run = g.ok ? ((await g.json()).workflow_runs || [])[0] : null;
+        if (run) {
+          running = run.run_started_at || run.created_at;
+          try {
+            const jr = await fetch(`https://api.github.com/repos/${repo}/actions/runs/${run.id}/jobs`,
+              { headers: { authorization: "Bearer " + token, accept: "application/vnd.github+json", "user-agent": "osap-health" }, signal: AbortSignal.timeout(20000) });
+            const started = jr.ok ? jobStarted((await jr.json()).jobs) : null;
+            if (started) running = started;
+          } catch (e) {}
+        }
+      } catch (e) {}
+    }
+    const gapMin = Math.min(...cronsOf(yml).map(cronGapMin).filter((g) => g != null));
+    list.push({ file, name: name.replace(/^["']|["']$/g, "").trim(), maxMin, gapMin, last, ...(since ? { since } : {}), ...(running ? { running } : {}) });
   }
   // when GitHub would not answer, the last answer is kept and the failure is listed, never an empty "nothing late"
   if (asked && failed === asked) return { ...(prev || { list: [] }), error: "could not read the workflow runs (" + failed + " of " + asked + " failed)" };
@@ -91,7 +115,8 @@ async function build() {
   let prevHealth = null; try { prevHealth = JSON.parse(fs.readFileSync("data/live/health.json", "utf8")); } catch (e) {}
   const jb = await jobs(prevHealth && prevHealth.jobs);
   const out = { v: 1, asof: new Date().toISOString().slice(0, 19) + "Z", run, topic: TOPIC, amberMin: cfg.amberMin, downMin: cfg.downMin, feeds,
-    quiet: { n: quiet.length, list: quiet.slice(0, 60) }, ...(jb ? { jobs: { ...jb, late: lateJobs(jb.list) } } : {}) };
+    // over 60, keep the most recent silences (the panel lists those first; years-quiet pages are the least worth a look)
+    quiet: { n: quiet.length, list: quiet.length > 60 ? quiet.slice(-60) : quiet }, ...(jb ? { jobs: { ...jb, late: lateJobs(jb.list, Date.now(), jb.at) } } : {}) };
   fs.mkdirSync("data/live", { recursive: true });
   fs.writeFileSync("data/live/health.json", JSON.stringify(out) + "\n");
   const ev = evaluate(out, cfg);

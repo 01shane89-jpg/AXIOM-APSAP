@@ -23,7 +23,7 @@
 ["n13984332002",-8.58716,116.36301,"id",{"name":"Puskesmas Wajageseng","amenity":"clinic","healthcare":"clinic","addr:district":"Kopang","addr:city":"Lombok Tengah","addr:province":"Nusa Tenggara Barat"}],
 ["n1403285674",-8.57799,116.12591,"id",{"name":"PUSKESMAS Taliwang","amenity":"hospital"}],
 ["n1411232667",-8.69317,116.39908,"id",{"name":"Puskesmas Janapria","amenity":"hospital","healthcare":"hospital"}],
-["n14267274617",-8.35431,116.04246,"id",{"name":"Island Medical Service","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Company","operator:type":"public","website":"https://islandmedicalservice.com","opening_hours":"24 Hours"}],
+["n14267274617",-8.35431,116.04246,"id",{"name":"Island Medical Service","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Company","operator:type":"public","website":"https://islandmedicalservice.com","opening_hours":"00:00-24:00"}],
 ["n1686897509",-8.24713,117.7252,"id",{"amenity":"clinic","operator":"Poskesdes Pekat","opening_hours":"24/7"}],
 ["n1690420593",-8.2111,117.71111,"id",{"name":"Puskesmas Plus Pekat","amenity":"hospital"}],
 ["n1771532641",-8.63405,116.35428,"id",{"name":"Puskesmas Kopang","amenity":"hospital"}],

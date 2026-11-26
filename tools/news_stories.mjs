@@ -9,7 +9,7 @@
 //   STORIES_IX (default data/live/news-index), STORIES_OUT (default data/live/stories), THREADS_OUT (default data/live/threads),
 //   STORIES_HOURS (default 72), STORIES_FACTCHECKS (default data/live/factchecks.js)
 import fs from "node:fs";
-import { outletBook, fromRow, buildCountry, SCHEMA, HOURS } from "./stories_lib.mjs";
+import { outletBook, fromRow, buildCountry, ccsOfInstitutions, SCHEMA, HOURS } from "./stories_lib.mjs";
 import { nameBook, connect, TSCHEMA, stems } from "./threads_lib.mjs";
 import { prepChecks, factMatch, figures } from "./factcheck_lib.mjs";
 import { ccsInText } from "./geo_cc.mjs";
@@ -38,6 +38,8 @@ const by = new Map(), seen = new Map();
 for (const r of reps) {
   const ccs = new Set(r.ccs.filter((c) => /^[a-z]{2,3}$/.test(c)));
   for (const c of ccsInText(r.title)) ccs.add(c);
+  // or names one of its national bodies (CIA, Kremlin, MI5): filed under that country too, so its coverage counts them
+  for (const c of ccsOfInstitutions(r.title)) ccs.add(c);
   if (ccs.has("jp")) ccs.add("oki");
   for (const c of ccs) { if (!by.has(c)) by.set(c, []); by.get(c).push(r); }
   // where each publisher's headlines are filed: a search result's publisher is placed where nearly all of them are
@@ -61,7 +63,7 @@ const inWin = reps.filter((r) => { const t = Date.parse(r.date.slice(0, 16) + "Z
 const names = nameBook(inWin.map((r) => r.title));
 const built = new Map();
 const METHOD = "Headlines from the outlets OSAP reads, grouped into stories by their words. Many headlines are machine translated, so a story told in other words is missed: counts are a floor, and a blindspot means no matching headline was found, not that the story went unreported.";
-const WMETHOD = "The stories carried by the most outlets in every country OSAP reads, worldwide, each under its own country: at most " + PER_COUNTRY + " a country, sport and show business left out, a story filed under two countries kept once. " + METHOD;
+const WMETHOD = "The stories carried by the most outlets in every country OSAP reads, worldwide (outlets in the last 24 hours count twice, so breaking stories rise), each under its own country: at most " + PER_COUNTRY + " a country, sport and show business left out, a story filed under two countries kept once. " + METHOD;
 const TMETHOD = "Go deeper joins every headline that shares an event's distinctive words within a few days, sorts each into a part by its words, and lists the names outlets write with a capital letter. All of it is word matching by machine, not AI and not an analyst: a headline can be missed or wrongly joined, and two stories naming the same person are not shown to be linked. Officials' lines are their claims.";
 for (const cc of [...want].sort()) {
   // a country's own name is no connection ("United States" in every US thread)

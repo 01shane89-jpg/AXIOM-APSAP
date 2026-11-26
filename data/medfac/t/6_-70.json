@@ -23,6 +23,7 @@
 ["n12366056642",7.56528,-69.14635,"ve",{"name":"Hospital Doctor Martin Lucena","amenity":"hospital"}],
 ["n12366073813",7.77886,-68.22425,"ve",{"name":"Hospital Doctor Francisco A. Rísquez","amenity":"hospital"}],
 ["n13294895673",6.11591,-69.31071,"ve",{"name":"Base Carabobo","aeroway":"aerodrome"}],
+["n14399627002",7.78233,-68.23214,"ve",{"name":"CRI Los Pumé","amenity":"hospital","addr:street":"Calle Comercio","addr:postcode":"7001","opening_hours":"Mo-Fr 08:00-12:00"}],
 ["n4347206690",7.11447,-69.78672,"ve",{"name":"Ambulatorio Rural Tipo I La Trinidad","amenity":"hospital"}],
 ["n4676265506",7.94688,-69.93032,"ve",{"aeroway":"aerodrome"}],
 ["n5175889222",7.1084,-69.78913,"ve",{"name":"La Trinidad Aeropuerto","name:en":"La Trinidad Airport","aeroway":"aerodrome"}],

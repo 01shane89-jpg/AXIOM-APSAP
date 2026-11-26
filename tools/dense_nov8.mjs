@@ -2,6 +2,7 @@
 // Every source was probed from GitHub Actions first (tools/probe_dense.mjs on claude/one-source-probe). No keys, no accounts.
 //   portwatch-choke  IMF PortWatch daily transits through 28 maritime chokepoints (7-day average vs the 4 weeks before)
 //   portwatch-disrupt IMF PortWatch events that hit ports (affected ports named by PortWatch)
+//   eia-choke        EIA yearly oil volumes through each chokepoint (baseline for PortWatch's live counts; added 23 Nov 2026)
 //   rfj              U.S. State Department Rewards for Justice offers, by the country each offer names
 //   vaac             Volcanic ash advisories of the Tokyo and Washington VAACs (latest per volcano, last 48 hours)
 //   unsc-press       UN Security Council meetings coverage and press statements (headline and link only)
@@ -84,6 +85,72 @@ run("portwatch-disrupt", async (g) => {
       url: "https://portwatch.imf.org/pages/disruption-monitor", sev: a.alertlevel === "RED" ? 3 : a.alertlevel === "ORANGE" ? 2 : 1, kind: "Port disruption", value: a.n_affectedports, ccs: withOki(ccs) });
   }
   return { items, note: items.length + " events with affected ports in 45 days" };
+});
+
+// ---------------------------------------------------------------- EIA World Oil Transit Chokepoints (baseline)
+// The U.S. EIA's yearly oil volumes through each chokepoint (million barrels a day, 2020 to the latest half-year), public domain.
+// A baseline to read PortWatch's live ship counts against: what normally passes, not what passes today. Page updated about once
+// a year (3 Mar 2026), so read weekly. Item order and positions follow the page's own chokepoints.
+const EIA_CHOKE = "https://www.eia.gov/international/content/analysis/special_topics/World_Oil_Transit_Chokepoints/";
+feed("eia-choke", { name: "Oil flows through maritime chokepoints (EIA baseline)", org: "U.S. Energy Information Administration", cat: "Maritime",
+  lic: "U.S. Government public domain (EIA)", url: EIA_CHOKE, everyHours: 168 });
+// the page's chokepoint names -> a position on the water (and the PortWatch chokepoint nearest it is looked up at run time)
+const EIA_AT = [
+  [/malacca/i, "Strait of Malacca", 2.0, 102.0], [/hormuz/i, "Strait of Hormuz", 26.6, 56.4], [/suez/i, "Suez Canal and SUMED pipeline", 30.5, 32.35],
+  [/bab el-mandeb/i, "Bab el-Mandeb", 12.6, 43.4], [/danish/i, "Danish Straits", 55.6, 12.7], [/dardanelles|turkish/i, "Turkish Straits (Dardanelles)", 40.2, 26.4],
+  [/bosporus/i, "Bosporus", 41.1, 29.05], [/panama/i, "Panama Canal", 9.1, -79.7], [/cape/i, "Cape of Good Hope", -34.8, 20.0]];
+const eiaCell = (h) => unhtml(h).replace(/&lt;/g, "<");
+/** The page's tables -> [{ name, lat, lon, periods: ["2020", ... "1H25"], total: [numbers], crude, products, lng (bcf/d), updated }] */
+export function eiaChokepoints(html) {
+  const updated = ((unhtml(html).match(/Last Updated:\s*([A-Z][a-z]+ \d{1,2}, 20\d\d)/) || [])[1]) || "";
+  const out = new Map();
+  const at = (label) => EIA_AT.find(([re]) => re.test(label));
+  for (const tb of String(html).match(/<table[\s\S]*?<\/table>/gi) || []) {
+    const rows = (tb.match(/<tr[\s\S]*?<\/tr>/gi) || []).map((tr) => (tr.match(/<t[hd][\s\S]*?<\/t[hd]>/gi) || []).map(eiaCell));
+    const head = rows.find((r) => r.filter((c) => /^(?:FY )?20\d\d$|^[12]H\d\d$/.test(c)).length >= 3);
+    if (!head) continue;
+    const periods = head.slice(1).map((c) => c.replace(/^FY /, "FY")), table1 = /Table 1\b/.test(unhtml(tb));
+    let cur = null;
+    for (const r of rows) {
+      if (r === head || r.length < periods.length + 1) continue;
+      const label = r[0].replace(/\s+[ab]$/, ""), nums = r.slice(1, periods.length + 1).map((c) => (/^[\d.]+$/.test(c) ? +c : null));
+      if (!nums.some((n) => n != null)) continue;
+      const total = table1 ? at(label) && !/world/i.test(label) : /^(Total oil flows (?:through|around)|Panama Canal total oil)/i.test(label);
+      if (total) {
+        const a = at(label); if (!a) { cur = null; continue; }
+        const o = out.get(a[1]) || { name: a[1], lat: a[2], lon: a[3], periods, total: nums, updated };
+        out.set(a[1], o); cur = o; continue;
+      }
+      if (!cur) continue;
+      const last = nums[nums.length - 1];
+      if (/^Crude oil/i.test(label) && cur.crude == null) cur.crude = last;
+      else if (/^(Petroleum|Refined) products/i.test(label) && cur.products == null) cur.products = last;
+      else if (/^LNG flows/i.test(label) && cur.lng == null) cur.lng = last;
+    }
+  }
+  return [...out.values()];
+}
+run("eia-choke", async (g) => {
+  const list = eiaChokepoints(await g(EIA_CHOKE, "text", { timeout: 60000 }));
+  if (list.length < 6) throw new Error("only " + list.length + " chokepoints read from the EIA tables");
+  // the PortWatch chokepoint nearest each one (within 1.5 degrees: the Dardanelles has no PortWatch chokepoint of its own), named so the two can be read side by side
+  const pw = [];
+  try { const cj = await g(PW + "PortWatch_chokepoints_database/FeatureServer/0/query?where=1%3D1&outFields=portname,lat,lon&returnGeometry=false&f=json");
+    for (const f of cj.features || []) if (isFinite(f.attributes.lat) && isFinite(f.attributes.lon)) pw.push(f.attributes); } catch (e) {}
+  const items = list.map((c) => {
+    const n = c.total.length - 1, per = c.periods[n], prev = c.total.slice(0, n).filter((v) => v != null);
+    const near = pw.map((p) => ({ p, d: Math.hypot(p.lat - c.lat, p.lon - c.lon) })).sort((a, b) => a.d - b.d)[0];
+    const parts = [c.crude != null && "crude oil and condensate " + c.crude, c.products != null && "petroleum products " + c.products].filter(Boolean);
+    return { title: c.name + ": " + c.total[n] + " million barrels of oil a day (EIA, " + per + ")",
+      detail: (parts.length ? "Of which " + parts.join(", ") + " million b/d. " : "") + (c.lng != null ? "LNG " + c.lng + " billion cubic feet a day. " : "") +
+        "By year " + c.periods.map((p, i) => p + " " + (c.total[i] == null ? "n/a" : c.total[i])).join(", ") + " million b/d." +
+        (prev.length ? " Range " + Math.min(...prev) + " to " + Math.max(...prev) + " before " + per + "." : "") +
+        (near && near.d < 1.5 ? " Live ship counts: PortWatch chokepoint \"" + near.p.portname + "\"." : "") +
+        " EIA estimate from tanker tracking" + (c.updated ? ", page updated " + c.updated : "") + ": a baseline of normal flows, not today's traffic.",
+      date: c.updated ? new Date(c.updated + " 12:00Z").toISOString() : undefined, lat: c.lat, lon: c.lon, url: EIA_CHOKE, sev: 1, kind: "Chokepoint oil flow (baseline)",
+      value: c.total[n], ccs: withOki(ccsAt(c.lat, c.lon, 2)) };
+  });
+  return { items, globals: items.map((x) => ({ ...x, ccs: undefined })), note: items.length + " chokepoints" + (pw.length ? "" : " (PortWatch names not read)") };
 });
 
 // ---------------------------------------------------------------- Rewards for Justice

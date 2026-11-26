@@ -82,7 +82,7 @@ export function evaluate(health, cfg, now = Date.now()) {
   // a scheduled data job past its limit (lateJobs below) is a stale data set the reader can't see from a feed stamp: it turns the
   // badge amber and is named like a late minor feed, but never sends a phone alert on its own (20 Nov 2026: three jobs sat late
   // in the panel only, with the badge green; "a quiet panel entry nobody sees" is the stuck data Shane ruled out)
-  for (const j of lateJobs(health.jobs && health.jobs.list, now)) problems.push({ id: "job:" + j.file, name: jobLabel(j.name), why: j.last ? "last updated " + ago(now - Date.parse(j.last)) : "no successful run", key: false, job: true });
+  for (const j of lateJobs(health.jobs && health.jobs.list, now, health.jobs && health.jobs.at)) problems.push({ id: "job:" + j.file, name: jobLabel(j.name), why: j.last ? "last updated " + ago(now - Date.parse(j.last)) : "no successful run", key: false, job: true });
   let alerts;
   if (ageMin > downMin) {
     // nothing is refreshing: one line says so, not one per feed
@@ -97,7 +97,7 @@ export function evaluate(health, cfg, now = Date.now()) {
   // operations checks (below): listed for the panel and the nightly run (quiet sources never touch the badge or the phone alerts)
   // (late jobs are both: a minor problem above, and listed here with the full reason for the nightly run)
   const ops = [];
-  for (const j of lateJobs(health.jobs && health.jobs.list, now)) ops.push({ id: "job:" + j.file, name: j.name, why: j.why, ops: true });
+  for (const j of lateJobs(health.jobs && health.jobs.list, now, health.jobs && health.jobs.at)) ops.push({ id: "job:" + j.file, name: j.name, why: j.why, ops: true });
   if (health.jobs && health.jobs.error) ops.push({ id: "jobs", name: "Scheduled job check", why: health.jobs.error, ops: true });
   const q = health.quiet && health.quiet.n;
   if (q) ops.push({ id: "quiet", name: "Quiet sources", why: q + " source" + (q === 1 ? "" : "s") + " with nothing new for " + QUIET_DAYS + "+ days or failing for " + DEAD_DAYS + "+ days", ops: true });
@@ -260,12 +260,51 @@ export function jobLimitMin(crons) {
   // several schedules together fire more often than any one alone: the combined gap is at most the smallest single gap
   return 2 * Math.min(...gaps) + 180;
 }
-/** a workflow's name as a data set: "Refresh airfield weather (METAR/TAF)" -> "Airfield weather (METAR/TAF)" */
-export function jobLabel(name) { const s = String(name || "").replace(/^Refresh\s+/i, ""); return s.charAt(0).toUpperCase() + s.slice(1); }
+/** a job's limit when it also writes watched feeds: never longer than the shortest of their limits, so the keeper restarts it
+ *  before (or as) its data goes stale, not hours after (refresh-factchecks.yml: 3-hourly, limit 540 min, but its feed's 420;
+ *  the fact checks sat stale 18:59Z to 20:34Z on 20 Nov 2026 with the job not yet "late"). Never under one gap of its own
+ *  schedule + 60 min, so a job is not called late between two normal runs. yml = the workflow text; feeds = tools/health.json feeds. */
+export function jobLimitFor(crons, yml, feeds, defaultMaxMin = 120) {
+  const lim = jobLimitMin(crons);
+  if (!lim) return null;
+  const own = (feeds || []).filter((f) => f && f.file && String(yml).includes(f.file)).map((f) => f.maxMin || defaultMaxMin);
+  if (!own.length) return lim;
+  const gap = Math.min(...crons.map(cronGapMin).filter((g) => g != null));
+  return Math.max(Math.min(lim, ...own), gap + 60);
+}
+/** a workflow's name as a data set: "Refresh airfield weather (METAR/TAF)" -> "Airfield weather (METAR/TAF)";
+ *  "Keep the 15-minute refresh running" -> "15-minute refresh keeper" (the badge said "Keep the 15-minute refresh running late") */
+export function jobLabel(name) { const s = String(name || "").replace(/^Refresh\s+/i, "").replace(/^Keep the (.+) running$/i, "$1 keeper"); return s.charAt(0).toUpperCase() + s.slice(1); }
 /** jobs: [{ file, name, maxMin, last: ISO of last success or null, since: ISO the workflow was added }] -> late ones [{ file, name, why, last }]
  *  A job with no success on record is late only once it has existed longer than its limit (a monthly job added mid-month has
- *  not reached its first run: refresh-outlet-facts.yml, added 14 Nov 2026, first due 7 Dec). */
-export function lateJobs(jobs, now = Date.now()) {
-  return (jobs || []).filter((j) => j && j.maxMin && (j.last ? now - Date.parse(j.last) > j.maxMin * 60000 : !(j.since && now - Date.parse(j.since) <= j.maxMin * 60000)))
-    .map((j) => ({ file: j.file, name: j.name || j.file, why: j.last ? "last succeeded " + ago(now - Date.parse(j.last)) + " ago (runs at least every " + ago(((j.maxMin - 180) / 2) * 60000) + ")" : "no successful run on record", last: j.last || null }));
+ *  not reached its first run: refresh-outlet-facts.yml, added 14 Nov 2026, first due 7 Dec). A job with a run going on main
+ *  (running: when it started, under 6 h ago) is working, not late: refresh-keeper.yml runs 5 h 20 min a time on an hourly
+ *  schedule and showed as late for ~20 min at the end of every run (20 Nov 2026). */
+export const RUN_ALIVE_MIN = 360; // GitHub ends any job after 6 h: a run "in progress" for longer is stuck, not working
+export const SNAPSHOT_TRUST_MIN = 120; // the job list is asked hourly (tools/health.mjs jobs); older than this, its "running" is not trusted
+/** when a run seen going is judged: as of the job list's own time (at), not the reader's clock. The list is asked at most hourly, so
+ *  a keeper run seen at 5 h 21 min was read 39 min later as 6 h "in progress" = stuck, and the Today badge went amber with "Keep the
+ *  15-minute refresh running late" while that run had already finished and the next one was going (22 Nov 2026, 15:07Z). */
+export function runRef(at, now = Date.now()) {
+  const t = Date.parse(at || "");
+  return t && t <= now && now - t < SNAPSHOT_TRUST_MIN * 60000 ? t : now;
+}
+/** should the hourly job list ask whether a run is going? Yes once the last success is within SNAPSHOT_TRUST_MIN of the limit:
+ *  the list is read for up to that long after it is asked, so asking only once already late left a keeper seen at 4 h 36 min
+ *  with no "running", and it read as late 45 min later while it ran fine (24 Nov 2026, 14:57Z). */
+export function askRunning(last, maxMin, now = Date.now()) {
+  return !last || now - Date.parse(last) > (maxMin - SNAPSHOT_TRUST_MIN) * 60000;
+}
+/** when a run's work really began: the earliest started_at of its jobs that have started (null when none has). A run queued
+ *  behind another in its concurrency group reports run_started_at = when it was queued (refresh-keeper.yml 24 Nov 2026: queued
+ *  11:01Z, job started 15:01Z), which would make a fresh keeper look 6 h "stuck" four hours early. */
+export function jobStarted(jobs) {
+  const t = (jobs || []).map((j) => j && j.started_at && j.status !== "queued" && j.status !== "waiting" && j.status !== "pending" ? Date.parse(j.started_at) : NaN).filter(isFinite);
+  return t.length ? new Date(Math.min(...t)).toISOString().slice(0, 19) + "Z" : null;
+}
+export function lateJobs(jobs, now = Date.now(), at = null) {
+  const ref = runRef(at, now);
+  return (jobs || []).filter((j) => j && j.maxMin && !(j.running && ref - Date.parse(j.running) < RUN_ALIVE_MIN * 60000) &&
+    (j.last ? now - Date.parse(j.last) > j.maxMin * 60000 : !(j.since && now - Date.parse(j.since) <= j.maxMin * 60000)))
+    .map((j) => ({ file: j.file, name: j.name || j.file, why: j.last ? "last succeeded " + ago(now - Date.parse(j.last)) + " ago (runs at least every " + ago((j.gapMin || (j.maxMin - 180) / 2) * 60000) + ")" : "no successful run on record", last: j.last || null }));
 }

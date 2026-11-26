@@ -1,6 +1,8 @@
 [["n10596711100",35.10193,111.03576,"cn",{"name":"校医室","amenity":"clinic","healthcare":"clinic","operator":"秦大夫"}],
 ["n10989056433",35.73781,111.69413,"cn",{"name":"裴月峰诊所","amenity":"clinic","healthcare":"clinic"}],
 ["n11795327390",35.73512,111.70336,"cn",{"name":"仁爱医院","amenity":"hospital","healthcare":"hospital"}],
+["n14361170005",34.99329,111.01875,"cn",{"aeroway":"helipad"}],
+["n14361170094",34.99702,111.02186,"cn",{"aeroway":"helipad"}],
 ["n4662879348",35.04279,110.99329,"cn",{"name":"运城市眼科医院","amenity":"hospital","healthcare":"hospital","addr:housenumber":"388","addr:street":"人民北路","addr:city":"运城市"}],
 ["n5063640834",35.88286,111.52301,"cn",{"name":"安李卫生所","amenity":"clinic","healthcare":"clinic","addr:street":"安李村","addr:district":"襄汾县","addr:city":"临汾市","addr:province":"山西省","addr:postcode":"041500"}],
 ["n6052758282",35.58024,110.66578,"cn",{"name":"阳村卫生院","amenity":"hospital","healthcare":"hospital"}],

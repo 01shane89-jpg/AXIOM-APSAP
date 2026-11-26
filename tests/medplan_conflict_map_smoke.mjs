@@ -50,7 +50,7 @@ async function open(o) {
     return r.abort();
   });
   await ctx.route(/\/data\/(medfac|hospitals)\//, (r) => r.fulfill({ status: 404, body: "" }));
-  await ctx.addInitScript((env) => { try { localStorage.setItem("osap-home", "map"); localStorage.setItem("osap.split", "0"); if (env) localStorage.setItem("osap-medplan-th", JSON.stringify({ env: env })); } catch (e) {} }, o.env || "");
+  await ctx.addInitScript((env) => { try { if (localStorage.getItem("osap-medplan-open") === null) localStorage.setItem("osap-medplan-open", JSON.stringify({ conop: 1, pic: 1, val: 1, pst: 1, pstmore: 1, gh: 1, fac: 1, rt: 1, ems: 1, air: 1, oc: 1, thr: 1, wx: 1, unit: 1, src: 1 })); if (localStorage.getItem("osap-medplan-layers") === null) localStorage.setItem("osap-medplan-layers", "[\"oh\"]"); localStorage.setItem("osap-home", "map"); localStorage.setItem("osap.split", "0"); if (env) localStorage.setItem("osap-medplan-th", JSON.stringify({ env: env })); } catch (e) {} }, o.env || "");
   const p = await ctx.newPage(); p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base + "#th/map", { waitUntil: "domcontentloaded" });
   await p.waitForFunction(() => window.TSAP && window.TSAP.areaApi && window.OSAP_MEDPLAN && window.OSAP_SEA, null, { timeout: 60000 });

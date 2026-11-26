@@ -30,12 +30,12 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Tonga.html",
    "srcname": "travel.state.gov Tonga country information",
    "coord_basis": "Nuku'alofa centre estimate; verify",
-   "fp": "e0b0654cb9586cd8c0f38d102aafe6a94ed6574d86feaae69de5223ce925b2f1",
+   "fp": "349c40153f3baccb17f2f941ddef09a9555a958228d244b5596176969d0615c7",
    "phone": "(676) 28-279",
    "phone_after_hours": "679 331-4466",
    "phone_src": "https://to.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-21"
+   "phone_asof": "2026-11-09"
   }
  ],
  "airports": [
@@ -332,5 +332,5 @@
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-21"
+ "evac_asof": "2026-11-09"
 }

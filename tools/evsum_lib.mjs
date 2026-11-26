@@ -86,3 +86,61 @@ export function figureContext(out, fig) {
   const txt = draftText(out).replace(/\s+/g, " "), i = txt.search(new RegExp("(?<![\\d.,])" + String(fig).replace(/\./g, "\\.") + "(?![\\d])"));
   return i < 0 ? "" : ' ("…' + txt.slice(Math.max(0, i - 30), i + 30) + '…")';
 }
+
+// ---------- flashpoint name terms (plain watch lists in tools/refresh_evsum.mjs) ----------
+// Reports are matched to a curated flashpoint by the place words in its name. Generic words, Thai/Lao place prefixes ("Chiang",
+// "Mae", "Ban": they start hundreds of town names) and country words say nothing about which flashpoint a report is about.
+// A proper-name part with two or more telling words is matched whole ("Golden Triangle", "Shwe Kokko"): on 22 Nov 2026 the Thai
+// daily summary told readers the Northern drug corridor was elevated "due to mentions of 'chiang'", because "Chiang Mai", "Chiang
+// Saen", "Golden" and "Triangle" were each matched alone and any Chiang Rai story counted (an elephant festival, a water meeting).
+export const FP_GENERIC = new Set("chong ban phu khao doi mae nong wat around near along with from temples temple checkpoint villages village fishing grounds posts post camps bank scam scams sector sectors tribal phnom hill hills hub hubs park parks dry state states zone old new great little black white yellow three four five first second shoal shoals reef reefs trade shipping targets target strike deep fortress front islands border borders front frontline zone zones river rivers island islands strait straits line area areas region regions north south east west northern southern eastern western central upper lower corridor crossing crossings point points pass mountains mountain hills coast coastal waters province state district city town camp base disputed dispute tensions maritime conflict civil war insurgency armed group groups spillover route routes sea gulf bay valley plateau lake desert chiang muang mueang after before attack attacks site sites buildup inland government strip basin delta peninsula heights canal highlands lowlands archipelago atoll atolls channel".split(" "));
+const FP_JOIN = new Set(["of", "the", "del", "de", "la", "el", "al", "and", "da", "do", "dos", "das", "di"]);
+// country names and their demonyms ("Thai", "Myanmar", "Sudanese", "Iranian", "Chinese")
+const CWORDS = (() => {
+  const out = new Set(["burmese", "filipino", "dutch", "swiss", "british", "korean", "emirati", "saudi", "kiwi", "okinawa"]);
+  try {
+    const dn = new Intl.DisplayNames(["en"], { type: "region" }), A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (const a of A) for (const b of A) { const n = dn.of(a + b); if (n && n !== a + b) n.toLowerCase().split(/[^a-z]+/).filter((w) => w.length >= 4).forEach((w) => out.add(w)); }
+  } catch (e) {}
+  return [...out];
+})();
+/** a country word or demonym: same first five letters (Afghan/Afghanistan), or the whole name but its last letter
+ *  (Iran/Iranian, China/Chinese; 22 Nov 2026 "mentions iranian" matched the Iranian nuclear sites flashpoint in Jordan and Oman) */
+export function countryWord(w) {
+  const l = String(w).toLowerCase(), k = Math.min(5, l.length);
+  if (l.length < 4) return false; // "Ta", "Sai", "Cay": too short to be a country word (and never kept as a word alone)
+  return CWORDS.some((c) => Math.abs(c.length - l.length) <= 6 && (c.slice(0, k) === l.slice(0, k) || (c.length >= 4 && l.startsWith(c.slice(0, c.length - 1)) && c.length - 1 >= 4) || l.startsWith(c)));
+}
+const telling = (w) => w.length >= 4 && !FP_GENERIC.has(w.toLowerCase()) && !countryWord(w);
+// place-name prefixes that only mean something with the word after them ("Chiang Saen", "Ban Nong Chan", "Mae Sot", "Chong Bok")
+const FP_PREFIX = new Set(["chiang", "mae", "ban", "nong", "chong", "phu", "khao", "doi", "wat", "muang", "mueang", "phnom"]);
+/** "Golden Triangle and Mekong (Chiang Saen–Chiang Khong)" -> ["Golden Triangle", "Mekong", "Chiang Saen", "Chiang Khong"] (max 8).
+ *  A part written as a proper name (every word capitalised, or of/the/del ...) is matched whole, trimmed of generic and country
+ *  words at its ends; other parts give their telling words one by one, as before. */
+export function flashpointTerms(name) {
+  const out = [];
+  for (const part of String(name || "").split(/[()–—,;/]| and | to /)) {
+    const words = part.split(/[^A-Za-zÀ-ɏ0-9'’-]+/).map((w) => w.replace(/['’]s$/, "")).filter(Boolean);
+    if (!words.length) continue;
+    const proper = words.every((w) => /^[A-ZÀ-Þ0-9]/.test(w) || /^[a-z]{1,3}-[A-ZÀ-Þ]/.test(w) || FP_JOIN.has(w.toLowerCase())); // "ez-Zor", "al-Aqsa"
+    if (!proper) { words.filter(telling).forEach((w) => out.push(w)); continue; }
+    const kind = (w) => { const l = w.toLowerCase(); return FP_JOIN.has(l) ? "J" : FP_PREFIX.has(l) ? "P" : FP_GENERIC.has(l) ? "G" : countryWord(w) ? "C" : "W"; };
+    const k = words.map(kind);
+    let i = 0, j = words.length - 1;
+    while (i <= j && k[i] !== "W" && k[i] !== "P") i++;
+    while (j >= i && k[j] !== "W") j--;
+    if (i > j) continue;
+    const span = words.slice(i, j + 1), ks = k.slice(i, j + 1);
+    // worth matching: a telling word, or a prefix with a name after it ("Mae Sot")
+    const ok = span.some((w, n) => ks[n] === "W" && (w.length >= 4 || (n > 0 && ks[n - 1] === "P" && w.length >= 3)));
+    if (ok) out.push(span.join(" "));
+  }
+  return [...new Set(out)].slice(0, 8);
+}
+/** one case-blind regex for the terms; words of a phrase may be split by spaces or hyphens ("Golden-Triangle") */
+export function termsRegex(terms) {
+  if (!terms || !terms.length) return null;
+  const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // a hyphen inside a name is optional ("Deir ez-Zor" = "Deir Ezzor")
+  return new RegExp("\\b(" + terms.map((t) => t.split(/\s+/).map((w) => esc(w).replace(/-/g, "[\\s-]?")).join("[\\s-]+")).join("|") + ")\\b", "i");
+}

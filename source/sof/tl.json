@@ -36,13 +36,13 @@
    "src": "https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Timor-Leste.html",
    "srcname": "travel.state.gov country information page",
    "coord_basis": "OpenStreetMap way/130770595",
-   "fp": "f9680bc24b10f3a16b15aa9535cffeced77957b4b42aa7db0c91beaab340c1c4",
+   "fp": "f0ce69a078159e4a040ffe7ed310add27901560841e5f05322efe130a27009af",
    "web": "https://tl.usembassy.gov",
    "phone": "+670 330 2400",
    "phone_after_hours": "+670 330 2400",
    "phone_src": "https://tl.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-21"
+   "phone_asof": "2026-11-09"
   }
  ],
  "airports": [
@@ -251,8 +251,8 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/1783173607",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-21",
-   "fp": "20e59c7436f6e382d21243e11d5f0394004cf04307aa30da5d128864813b2adc"
+   "asof": "2026-11-09",
+   "fp": "ad9426dba806725d2aa7ac8f5340c1fa079ee68929b0804a892449d03be84afa"
   },
   {
    "id": "sof:tl:xing:way-658027880",
@@ -268,13 +268,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/way/658027880",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-21",
-   "fp": "20b7dd05fa8de9fb0e356d59c023b0011a8e0113baa4fa0e4769be6ef0fa5c9f"
+   "asof": "2026-11-09",
+   "fp": "e87dee98a46686e598c7a75dc931ab361d43d0961dddd8a795fa139b430ad063"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-21"
+ "evac_asof": "2026-11-09"
 }

@@ -6,7 +6,7 @@
 // Crisis24 publish (Minimal, Low, Moderate, High, Extreme), per category and overall.
 // Every category is a score from 0 (no risk seen) to 100, made of indicators that each keep their raw value, year or window,
 // the points they gave and their source link, so anyone can redo the sum.
-export const RULE = "osap.risk/0.3";
+export const RULE = "osap.risk/0.4";
 export const LEVELS = ["", "Minimal", "Low", "Moderate", "High", "Extreme"];
 // score -> level: 0-19 Minimal, 20-39 Low, 40-59 Moderate, 60-79 High, 80-100 Extreme
 export function levelOf(score) { return score == null || !isFinite(score) ? 0 : score >= 80 ? 5 : score >= 60 ? 4 : score >= 40 ? 3 : score >= 20 ? 2 : 1; }
@@ -67,6 +67,11 @@ export function security(I) {
   // a war is a war whatever the governance estimate says: the conflict-deaths score alone counts when it is higher
   const d = m.parts[1].pts;
   if (d != null && m.score != null && d > m.score) { m.score = d; m.by_deaths = true; }
+  // no input measures military pressure short of combat deaths (air and sea incursions, blockades, drills): say so on every record
+  m.unmeasured = "Military pressure without combat deaths (air and sea incursions, blockades, drills)";
+  // without the governance estimate the score rests on conflict deaths alone, and no deaths reads as 0 even under sustained military
+  // pressure (Taiwan, 21 Nov): that is a gap, not calm, so the category is Partial with no level of its own
+  if (m.score != null && m.parts[0].pts == null) { m.partial = true; m.rests_on = "conflict deaths only"; }
   return m;
 }
 // Crime: intentional homicide rate 60%, World Bank "Rule of Law" 40%
@@ -156,17 +161,19 @@ export function overall(cats) {
   const level = Math.max(levelOf(score), sec, other);
   const floor = level > levelOf(score) ? (level === sec ? "security" : "category") : undefined;
   const missing = CATS.filter((c) => !have.includes(c)).map((c) => c.name);
+  // a Partial category (security without the governance estimate) is in the mean but cannot set a level: the overall is Partial too
+  const thin = have.filter((c) => cats[c.k].partial).map((c) => c.name + " rests on " + (cats[c.k].rests_on || "part of its data"));
   // a category with no data is unknown, not calm: with any missing there is no overall level (a mean of what is left would read
   // as a confident "Minimal"), only "Partial"; the categories that have data keep their own levels and the score stays as the
   // mean of those, labelled partial
-  if (missing.length) return { score, level: 0, label: "Partial", partial: true, missing, of: CATS.length };
+  if (missing.length || thin.length) return Object.assign({ score, level: 0, label: "Partial", partial: true, missing, of: CATS.length }, thin.length ? { thin } : {});
   return { score, level, label: LEVELS[level], floor, missing };
 }
 // all categories for one place; ev.warDeaths (optional) gives the conflict deaths infrastructure uses, so a city keeps the
 // national figure
 export function rate(I, ev) {
   const cats = { security: security(I), crime: crime(I), health: health(I, ev.health || []), hazards: hazards(ev.hazards || [], ev.hazardsOk !== false), infra: infra(I, ev.outage, ev.warDeaths) };
-  for (const k in cats) { cats[k].level = levelOf(cats[k].score); cats[k].label = LEVELS[cats[k].level]; }
+  for (const k in cats) { const p = cats[k].partial; cats[k].level = p ? 0 : levelOf(cats[k].score); cats[k].label = p ? "Partial" : LEVELS[cats[k].level]; }
   return { overall: overall(cats), cats };
 }
 
@@ -175,9 +182,34 @@ export function km(lat1, lon1, lat2, lon2) {
   const r = Math.PI / 180, h = Math.sin((lat2 - lat1) * r / 2) ** 2 + Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin((lon2 - lon1) * r / 2) ** 2;
   return 12742 * Math.asin(Math.sqrt(Math.min(1, h)));
 }
-// the latest World Bank value of a series [[year, value], ...] no older than maxAge years
+// World Bank API rows into {iso3: [[year, value], ...]}. The bulk API mislabels some rows (Nov 2026: "Taiwan, China" came with
+// countryiso3code SYR, so Syria had two 2025 Rule of Law values and Taiwan none; Netherlands Antilles came as NLD): a row is trusted
+// only with the economy's own two-letter id, the few economies the API lists with no id are mapped by name, and a year with two
+// different values for one country is dropped as a conflict rather than guessed
+export const WB_NAME_A3 = { "Taiwan, China": "TWN" };
+export function wbRows(rows) {
+  const o = {}, conflicts = [], renamed = [];
+  for (const r of rows || []) {
+    if (!r || r.value == null || !isFinite(r.value)) continue;
+    const name = (r.country && r.country.value) || "", id = (r.country && r.country.id) || "";
+    let a3 = r.countryiso3code || "";
+    if (!id) { if (!WB_NAME_A3[name]) continue; if (a3 !== WB_NAME_A3[name]) renamed.push(name + " " + (a3 || "-") + " -> " + WB_NAME_A3[name]); a3 = WB_NAME_A3[name]; }
+    if (!/^[A-Z]{3}$/.test(a3)) continue;
+    (o[a3] = o[a3] || []).push([String(r.date), +r.value]);
+  }
+  for (const a in o) {
+    const by = {};
+    for (const [y, v] of o[a]) (by[y] = by[y] || []).push(v);
+    o[a] = Object.keys(by).sort().filter((y) => { const ok = by[y].every((v) => v === by[y][0]); if (!ok) conflicts.push(a + " " + y + " " + by[y].join(" / ")); return ok; }).map((y) => [y, by[y][0]]);
+    if (!o[a].length) delete o[a];
+  }
+  return { series: o, conflicts, renamed };
+}
+// the latest World Bank value of a series [[year, value], ...] no older than maxAge years; a year with two different values is a
+// conflict and is skipped
 export function latest(series, nowYear, maxAge = 8) {
-  const s = (series || []).filter((x) => x && x[1] != null && isFinite(x[1]));
+  const all = (series || []).filter((x) => x && x[1] != null && isFinite(x[1]));
+  const s = all.filter((x) => all.every((z) => z[0] !== x[0] || z[1] === x[1]));
   if (!s.length) return null;
   const [y, v] = s[s.length - 1];
   return nowYear - +y > maxAge ? null : { y: String(y), v: +v };

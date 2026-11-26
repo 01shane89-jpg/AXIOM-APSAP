@@ -10,6 +10,7 @@
 ["w1010249002",4.78166,33.58599,"ss",{"name":"Kapoeta Airport","addr:city":"Kapoeta","aeroway":"aerodrome","icao":"HSKP"}],
 ["w1012539310",4.74446,33.60104,"ss",{"name":"Kapoeta Mission Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"Kapoeta -  Ngauro"}],
 ["w1012539603",4.72568,33.53232,"ss",{"name":"Katiko Referral Hospital","amenity":"hospital","healthcare":"hospital"}],
+["w1098845833",4.08841,33.87026,"ug",{"name":"KHiman Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["w1570552892",4.22358,33.19478,"ss",{"amenity":"clinic","healthcare":"clinic"}],
 ["w257573237",4.41715,32.57568,"ss",{"name":"Torit Airport","addr:street":"Juba-Torit-Nadapal Highway","addr:city":"Torit","aeroway":"aerodrome","icao":"HSTR","wikidata":"Q2916022"}],
 ["w719629873",4.40188,32.59278,"ss",{"name":"Torit","aeroway":"helipad","surface":"unpaved"}],

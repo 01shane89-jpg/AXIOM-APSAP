@@ -82,6 +82,7 @@
 ["w1347833952",7.06732,-70.75102,"co",{"aeroway":"helipad"}],
 ["w1449432039",7.8243,-71.19413,"ve",{"name":"Helipuerto del Batallón Caribe 937","name:en":"Batallón Caribe 937 HLS","aeroway":"helipad","surface":"ground"}],
 ["w1449435998",7.26568,-71.93033,"ve",{"name":"Helipuerto de El Nula","name:en":"El Nula Heliport","aeroway":"helipad","surface":"asphalt"}],
+["w1577683605",7.09173,-70.74429,"ve",{"aeroway":"helipad"}],
 ["w177514188",7.06805,-70.73699,"co",{"name":"Aeropuerto Santiago Pérez Quiroz","operator":"Aerocivil","aeroway":"aerodrome","icao":"SKUC","iata":"AUC","wikidata":"Q2232461"}],
 ["w180422726",6.95401,-71.85404,"co",{"aeroway":"helipad"}],
 ["w180422729",6.95531,-71.85476,"co",{"aeroway":"helipad"}],

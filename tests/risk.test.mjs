@@ -65,8 +65,18 @@ ok(tw.overall.partial && tw.overall.level === 0 && tw.overall.missing.join("|") 
 const one = L.rate({ pv: { v: -2.5 }, deaths: { n: 20000, popM: 20 }, homicide: { v: 1 }, rl: { v: 1.5 }, elec: { v: 100 }, net: { v: 95 } }, { hazards: [] });
 ok(one.overall.partial && one.overall.missing.join() === "Health and medical" && one.cats.security.level === 5, "even one category missing gives Partial; the categories with data keep their levels (security " + one.cats.security.label + ")");
 ok(!calm.overall.partial && !war.overall.partial, "with all five categories in, the overall level stands");
+// Taiwan (21 Nov): no governance estimate (the World Bank publishes none for Taiwan) and no conflict deaths read security "1 Minimal"
+// at 0 under sustained PLA air and sea pressure. Without the estimate the score rests on deaths alone: security is Partial, not Minimal
+const twSec = L.rate({ deaths: { n: 0, popM: 23 }, homicide: { v: 0.8 }, rl: { v: 1.2 }, u5: { v: 4 }, elec: { v: 100 }, net: { v: 90 } }, { hazards: [] });
+ok(twSec.cats.security.partial && twSec.cats.security.level === 0 && twSec.cats.security.label === "Partial" && twSec.cats.security.rests_on === "conflict deaths only", "security without the governance estimate is Partial, not Minimal (" + twSec.cats.security.label + ")");
+ok(twSec.overall.partial && twSec.overall.level === 0 && !twSec.overall.missing.length && /Security and conflict rests on conflict deaths only/.test(twSec.overall.thin.join()), "a Partial security category makes the overall Partial even with every category in");
+ok(/military pressure without combat deaths/i.test(twSec.cats.security.unmeasured) && /military pressure/i.test(calm.cats.security.unmeasured), "every record says military pressure without deaths is not counted");
+ok(!calm.cats.security.partial && calm.cats.security.level === 1 && !war.cats.security.partial, "with the governance estimate in, security keeps its level");
+const twWar = L.rate({ deaths: { n: 5000, popM: 23 } }, { hazards: [] });
+ok(twWar.cats.security.partial && twWar.cats.security.score >= 80, "deaths alone still give the score when the estimate is missing (" + twWar.cats.security.score + ")");
 const R0 = C;
 ok(R0.isPartial({ level: 1, label: "Minimal", missing: ["Crime", "Health and medical", "Infrastructure and services"] }) && R0.partialText({ missing: ["Crime"], of: 5 }) === "Partial: 1 of 5 categories have no data (Crime)" && /Partial/.test(R0.obadge({ partial: true, missing: ["Crime"] })) && !/Minimal/.test(R0.obadge({ level: 1, missing: ["Crime"] })), "the page shows Partial with the count and list, also for records written before this rule");
+ok(R0.partialText({ missing: ["Crime"], thin: ["Security and conflict rests on conflict deaths only"], of: 5 }) === "Partial: 1 of 5 categories have no data (Crime); Security and conflict rests on conflict deaths only" && R0.partialText({ missing: [], thin: ["Security and conflict rests on conflict deaths only"] }) === "Partial: Security and conflict rests on conflict deaths only", "the Partial text names a category that rests on part of its data");
 ok(!R0.isPartial({ level: 2, missing: [] }) && /2 Low/.test(R0.obadge({ level: 2, missing: [] })), "a full record keeps its level badge");
 ok(L.deathsFrom([{ date: "2026-01-01", lat: 13.75, lon: 100.5, best: 3 }, { date: "2026-01-01", lat: 6.5, lon: 101.3, best: 7 }, { date: "2024-01-01", lat: 13.75, lon: 100.5, best: 50 }], "2025-10-24", { lat: 13.75, lon: 100.5 }, 50).n === 3,
   "city deaths: only events in the window and within 50 km");
@@ -83,10 +93,25 @@ ok(near1(L.warDamagePts(5000, 100), 2 * (L.perMillionPts(50) - 40)) && L.warDama
 const sdR = L.rate(sdI, { warDeaths: { n: 0, popM: 51.6 } });
 ok(!sdR.cats.infra.events.some((e) => e.k === "war"), "a city passes the national deaths for infrastructure (warDeaths), not its own");
 
+// World Bank mislabeled rows (21 Nov 2026): the bulk API sent "Taiwan, China" with countryiso3code SYR, so Syria's Rule of Law read
+// +1.20 (crime Minimal) and Taiwan had no governance figures; Netherlands Antilles 2017 came as NLD
+const wbr = L.wbRows([
+  { country: { id: "SY", value: "Syrian Arab Republic" }, countryiso3code: "SYR", date: "2025", value: -1.8143935 },
+  { country: { id: "", value: "Taiwan, China" }, countryiso3code: "SYR", date: "2025", value: 1.2009747 },
+  { country: { id: "NL", value: "Netherlands" }, countryiso3code: "NLD", date: "2025", value: 1.67 },
+  { country: { id: "", value: "Netherlands Antilles" }, countryiso3code: "NLD", date: "2017", value: 0.81 },
+  { country: { id: "", value: "Jersey" }, countryiso3code: "", date: "2025", value: 1.6 },
+  { country: { id: "XX", value: "Twice" }, countryiso3code: "XXX", date: "2025", value: 1 }, { country: { id: "XX", value: "Twice" }, countryiso3code: "XXX", date: "2025", value: 2 },
+  { country: { id: "XX", value: "Twice" }, countryiso3code: "XXX", date: "2024", value: 0.5 }]);
+ok(JSON.stringify(wbr.series.SYR) === '[["2025",-1.8143935]]' && JSON.stringify(wbr.series.TWN) === '[["2025",1.2009747]]', "a row mislabeled SYR goes to Taiwan by its name; Syria keeps only its own value");
+ok(JSON.stringify(wbr.series.NLD) === '[["2025",1.67]]' && !("" in wbr.series) && wbr.renamed.length === 1, "rows with no economy id are dropped unless mapped by name (Netherlands Antilles, Jersey)");
+ok(JSON.stringify(wbr.series.XXX) === '[["2024",0.5]]' && /XXX 2025/.test(wbr.conflicts.join()), "two different values for one year are a conflict: that year is dropped, the year before is used");
+ok(L.latest([["2025", -1.81], ["2025", 1.2]], 2026) === null && L.latest([["2024", -1.82], ["2025", -1.81], ["2025", 1.2]], 2026).v === -1.82, "latest() skips a conflicting year in an older cached file");
+
 // the job, end to end, on the repository's own feeds with World Bank figures from a fixture
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "risk-"));
 const out = path.join(tmp, "out"); fs.mkdirSync(out);
-const wbFix = { schema: "osap-risk-wb/1", read: new Date().toISOString().slice(0, 16) + "Z", ids: { pv: "GOV_WGI_PV.EST" },
+const wbFix = { schema: "osap-risk-wb/2", read: new Date().toISOString().slice(0, 16) + "Z", ids: { pv: "GOV_WGI_PV.EST" },
   series: { pop: { THA: [["2024", 71.7e6]], UKR: [["2024", 37e6]], SGP: [["2024", 5.9e6]] }, pv: { THA: [["2023", -0.6]], UKR: [["2023", -2.0]], SGP: [["2023", 1.5]] }, rl: { THA: [["2023", 0]], UKR: [["2023", -0.9]], SGP: [["2023", 1.8]] }, homicide: { THA: [["2021", 4.4]], UKR: [["2021", 4.1]], SGP: [["2021", 0.1]] },
     u5: { THA: [["2023", 8.5]], UKR: [["2023", 8.6]], SGP: [["2023", 2.1]] }, elec: { THA: [["2022", 100]], SGP: [["2022", 100]] }, net: { THA: [["2023", 88]], SGP: [["2023", 96]] } } };
 fs.writeFileSync(path.join(out, "_wb.json"), JSON.stringify(wbFix));

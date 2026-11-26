@@ -19,7 +19,7 @@
 ["w1191627112",29.58742,103.75366,"cn",{"name":"武警医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1225609384",29.62041,103.49882,"cn",{"name":"峨眉山佛光医院","amenity":"hospital","healthcare":"hospital"}],
 ["w1229849710",29.49547,103.6175,"cn",{"name":"乐山市中医医院康养中心","amenity":"hospital","healthcare":"hospital"}],
-["w1240342803",29.43808,103.74917,"cn",{"name":"乐山机场","name:en":"Leshan Airport","aeroway":"aerodrome"}],
+["w1240342803",29.43808,103.74917,"cn",{"name":"乐山机场","name:en":"Leshan Airport","operator":"乐山机场投资发展集团（有限）公司","operator:type":"government","addr:housenumber":"888","addr:street":"蔡金镇顺溪路","addr:district":"五通桥区","addr:city":"乐山市","addr:province":"四川省","addr:postcode":"614807","aeroway":"aerodrome","icao":"ZULF","iata":"LSG"}],
 ["w1263618515",28.23445,103.63048,"cn",{"name":"永善县人民医院","name:en":"People's Hospital of Yongshan County","amenity":"hospital","healthcare":"hospital"}],
 ["w1296318440",29.99435,103.00449,"cn",{"name":"雅安恒博医院(北二路院区)","amenity":"hospital","healthcare":"hospital","addr:housenumber":"77","addr:street":"碧峰峡路"}],
 ["w1306028132",29.52876,103.72849,"cn",{"name":"乐山市人民医院(高新院区)","amenity":"hospital"}],

@@ -1,5 +1,5 @@
 // New dense feeds of 8 Nov 2026 (tools/dense_nov8.mjs): chokepoint summary, RFJ tags, VAAC advisory parsing.
-import { chokeSummary, rfjTags, vaaParse, blastItem, odlSummary, routeChange, pkoMissions, subPoint, pkoFatalities, euRegimeItems } from "../tools/dense_nov8.mjs";
+import { chokeSummary, rfjTags, vaaParse, blastItem, odlSummary, routeChange, pkoMissions, subPoint, pkoFatalities, euRegimeItems, eiaChokepoints } from "../tools/dense_nov8.mjs";
 let bad = 0;
 const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) bad++; };
 const rows = [];
@@ -51,5 +51,33 @@ const gp = { EPOCH: "2026-11-08T07:58:15.212928", MEAN_MOTION: 15.66848761, ECCE
 const sp = subPoint(gp, Date.parse("2026-11-08T19:58:15.213Z"));
 const km = Math.hypot((sp[0] + 60.5) * 111, (sp[1] - 104.5) * 111 * Math.cos(60.5 * Math.PI / 180));
 ok(km < 300, "12-hour sub-satellite point within 300 km of SGP4 (" + Math.round(km) + " km)");
+
+// EIA World Oil Transit Chokepoints: the page's tables (shape as served 23 Nov 2026, trimmed)
+{
+  const tr = (cells, th) => "<tr>" + cells.map((c) => (th ? "<th>" : "<td>") + c + (th ? "</th>" : "</td>")).join("") + "</tr>";
+  const yrs = ["2020", "2021", "2022", "2023", "2024", "1H25"];
+  const html = "<p>Last Updated: March 3, 2026 | Notes</p>" +
+    "<table><caption>Table 1. Volume of crude oil and petroleum liquids transported through world chokepoints and the Cape of Good Hope, 2020–1H25</caption>" +
+    tr(["million barrels per day"], true) + tr(["Location", ...yrs], true) +
+    tr(["Strait of Malacca", "22.8", "22.1", "23.0", "24.0", "22.5", "23.2"]) + tr(["Strait of Hormuz", "19.2", "19.7", "21.9", "21.8", "20.7", "20.9"]) +
+    tr(["Danish Straits <sup>a</sup>", "3.1", "3.1", "4.2", "5.0", "4.9", "4.9"]) + tr(["Panama Canal b", "1.7", "1.8", "2.2", "2.2", "2.0", "2.3"]) +
+    tr(["World maritime oil trade", "74.1", "75.9", "78.6", "80.2", "79.7", "79.8"]) + "</table>" +
+    "<table><caption>Table 3. Strait of Hormuz</caption>" + tr(["", ...yrs], true) +
+    tr(["Total oil flows through the Strait of Hormuz", "19.2", "19.7", "21.9", "21.8", "20.7", "20.9"]) + tr(["Crude oil and condensate", "14.4", "14.7", "16.2", "15.8", "14.6", "14.7"]) +
+    tr(["Petroleum products", "4.8", "5.1", "5.6", "6.0", "6.1", "6.1"]) + tr(["LNG flows through Strait of Hormuz (billion cubic feet per day)", "10.7", "10.8", "11.0", "10.6", "10.5", "11.4"]) + "</table>" +
+    "<table><caption>Table 6. Turkish Straits</caption>" + tr(["", ...yrs], true) +
+    tr(["Total oil flows through the Bosporus Strait", "2.9", "3.0", "2.9", "3.3", "3.3", "3.3"]) + tr(["Crude oil and condensate", "1.6", "1.7", "1.6", "1.9", "1.9", "2.1"]) + "</table>" +
+    "<table><caption>Table 7. Panama Canal oil flows, 2020–2025 (fiscal years)</caption>" + tr(["", "FY 2020", "FY 2021", "FY 2022", "FY 2023", "FY 2024", "FY 2025"], true) +
+    tr(["Panama Canal total oil", "1.7", "1.8", "2.2", "2.2", "2.0", "2.3"]) + tr(["Crude oil", "&lt;0.1", "&lt;0.1", "&lt;0.1", "&lt;0.1", "&lt;0.1", "&lt;0.1"]) + "</table>";
+  const L = eiaChokepoints(html), by = Object.fromEntries(L.map((c) => [c.name, c]));
+  ok(L.length === 5 && !by["World maritime oil trade"], "EIA: 5 chokepoints, world totals left out (" + L.map((c) => c.name).join(", ") + ")");
+  const h = by["Strait of Hormuz"];
+  ok(h && h.total[5] === 20.9 && h.periods[5] === "1H25" && h.crude === 14.7 && h.products === 6.1 && h.lng === 11.4 && h.updated === "March 3, 2026", "EIA: Hormuz latest volume, split and LNG");
+  ok(by["Danish Straits"] && by["Danish Straits"].total[0] === 3.1, "EIA: footnote letter dropped from the name");
+  ok(by["Bosporus"] && by["Bosporus"].crude === 2.1, "EIA: Bosporus from its own table");
+  ok(by["Panama Canal"] && by["Panama Canal"].crude == null, "EIA: '<0.1' is not read as a number");
+  ok(eiaChokepoints("<p>no tables</p>").length === 0, "EIA: page without tables gives nothing");
+}
+
 console.log(bad ? bad + " FAILED" : "all passed");
 process.exit(bad ? 1 : 0);

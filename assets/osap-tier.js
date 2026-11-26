@@ -210,7 +210,10 @@
     /* the sign-in screen is the first thing people see: the logo and name above the form, as on the loading screen */
     var h = '<div class="cbox">' + (wall ? '<div class="trbrand"><img src="assets/logo-cover.webp" alt=""><span>AXIOM OSAP</span></div>' : "") + '<div class="chead"><h2 id="tr-h">' + title + "</h2>" + (stay ? "" : '<button type="button" class="x" aria-label="Close">&times;</button>') + "</div>" +
       '<p class="trmsg" role="status"' + (UI.msg ? "" : " hidden") + ">" + esc(UI.msg) + "</p>";
-    if (wall && UI.mode === "signin") h += '<p>OSAP needs an account, on the Free plan too. Sign in, or create a free account with your email.</p>';
+    /* the first screen a new visitor sees: what OSAP is, then what an account costs (early access: Full free, tools/owner.mjs) */
+    if (wall && (UI.mode === "signin" || UI.mode === "signup")) h += '<p class="trpitch">See beyond the headlines. Every report in OSAP links back to its source, on one map of every country.</p>' +
+      (CFG.early ? '<p class="trsoon" role="note"><b>Early access: Full is free for every account until paid plans open.</b> No card needed.</p>' : "") +
+      (UI.mode === "signin" ? "<p>Sign in, or create a free account with your email.</p>" : "");
     if (UI.mode === "users") {
       h += usersHtml();
     } else if (UI.mode === "team") {
@@ -687,6 +690,10 @@
       "#tierdlg .trbrand{display:flex;flex-direction:column;align-items:center;gap:6px;margin:4px 0 12px;font-weight:700;letter-spacing:.08em;font-size:14px}" +
       "#tierdlg .trbrand img{width:72px;height:72px;border-radius:50%}" +
       "#tierdlg.trwall .trbtns button.primary[type=submit]{flex:1 1 100%}" +
+      /* on the sign-in screen the other way in (new account / have one) is a full-width second button, Forgot password a quiet link */
+      "#tierdlg.trwall .trbtns button[data-tr=signup],#tierdlg.trwall .trbtns button[data-tr=signin]{flex:1 1 100%}" +
+      "#tierdlg.trwall .trbtns button[data-tr=forgot]{flex:1 1 100%;background:none;border:none;box-shadow:none;color:var(--link,#1c5d99);text-decoration:underline;text-underline-offset:2px;cursor:pointer}" +
+      "#tierdlg .trpitch{font-size:15px;font-weight:600;line-height:1.4;margin:6px 0 8px}" +
       /* daily summaries are on Full: on a plan without them the Today page leaves out the box rather than saying none was built */
       "html[data-osap-tier=free] .tddaily,html[data-osap-tier=mid] .tddaily{display:none!important}" +
       "#tierdlg .trusers{overflow:auto;max-height:60vh}#tierdlg .cbox:has(.trusers){max-width:900px}" +

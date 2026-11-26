@@ -34,12 +34,12 @@
    "src": "https://www.wikidata.org/entity/Q105550345",
    "srcname": "Wikidata",
    "coord_basis": "OpenStreetMap node/6617641001",
-   "fp": "32829f2d2f54162e0ba7cca965ac9bb0cbf927900dd54cb80df1f8e3aeaee98e",
+   "fp": "70c7001fdd963c9095ef23172a4b4f56ab8b4e72f57ab477244287d1dea26954",
    "web": "https://bs.usembassy.gov/embassy/nassau/",
    "phone": "242-322-1181",
    "phone_src": "https://www.openstreetmap.org/node/6617641001",
    "phone_srcname": "OpenStreetMap (ODbL), as tagged on the post",
-   "phone_asof": "2026-11-21"
+   "phone_asof": "2026-11-09"
   },
   {
    "id": "sof:bs:post:embassy-of-the-united-states-of-america-nassau",
@@ -54,12 +54,12 @@
    "src": "https://www.wikidata.org/entity/Q137722584",
    "srcname": "Wikidata",
    "coord_basis": "city centre (GeoNames); the post's own position is not in Wikidata",
-   "fp": "773c2012e0f18c1bcc251f668d4924a4d1a7d96ca1fb700f4e5ba9489b8c9186",
+   "fp": "ae53b4b3bacf87f9a0f1c9139c7be130dade6f4fc06f7bd461741f4ad1ca69c5",
    "phone": "242-461-5025",
    "phone_after_hours": "242-461-5025",
    "phone_src": "https://bs.usembassy.gov/",
    "phone_srcname": "the post's own website",
-   "phone_asof": "2026-11-21"
+   "phone_asof": "2026-11-09"
   }
  ],
  "airports": [
@@ -377,13 +377,13 @@
    "coord_basis": "OpenStreetMap",
    "src": "https://www.openstreetmap.org/node/7214177134",
    "srcname": "OpenStreetMap (ODbL), barrier=border_control",
-   "asof": "2026-11-21",
-   "fp": "6bc14ead3f0311f6d7904e11c9b8d23127abada4cae35aec870d18f089a39d3f"
+   "asof": "2026-11-09",
+   "fp": "24b3cfd45908bbff30cd8be6f16557bc85f422611d7872ae14daafbfbeefb344"
   }
  ],
  "evac_sources": {
   "posts": "Researched list, filled from OpenStreetMap office=diplomatic country=US (ODbL); phone numbers as published on each post's own website, else as tagged in OpenStreetMap",
   "crossings": "OpenStreetMap barrier=border_control (ODbL), one point per crossing"
  },
- "evac_asof": "2026-11-21"
+ "evac_asof": "2026-11-09"
 }

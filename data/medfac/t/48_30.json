@@ -114,7 +114,7 @@
 ["w1069387140",49.44912,31.43023,"ua",{"name":"Амбулаторія загальної практики сімейної медицини","amenity":"hospital","healthcare":"hospital","emergency":"no","phone":"+380 4735 30 980","addr:street":"вулиця Леніна","addr:city":"Набутів","addr:postcode":"19425"}],
 ["w1069478921",49.77485,30.12586,"ua",{"name":"Центральна районна клініка","amenity":"hospital","healthcare":"hospital"}],
 ["w1069685951",49.7999,30.11118,"ua",{"name":"Поліклініка профоглядів","amenity":"hospital","healthcare":"hospital","addr:housenumber":"25","addr:street":"вулиця Богдана Хмельницького"}],
-["w108585454",49.81562,30.08708,"ua",{"name":"Білоцерківський міський центр первинної медико-санітарної допомоги №1","amenity":"clinic","healthcare":"clinic","addr:housenumber":"65а","addr:street":"вулиця Івана Мазепи"}],
+["w108585454",49.81562,30.08708,"ua",{"name":"Білоцерківський міський центр первинної медико-санітарної допомоги №1","amenity":"clinic","healthcare":"clinic","addr:housenumber":"65-А","addr:street":"вулиця Івана Мазепи"}],
 ["w108816629",48.02336,30.85688,"ua",{"name":"Дитяча поліклініка","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"paediatrics"}],
 ["w108867796",48.04378,30.85552,"ua",{"name":"Стомат. відділення ПЦМБЛ","amenity":"hospital","healthcare":"hospital","operator":"ПЦМБЛ","addr:housenumber":"22","addr:street":"Театральна вулиця","addr:postcode":"55200","opening_hours":"Mo-Fr 09:00-14:00"}],
 ["w109138892",49.69707,31.56236,"ua",{"name":"Канів (Пекарі)","name:en":"Kaniv (Pekari)","operator":"Національніа поліція","aeroway":"heliport","icao":"UKBE"}],

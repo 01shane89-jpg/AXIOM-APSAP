@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { compileRelevance } from "../tools/topics_lib.mjs";
 import { actorCountryAdded, cutOff } from "../tools/ai_lines.mjs";
-import { briefFresh, buildRules, buildWorld, validateAi, stripInlineCites, cluster, softSection, unent, fromRow, fingerprint, aiQueue, overclaims, dropOverclaims } from "../tools/daily_lib.mjs";
+import { briefFresh, buildRules, buildWorld, validateAi, stripInlineCites, cluster, softSection, unent, fromRow, fingerprint, aiQueue, shardQueue, takeShardDay, overclaims, dropOverclaims } from "../tools/daily_lib.mjs";
 
 const R = compileRelevance(JSON.parse(fs.readFileSync("tools/relevance.json", "utf8")));
 const end = Date.parse("2026-09-28T01:00:00Z");
@@ -191,5 +191,23 @@ t("a refreshed brief's watch points are dated by watch_asof, not by its as_of", 
   assert.equal(w.length, 1); assert.equal(w[0].asof, "2026-09-19");
   // as_of moved by a section update while the watch points stayed from an old research date: not carried
   assert.equal(buildRules({ ...inp, brief: b("2026-09-20", null) }, R).watch.filter((x) => x.from === "brief").length, 0);
+});
+t("Shards: each takes its turn from the back of the queue, all together cover it once; no shard means the whole queue", () => {
+  const q = ["ww", "th", "ua", "de", "fr", "it", "es"];
+  const parts = [0, 1, 2].map((k) => shardQueue(q, k + "/3"));
+  assert.deepEqual(parts[0], ["es", "de", "ww"]); assert.deepEqual(parts[1], ["it", "ua"]); assert.deepEqual(parts[2], ["fr", "th"]);
+  assert.deepEqual(parts.flat().sort(), [...q].sort());
+  assert.deepEqual(shardQueue(q, ""), q); assert.deepEqual(shardQueue(q, "3/3"), []); assert.deepEqual(shardQueue(q, "0/0"), []);
+  assert.deepEqual(q[0], "ww");   // the queue itself is not reversed in place
+});
+
+t("Shard merge: only today's AI draft is taken, and never over main's own AI draft of today", () => {
+  const day = (date, method) => ({ days: [{ date, method }] });
+  assert.equal(takeShardDay(day("2026-11-23", "ai"), day("2026-11-23", "rules"), "2026-11-23"), true);
+  assert.equal(takeShardDay(day("2026-11-23", "ai"), null, "2026-11-23"), true);
+  assert.equal(takeShardDay(day("2026-11-23", "ai"), day("2026-11-23", "ai"), "2026-11-23"), false);
+  assert.equal(takeShardDay(day("2026-11-23", "rules"), day("2026-11-23", "rules"), "2026-11-23"), false);
+  assert.equal(takeShardDay(day("2026-11-22", "ai"), day("2026-11-23", "rules"), "2026-11-23"), false);
+  assert.equal(takeShardDay(null, day("2026-11-23", "rules"), "2026-11-23"), false);
 });
 console.log(`${ok} passed`);
