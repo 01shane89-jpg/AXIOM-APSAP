@@ -84,9 +84,25 @@ t("names: a currency or unit next to its amount is not a name (\"Not in its sour
   assert.deepEqual(namesIn("Officials said the fine was USD 40 per day and US$5m in total."), []);
   const refs = [ref(1, "Polis rampas kokain bernilai RM2.5 juta di Sungai Golok", "Harian Metro")];
   const r = groundLine({ text: "Thai police, as reported by Harian Metro, seized RM2.5 million in suspected cocaine at Sungai Golok.", refs: [1] }, refs, { place: "Thailand" });
-  assert.ok(!(r.gaps || []).some((g) => g[0] === "name" && g[1] === "RM"), JSON.stringify(r.gaps));
+  assert.ok(!(r.gaps || []).some((g) => g.kind === "name" && g.what === "RM"), JSON.stringify(r.gaps));
   // NEGATIVE: an all-capitals name that is not next to an amount still counts
   assert.ok(namesIn("Talks with ASEAN resumed in Jakarta on Monday.").includes("ASEAN"));
+});
+t("names: a name spelled out before its own abbreviation is the sources' when they give the abbreviation (\"Not in its sources: Disaster Prevention Mitigation\", 26 Nov 2026)", () => {
+  const refs = [ref(1, "DDPM puts 15 provinces on flood alert for November 27–30", "Nation Thailand")];
+  const line = { text: "The Disaster Prevention and Mitigation Department (DDPM) has put 15 provinces on flood alert, according to Nation Thailand.", refs: [1] };
+  const r = groundLine(line, refs, { place: "Thailand" });
+  assert.ok(!r.gaps.some((g) => g.kind === "name"), JSON.stringify(r.gaps));
+  assert.ok(r.trace.some(([w, ns]) => w === "DDPM" && ns.join() === "1"), JSON.stringify(r.trace));
+  // only the words the abbreviation spells are covered: a name before them is still checked
+  const r2 = groundLine({ text: "Governor Somchai said the Disaster Prevention and Mitigation Department (DDPM) put 15 provinces on alert.", refs: [1] }, refs, { place: "Thailand" });
+  assert.ok(r2.gaps.some((g) => g.kind === "name" && /Somchai/.test(g.what)), JSON.stringify(r2.gaps));
+  // NEGATIVE: an abbreviation the sources don't give covers nothing
+  const r3 = groundLine({ text: "The Disaster Prevention and Mitigation Department (DPMD) put 15 provinces on alert.", refs: [1] }, refs, { place: "Thailand" });
+  assert.ok(r3.gaps.some((g) => g.kind === "name" && /Disaster/.test(g.what)), JSON.stringify(r3.gaps));
+  // NEGATIVE: a spelled-out name whose initials are not the abbreviation's letters is still checked
+  const r4 = groundLine({ text: "The Bangkok Flood Monitoring Centre (DDPM) put 15 provinces on alert.", refs: [1] }, refs, { place: "Thailand" });
+  assert.ok(r4.gaps.some((g) => g.kind === "name" && /Flood|Monitoring/.test(g.what)), JSON.stringify(r4.gaps));
 });
 t("NEGATIVE: a line citing nothing that exists is dropped", () => {
   assert.equal(groundLine({ text: "Something happened.", refs: [9] }, [ref(1, "x", "y")], {}).drop, true);
