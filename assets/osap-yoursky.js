@@ -151,56 +151,56 @@
   }
 
   /* ---------- drawing ---------- */
-  var CSS = ".tdsky .skhead{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}.tdsky h2{margin:0}.tdsky .sksub{font-size:12px;color:var(--muted)}" +
-    ".tdsky .skgrid{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:12px;margin-top:8px;align-items:start}" +
-    "@media (max-width:520px){.tdsky .skgrid{grid-template-columns:minmax(0,1fr)}.tdsky .skpic{max-width:280px}}" +
-    ".tdsky .skpic{position:relative;width:100%;aspect-ratio:1/1;border-radius:8px;overflow:hidden;background:var(--line-soft,#e5e7eb);border:1px solid var(--line)}" +
-    ".tdsky .skpic canvas{display:block;width:100%;height:100%}" +
-    ".tdsky .skx{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.6);pointer-events:none}" +
-    ".tdsky .skwait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:10px;text-align:center;font-size:12.5px;color:var(--muted)}" +
-    ".tdsky .skcap{font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.4;overflow-wrap:anywhere}" +
+  var CSS = ".tdsky .yshead{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}.tdsky h2{margin:0}.tdsky .yssub{font-size:12px;color:var(--muted)}" +
+    ".tdsky .ysgrid{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:12px;margin-top:8px;align-items:start}" +
+    "@media (max-width:520px){.tdsky .ysgrid{grid-template-columns:minmax(0,1fr)}.tdsky .yspic{max-width:280px}}" +
+    ".tdsky .yspic{position:relative;width:100%;aspect-ratio:1/1;border-radius:8px;overflow:hidden;background:var(--line-soft,#e5e7eb);border:1px solid var(--line)}" +
+    ".tdsky .yspic canvas{display:block;width:100%;height:100%}" +
+    ".tdsky .ysx{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.6);pointer-events:none}" +
+    ".tdsky .yswait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:10px;text-align:center;font-size:12.5px;color:var(--muted)}" +
+    ".tdsky .yscap{font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.4;overflow-wrap:anywhere}" +
     ".tdsky ul{list-style:none;margin:0;padding:0}.tdsky li{padding:6px 0;border-top:1px solid var(--line-soft,var(--line));font-size:13px;line-height:1.45;overflow-wrap:anywhere}.tdsky li:first-child{border-top:0;padding-top:0}" +
-    ".tdsky .skk{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}" +
-    ".tdsky .skb{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}.tdsky .skb button{font:inherit;font-size:13px;font-weight:600;min-height:40px;padding:4px 12px;border:1px solid var(--accent,#1D5A86);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}" +
-    ".tdsky .skb button.skp{background:var(--accent,#1D5A86);color:#fff}" +
-    ".tdsky .skfoot{font-size:11.5px;color:var(--muted);margin:8px 0 0;line-height:1.45}.tdsky .skintro{font-size:13px;margin:6px 0 0;line-height:1.45}";
-  function css() { if (D.getElementById("sky-css")) return; var s = D.createElement("style"); s.id = "sky-css"; s.textContent = CSS; D.head.appendChild(s); }
+    ".tdsky .ysk{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}" +
+    ".tdsky .ysb{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}.tdsky .ysb button{font:inherit;font-size:13px;font-weight:600;min-height:40px;padding:4px 12px;border:1px solid var(--accent,#1D5A86);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}" +
+    ".tdsky .ysb button.ysp{background:var(--accent,#1D5A86);color:#fff}" +
+    ".tdsky .ysfoot{font-size:11.5px;color:var(--muted);margin:8px 0 0;line-height:1.45}.tdsky .ysintro{font-size:13px;margin:6px 0 0;line-height:1.45}";
+  function css() { if (D.getElementById("ysky-css")) return; var s = D.createElement("style"); s.id = "ysky-css"; s.textContent = CSS; D.head.appendChild(s); }
 
-  function head() { return '<div class="skhead"><h2>Your sky</h2><span class="sksub">The last satellite picture of the ground around you, and the next one</span></div>'; }
+  function head() { return '<div class="yshead"><h2>Your sky</h2><span class="yssub">The last satellite picture of the ground around you, and the next one</span></div>'; }
   function intro() {
-    return head() + '<p class="skintro">A free 10 m satellite picture of most places on Earth is taken every few days. See the newest clear one around you, when the next picture and radar pass are due, and how many imaging satellites cross the country today.</p>' +
-      '<div class="skb"><button type="button" class="skp" data-sky="me">Show my sky</button><button type="button" data-sky="map">Use the place on the map</button></div>' +
-      '<p class="skfoot">Your position is rounded to about 1 km and sent only to the public satellite catalogs and AWS Open Data to fetch the pictures, never to AXIOM, and it is not stored.</p>';
+    return head() + '<p class="ysintro">A free 10 m satellite picture of most places on Earth is taken every few days. See the newest clear one around you, when the next picture and radar pass are due, and how many imaging satellites cross the country today.</p>' +
+      '<div class="ysb"><button type="button" class="ysp" data-ysky="me">Show my sky</button><button type="button" data-ysky="map">Use the place on the map</button></div>' +
+      '<p class="ysfoot">Your position is rounded to about 1 km and sent only to the public satellite catalogs and AWS Open Data to fetch the pictures, never to AXIOM, and it is not stored.</p>';
   }
   function picHtml(now) {
-    var p = S.pic, h = '<div><div class="skpic">';
-    if (S.canvas) h += '<span class="skx" aria-hidden="true"></span>';
-    else h += '<span class="skwait">' + (S.picErr ? "The picture could not be read just now." : p === null && S.step === "done" && S.searched ? "No Sentinel-2 pass over this spot in the last " + LOOK_D + " days." : "Reading the newest Sentinel-2 picture…") + "</span>";
+    var p = S.pic, h = '<div><div class="yspic">';
+    if (S.canvas) h += '<span class="ysx" aria-hidden="true"></span>';
+    else h += '<span class="yswait">' + (S.picErr ? "The picture could not be read just now." : p === null && S.step === "done" && S.searched ? "No Sentinel-2 pass over this spot in the last " + LOOK_D + " days." : "Reading the newest Sentinel-2 picture…") + "</span>";
     h += "</div>";
     if (p) {
       var item = p.items[0];
-      h += '<p class="skcap"><b>' + esc(String(p.sat).replace(/^S2/, "Sentinel-2")) + "</b> · " + esc(when(p.t)) + " · " + esc(ago(p.t, now)) + " · " + esc(cloudTxt(p.cloud)) +
+      h += '<p class="yscap"><b>' + esc(String(p.sat).replace(/^S2/, "Sentinel-2")) + "</b> · " + esc(when(p.t)) + " · " + esc(ago(p.t, now)) + " · " + esc(cloudTxt(p.cloud)) +
         (S.bands ? " · drawn from the 16-bit bands (bright ground)" : "") + (item && item.stac ? ' · <a href="' + esc(item.stac) + '" target="_blank" rel="noopener noreferrer">scene record</a>' : "") + "</p>";
-      if (S.newer.length) h += '<p class="skcap">' + esc(S.newer.length === 1 ? "A newer pass" : S.newer.length + " newer passes") + " (newest " + esc(zulu(S.newer[0].t)) + ", " + esc(cloudTxt(S.newer[0].cloud)) + ") " + (S.newer.length === 1 ? "was" : "were") + " cloudier.</p>";
+      if (S.newer.length) h += '<p class="yscap">' + esc(S.newer.length === 1 ? "A newer pass" : S.newer.length + " newer passes") + " (newest " + esc(zulu(S.newer[0].t)) + ", " + esc(cloudTxt(S.newer[0].cloud)) + ") " + (S.newer.length === 1 ? "was" : "were") + " cloudier.</p>";
     }
     return h + "</div>";
   }
   function listHtml(now) {
     var r = S.space, n = nextOf(r), li = [];
-    if (!r) li.push('<li><span class="skk">Next passes</span>Working out the next Sentinel passes…</li>');
+    if (!r) li.push('<li><span class="ysk">Next passes</span>Working out the next Sentinel passes…</li>');
     else {
-      li.push('<li><span class="skk">Next picture</span>' + (n.pic ? "<b>" + esc(when(n.pic.t)) + "</b> · " + esc(soon(n.pic.t, now)) + " · " + esc(n.pic.sat) +
+      li.push('<li><span class="ysk">Next picture</span>' + (n.pic ? "<b>" + esc(when(n.pic.t)) + "</b> · " + esc(soon(n.pic.t, now)) + " · " + esc(n.pic.sat) +
         (n.pic.cloud != null ? " · cloud forecast " + esc(n.pic.cloud) + "%" + ((n.pic.t - now) / DAY > 3 ? " (rough this far out)" : "") : "") : r.ok && r.ok.s2 === false ? "The Sentinel-2 pass list could not be read just now." : "No Sentinel-2 pass expected in the next 14 days from the passes seen here.") + "</li>");
-      li.push('<li><span class="skk">Next radar pass</span>' + (n.radar ? "<b>" + esc(when(n.radar.t)) + "</b> · " + esc(soon(n.radar.t, now)) + " · " + esc(n.radar.sat) + (n.radar.track ? " " + esc(n.radar.track) : "") + " · sees through cloud and at night" :
+      li.push('<li><span class="ysk">Next radar pass</span>' + (n.radar ? "<b>" + esc(when(n.radar.t)) + "</b> · " + esc(soon(n.radar.t, now)) + " · " + esc(n.radar.sat) + (n.radar.track ? " " + esc(n.radar.track) : "") + " · sees through cloud and at night" :
         r.ok && r.ok.s1 === false ? "The Sentinel-1 pass list could not be read just now." : "No Sentinel-1 pass expected in the next 14 days from the passes seen here.") + "</li>");
     }
     var s = S.sats;
-    if (!s) li.push('<li><span class="skk">Over the country</span>Counting satellites…</li>');
-    else if (s.none) li.push('<li><span class="skk">Over the country</span>' + (s.sea ? "This spot is not inside a country, so there is no country count." : "No satellite count for this country right now.") + "</li>");
+    if (!s) li.push('<li><span class="ysk">Over the country</span>Counting satellites…</li>');
+    else if (s.none) li.push('<li><span class="ysk">Over the country</span>' + (s.sea ? "This spot is not inside a country, so there is no country count." : "No satellite count for this country right now.") + "</li>");
     else {
       // only passes still ahead are named; the count is for the job's 12-hour window, and it says when that started
       var up = s.first.filter(function (f) { return !isFinite(f.t) || f.t > now; }).slice(0, 4), win = s.t0 ? " from " + zulu(s.t0).slice(11) : "";
-      li.push('<li><span class="skk">Over the country, 12 hours' + esc(win) + '</span><b>' + esc(s.n) + "</b> reconnaissance or imaging satellites" + (s.mil ? " (" + esc(s.mil) + " military)" : "") +
+      li.push('<li><span class="ysk">Over the country, 12 hours' + esc(win) + '</span><b>' + esc(s.n) + "</b> reconnaissance or imaging satellites" + (s.mil ? " (" + esc(s.mil) + " military)" : "") +
         (up.length ? ". Next: " + up.map(function (f) { return esc(f.name) + " " + esc(f.z) + "Z"; }).join(", ") : "") + ". For the whole country, not just this spot.</li>");
     }
     return "<ul>" + li.join("") + "</ul>";
@@ -210,18 +210,18 @@
     css();
     if (S.step === "idle") { el.innerHTML = intro(); el.hidden = false; return; }
     if (S.step === "locating") {
-      el.innerHTML = head() + '<p class="skintro">Waiting for your position. Your browser asks first; if you say no, use the place on the map instead.</p><div class="skb"><button type="button" data-sky="map">Use the place on the map</button></div>';
+      el.innerHTML = head() + '<p class="ysintro">Waiting for your position. Your browser asks first; if you say no, use the place on the map instead.</p><div class="ysb"><button type="button" data-ysky="map">Use the place on the map</button></div>';
       el.hidden = false; return;
     }
     var now = Date.now(), pt = S.pt;
-    el.innerHTML = head() + '<p class="skcap">Around ' + esc(S.what) + " (" + esc(pt.la.toFixed(2)) + ", " + esc(pt.lo.toFixed(2)) + ', rounded to about 1 km) · 4 km across</p>' +
-      '<div class="skgrid">' + picHtml(now) + "<div>" + listHtml(now) +
-      '<div class="skb"><button type="button" data-sky="cmp">Compare two dates here</button><button type="button" data-sky="new">Newest imagery here</button>' +
-      '<button type="button" data-sky="' + (S.src === "me" ? "map" : "me") + '">' + (S.src === "me" ? "Use the place on the map" : "Use my position") + "</button></div></div></div>" +
-      '<p class="skfoot">Picture: the newest Sentinel-2 pass in the last ' + LOOK_D + " days with " + CLEAR + "% scene cloud or less, else the least cloudy (rules " + RULES + "). Scene cloud is for the whole 110 km tile, so the spot itself can still be cloudy. " +
+    el.innerHTML = head() + '<p class="yscap">Around ' + esc(S.what) + " (" + esc(pt.la.toFixed(2)) + ", " + esc(pt.lo.toFixed(2)) + ', rounded to about 1 km) · 4 km across</p>' +
+      '<div class="ysgrid">' + picHtml(now) + "<div>" + listHtml(now) +
+      '<div class="ysb"><button type="button" data-ysky="cmp">Compare two dates here</button><button type="button" data-ysky="new">Newest imagery here</button>' +
+      '<button type="button" data-ysky="' + (S.src === "me" ? "map" : "me") + '">' + (S.src === "me" ? "Use the place on the map" : "Use my position") + "</button></div></div></div>" +
+      '<p class="ysfoot">Picture: the newest Sentinel-2 pass in the last ' + LOOK_D + " days with " + CLEAR + "% scene cloud or less, else the least cloudy (rules " + RULES + "). Scene cloud is for the whole 110 km tile, so the spot itself can still be cloudy. " +
       "Next passes are expected from each satellite's repeat track, not promised: ESA's plan decides what is taken. Satellite count: public CelesTrak orbital elements, timings within a few minutes. " +
       "Sources: Element 84 Earth Search, AWS Open Data, NASA CMR, Open-Meteo. Contains modified Copernicus Sentinel data " + new Date(now).getUTCFullYear() + ". The rounded point is sent only to those sources, never to AXIOM.</p>";
-    if (S.canvas) { var box = el.querySelector(".skpic"); if (box) { S.canvas.setAttribute("role", "img"); S.canvas.setAttribute("aria-label", "Sentinel-2 picture, 4 km across, centred on " + S.what); box.insertBefore(S.canvas, box.firstChild); } }
+    if (S.canvas) { var box = el.querySelector(".yspic"); if (box) { S.canvas.setAttribute("role", "img"); S.canvas.setAttribute("aria-label", "Sentinel-2 picture, 4 km across, centred on " + S.what); box.insertBefore(S.canvas, box.firstChild); } }
     el.hidden = false;
   }
   function openTool(which) {
@@ -234,8 +234,8 @@
     if (!box) return;
     el = box; CC = cc || ""; NAME = name || cc; el.classList.add("tdsky");
     el.addEventListener("click", function (e) {
-      var t = e.target.closest && e.target.closest("[data-sky]"); if (!t) return;
-      var k = t.getAttribute("data-sky");
+      var t = e.target.closest && e.target.closest("[data-ysky]"); if (!t) return;
+      var k = t.getAttribute("data-ysky");
       if (k === "me" || k === "map") start(k); else openTool(k);
     });
     var pref = lsGet();

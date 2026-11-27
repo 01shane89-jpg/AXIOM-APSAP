@@ -72,7 +72,7 @@ const done = (p) => p.waitForFunction(() => { const s = window.OSAP_SKYQ.state()
   ok(/Show my sky/.test(t) && /Use the place on the map/.test(t) && /rounded to about 1 km/.test(t), "before a tap: two buttons and the privacy line");
   await p.waitForTimeout(1500);
   ok(sent.length === 0, "nothing is sent before a tap (" + sent.length + ")");
-  await p.click('#td-sky [data-sky="map"]');
+  await p.click('#td-sky [data-ysky="map"]');
   await done(p);
   const s = await p.evaluate(() => ({ st: window.OSAP_SKYQ.state(), r: window.__skyRender, ls: localStorage.getItem("osap-sky") }));
   const txt = await card(p);
@@ -91,7 +91,9 @@ const done = (p) => p.waitForFunction(() => { const s = window.OSAP_SKYQ.state()
   ok(/Over the country, 12 hours/i.test(txt) && /reconnaissance or imaging satellites/.test(txt) && /not just this spot/.test(txt), "the country's satellite count, said to be for the whole country");
   ok(/Contains modified Copernicus Sentinel data/.test(txt) && /rules sky-v1/.test(txt), "credit and rules shown");
   ok(s.ls && !/13\.|100\./.test(s.ls) && JSON.parse(s.ls).src === "map", "only the choice is remembered, never the position (" + s.ls + ")");
-  ok(await p.evaluate(() => !!document.querySelector("#td-sky .skpic canvas")), "the picture is on the card");
+  ok(await p.evaluate(() => !!document.querySelector("#td-sky .yspic canvas")), "the picture is on the card");
+  // Skyline match (assets/osap-skyline.js) owns the "sky-css" style and data-sky buttons: this card must not take either
+  ok(await p.evaluate(() => !!document.getElementById("ysky-css") && !document.getElementById("sky-css") && !document.querySelector("#td-sky [data-sky]")), "no clash with Skyline match's style or buttons");
   if (OUT) await p.locator("#td-sky").screenshot({ path: OUT + "/sky-map.png" });
   // reloaded: starts again by itself
   await p.reload({ waitUntil: "domcontentloaded" });
@@ -101,7 +103,7 @@ const done = (p) => p.waitForFunction(() => { const s = window.OSAP_SKYQ.state()
   const again = await p.evaluate(() => { const s = window.OSAP_SKYQ.state(), m = window.__asapMap.getCenter(); return { step: s.step, drawn: s.drawn, pt: s.pt, la: Math.round(m.lat * 100) / 100, lo: Math.round(m.lng * 100) / 100 }; });
   ok(again.step === "done" && again.drawn && /Sentinel-2C/.test(await card(p)) && again.pt.la === again.la && again.pt.lo === again.lo, "after a reload the card runs again by itself, on the map's place (" + JSON.stringify(again) + ")");
   // Compare two dates opens Satellite before/after on the point
-  await p.click('#td-sky [data-sky="cmp"]');
+  await p.click('#td-sky [data-ysky="cmp"]');
   await p.waitForFunction(() => window.OSAP_SAT.isOpen && window.OSAP_SAT.isOpen(), null, { timeout: 10000 }).catch(() => {});
   const c = await p.evaluate(() => { const m = window.__asapMap.getCenter(), q = window.OSAP_SKYQ.state().pt; return { open: window.OSAP_SAT.isOpen(), la: m.lat, lo: m.lng, pla: q.la, plo: q.lo, today: window.OSAP_TODAY.isOpen() }; });
   ok(c.open && !c.today && Math.abs(c.la - c.pla) < 0.001 && Math.abs(c.lo - c.plo) < 0.001, "Compare two dates closes Today and opens Satellite before/after on the point (" + JSON.stringify(c) + ")");
@@ -110,7 +112,7 @@ const done = (p) => p.waitForFunction(() => { const s = window.OSAP_SKYQ.state()
 }
 {
   const { p, ctx, errors } = await today({ esDown: true });
-  await p.click('#td-sky [data-sky="map"]');
+  await p.click('#td-sky [data-ysky="map"]');
   await done(p);
   const txt = await card(p);
   ok(/picture could not be read just now/.test(txt) && /Sentinel-2 pass list could not be read/.test(txt), "Earth Search down: said plainly, no endless wait");
@@ -120,7 +122,7 @@ const done = (p) => p.waitForFunction(() => { const s = window.OSAP_SKYQ.state()
 }
 {
   const { p, ctx, errors } = await today({ geo: { latitude: 13.7563, longitude: 100.5018, accuracy: 25 }, vp: { width: 390, height: 844 } });
-  await p.click('#td-sky [data-sky="me"]');
+  await p.click('#td-sky [data-ysky="me"]');
   // the location may move the app to the person's country (a reload): wait for the card to come back
   await p.waitForTimeout(2500);
   await p.waitForFunction(() => window.OSAP_SKYQ && window.OSAP_TODAY, null, { timeout: 60000 });
