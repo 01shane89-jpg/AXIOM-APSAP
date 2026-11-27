@@ -254,6 +254,8 @@ jobs:
       - run: node tests/grade.test.mjs
       # photo and video check: NOAA sun position, shadow times, metadata reader (JPEG, PNG, HEIC, MP4, MOV)
       - run: node tests/photocheck.test.mjs
+      # Seen it before?: picture prints, match rules, border trim, file labels, the print job's archive (assets/osap-seenit.js, tools/refresh_prints.mjs)
+      - run: node tests/seenit.test.mjs
       # the bundle AXIOM imports: framing and digest, non-commercial sources left out, curated records unchanged (tools/axiom_bundle_lib.mjs)
       - run: node tests/axiom_bundle.test.mjs
       # every app file index.html loads is saved by the service worker for offline use

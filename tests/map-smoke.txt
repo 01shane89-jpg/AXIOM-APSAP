@@ -308,3 +308,5 @@ tests/daily_ground_smoke.mjs
 tests/split_map_full_smoke.mjs
 tests/brief_report_smoke.mjs
 tests/health_ops_smoke.mjs
+# Seen it before? (assets/osap-seenit.js): a photo checked against a made-up news picture archive, on Today, Photo check and a phone
+tests/seenit_smoke.mjs
