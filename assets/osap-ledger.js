@@ -175,6 +175,8 @@
     H += section("Who repeated it", plural(rep.length, "outlet"), "Each outlet's first headline on it, in time order.", rep.length ? capped(rep, l, "", "rep", 8) : "<p>No other outlet in the rows kept.</p>");
     H += section("The official line", plural(l.no, "headline"), "Headlines reporting what officials, agencies and governments say, matched by their words. <b>These are their claims, not established fact</b>, and a government's figure is its claim.",
       off.length ? capped(off, l, "ldof", "off", 6) : "<p>No headline in this story reports an official's statement in words OSAP matches.</p>");
+    /* Gap meter (assets/osap-gap.js, rules gap-v1): an official line that names something an instrument measures, beside the reading */
+    if (W.OSAP_GAP) H += W.OSAP_GAP.html(cc, l);
     H += section("Deny or dispute", plural(l.nd, "headline"), "Headlines with words like deny, reject, false or no evidence. This is a word match, not a judgment: read each one in full to see who disputes what.",
       dis.length ? capped(dis, l, "ldd", "dis", 6) : "<p>No headline in this story denies or disputes it in words OSAP matches. That does not mean nobody did.</p>");
     var figs = (l.figs || []).map(function (fg) {

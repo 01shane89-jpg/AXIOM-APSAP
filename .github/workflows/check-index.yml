@@ -57,6 +57,8 @@ jobs:
       - run: node tests/picture.test.mjs
       # Claim ledger: disputed stories followed past 72 hours (tools/ledger_lib.mjs, tools/claim_ledger.mjs, rules ledger-v1)
       - run: node tests/ledger.test.mjs
+      # Gap meter: official line beside the instruments, five fixed pairs, never a verdict (assets/osap-gap.js, rules gap-v1)
+      - run: node tests/gap.test.mjs
       # Same story in other languages: AI proposals beside the claim ledgers, off without VOYAGE_API_KEY (tools/xlang_lib.mjs, rules xmatch-v1)
       - run: node tests/xlang.test.mjs
       # Check it from space: next Sentinel passes over a strike report (assets/osap-space.js, rules space-v1)
