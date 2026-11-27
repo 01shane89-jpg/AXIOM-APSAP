@@ -1,17 +1,25 @@
-// Probe 23 (27 Nov 2026): headline changes on real history pairs (25 -> 27 Nov) and the Wayback availability API from the runners.
-import fs from "node:fs";
-const { get } = await import("./dense_lib.mjs");
-const { editItems, waybackBefore } = await import("./dense_edits.mjs");
-const pairs = JSON.parse(fs.readFileSync("tools/probe_pairs.json", "utf8"));
-const items = editItems(pairs, Date.parse("2026-11-27T00:00Z"));
-console.log("P items", items.length, "sev2", items.filter((i) => i.sev === 2).length);
-let found = 0;
-for (const it of items.slice(0, 12)) {
+// Probe 24 (27 Nov 2026): official transcript sources (Kremlin, UK Parliament, White House, State Department, China MFA).
+const { UA } = await import("./dense_lib.mjs");
+const U = [
+  "https://kremlin.ru/events/president/news/feed", "https://en.kremlin.ru/events/president/transcripts/feed", "http://en.kremlin.ru/events/president/transcripts/feed",
+  "http://en.kremlin.ru/events/president/news/81350", "http://en.kremlin.ru/about/copyrights", "http://kremlin.ru/about/copyrights",
+  "https://questions-statements-api.parliament.uk/api/writtenstatements/statements?take=3",
+  "https://hansard-api.parliament.uk/overview/lastsittingdate.json?house=Commons",
+  "https://hansard.parliament.uk/rss/Commons.rss",
+  "https://www.whitehouse.gov/briefings-statements/feed/", "https://www.whitehouse.gov/remarks/feed/", "https://www.whitehouse.gov/feed/",
+  "https://www.state.gov/rss-feed/department-press-briefings/feed/", "https://www.state.gov/briefings/feed/",
+  "https://www.fmprc.gov.cn/eng/xw/fyrbt/", "https://www.mfa.gov.cn/eng/xw/fyrbt/", "https://www.fmprc.gov.cn/eng/rss/", 
+];
+for (const u of U) {
   try {
-    const j = await get("https://archive.org/wayback/available?url=" + encodeURIComponent(it.url) + "&timestamp=" + String(it._from).replace(/[^0-9]/g, "").slice(0, 12), "json", { timeout: 20000 });
-    const w = waybackBefore(j, it._by); if (w) found++;
-    console.log("P  wb", it.url.slice(0, 90), JSON.stringify(j.archived_snapshots?.closest || {}).slice(0, 160), w ? "BEFORE " + w.when : "none before");
-  } catch (e) { console.log("P  wb ERR", e.message); }
+    const r = await fetch(u, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(30000), redirect: "follow" });
+    const t = await r.text();
+    const items = t.split(/<item>|<entry>/).length - 1;
+    const tt = (t.match(/<title>([\s\S]*?)<\/title>/g) || []).slice(0, 4).map((x) => x.replace(/<\/?title>|<!\[CDATA\[|\]\]>/g, "").trim().slice(0, 90));
+    console.log("P ==", u, r.status, r.url !== u ? "-> " + r.url : "", r.headers.get("content-type"), t.length, "items", items, "|", tt.join(" || "));
+    if (/copyright/.test(u)) { const x = t.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " "); const i = x.search(/Creative Commons|CC BY|Attribution|лицензи/i); console.log("P   ", x.slice(Math.max(0, i - 300), i + 500)); }
+    if (/json/.test(r.headers.get("content-type") || "")) console.log("P   ", t.slice(0, 500));
+    if (/fyrbt/.test(u)) console.log("P   links", [...t.matchAll(/href="([^"]+)"[^>]*>([^<]{10,120})</g)].slice(0, 8).map((m) => m[1] + " " + m[2].trim()).join(" | "));
+    if (/81350/.test(u)) { const x = t.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " "); console.log("P   ", x.slice(x.indexOf("Tokayev"), x.indexOf("Tokayev") + 400)); }
+  } catch (e) { console.log("P ==", u, "ERR", e.message, e.cause?.code || ""); }
 }
-console.log("P found before", found);
-for (const it of items.slice(0, 6)) console.log("P  ", JSON.stringify({ t: it.title, x: it.detail }).slice(0, 700));
