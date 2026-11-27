@@ -1,9 +1,9 @@
-// Probe 54 (27 Nov 2026): Comtrade Russia feed for real.
-process.env.ONLY = "comtrade-russia";
-const { runAll, RESULTS } = await import("./dense_lib.mjs");
-await import("./dense_comtrade.mjs");
-const t0 = Date.now(); await runAll(2); console.log("P ms", Date.now() - t0);
-for (const [id, r] of Object.entries(RESULTS)) {
-  console.log("P", id, r.ok ? "ok" : "FAIL " + r.error, r.items ? r.items.length : "", r.note || "");
-  for (const it of (r.items || [])) console.log("P  ", JSON.stringify({ t: it.title, x: it.detail.slice(0, 420) }));
+// Probe 55 (27 Nov 2026): OpenAIP exports page filters.
+const UA = "AXIOM-OSAP/1.0 (open-source situational awareness; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
+for (const q of ["?page=1", "?search=asp.geojson", "?q=asp.geojson", "?filter=asp", "?type=asp", "?format=geojson&type=airspace", "?page=2"]) {
+  const r = await fetch("https://www.openaip.net/data/exports" + q, { headers: { "user-agent": UA } }); const t = await r.text();
+  const all = [...t.matchAll(/openaip-system-exports\/([a-z0-9_]+\.[a-z]+)\?/g)].map((m) => m[1]);
+  const asp = all.filter((f) => /_asp\.geojson$/.test(f));
+  console.log("P", q, r.status, "files", all.length, "asp", asp.length, all.slice(0, 12).join(" "), "|", (t.match(/of (\d+) results/) || [])[0]);
+  await new Promise((r) => setTimeout(r, 1500));
 }
