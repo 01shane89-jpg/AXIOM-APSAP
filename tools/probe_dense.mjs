@@ -1,5 +1,5 @@
 // Probe 35 (27 Nov 2026): FARA and LDA feeds for real.
-process.env.ONLY = "fara-new,lda-foreign";
+process.env.ONLY = "lda-foreign";
 const { runAll, RESULTS } = await import("./dense_lib.mjs");
 await import("./dense_influence.mjs");
 const t0 = Date.now(); await runAll(2); console.log("P ms", Date.now() - t0);

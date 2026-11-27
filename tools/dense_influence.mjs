@@ -99,7 +99,22 @@ feed("lda-foreign", { name: "Lobbying filings with a foreign link (U.S. Lobbying
 run("lda-foreign", async (g) => {
   const since = new Date(Date.now() - 14 * 864e5).toISOString().slice(0, 10), all = [];
   let url = "https://lda.gov/api/v1/filings/?filing_dt_posted_after=" + since + "&ordering=-dt_posted&page_size=25", total = 0;
-  for (let p = 0; p < 16 && url && url.startsWith("https://lda.gov/api/v1/"); p++) { const j = await g(url, "json", { timeout: 60000 }); if (!p) total = j.count; all.push(...(j.results || [])); url = j.next; await sleep(600); }
+  // lda.gov answers 429 when paged quickly: pages are 2 s apart, a 429 waits 15 s and tries once more, and a second refusal
+  // after page one keeps what was read (the note says so) instead of failing the feed.
+  let stopped = "";
+  for (let p = 0; p < 8 && url && url.startsWith("https://lda.gov/api/v1/"); p++) {
+    let j;
+    for (let a = 0; ; a++) {
+      try { j = await g(url, "json", { timeout: 60000 }); break; }
+      catch (e) {
+        if (!/429/.test(String(e && e.message)) || a) { if (!p) throw e; stopped = "; stopped at page " + (p + 1) + " (" + String(e.message).slice(0, 40) + ")"; break; }
+        await sleep(15000);
+      }
+    }
+    if (!j) break;
+    if (!p) total = j.count;
+    all.push(...(j.results || [])); url = j.next; await sleep(2000);
+  }
   const items = ldaItems(all);
-  return { items, note: total + " filings posted since " + since + "; " + all.length + " read; " + items.length + " with a foreign link" };
+  return { items, note: total + " filings posted since " + since + "; " + all.length + " read; " + items.length + " with a foreign link" + stopped };
 });
