@@ -24,7 +24,10 @@ let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
 const known = knownReports();
-const reps = [...(known.get(ID) || new Map()).values()].filter((i) => i.geo && i.geo.la != null && i.geo.p !== "province" && !["legal", "talks", "humanitarian", "statement"].includes(i.kind)).sort((a, b) => (a.date < b.date ? 1 : -1));
+// placed = pinned to a named place: a report naming only the country sits at its capital (geo.p "country") and joins whatever
+// incident is near the capital (27 Nov 2026: a Myanmar feature story pinned at Naypyidaw joined Bago reports with a tab report,
+// which is not reviewable, so it had no proposal and this check went red on live data)
+const reps = [...(known.get(ID) || new Map()).values()].filter((i) => i.geo && i.geo.la != null && i.geo.p !== "province" && i.geo.p !== "country" && i.geo.b !== "country" && !["legal", "talks", "humanitarian", "statement"].includes(i.kind)).sort((a, b) => (a.date < b.date ? 1 : -1));
 // two placed reports far enough apart (and days apart) that the page keeps them as separate incidents
 const A = reps[0], B = reps.find((r) => Math.abs(r.geo.la - A.geo.la) + Math.abs(r.geo.lo - A.geo.lo) > 1 && Math.abs(Date.parse(r.date) - Date.parse(A.date)) > 4 * 864e5);
 if (!A || !B) { console.log("SKIP: need two placed " + ID + " reports apart in place and time"); server.close(); process.exit(0); }

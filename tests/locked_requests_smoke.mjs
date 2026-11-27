@@ -58,7 +58,10 @@ async function context(token, viewport = { width: 1400, height: 900 }) {
   if (token) await ctx.addInitScript({ content: "if(!sessionStorage.getItem('t-seeded'))try{sessionStorage.setItem('t-seeded','1');localStorage.setItem('osap-auth',JSON.stringify({access_token:'" + token + "',refresh_token:'" + token + "',until:Date.now()+3600e3}));document.cookie='nf_jwt=" + token + "; path=/'}catch(e){}" });
   const p = await ctx.newPage(), log = { reqs: [], refused: [], errors: [], loads: 0, outside };
   p.on("pageerror", (e) => log.errors.push(String(e.message)));
-  p.on("load", () => log.loads++);
+  // a start is counted when the page asks for its document, not at its load event: a start that reloads before its own load event
+  // fires (this one has no account service and reloads as soon as the account check fails) never fires one, so counting load
+  // events saw 1 start where there were 2 (map-smoke shard 6, PR #955, 27 Nov 2026)
+  p.on("request", (r) => { if (r.isNavigationRequest() && r.frame() === p.mainFrame()) log.loads++; });
   p.on("request", (r) => { if (r.url().startsWith(base)) log.reqs.push(r.url().slice(base.length)); });
   p.on("response", (r) => { if (r.status() === 402 || r.status() === 401) log.refused.push(r.status() + " " + r.url().slice(base.length)); });
   const reset = () => { log.reqs.length = 0; log.refused.length = 0; log.errors.length = 0; log.loads = 0; log.outside.length = 0; };
