@@ -154,11 +154,12 @@
   /* what a line does when tapped: "tab", "url", "brief", "list" or "" (nothing behind it) */
   function watchGo(w) {
     if (w.from === "conflict" && w.tab) return "tab";
-    if (w.from === "advisory" && (w.refs || []).length) return "url";
+    if (w.from === "advisory") return "url";
     if (w.from === "brief") return D.getElementById("brief-btn") ? "brief" : "";
     if ((w.refs || []).length || w.from === "flashpoint") return "list";
     return "";
   }
+  var ADV_URL = "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html";
   var GO_HINT = { tab: "Open the conflict tab and its reports", url: "Open the source", brief: "Open the country brief", list: "Show the reports" };
   function repRow(r) {
     var u = safeUrl(r.url), meta = esc(r.outlet || r.source || "") + (r.date || r.ts ? " · " + esc(when(r.date || r.ts, true)) : "");
@@ -200,7 +201,9 @@
       /* a World line names the conflict's first country (World has no conflict tabs of its own) */
       if (b) b.click(); else if (CT && CT.open) CT.open(w.tab, w.cc || CC);
     } else if (go === "url") {
-      var r = d.refs[w.refs[0] - 1], u = r && safeUrl(r.url); if (u) W.open(u, "_blank", "noopener,noreferrer");
+      /* a summary built while its 30 numbered sources were full has the advisory line with no ref (fixed in tools/daily_lib.mjs
+         27 Nov 2026): it still opens the State Department's advisories page, which is what the line rests on */
+      var r = (w.refs || []).length && d.refs[w.refs[0] - 1], u = (r && safeUrl(r.url)) || ADV_URL; W.open(u, "_blank", "noopener,noreferrer");
     } else if (go === "brief") {
       leave(); var bb = D.getElementById("brief-btn"); if (bb) bb.click();
     } else if (go === "list") {
