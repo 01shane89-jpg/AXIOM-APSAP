@@ -39,6 +39,7 @@
 ["n12719325187",27.5691,77.6732,"in",{"name":"Radha Rani hospital","amenity":"hospital","healthcare":"hospital"}],
 ["n13626243701",27.52305,77.65647,"in",{"name":"City hospital","amenity":"hospital"}],
 ["n14280328601",27.49051,77.67833,"in",{"amenity":"clinic","addr:postcode":"281001","opening_hours":"Mo-Fr 10:00-14:00","osap:withheld":"1"}],
+["n14390262581",26.88203,76.79033,"in",{"name":"Sehrakar Govt Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["n1494011979",27.57635,76.62604,"in",{"aeroway":"helipad"}],
 ["n2564422081",27.57291,77.6932,"in",{"name":"Ramakrishna Math and Ramakrishna Mission Sevashrama","amenity":"hospital","healthcare":"hospital","phone":"+91 9259271811","website":"https://rkmsvrind.org/"}],
 ["n2653409128",27.19699,77.99731,"in",{"name":"Pushpanjali Hospital and Research Centre","amenity":"hospital","healthcare":"hospital","operator:type":"private","website":"https://www.pushpanjalihospital.in/","addr:full":"Pushpanjali Palace, Delhi Gate","addr:district":"Agra","addr:city":"Agra","addr:postcode":"282002"}],

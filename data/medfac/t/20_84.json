@@ -13,6 +13,7 @@
 ["n13546459613",20.27434,85.76403,"in",{"name":"IGKC Multispecialty Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"gastroenterology","operator":"Private","operator:type":"private","addr:district":"Khordha","addr:city":"Bhubaneswar","addr:postcode":"751029"}],
 ["n13685544652",20.31175,85.82119,"in",{"amenity":"hospital","healthcare":"hospital"}],
 ["n14040461150",20.36334,85.82624,"in",{"name":"Genesis Healing Centre","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"de-addiction;rehabilitation;addiction_treatment","emergency":"no","operator":"Genesis Healing Centre","operator:type":"ngo","website":"https://genesishealing.in","addr:housenumber":"474/3907","addr:street":"Star City, Patia","addr:district":"khordha","addr:city":"Bhubaneswar","addr:postcode":"751024","opening_hours":"24/7"}],
+["n14386353401",20.30906,85.87062,"in",{"name":"GenX Diagnostics Authorised Collection Centre","amenity":"clinic","phone":"+91 78940 53240","addr:street":"Satya Vihar","addr:postcode":"751010","opening_hours":"Mo-Su 07:00-22:00"}],
 ["n1722857470",21.58023,84.00509,"in",{"aeroway":"helipad"}],
 ["n2195744047",21.04004,85.77022,"in",{"name":"TISCO HELOPAD","aeroway":"helipad"}],
 ["n2445342986",20.28348,85.76966,"in",{"name":"IMS SUM Hospital","amenity":"hospital","healthcare":"hospital","website":"https://www.ims.ac.in/","addr:full":"IMS and SUM Hospital, K-8,Kalinga Nagar, Bhubaneswar,Khordha","addr:subdistrict":"Bhubaneswar","addr:district":"Khordha","addr:postcode":"751003","wikidata":"Q16958268"}],

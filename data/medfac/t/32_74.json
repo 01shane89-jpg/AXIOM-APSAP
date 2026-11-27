@@ -608,7 +608,7 @@
 ["w232250416",33.16037,74.23552,"in",{"aeroway":"aerodrome"}],
 ["w236257852",32.62781,74.06708,"pk",{"name":"Gujrat Airport","aeroway":"aerodrome","iata":"GRT","wikidata":"Q35261901"}],
 ["w240375804",33.87717,74.97668,"in",{"name":"Awantipura Air Force Station","operator":"Indian Air Force","aeroway":"aerodrome","icao":"VIAW","military":"airfield"}],
-["w258277594",32.53546,74.36333,"pk",{"name":"سیالکوٹ انٹرنیشنل ایئرپورٹ","name:en":"Sialkot International Airport","operator":"Sialkot International Airport Ltd.","operator:type":"business","website":"https://www.sial.com.pk/","addr:street":"Airport Road","addr:city":"Sambrial","aeroway":"aerodrome","icao":"OPST","iata":"SKT","aerodrome:type":"international","wikidata":"Q28461"}],
+["w258277594",32.53546,74.36333,"pk",{"name":"سیالکوٹ انٹرنیشنل ایئرپورٹ","name:en":"Sialkot International Airport","operator":"Sialkot International Airport Ltd.","operator:type":"business","phone":"+92-52-6633048","website":"https://www.sial.com.pk/","addr:street":"Airport Road","addr:city":"Sambrial","aeroway":"aerodrome","icao":"OPST","iata":"SKT","aerodrome:type":"international","wikidata":"Q28461"}],
 ["w261537931",32.98748,74.92017,"in",{"name":"Vaishno Devi Heliport","aeroway":"heliport"}],
 ["w287298961",32.14391,74.19388,"pk",{"name":"WAPDA Hospital","amenity":"hospital","healthcare":"hospital","addr:street":"Grand Trunk Road","addr:city":"Gujranwala"}],
 ["w297287260",32.23801,75.62739,"in",{"name":"Pathankot Air Force Station","aeroway":"aerodrome","icao":"VIPK","iata":"IXP","military":"airfield","wikidata":"Q12694367"}],

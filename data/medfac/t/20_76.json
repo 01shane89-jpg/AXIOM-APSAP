@@ -293,7 +293,7 @@
 ["n7628343218",20.70189,77.00029,"in",{"name":"Government Medical College & Multispeciality Hospital","amenity":"hospital","addr:full":"Bhandaraj BK, Akola","addr:district":"Akola","addr:postcode":"444002"}],
 ["n7628343219",20.88525,76.20435,"in",{"name":"Kolte Hospital","amenity":"hospital","addr:full":"Near Government Hospital, Buldana Road, Chalis Bigha, Malkapur","addr:district":"Buldhana","addr:postcode":"443101"}],
 ["n7628343220",20.53627,76.17441,"in",{"name":"Bharad Hospital","amenity":"hospital","addr:full":"Suvarna Nagaar, Buldana","addr:district":"Buldhana","addr:postcode":"443001"}],
-["n7628343221",20.52911,76.18475,"in",{"name":"Hire Child Hospital","amenity":"hospital","addr:full":"Jambhrun Road, Suvarna Nagaar, Buldana","addr:district":"Buldhana","addr:postcode":"443001"}],
+["n7628343221",20.52909,76.18467,"in",{"name":"Hire Child Hospital","amenity":"hospital","addr:full":"Jambhrun Road, Suvarna Nagaar, Buldana","addr:district":"Buldhana","addr:postcode":"443001"}],
 ["n7628343222",20.53416,76.17762,"in",{"name":"Kothari Hospital","amenity":"hospital","addr:full":"Chaitanyawadi, Buldana","addr:district":"Buldhana","addr:postcode":"443001"}],
 ["n7628343223",20.7093,76.98604,"in",{"name":"Gandhi Hospital","amenity":"hospital","addr:full":"Dabki Road, Gulzarpura, Old City, Akola","addr:district":"Akola","addr:postcode":"444002"}],
 ["n7628343224",20.71998,76.56347,"in",{"name":"Dr. Bunde Children's Hospital","amenity":"hospital","addr:full":"Madhav Nagar, Khamgaon","addr:district":"Buldhana","addr:postcode":"444303"}],
@@ -683,9 +683,11 @@
 ["w1090579610",21.10557,77.05125,"in",{"name":"Rural Hospital, Akot","amenity":"hospital","addr:full":"Rural Hospital Akot, Near Krushi Utpanna Bazar Samiti, Akot","addr:subdistrict":"Akot","addr:district":"Akola","addr:postcode":"444101"}],
 ["w1389705780",20.85598,77.73911,"in",{"name":"Badnera Railway Hospital","amenity":"hospital","healthcare":"hospital","operator":"Indian Railways","operator:type":"government"}],
 ["w1423003574",20.73547,77.36187,"in",{"name":"SDH Murtizapur","amenity":"hospital","healthcare":"hospital","addr:full":"Smt. Laxmibai Deshmukh Upzila Rugnalaya, Railway Station, Murtizapur","addr:subdistrict":"Murtijapur","addr:district":"Akola","addr:postcode":"444107"}],
-["w146363835",20.69758,77.0565,"in",{"name":"Akola Airport","aeroway":"aerodrome","icao":"VAAK","iata":"AKD"}],
+["w146363835",20.69758,77.0565,"in",{"name":"Akola Airport","aeroway":"aerodrome","icao":"VAAK","iata":"AKD","wikidata":"Q4701514"}],
 ["w1567641494",20.68727,77.00966,"in",{"name":"Sankalp Hospital","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:street":"Kaulkhed Road","addr:district":"Akola","addr:city":"Akola","addr:postcode":"444004"}],
 ["w1567659336",20.68737,77.01086,"in",{"name":"Kalpande Children Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"paediatrics","emergency":"yes","addr:street":"Balwant Colony, Kaulkhed Road","addr:district":"Akola","addr:city":"Akola","addr:postcode":"444004"}],
+["w1584095615",20.01962,76.04531,"in",{"amenity":"hospital"}],
+["w1584358694",20.01984,76.04484,"in",{"amenity":"hospital","healthcare":"hospital"}],
 ["w163732759",20.93273,77.76054,"in",{"name":"Irvin Hospital","amenity":"hospital","addr:full":"Khaparde Bagicha, Maltekdi, Amravati","addr:district":"Amravati","addr:postcode":"444606"}],
 ["w163740852",20.94477,77.77257,"in",{"name":"PanjabRao Deshmukh Medical College and Hospital","amenity":"hospital","healthcare":"hospital"}],
-["w506378487",21.8573,76.33463,"in",{"name":"Khandwa Airstrip","aeroway":"aerodrome","icao":"VAKD"}]]
+["w506378487",21.8573,76.33463,"in",{"name":"Khandwa Airstrip","aeroway":"aerodrome","icao":"VAKD","wikidata":"Q6400263"}]]

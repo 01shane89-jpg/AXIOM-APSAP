@@ -32,5 +32,5 @@
 ["w1444403254",28.03788,69.68356,"pk",{"name":"Engro Hospital Daharki","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"Engro","addr:city":"Daharki","opening_hours":"24/7"}],
 ["w1552485515",29.89437,69.24736,"pk",{"aeroway":"helipad"}],
 ["w1552485754",29.894,69.2465,"pk",{"aeroway":"helipad"}],
-["w73304658",28.28337,68.45361,"pk",{"name":"PAF Base Shahbaz","name:en":"Dr. Safdar Sarki Airport","aeroway":"aerodrome","icao":"OPJA","iata":"JAG","military":"airfield"}],
+["w73304658",28.28337,68.45361,"pk",{"name":"PAF Base Shahbaz","name:en":"Dr. Safdar Sarki Airport","aeroway":"aerodrome","icao":"OPJA","iata":"JAG","military":"airfield","wikidata":"Q3694521"}],
 ["w810501354",29.92667,69.98436,"pk",{"amenity":"hospital","healthcare":"hospital"}]]

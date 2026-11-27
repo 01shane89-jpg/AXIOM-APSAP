@@ -58,7 +58,7 @@
 ["w1347573254",29.41214,71.71945,"pk",{"name":"Sir Sadiq Abbasi (Civil) Hospital","amenity":"hospital"}],
 ["w151384032",28.29788,70.48936,"pk",{"aeroway":"aerodrome"}],
 ["w1514661424",28.35389,70.41884,"pk",{"amenity":"hospital","healthcare":"hospital"}],
-["w178722922",28.38201,70.27926,"pk",{"name":"Shaikh Zaid Airport","aeroway":"aerodrome","icao":"OPRK","iata":"RYK"}],
+["w178722922",28.38201,70.27926,"pk",{"name":"Shaikh Zaid Airport","aeroway":"aerodrome","icao":"OPRK","iata":"RYK","wikidata":"Q3235708"}],
 ["w240178106",28.50817,70.06324,"pk",{"name":"Jamal Din Wali Airport","aeroway":"aerodrome"}],
 ["w252676421",28.42897,71.23882,"pk",{"name":"Al Habieb Airport","aeroway":"aerodrome"}],
 ["w327896360",28.41776,70.31487,"pk",{"name":"شیخ زید ہسپتال","name:en":"Sheikh Zayed Medical College and Hospital","amenity":"hospital","healthcare":"hospital","addr:city":"رحیم یار خان"}],

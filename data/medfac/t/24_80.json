@@ -454,7 +454,7 @@
 ["w1093235543",25.67357,81.49401,"in",{"name":"Benti Airstrip","aeroway":"aerodrome"}],
 ["w1135593921",25.40484,81.8708,"in",{"name":"Ayushman Bharat Clinic","amenity":"clinic","healthcare":"clinic","operator":"Government","operator:type":"government","addr:postcode":"211008"}],
 ["w1137951683",25.53417,81.24647,"in",{"amenity":"hospital","healthcare":"hospital"}],
-["w1144611678",25.41045,81.85897,"in",{"name":"The Leproacy Mission Hospital","amenity":"hospital","healthcare":"hospital","website":"https://www.leprosymission.in/","addr:street":"Naini","addr:city":"Prayagraj","addr:postcode":"211008","wikidata":"Q4442335"}],
+["w1144611678",25.41045,81.85897,"in",{"name":"The Leprosy Mission Hospital","amenity":"hospital","healthcare":"hospital","website":"https://www.leprosymission.in/","addr:street":"Naini","addr:city":"Prayagraj","addr:postcode":"211008","wikidata":"Q4442335"}],
 ["w1155944913",25.44554,81.84528,"in",{"name":"Swaroop Rani Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w1155948965",25.93589,80.81356,"in",{"name":"District hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w1168191833",25.37261,81.87701,"in",{"name":"ESI Hospital","amenity":"hospital","healthcare":"hospital","operator":"Employees' State Insurance","operator:type":"government","addr:street":"Mirzapur Road","addr:city":"Prayagraj","addr:postcode":"211010"}],

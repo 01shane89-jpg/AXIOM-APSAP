@@ -38,6 +38,7 @@
 ["n13925849376",20.84572,79.32417,"in",{"name":"Daksh Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["n14028829302",21.15969,79.04049,"in",{"name":"MI Room","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general","operator":"KV VSN MEDICAL ROOM","operator:type":"university","addr:housenumber":"Oppo corriddor of Principal Office","addr:street":"Near the KV VSN Ground","addr:district":"Nagpur","addr:city":"nagpur","addr:postcode":"440007"}],
 ["n14099205099",21.28358,79.10229,"in",{"name":"Shantidevi Orthopedic And Multi Care Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"orthopaedics;cardiology;surgery","operator":"Raju Sarkar","operator:type":"private","addr:housenumber":"House no 411","addr:street":"Ward NO 2 Near Shree Om Medical","addr:district":"Nagpur","addr:city":"Khaperkheda","addr:postcode":"441102"}],
+["n14338204485",21.03804,78.98014,"in",{"emergency":"ambulance_station"}],
 ["n1834257603",21.1269,79.11416,"in",{"name":"Inpatient Department","amenity":"hospital","healthcare":"hospital"}],
 ["n1834257604",21.12734,79.1136,"in",{"name":"Outpatient Department","amenity":"hospital","healthcare":"hospital"}],
 ["n1836790305",21.13315,79.09988,"in",{"name":"Sanjivani Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"urology"}],
@@ -1031,5 +1032,6 @@
 ["w828316608",20.54542,79.88177,"in",{"name":"SubCentre, Chaugaon","amenity":"clinic","healthcare":"centre","addr:full":"Chaugaon","addr:district":"Chandrapur","addr:postcode":"441206"}],
 ["w828316813",20.57995,79.36121,"in",{"name":"SubCentre, Mahalgaon","amenity":"clinic","healthcare":"centre","addr:full":"Mahalgaon","addr:district":"Chandrapur","addr:postcode":"442903"}],
 ["w843459821",20.23547,79.00736,"in",{"name":"Trauma Care Center","amenity":"hospital","healthcare":"hospital"}],
+["w848874344",21.02766,79.03297,"in",{"name":"National Cancer Institute","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"oncology","emergency":"no","phone":"+91-07122800400","website":"https://www.ncinagpur.in/","addr:street":"Nagpur Bypass","addr:district":"Nagpur","addr:city":"Jamtha","addr:postcode":"441108","opening_hours":"Mo-Fr 10:00-18:00"}],
 ["w958733124",21.12634,79.09705,"in",{"name":"GMC building","amenity":"hospital","healthcare":"hospital"}],
 ["w977468491",20.3959,78.21598,"in",{"name":"Sant Gadge Baba Yavatmal Airport","operator":"Reliance Infrastructure","operator:type":"public/government","addr:housenumber":"NH 361","addr:street":"Nagpur Road","addr:city":"Yavatmal","addr:postcode":"445001","aeroway":"aerodrome","wikidata":"Q3528676"}]]

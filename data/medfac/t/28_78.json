@@ -773,7 +773,7 @@
 ["w1247344311",28.33979,79.46079,"in",{"aeroway":"helipad"}],
 ["w1257701559",28.38934,79.43539,"in",{"name":"referal veterinary polyclinic","amenity":"hospital","healthcare":"hospital"}],
 ["w1257838198",28.38113,79.43088,"in",{"name":"GANGASHEEL HOSPITAL","amenity":"hospital","healthcare":"hospital"}],
-["w129560589",28.81723,78.92822,"in",{"name":"Rampur Airfield","aeroway":"aerodrome"}],
+["w129560589",28.81723,78.92822,"in",{"name":"Rampur Airfield","aeroway":"aerodrome","icao":"VIMB","iata":"MZS","wikidata":"Q3612729"}],
 ["w129752981",28.33803,79.4603,"in",{"name":"Bareilly Heliport","aeroway":"heliport"}],
 ["w1488438952",29.75332,78.52988,"in",{"aeroway":"helipad"}],
 ["w1517736321",29.91824,79.61587,"in",{"aeroway":"helipad"}],

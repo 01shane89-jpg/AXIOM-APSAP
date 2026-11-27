@@ -939,7 +939,7 @@
 ["w1249632905",18.3887,76.62235,"in",{"aeroway":"helipad"}],
 ["w1257530600",19.15832,77.30743,"in",{"name":"sai opticals","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"ophthalmology"}],
 ["w1337378721",18.57571,76.54991,"in",{"name":"PHC","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"community"}],
-["w1495879845",19.16609,77.31887,"in",{"name":"Nirmal Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"neurosurgery","emergency":"yes","operator":"Adhav Hospitals","operator:type":"private"}],
+["w1495879845",19.16608,77.31889,"in",{"name":"Nirmal Hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"neurosurgery","emergency":"yes","operator":"Adhav Hospitals","operator:type":"private"}],
 ["w202368156",18.41185,76.46462,"in",{"name":"Latur Airport","aeroway":"aerodrome","icao":"VALT","iata":"LTU","wikidata":"Q3529389"}],
 ["w329243539",19.84302,76.65782,"in",{"name":"PHC, Kapadsingi","amenity":"hospital","healthcare":"centre","addr:full":"Near Veternary Dispensary Grade 2, Kapadsingi","addr:subdistrict":"Sengaon","addr:district":"Hingoli","addr:postcode":"431510"}],
 ["w564041234",18.00974,76.07605,"in",{"name":"RHC","amenity":"hospital","healthcare":"hospital","addr:full":"Latur Road, Parbhani, Tuljapur","addr:district":"Osmanabad","addr:postcode":"413601"}],

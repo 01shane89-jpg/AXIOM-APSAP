@@ -659,6 +659,7 @@
 ["w1547001575",23.26326,87.83519,"in",{"name":"Lifeguard Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w1550128458",22.31113,87.32229,"in",{"aeroway":"helipad"}],
 ["w1550128459",22.3118,87.32167,"in",{"aeroway":"helipad"}],
+["w1571418595",22.79374,86.24063,"in",{"name":"TMH OPD Clinic, Baridih","amenity":"clinic","healthcare":"clinic","operator":"Tata Steel","operator:type":"private","addr:district":"East Singhbhum","addr:city":"Jamshedpur","addr:postcode":"831017"}],
 ["w206000499",23.84954,86.89619,"in",{"name":"Kasturba Gandhi Hospital, Bardhaman","amenity":"hospital","emergency":"yes","operator":"Government","phone":"+913412525645","addr:full":"Indian Railways, Burdwan, Chittaranjan","addr:district":"Bardhaman","addr:city":"Chittaranjan","addr:postcode":"713331"}],
 ["w208918255",22.4173,87.29813,"in",{"name":"Vidyasagar Institute of Health","amenity":"hospital","emergency":"no","website":"https://vihmid.org.in/","addr:full":"Rangamati, P.O-Vidyasagar University","addr:district":"Medinipur West","addr:postcode":"721102"}],
 ["w211388845",22.42028,87.32184,"in",{"amenity":"hospital","healthcare":"hospital"}],

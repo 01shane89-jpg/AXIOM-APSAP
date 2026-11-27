@@ -7,6 +7,7 @@
 ["n14264508437",37.86247,67.39391,"uz",{"name":"Kasalxona","amenity":"hospital","healthcare":"hospital"}],
 ["n14264508438",37.86321,67.39423,"uz",{"name":"Tez yordam","amenity":"hospital","healthcare":"hospital"}],
 ["n14321231180",37.24055,67.30177,"uz",{"amenity":"clinic"}],
+["n14419136601",36.72433,67.10791,"af",{"name":"شفاخانه حیات النسا","amenity":"hospital"}],
 ["n4444992190",37.24663,67.27442,"uz",{"name":"ЗАРАВУТ","name:en":"ZARAVUT","amenity":"clinic","operator":"Xolmatov","phone":"+998936340075"}],
 ["n4591597110",36.71297,67.12005,"af",{"name:en":"Parween Clinic","amenity":"clinic","healthcare":"clinic"}],
 ["n5359100453",37.67486,67.01722,"uz",{"name":"Evro Med Plus","amenity":"clinic"}],
@@ -35,7 +36,7 @@
 ["w1343549487",36.71552,67.108,"af",{"name":"بیمارستان منطقه ای مزارشریف","name:en":"Mazar-e-Sharif Regional Hospital","amenity":"hospital","healthcare":"hospital"}],
 ["w1366000006",37.65879,67.60379,"uz",{"name":"Mahalliy shifoxona","name:en":"Local hospital","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general","addr:street":"Yangi O`zbekiston ko`chasi","addr:city":"O`zbekiston Respublikasi, Surxondaryo viloyati, Qumqurg`on tumani, Arpapoya mahallasi"}],
 ["w228789183",37.62416,67.51707,"uz",{"name":"Kakaydi harbiy aerodromi","name:en":"\"Kakaydy\" Air Base","aeroway":"aerodrome","icao":"UT1M"}],
-["w230406477",36.7048,67.21135,"af",{"name":"فرودگاه مزار شریف","name:en":"Mazar Sharif International Airport","operator":"افغانستان کی وزارت ٹرانسپورٹ اور شہری ہوا بازی","aeroway":"aerodrome","icao":"OAMS","iata":"MZR","wikidata":"Q703013"}],
+["w230406477",36.70488,67.20513,"af",{"name":"فرودگاه مزار شریف","name:en":"Mazar Sharif International Airport","operator":"افغانستان کی وزارت ٹرانسپورٹ اور شہری ہوا بازی","aeroway":"aerodrome","icao":"OAMS","iata":"MZR","wikidata":"Q703013"}],
 ["w238402100",36.64983,66.99942,"af",{"aeroway":"helipad"}],
 ["w492515336",37.23305,67.2921,"uz",{"name":"Республика шошилинч тиббий ёрдам илмий маркази Сурхондарё филиали","amenity":"hospital","healthcare":"hospital","emergency":"yes","phone":"+998 8 (376) 225-09-33","addr:street":"Alisher Navoiy ko’chasi"}],
 ["w494106838",37.24336,67.27376,"uz",{"name":"Surxondaryo viloyat OITSga qarshi kurashish markazi","amenity":"hospital","healthcare":"hospital"}],
@@ -62,5 +63,5 @@
 ["w818231646",37.592,66.32091,"tm",{"aeroway":"helipad"}],
 ["w904644835",37.2427,67.29881,"uz",{"name":"Doktor-A","amenity":"hospital","healthcare":"hospital","addr:street":"Turon ko'chasi","addr:city":"Termiz","addr:postcode":"190100"}],
 ["w977888235",37.24631,67.27826,"uz",{"name":"Onkologiya","amenity":"hospital","healthcare":"hospital"}],
-["w999812393",36.65111,67.03442,"af",{"aeroway":"helipad"}],
-["w999812394",36.65114,67.03585,"af",{"aeroway":"helipad"}]]
+["w999812393",36.65112,67.03443,"af",{"aeroway":"helipad"}],
+["w999812394",36.65113,67.03585,"af",{"aeroway":"helipad"}]]
