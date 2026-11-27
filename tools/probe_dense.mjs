@@ -1,16 +1,18 @@
-// Probe 61 (27 Nov 2026): BILLSTATUS structure: top-level tags, actions items, sponsors, laws, for a law, a vetoed one, an hres, an S.
-const UA = "AXIOM-OSAP/1.0 (open-source situational awareness; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
-const get = async (u) => (await fetch(u, { headers: { "user-agent": UA } })).text();
-for (const [t, n] of [["hr", 1], ["hr", 2347], ["hres", 5], ["s", 5], ["hjres", 20]]) {
-  const x = await get(`https://www.govinfo.gov/bulkdata/BILLSTATUS/119/${t}/BILLSTATUS-119${t}${n}.xml`);
-  const bill = x.slice(x.indexOf("<bill>") + 6);
-  const top = []; let depth = 0;
-  for (const m of bill.matchAll(/<(\/?)([A-Za-z]+)[^>]*?(\/?)>/g)) { if (m[3]) continue; if (m[1]) { depth--; continue; } if (depth === 0) top.push(m[2]); depth++; }
-  console.log("P ===", t, n, x.length, "top:", [...new Set(top)].join(","));
-  for (const tg of ["title", "introducedDate", "policyArea", "sponsors", "laws", "latestAction", "committees"]) { const m = new RegExp("<" + tg + ">[\\s\\S]*?</" + tg + ">").exec(bill); console.log("P", tg, m ? m[0].replace(/\s+/g, " ").slice(0, 500) : "none"); }
-  const cs = /<cosponsors>[\s\S]{0,300}/.exec(bill); console.log("P cosponsors", cs ? cs[0].replace(/\s+/g, " ").slice(0, 250) : "none");
-  const acts = (/<actions>([\s\S]*?)<\/actions>/.exec(bill) || [, ""])[1];
-  const items = [...acts.matchAll(/<item>([\s\S]*?)<\/item>\s*(?=<item>|$)/g)];
-  console.log("P actions", items.length);
-  for (const it of items.slice(0, 40)) { const s = it[1]; const g = (k) => ((new RegExp("<" + k + ">([^<]*)</" + k + ">").exec(s)) || [, ""])[1]; console.log("P   ", g("actionDate"), "|", g("type"), "|", g("actionCode"), "|", g("name"), "|", g("text").slice(0, 150)); }
-}
+// Probe 62 (27 Nov 2026): live run of tools/refresh_congress.mjs (full load from the zips, then an incremental run).
+import fs from "node:fs";
+import { execSync } from "node:child_process";
+let t0 = Date.now();
+console.log(execSync("FORCE=1 node tools/refresh_congress.mjs", { encoding: "utf8", maxBuffer: 1e8 }).split("\n").map((l) => "P " + l).join("\n"));
+console.log("P full run", ((Date.now() - t0) / 1000).toFixed(0), "s");
+console.log(execSync("du -sh data/live/congress/119; ls data/live/congress/119 | wc -l; ls -la data/live/congress/119/index.js data/live/congress/119/recent.json data/live/congress/119/hr-23.json", { encoding: "utf8" }).split("\n").map((l) => "P " + l).join("\n"));
+const ch = JSON.parse(fs.readFileSync("data/live/congress/119/hr-23.json", "utf8"));
+console.log("P hr2347", JSON.stringify(ch.hr2347).slice(0, 2500));
+const c0 = JSON.parse(fs.readFileSync("data/live/congress/119/hr-0.json", "utf8"));
+console.log("P hr1", JSON.stringify({ ...c0.hr1, steps: c0.hr1.steps.length }).slice(0, 1200));
+const rec = JSON.parse(fs.readFileSync("data/live/congress/119/recent.json", "utf8"));
+console.log("P recent rows", rec.rows.length); for (const r of rec.rows.slice(0, 12)) console.log("P   ", r.date, "|", r.title.slice(0, 200));
+const ix = fs.readFileSync("data/live/congress/119/index.js", "utf8");
+console.log("P index has BAAJA", /"BAAJA"/.test(ix), ix.length);
+t0 = Date.now();
+console.log(execSync("FORCE=1 node tools/refresh_congress.mjs", { encoding: "utf8", maxBuffer: 1e8 }).split("\n").map((l) => "P " + l).join("\n"));
+console.log("P incremental run", ((Date.now() - t0) / 1000).toFixed(0), "s");
