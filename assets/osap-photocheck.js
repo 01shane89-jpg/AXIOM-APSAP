@@ -548,6 +548,8 @@
     } else if (S.url) {
       h = '<img class="phc-media" alt="' + esc(f.name) + '" src="' + S.url + '">' +
         /* Skyline match (assets/osap-skyline.js): where the hills on the horizon fit the terrain; proposals only */
+        /* Seen it before? (assets/osap-seenit.js): has this picture run in the news OSAP has read */
+        (W.OSAP_SEENIT && W.OSAP_SEENIT.open ? '<p><button type="button" class="phc-b" data-phc-seen title="Check this picture against every news picture OSAP has read, on this device.">Seen it before? Check the news archive</button></p>' : "") +
         (W.OSAP_SKYLINE ? '<p><button type="button" class="phc-b" data-phc-sky title="Trace the skyline and search the terrain for spots it fits. Proposals, never a confirmation.">Skyline match: where could this be?</button></p>' : "") +
         (f.frame ? '<p class="obs">A frame from ' + esc(f.src) + ' at ' + S.frame.t.toFixed(3) + ' s. A frame has no metadata of its own; the video\'s is shown below. <button type="button" class="phc-b sm" data-phc="back">Back to the video</button></p>' : "");
     }

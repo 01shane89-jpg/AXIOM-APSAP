@@ -57,10 +57,14 @@ jobs:
       - run: node tests/picture.test.mjs
       # Claim ledger: disputed stories followed past 72 hours (tools/ledger_lib.mjs, tools/claim_ledger.mjs, rules ledger-v1)
       - run: node tests/ledger.test.mjs
+      # Gap meter: official line beside the instruments, five fixed pairs, never a verdict (assets/osap-gap.js, rules gap-v1)
+      - run: node tests/gap.test.mjs
       # Same story in other languages: AI proposals beside the claim ledgers, off without VOYAGE_API_KEY (tools/xlang_lib.mjs, rules xmatch-v1)
       - run: node tests/xlang.test.mjs
       # Check it from space: next Sentinel passes over a strike report (assets/osap-space.js, rules space-v1)
       - run: node tests/space.test.mjs
+      # Your sky on Today: rounded point, which Sentinel-2 pass is shown, next passes, the country satellite count (assets/osap-yoursky.js, rules sky-v1)
+      - run: node tests/yoursky.test.mjs
       # Ask about this country (tools/ask_lib.mjs, netlify/functions/osap-ask.mjs): cited answers only, plan, quota, off without the key
       - run: node tests/ask.test.mjs
       # Official briefing transcripts (tools/transcribe_lib.mjs, tools/refresh_transcripts.mjs): official sources only, cost caps,
@@ -93,6 +97,8 @@ jobs:
       - run: node tests/dense_records.test.mjs
       # UN Comtrade exports to Russia (tools/dense_comtrade.mjs): derived comparisons with the required attribution
       - run: node tests/dense_comtrade.test.mjs
+      # U.S. Congress floor votes (tools/dense_congress.mjs, tools/congress_rows.mjs): final votes only, bill named as it is now, news-search rows
+      - run: node tests/dense_congress.test.mjs
       - run: node tests/uk_sanctions.test.mjs
       # open-licence full text for the in-app reader (tools/fulltext_lib.mjs): which addresses, safe text, no script
       - run: node tests/fulltext.test.mjs
@@ -256,6 +262,8 @@ jobs:
       - run: node tests/grade.test.mjs
       # photo and video check: NOAA sun position, shadow times, metadata reader (JPEG, PNG, HEIC, MP4, MOV)
       - run: node tests/photocheck.test.mjs
+      # Seen it before?: picture prints, match rules, border trim, file labels, the print job's archive (assets/osap-seenit.js, tools/refresh_prints.mjs)
+      - run: node tests/seenit.test.mjs
       # the bundle AXIOM imports: framing and digest, non-commercial sources left out, curated records unchanged (tools/axiom_bundle_lib.mjs)
       - run: node tests/axiom_bundle.test.mjs
       # every app file index.html loads is saved by the service worker for offline use
