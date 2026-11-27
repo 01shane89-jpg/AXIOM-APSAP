@@ -542,6 +542,7 @@
           '<button type="button" class="refresh" data-wk-del="' + esc(it.k) + '">Remove</button></div></div>';
       }).join("") + "</div>" : '<p class="obs">Nothing here yet. Open any report and use ☆ Save, Mark reviewed, Add note or Grade.</p>') +
       srcDefaultsHtml() +
+      (window.OSAP_SEENIT && window.OSAP_SEENIT.open ? '<h3>Seen it before?</h3><p class="obs">See if a photo already ran in the news OSAP has read, and when. Checked on this device.</p><p class="wkbtns"><button type="button" class="refresh" data-wk-act="seenit">Check a photo</button></p>' : "") +
       (window.OSAP_PHOTOCHECK && window.OSAP_PHOTOCHECK.open ? '<h3>Check a photo or video</h3><p class="obs">Read its metadata, check the sun and shadows, step through video frames and search for copies, all on this device.</p><p class="wkbtns"><button type="button" class="refresh" data-wk-act="photo">Check a photo</button></p>' : "") +
       '<h3>Keep your work when you change phone</h3><p class="obs">Export writes every country\'s saved items and notes to a file. Import merges a file back in; the newer copy of each item wins.</p>' +
       '<p class="wkbtns"><button type="button" class="refresh" data-wk-act="notes-out">Export my notes (.json)</button>' +
@@ -596,7 +597,7 @@
     else if ((a = b.getAttribute("data-wk-f"))) { WK.savedF = a; renderTab(); }
     else if ((a = b.getAttribute("data-wk-scope"))) { WK.scope = a; renderTab(); }
     else if ((a = b.getAttribute("data-wk-exp"))) { if (a === "sitrep") { var sc = WK.scope || "tab", ua = WK.useArea !== false && !!area(); closeWk(); sitrep(sc, ua); } else exportAs(a, WK.scope || "tab", WK.useArea !== false && !!area()); }
-    else if ((a = b.getAttribute("data-wk-act"))) { if (a === "seen") markAllSeen(); else if (a === "notes-out") exportNotes(); else if (a === "photo" && window.OSAP_PHOTOCHECK) { closeWk(); window.OSAP_PHOTOCHECK.open(); } }
+    else if ((a = b.getAttribute("data-wk-act"))) { if (a === "seen") markAllSeen(); else if (a === "notes-out") exportNotes(); else if (a === "photo" && window.OSAP_PHOTOCHECK) { closeWk(); window.OSAP_PHOTOCHECK.open(); } else if (a === "seenit" && window.OSAP_SEENIT) { closeWk(); window.OSAP_SEENIT.open(); } }
     else if ((a = b.getAttribute("data-wk-tog"))) {
       var k = b.getAttribute("data-k"), it = WORK.items[k]; if (!it) return;
       var r = recByKey(k);
