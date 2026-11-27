@@ -1,28 +1,17 @@
-// Probe 57 (27 Nov 2026): official US legislation sources, keyless, from the runners.
+// Probe 58 (27 Nov 2026): Senate vote 270 (H.R. 2347), its bill status titles/amendments, House latest roll number.
 const UA = "AXIOM-OSAP/1.0 (open-source situational awareness; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
-async function t(name, url, show = 600) {
-  try {
-    const r = await fetch(url, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(30000) });
-    const b = await r.text();
-    console.log("P", name, r.status, r.headers.get("content-type"), b.length);
-    console.log("P   ", b.slice(0, show).replace(/\s+/g, " "));
-    return b;
-  } catch (e) { console.log("P", name, "ERR", e.message); return ""; }
-}
-const sm = await t("senate-menu", "https://www.senate.gov/legislative/LIS/roll_call_lists/vote_menu_119_2.xml", 1500);
-const nums = [...sm.matchAll(/<vote_number>(\d+)<\/vote_number>/g)].map((m) => m[1]);
-console.log("P senate votes listed", nums.length, nums.slice(0, 3).join(","));
-if (nums[0]) await t("senate-vote", "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1192/vote_119_2_" + nums[0].padStart(5, "0") + ".xml", 2500);
-// find the BAAJA vote on 19 Nov
-const i = sm.indexOf("19-Nov"); console.log("P 19-Nov block", i >= 0 ? sm.slice(Math.max(0, i - 900), i + 300).replace(/\s+/g, " ") : "none");
-await t("house-evs-index", "https://clerk.house.gov/evs/2026/index.asp", 1200);
-const hx = await t("house-roll", "https://clerk.house.gov/evs/2026/roll300.xml", 1500);
-await t("clerk-api", "https://clerk.house.gov/Votes/MemberVotes?page=1", 300);
-await t("govinfo-rss-bills", "https://www.govinfo.gov/rss/bills.xml", 1500);
-await t("govinfo-rss-plaw", "https://www.govinfo.gov/rss/plaw.xml", 800);
-await t("govinfo-bulk-billstatus", "https://www.govinfo.gov/bulkdata/json/BILLSTATUS/119/hr", 1200);
-await t("govinfo-billstatus-2347", "https://www.govinfo.gov/bulkdata/BILLSTATUS/119/hr/BILLSTATUS-119hr2347.xml", 3000);
-await t("congress-demo", "https://api.congress.gov/v3/bill/119/hr/2347/actions?api_key=DEMO_KEY&format=json&limit=5", 1500);
-await t("congress-rss", "https://www.congress.gov/rss/most-viewed-bills.xml", 600);
-await t("senate-floor", "https://www.senate.gov/legislative/LIS/floor_activity/floor_activity.xml", 1200);
-await t("house-floor", "https://clerk.house.gov/floorsummary/floor-download.aspx?date=20261119", 600);
+const get = async (u) => { const r = await fetch(u, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(30000) }); return [r.status, await r.text()]; };
+let [s, b] = await get("https://www.senate.gov/legislative/LIS/roll_call_votes/vote1192/vote_119_2_00270.xml");
+console.log("P v270", s, b.split("<members>")[0].replace(/\s+/g, " ").slice(0, 3000));
+[s, b] = await get("https://www.govinfo.gov/bulkdata/BILLSTATUS/119/hr/BILLSTATUS-119hr2347.xml");
+const tl = b.match(/<titles>[\s\S]*?<\/titles>/); console.log("P titles", tl ? tl[0].replace(/\s+/g, " ").slice(0, 2500) : "none");
+console.log("P BAAJA count", (b.match(/BAAJA|Affordability and Jobs/gi) || []).length);
+const am = b.match(/<amendments>[\s\S]{0,2500}/); console.log("P amendments", am ? am[0].replace(/\s+/g, " ") : "none");
+const la = b.match(/<latestAction>[\s\S]*?<\/latestAction>/g); console.log("P latest", la ? la.slice(-1)[0].replace(/\s+/g, " ") : "none");
+[s, b] = await get("https://clerk.house.gov/Votes/MemberVotes?page=1");
+console.log("P clerk", s, (b.match(/of (\d+) Results/) || [])[1], [...b.matchAll(/href="([^"]*Votes\/20262?\d+[^"]*)"/g)].slice(0, 5).map((m) => m[1]).join(" "));
+const i = b.indexOf("Roll Call"); console.log("P clerk snip", b.slice(i, i + 1500).replace(/\s+/g, " "));
+for (const n of [327, 328]) { [s, b] = await get("https://clerk.house.gov/evs/2026/roll" + n + ".xml"); console.log("P roll", n, s, (b.match(/<legis-num>[^<]*/) || [""])[0], (b.match(/<vote-question>[^<]*/) || [""])[0], (b.match(/<action-date>[^<]*/) || [""])[0], (b.match(/<vote-desc>[^<]*/) || [""])[0].slice(0, 200)); }
+[s, b] = await get("https://www.senate.gov/legislative/LIS/roll_call_lists/vote_menu_119_2.xml");
+const v = [...b.matchAll(/<vote>([\s\S]*?)<\/vote>/g)].map((m) => m[1]).filter((x) => !/<issue>PN/.test(x));
+console.log("P senate non-PN", v.length); for (const x of v.slice(0, 15)) console.log("P   ", x.replace(/\s+/g, " ").slice(0, 330));
