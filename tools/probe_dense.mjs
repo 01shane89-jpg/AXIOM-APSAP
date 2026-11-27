@@ -1,12 +1,11 @@
-// Probe 44 (27 Nov 2026): EUvsDisinfo RSS, cases html, copyright.
+// Probe 45 (27 Nov 2026): EUvsDisinfo cases html structure.
 const UA = "AXIOM-OSAP/1.0 (open-source situational awareness; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
-const get = async (u) => { const r = await fetch(u, { headers: { "user-agent": UA } }); return [r.status, await r.text()]; };
-for (const u of ["https://euvsdisinfo.eu/feed/", "https://euvsdisinfo.eu/disinformation-cases/", "https://euvsdisinfo.eu/about/", "https://euvsdisinfo.eu/legal-notice/", "https://euvsdisinfo.eu/disinformation-cases/feed/"]) {
-  const [s, t] = await get(u); console.log("P ==", s, u, t.length);
-  if (/cases\/$/.test(u)) { const i = t.indexOf("disinfo-db"); console.log("P   HTML", t.slice(Math.max(0, t.indexOf("<table") - 200), t.indexOf("<table") + 3500).replace(/\s+/g, " ")); console.log("P   LINKS", [...new Set([...t.matchAll(/href="(https:\/\/euvsdisinfo\.eu\/report\/[^"]+)"/g)].map((m) => m[1]))].slice(0, 5).join(" ")); }
-  else if (/feed/.test(u)) console.log("P   ", t.slice(0, 1800).replace(/\s+/g, " "));
-  else for (const k of ["reproduc", "copyright", "licen", "Creative Commons", "authoris"]) { const i = t.search(new RegExp(k, "i")); if (i > 0) console.log("P   ", k, "|", t.slice(i - 200, i + 300).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")); }
-  await new Promise((r) => setTimeout(r, 1500));
-}
-const [s, t] = await get("https://euvsdisinfo.eu/report/");
-console.log("P == report index", s, t.length);
+const t = await (await fetch("https://euvsdisinfo.eu/disinformation-cases/", { headers: { "user-agent": UA } })).text();
+const links = [...t.matchAll(/href="(https:\/\/euvsdisinfo\.eu\/[^"#?]+)"/g)].map((m) => m[1]);
+const counts = {}; for (const l of links) { const k = l.split("/").slice(3, 4).join("/"); counts[k] = (counts[k] || 0) + 1; }
+console.log("P LINKPREFIX", JSON.stringify(Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 15)));
+const i = t.search(/class="[^"]*disinfo-db-post|class="[^"]*cases|<article/);
+console.log("P AT", i, t.slice(i - 300, i + 3000).replace(/\s+/g, " "));
+const m = t.match(/https:\/\/euvsdisinfo\.eu\/report\/[^"]+/); console.log("P REPORT", m && m[0]);
+for (const k of ["reproduc", "copyright", "Creative", "authoris", "©"]) { const j = t.search(new RegExp(k, "i")); if (j > 0) console.log("P  ", k, "|", t.slice(j - 150, j + 250).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")); }
+if (m) { await new Promise((r) => setTimeout(r, 1500)); const r = await fetch(m[0], { headers: { "user-agent": UA } }); const x = await r.text(); console.log("P CASE", r.status); const k = x.search(/Summary|SUMMARY|summary/); console.log("P CASEBODY", x.slice(k - 2500, k + 2500).replace(/<script[\s\S]*?<\/script>/g, "").replace(/\s+/g, " ")); }
