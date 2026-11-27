@@ -1,0 +1,52 @@
+name: Refresh picture prints
+
+# "Seen it before?" (assets/osap-seenit.js): every hour, the news pictures OSAP has not printed yet (newest stories first, at most
+# PRINTS_MAX a run) are downloaded, printed and let go by tools/refresh_prints.mjs (rules prints-v1, tools/prints_lib.mjs). Only
+# the prints (two 64-bit hashes per view) and each story's line are kept, never a picture. The whole archive is written to the
+# live-prints branch as one commit replaced each time, so the branch never grows history. The page reads it from
+# raw.githubusercontent.com. Nothing is committed to main. Stories from hidden areas (tools/hidden-areas.json) are left out by
+# the job itself, so this branch never needs sealing.
+on:
+  schedule:
+    - cron: "41 * * * *"
+  workflow_dispatch:
+    inputs:
+      max:
+        description: "Most new pictures to print this run"
+        required: false
+        default: "3000"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-prints-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prints:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      # sharp (libvips, Apache-2.0) decodes and shrinks the pictures; installed for the run only, never committed
+      - run: npm install --no-save --no-audit --no-fund sharp@0.33.5
+      - name: Print and publish
+        env:
+          PRINTS_MAX: ${{ inputs.max || '3000' }}
+          # main publishes to live-prints, the page's source; a test run on any other branch publishes to live-prints-test
+          TARGET: ${{ github.ref == 'refs/heads/main' && 'live-prints' || 'live-prints-test' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/pr/prev
+          # carry on from the last published archive
+          git fetch -q --depth=1 origin "$TARGET" 2>/dev/null && git archive FETCH_HEAD | tar -x -C /tmp/pr/prev 2>/dev/null || true
+          rm -rf /tmp/pr/out
+          node tools/refresh_prints.mjs /tmp/pr/out /tmp/pr/prev
+          git worktree add -q --detach /tmp/prwt
+          cd /tmp/prwt && git checkout -q --orphan prints && git rm -rfq . 2>/dev/null || true
+          cp -r /tmp/pr/out/. . && git add index.json state.json p r && git commit -qm "Picture prints $(date -u +%FT%H:%MZ)" && git push -q -f origin "HEAD:refs/heads/$TARGET"
