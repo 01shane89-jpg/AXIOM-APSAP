@@ -1,11 +1,20 @@
-// Probe 59 (27 Nov 2026): live run of tools/dense_congress.mjs (us-congress) and its items.
-import fs from "node:fs";
-process.env.ONLY = "us-congress";
-const lib = await import("./dense_lib.mjs");
-await import("./dense_congress.mjs");
-await lib.runAll(1);
-lib.writeAll(["us"]);
-const t = fs.readFileSync("data/live/x/us.js", "utf8"), k = 'OSAP_XC["us"]=', x = JSON.parse(t.slice(t.indexOf(k) + k.length).trim().replace(/;\s*$/, ""));
-const mine = x.items.filter((r) => r.f === "us-congress");
-console.log("P items", mine.length);
-for (const r of mine) console.log("P", r.d, "|", r.t, "\nP    ", (r.x || "").slice(0, 520), "\nP    ", r.u);
+// Probe 60 (27 Nov 2026): govinfo BILLSTATUS bulk data: listings (json/xml), zip sizes, per-file modified dates.
+const UA = "AXIOM-OSAP/1.0 (open-source situational awareness; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
+async function head(u, accept) {
+  try { const r = await fetch(u, { headers: { "user-agent": UA, accept: accept || "*/*" }, signal: AbortSignal.timeout(60000) });
+    const b = accept ? await r.text() : ""; if (!accept) r.body?.cancel();
+    console.log("P", r.status, r.headers.get("content-type"), r.headers.get("content-length"), r.headers.get("last-modified"), u);
+    return b;
+  } catch (e) { console.log("P ERR", e.message, u); return ""; }
+}
+let b = await head("https://www.govinfo.gov/bulkdata/json/BILLSTATUS/119/hr", "application/json");
+console.log("P json-listing", b.slice(0, 700).replace(/\s+/g, " "));
+try { const j = JSON.parse(b); console.log("P files", (j.files || []).length, JSON.stringify((j.files || [])[0])); } catch (e) { console.log("P not json"); }
+b = await head("https://www.govinfo.gov/bulkdata/xml/BILLSTATUS/119/hr", "application/xml");
+console.log("P xml-listing", b.slice(0, 900).replace(/\s+/g, " "));
+for (const t of ["hr", "s", "hres", "sres", "hjres", "sjres", "hconres", "sconres"]) await head("https://www.govinfo.gov/bulkdata/BILLSTATUS/119/" + t + "/BILLSTATUS-119-" + t + ".zip");
+await head("https://www.govinfo.gov/sitemap/bulkdata/BILLSTATUS/119hr/sitemap.xml", "application/xml").then((x) => console.log("P sitemap", x.length, x.slice(0, 600).replace(/\s+/g, " ")));
+// how fast: 10 sequential BILLSTATUS files
+const t0 = Date.now(); let bytes = 0;
+for (let n = 1; n <= 10; n++) { const r = await fetch("https://www.govinfo.gov/bulkdata/BILLSTATUS/119/hr/BILLSTATUS-119hr" + n + ".xml", { headers: { "user-agent": UA } }); bytes += (await r.text()).length; }
+console.log("P 10 files", Date.now() - t0, "ms", bytes, "bytes");
