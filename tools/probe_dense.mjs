@@ -1,13 +1,12 @@
-// Probe 43 (27 Nov 2026): GLEIF parent-country filter syntax.
+// Probe 44 (27 Nov 2026): EUvsDisinfo RSS, cases html, copyright.
 const UA = "AXIOM-OSAP/1.0 (open-source situational awareness; +https://01shane89-jpg.github.io/AXIOM-APSAP/)";
-const get = async (u) => { const r = await fetch(u, { headers: { "user-agent": UA, accept: "application/vnd.api+json" } }); const t = await r.text(); return [r.status, t]; };
-const m = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
-for (const u of [
-  "https://api.gleif.org/api/v1/lei-records?filter[ultimateParent.addresses.country]=CN&page[size]=1",
-  "https://api.gleif.org/api/v1/lei-records?filter[ultimateParent.addresses.country]=CN&filter[entity.legalAddress.country]=DE&page[size]=1",
-  "https://api.gleif.org/api/v1/lei-records?filter[ultimateParent.addresses.country]=CN&filter[registration.initialRegistrationDate]=>" + m + "&page[size]=1",
-  "https://api.gleif.org/api/v1/lei-records?filter[directParent.addresses.country]=CN&filter[registration.initialRegistrationDate]=>" + m + "&page[size]=1",
-  "https://api.gleif.org/api/v1/lei-records?filter[ultimateParent.addresses.country]=CN&sort=-registration.initialRegistrationDate&page[size]=3",
-]) { const [s, t] = await get(u); const j = (() => { try { return JSON.parse(t); } catch { return {}; } })();
-  console.log("P ==", s, u, "total", j.meta && j.meta.pagination && j.meta.pagination.total, (j.data || []).map((d) => d.attributes.entity.legalName.name + " " + d.attributes.entity.legalAddress.country + " " + d.attributes.registration.initialRegistrationDate.slice(0, 10)).join(" | "), s >= 400 ? t.slice(0, 300) : "");
-  await new Promise((r) => setTimeout(r, 1100)); }
+const get = async (u) => { const r = await fetch(u, { headers: { "user-agent": UA } }); return [r.status, await r.text()]; };
+for (const u of ["https://euvsdisinfo.eu/feed/", "https://euvsdisinfo.eu/disinformation-cases/", "https://euvsdisinfo.eu/about/", "https://euvsdisinfo.eu/legal-notice/", "https://euvsdisinfo.eu/disinformation-cases/feed/"]) {
+  const [s, t] = await get(u); console.log("P ==", s, u, t.length);
+  if (/cases\/$/.test(u)) { const i = t.indexOf("disinfo-db"); console.log("P   HTML", t.slice(Math.max(0, t.indexOf("<table") - 200), t.indexOf("<table") + 3500).replace(/\s+/g, " ")); console.log("P   LINKS", [...new Set([...t.matchAll(/href="(https:\/\/euvsdisinfo\.eu\/report\/[^"]+)"/g)].map((m) => m[1]))].slice(0, 5).join(" ")); }
+  else if (/feed/.test(u)) console.log("P   ", t.slice(0, 1800).replace(/\s+/g, " "));
+  else for (const k of ["reproduc", "copyright", "licen", "Creative Commons", "authoris"]) { const i = t.search(new RegExp(k, "i")); if (i > 0) console.log("P   ", k, "|", t.slice(i - 200, i + 300).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")); }
+  await new Promise((r) => setTimeout(r, 1500));
+}
+const [s, t] = await get("https://euvsdisinfo.eu/report/");
+console.log("P == report index", s, t.length);
