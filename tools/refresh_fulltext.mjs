@@ -103,6 +103,6 @@ fs.writeFileSync(`${DIR}/checked.json`, JSON.stringify(checked) + "\n");
 // what the reader may offer: the publishers and their licences (the app reads this small file, not the shards, to show buttons)
 fs.writeFileSync(`${DIR}/index.js`, "window.OSAP_FTIX=" + JSON.stringify({
   asof: stamp, extractor: EXTRACTOR, shards: SHARDS, n: kept,
-  rules: RULES.map((r) => ({ id: r.id, hosts: r.hosts, path: r.path.source, name: r.name, lic: r.lic, licUrl: r.licUrl, terms: r.terms, note: r.note, nd: r.nd, apiName: r.apiName || "" }))
+  rules: RULES.map((r) => ({ id: r.id, hosts: r.hosts, path: r.path.source, name: r.name, lic: r.lic, licUrl: r.licUrl, terms: r.terms, note: r.note, nd: r.nd, apiName: r.apiName || "", credit: r.credit || "", from: !!r.from, http: !!r.http }))
 }) + ";\n");
 console.log(`full text: ${want.size} open-licence links now, ${todo.length} to read, read ${batch.length} (${ok} read, ${same} unchanged, ${miss} refused or empty), ${kept} stored, ${Object.keys(misses).length} misses`);

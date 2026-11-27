@@ -13,7 +13,7 @@ t("only listed publishers' article addresses, https, no credentials or odd ports
     "https://theconversation.com.evil.com/x-1", "https://user:pw@theconversation.com/x-1", "https://theconversation.com:8443/x-1", "https://www.gov.uk/guidance/x",
     "https://www.lowyinstitute.org/the-interpreter/x", "javascript:alert(1)", "not a url", ""]) assert.equal(ruleFor(u), null, u);
   // every rule names its licence, where it is stated, and allows commercial reuse (no NC licence may be listed)
-  for (const r of RULES) { assert.ok(r.lic && /^https:\/\//.test(r.licUrl) && /^https:\/\//.test(r.terms) && r.note, r.id); assert.ok(!/\bNC\b|non-?commercial/i.test(r.lic), r.id); }
+  for (const r of RULES) { assert.ok(r.lic && /^https:\/\//.test(r.licUrl) && (r.http ? /^https?:\/\// : /^https:\/\//).test(r.terms) && r.note, r.id); assert.ok(!/\bNC\b|non-?commercial/i.test(r.lic), r.id); }
 });
 t("shards are stable and in range", () => {
   assert.equal(fnv("a"), 0xe40c292c);
@@ -85,5 +85,21 @@ t("White House statements and remarks, and UK written ministerial statements thr
   assert.equal(w.title, "Congressional Bills Signed into Law"); assert.equal(w.pub, "2026-11-25T12:01:00+00:00"); assert.deepEqual(w.by, [{ n: "The White House", r: "" }]);
   assert.deepEqual(w.blocks.map((b) => b.k), ["h", "p"]); assert.ok(!/Menu|Footer|Official photo/.test(JSON.stringify(w)));
   assert.ok(API_PREFIXES.every((p) => /^https:\/\/[^/]+\/api\//.test(p)));
+});
+t("Kremlin (Shane 27 Nov: plain http for this publisher only): readouts and transcripts, article body, date", () => {
+  assert.equal(ruleFor("http://en.kremlin.ru/events/president/news/81350").id, "kremlin");
+  assert.equal(ruleFor("https://kremlin.ru/events/president/transcripts/81342").id, "kremlin");
+  for (const u of ["http://en.kremlin.ru/about/copyrights", "http://en.kremlin.ru:8080/events/president/news/1", "http://user@en.kremlin.ru/events/president/news/1", "http://evil.example/events/president/news/1",
+    "http://www.gov.uk/government/news/x", "http://www.whitehouse.gov/remarks/2026/10/x/", "ftp://en.kremlin.ru/events/president/news/1"]) assert.equal(ruleFor(u), null, u);
+  assert.ok(RULES.filter((r) => r.http).map((r) => r.id).join() === "kremlin", "only the Kremlin is read over http");
+  const html = '<html><head><meta property="og:title" content="Conversation with President of Kazakhstan Kassym-Jomart Tokayev"></head><body><p>All content on this site is licensed under</p>' +
+    '<time class="read__published" datetime="2026-11-25" itemprop="datePublished">November 25, 2026</time><div class="entry-content e-content read__internal_content" itemprop="articleBody">' +
+    '<div class="slider"><div class="slide" data-cycle-desc="Before a conversation."><img src="x.jpg"></div></div><p>' + "Vladimir Putin had a telephone conversation with President of Kazakhstan. ".repeat(5) + "</p><p>President of Kazakhstan <a href=\"/catalog/persons/593/events\" class=\"person_tag read__tag\">Kassym-Jomart Tokayev<span class=\"read__tooltip tooltip_person hidden masha-ignore\"> <span class=\"tooltip__close\"><i></i></span> <span class=\"tooltip__name\">Tokayev Kassym-Jomart Kemelevich</span></span></a> discussed bilateral relations.</p></div><div class=\"footer\"><p>Footer</p></div></body></html>";
+  const e = extract(ruleFor("http://en.kremlin.ru/events/president/news/81350"), html, "http://en.kremlin.ru/events/president/news/81350");
+  assert.equal(e.title, "Conversation with President of Kazakhstan Kassym-Jomart Tokayev"); assert.equal(e.pub, "2026-11-25");
+  assert.deepEqual(e.by, [{ n: "President of Russia", r: "Presidential Executive Office" }]); assert.equal(e.blocks.length, 2);
+  assert.ok(!/licensed under|Footer|Before a conversation|Kemelevich/.test(JSON.stringify(e.blocks)));
+  assert.ok(/President of Kazakhstan Kassym-Jomart Tokayev discussed bilateral relations\./.test(JSON.stringify(e.blocks)), JSON.stringify(e.blocks[1]));
+  assert.ok(RULES.every((r) => r.id === "conversation" || r.credit), "every rule but The Conversation has its own credit line");
 });
 console.log(`${n} fulltext checks passed`);

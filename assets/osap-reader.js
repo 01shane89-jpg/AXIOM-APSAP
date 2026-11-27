@@ -10,6 +10,8 @@
   var W = window, D = document, IX = null, rules = [], wait = [];
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function web(u) { u = String(u || ""); return /^https:\/\/[^\s"<>]+$/i.test(u) ? u : ""; }
+  /* an article address: https, or plain http for a publisher the index marks http (ruleFor checks which) */
+  function art(u) { u = String(u || ""); return /^https?:\/\/[^\s"<>]+$/i.test(u) ? u : ""; }
   function out(u, text, cls) { return '<a' + (cls ? ' class="' + cls + '"' : "") + ' href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + text + "</a>"; }
   var ARROW = ' <span aria-hidden="true">↗</span>';
   /* the same FNV-1a shard as tools/fulltext_lib.mjs */
@@ -23,11 +25,11 @@
   }
   function ruleFor(url) {
     var u; try { u = new URL(String(url)); } catch (e) { return null; }
-    if (u.protocol !== "https:") return null;
+    if ((u.protocol !== "https:" && u.protocol !== "http:") || u.username || u.password || u.port) return null;
     var host = u.hostname.toLowerCase();
     for (var i = 0; i < rules.length; i++) {
       var x = rules[i];
-      if (x.re && x.r.hosts.some(function (h) { return h === host || "www." + h === host; }) && x.re.test(u.pathname)) return x.r;
+      if (x.re && x.r.hosts.some(function (h) { return h === host || "www." + h === host; }) && x.re.test(u.pathname)) return u.protocol === "https:" || x.r.http ? x.r : null;
     }
     return null;
   }
@@ -87,7 +89,7 @@
   D.addEventListener("keydown", function (e) { if (e.key === "Escape" && box) close(); });
   function open(url, o) {
     o = o || {};
-    var u = web(url), rule = u && ruleFor(u);
+    var u = art(url), rule = u && ruleFor(u);
     if (!rule) { if (u) W.open(u, "_blank", "noopener,noreferrer"); return false; }
     frame('<h2 class="ftt">' + esc(o.title || "") + '</h2><p class="ftobs">Loading the article…</p>');
     var mine = box;
@@ -105,10 +107,11 @@
       box.querySelector(".ftbody").innerHTML =
         '<p class="ftsrc">' + esc(rule.name) + (o.src && o.src.indexOf(rule.name) < 0 ? " · via " + esc(o.src) : "") + "</p>" +
         '<h2 class="ftt">' + esc(e.title || o.title || "") + "</h2>" +
-        (by ? '<p class="ftby">' + (rule.id === "govuk" ? "From " : "By ") + by + "</p>" : "") +
+        (by ? '<p class="ftby">' + (rule.id === "govuk" || rule.from ? "From " : "By ") + by + "</p>" : "") +
         (dates ? '<p class="ftsub">' + dates + "</p>" : "") +
         (e.change ? '<p class="ftsub">Latest change: ' + esc(e.change) + "</p>" : "") +
         '<p class="ftlic">' + (rule.id === "conversation" ? "This article is republished from " + out(u, "The Conversation") + " under a " + out(rule.licUrl, esc(rule.lic)) + " licence. Read the " + out(u, "original article") + "."
+          : rule.credit ? esc(rule.credit) + " " + out(rule.licUrl, "Licence") + ". " + out(u, "Original at " + esc(rule.name)) + "."
           : "Contains public sector information licensed under the " + out(rule.licUrl, esc(rule.lic)) + ". " + out(u, "Original on GOV.UK") + ".") + "</p>" +
         orig + '<div class="fttext">' + bodyHtml(e.blocks) + "</div>" +
         '<div class="ftprov"><h4>Where this text comes from</h4>' +
@@ -116,6 +119,7 @@
           "<p>Read by OSAP on " + esc(when(e.at)) + " from " + (e.read && e.read !== u ? "the " + esc(rule.apiName || host(e.read)) : esc(host(u))) +
           ", turned into plain text by fixed rules (" + esc(e.x || "") + "), not by AI. Images and embedded media are left out; the publisher's own links are kept.</p>" +
           '<p>SHA-256 of what OSAP read: <code class="ftsha">' + esc(e.sha || "") + "</code></p>" +
+          (rule.http ? "<p>Read over plain http: the publisher's https site does not answer OSAP's servers, so the copy could not be protected in transit. The SHA-256 is of what arrived.</p>" : "") +
           "<p>It is the publisher's account or opinion, not an OSAP finding, and no analyst has checked it." + (rule.nd ? " It is not translated: the licence does not allow translations." : "") + "</p>" +
           '<p><a href="' + esc(rule.terms) + '" target="_blank" rel="noopener noreferrer">The publisher\'s reuse terms' + ARROW + "</a></p></div>";
       box.querySelector(".ftbody").scrollTop = 0;
@@ -123,7 +127,7 @@
     return true;
   }
   W.OSAP_READER = {
-    can: function (url) { return !!(web(url) && ruleFor(url)); },
+    can: function (url) { return !!(art(url) && ruleFor(url)); },
     open: open, close: close,
     whenReady: function (f) { if (IX) f(); else wait.push(f); },
     _ruleFor: ruleFor, _shardOf: shardOf
