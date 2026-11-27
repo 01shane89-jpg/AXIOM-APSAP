@@ -1,9 +1,12 @@
-// Probe 35 (27 Nov 2026): FARA and LDA feeds for real.
-process.env.ONLY = "sec-cyber-8k";
-const { runAll, RESULTS } = await import("./dense_lib.mjs");
-await import("./dense_sec.mjs");
-const t0 = Date.now(); await runAll(2); console.log("P ms", Date.now() - t0);
-for (const [id, r] of Object.entries(RESULTS)) {
-  console.log("P", id, r.ok ? "ok" : "FAIL " + r.error, r.items ? r.items.length : "", r.note || "");
-  for (const it of (r.items || []).slice(0, 40)) console.log("P  ", JSON.stringify({ t: it.title, x: it.detail.slice(0, 300), ccs: it.ccs, d: it.date, u: it.url.slice(0, 80) }));
+// Probe 36 (27 Nov 2026): SEC EDGAR full-text search shape.
+const UA = "Axiom Intelligence Systems support@axiom-intelligence-systems.com";
+for (const u of [
+  "https://efts.sec.gov/LATEST/search-index?q=%22Item%201.05%22&forms=8-K&dateRange=custom&startdt=2026-10-13&enddt=2026-11-27",
+  "https://efts.sec.gov/LATEST/search-index?q=%22Item%201.05%22&forms=8-K",
+  "https://efts.sec.gov/LATEST/search-index?q=%22cybersecurity%20incident%22&forms=8-K&startdt=2026-10-13&enddt=2026-11-27",
+  "https://data.sec.gov/submissions/CIK0000320193.json",
+]) {
+  try { const r = await fetch(u, { headers: { "user-agent": UA, accept: "application/json" } }); const t = await r.text(); console.log("P ==", r.status, u); console.log("P   ", t.slice(0, 1500).replace(/\s+/g, " ")); }
+  catch (e) { console.log("P ERR", u, e.message); }
+  await new Promise((r) => setTimeout(r, 500));
 }
