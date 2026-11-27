@@ -103,6 +103,7 @@ tests/trail_smoke.mjs
 tests/trailmap_smoke.mjs
 # Claim ledger: a disputed story followed for up to 30 days, from Go deeper and Story coverage (assets/osap-ledger.js)
 tests/ledger_smoke.mjs
+tests/gap_smoke.mjs
 # Same story in other languages: AI proposals beside a claim ledger, never counted in it (assets/osap-ledger.js, data/live/ledger-x)
 tests/xlang_smoke.mjs
 tests/spikes_smoke.mjs
