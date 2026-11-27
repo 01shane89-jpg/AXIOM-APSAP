@@ -91,6 +91,8 @@ jobs:
       - run: node tests/dense_trade.test.mjs
       # public records around Army ammunition plants (tools/dense_records.mjs): USAspending, SAM.gov extract, ECHO, Federal Register, CourtListener
       - run: node tests/dense_records.test.mjs
+      # OpenAIP airspace builder (tools/refresh_openaip.mjs): restricted kinds only, compact, nc-tagged, no contributor ids
+      - run: node tests/openaip.test.mjs
       - run: node tests/uk_sanctions.test.mjs
       # open-licence full text for the in-app reader (tools/fulltext_lib.mjs): which addresses, safe text, no script
       - run: node tests/fulltext.test.mjs
