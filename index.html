@@ -834,6 +834,8 @@ html.switching .rail{opacity:.55;transition:opacity .1s}
 html.switching #map::after{content:"";position:absolute;left:0;top:0;height:3px;width:40%;background:var(--accent);z-index:1000;animation:swbar .8s linear infinite}
 @keyframes swbar{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
 html.phone .rvpkg{max-height:none}
+/* phone: a tab with no reports of its own (Comms, Route, Conflict events...) showed "Nothing in this tab" above its own full panel */
+html.phone #rv.rv-empty>.rvhead,html.phone #rv.rv-empty>.rvlist{display:none}
 .shell.rv-list .leaflet-control-container{display:none}
 .rvhead .rvseg{display:none;box-shadow:none}
 .shell.rv-list .rvhead .rvseg{display:flex}
@@ -7562,7 +7564,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
     if (current === "timeline") list = evCollapse(list);
     rvShown = list;
     var none = !all.length;
-    rvBox.classList.toggle("rv-empty", none);
+    rvBox.classList.toggle("rv-empty", none && !AREA);
     var nn = all.length && all[0].sof ? "map item" : "report", pl = function (n) { return n + " " + nn + (n === 1 ? "" : "s"); };
     rvN.textContent = none ? "Nothing in this tab" : pl(list.length) + (AREA ? " in the drawn area" : inArea ? " in this map area" : " in this tab");
     var more = inArea ? (all.length - located.length) : 0;

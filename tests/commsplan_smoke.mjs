@@ -312,6 +312,14 @@ const pane = (p) => p.textContent("#cp-pane");
 {
   const { ctx, p, errors } = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   await p.evaluate(() => document.documentElement.setAttribute("data-sheet", "full")); await p.waitForTimeout(400);
+  // a tool tab with no reports of its own does not show "Nothing in this tab" above its own panel; a tab with reports keeps its count
+  const rvHead = () => p.evaluate(() => { const h = document.querySelector("#rv .rvhead"); return h && h.getClientRects().length ? document.getElementById("rv-n").textContent : ""; });
+  ok((await rvHead()) === "", "phone: no empty reports line above Comms planning");
+  await p.evaluate(() => window.TSAP.setView("news")); await p.waitForTimeout(1500);
+  const nh = await rvHead();
+  ok(/\d+ reports?/.test(nh), "phone: News keeps its reports count line: " + nh);
+  await p.evaluate(() => window.TSAP.setView("comms")); await p.waitForFunction(() => document.querySelector(".cptabs"), null, { timeout: 20000 });
+  await p.evaluate(() => document.documentElement.setAttribute("data-sheet", "full")); await p.waitForTimeout(400);
   for (const t of ["plan", "equipment", "link", "status"]) {
     await p.evaluate((t) => window.OSAP_COMMSPLAN.tab(t), t);
     if (t === "plan") await p.evaluate(() => { const b = document.querySelector('[data-cpa="new"]'); if (b) b.click(); });
