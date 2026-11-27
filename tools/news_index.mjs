@@ -14,6 +14,7 @@ import { loadDates, cachedDate, applyPageDate } from "./news_pagedate.mjs";
 // a search result's publication time from its own page (tools/news_pagedate.mjs; read by the news step), by link
 const PAGE_DATES = loadDates(), NOW = Date.now();
 import { compileViews, viewsOf } from "./view_reports_lib.mjs";
+import { congressRows } from "./congress_rows.mjs";
 
 const DAYS = Number(process.env.NEWSIX_DAYS || 30), SUM = Number(process.env.NEWSIX_SUM || 0), OUT = "data/live/news-index.js", DIR = "data/live/news-index";
 const stamp = new Date().toISOString().slice(0, 16).replace("T", " ") + "Z";
@@ -66,6 +67,14 @@ catch (e) { console.error("news.js unreadable:", e.message); }
 let tn = 0;
 try { const t = readJs("data/live/topics.js"); (t.items || []).forEach((i) => { add(i, i.cc || []); tn++; }); }
 catch (e) { console.error("topics.js unreadable (no data-set searches yet):", e.message); }
+// official U.S. Congress floor votes (tools/dense_congress.mjs, kept in data/live/x/us.js by the dense step) are searched with the
+// news, so a bill is found by the name it carries now: BAAJA (permitting reform) passed the Senate under H.R. 2347's old number
+// and few headlines used its name. Outlet: the chamber's own record. Each vote is its own row (the bill page plus a #vote mark).
+let cn = 0;
+try {
+  const t = fs.readFileSync("data/live/x/us.js", "utf8"), k = 'OSAP_XC["us"]=', x = JSON.parse(t.slice(t.indexOf(k) + k.length).trim().replace(/;\s*$/, ""));
+  for (const r of congressRows(x.items)) { add(r, ["us"]); cn++; }
+} catch (e) { console.error("Congress votes unreadable:", e.message); }
 
 const clip = (s, n) => { s = String(s || "").replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; };
 const count = {}, left = new Set();   // left: links this run's relevance check left out
@@ -140,6 +149,6 @@ const out = { asof: stamp, days: days.map((d) => ({ d, n: byDay[d].length })), f
   relevance: { kept: (relN.strong || 0) + (relN.keep || 0) + (relN.unchecked || 0), left_out: (relN.drop || 0) + (relN.none || 0) } };
 fs.writeFileSync(OUT, "window.OSAP_NEWSIX=" + JSON.stringify(out).replace(/<\//g, "<\\/") + ";\n");
 const total = days.reduce((s, d) => s + fs.statSync(DIR + "/" + d + ".js").size, 0);
-console.log(`news index: ${rows.length} headlines from ${files} country histories and ${tn} data-set search results, ${days.length} days, ` + (total / 1e6).toFixed(1) + " MB");
+console.log(`news index: ${rows.length} headlines from ${files} country histories, ${tn} data-set search results and ${cn} Congress floor votes, ${days.length} days, ` + (total / 1e6).toFixed(1) + " MB");
 console.log("per data set:", out.topics.map((t) => t.id + " " + t.n).join(", "));
 console.log("per tab:", out.views.map((v) => v.id + " " + v.n).join(", "));
