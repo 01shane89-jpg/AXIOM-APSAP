@@ -18,6 +18,9 @@ import { groundLines, groundStats, GROUND_V } from "./ground.mjs";
 
 export const SCHEMA = "osap-daily/1";
 export const MAX_EVENTS = 6, MAX_REFS = 30;
+// What to watch lines (flashpoint reports, official warnings, the travel advisory) get their own room past MAX_REFS: on a busy day
+// the events fill all 30, and the advisory then lost its State Department link (27 Nov 2026, Thailand). 2 x 8 + 2 + 1 = 19.
+export const MAX_WATCH_REFS = 19;
 // sections of an outlet's site that are never analyst news, whatever words the headline has ("war" in a football report)
 const SOFT_PATH = /\/(sports?|sport-news|football|soccer|cricket|tennis|golf|f1|motorsports?|entertainment|showbiz|celebrit(y|ies)|lifestyle|life-style|style|fashion|beauty|food|recipes?|travel|horoscopes?|astrology|music|movies?|film|tv|television|arts?|culture|books|gaming|games|auto|cars|shopping|deals|brandvoice|sponsored|promoted|advertorial|partner-content)(\/|$)/i;
 const STOP = new Set("the a an and or of to in on at for from with by as is are was were be been has have had it its this that these those after over into amid says said say will would could can new more than about up out not no but who what when where how why his her their our your".split(" "));
@@ -89,16 +92,16 @@ export function buildRules(inp, R) {
     return { ...g, outlets, rank: top * 2 + Math.min(outlets.length, 5) * 1.5 + (g.items.some((i) => i.via === "conflict") ? 1 : 0), newest };
   }).sort((a, b) => b.rank - a.rank || (a.newest < b.newest ? 1 : -1));
   const refs = [], refOf = new Map();
-  const ref = (i) => {
+  const ref = (i, cap = MAX_REFS) => {
     if (refOf.has(i.url)) return refOf.get(i.url);
-    if (refs.length >= MAX_REFS) return 0;
+    if (refs.length >= cap) return 0;
     const n = refs.length + 1;
     refs.push({ n, title: i.title, orig: i.orig || undefined, outlet: i.outlet, url: i.url, date: i.date, via: i.via, conflict: i.conflict, flags: i.flags || undefined });
     refOf.set(i.url, n); return n;
   };
   const events = groups.slice(0, MAX_EVENTS).map((g) => {
     const lead = g.items.find((i) => !/m/.test(i.flags)) || g.items[0];
-    const rs = [...new Set(g.items.slice(0, 8).map(ref).filter(Boolean))].slice(0, 6);
+    const rs = [...new Set(g.items.slice(0, 8).map((i) => ref(i)).filter(Boolean))].slice(0, 6);
     const state = g.items.every((i) => /g/.test(i.flags)), someState = !state && g.items.some((i) => /g/.test(i.flags));
     return { text: lead.title, outlets: g.outlets.slice(0, 6), n: g.outlets.length, refs: rs, when: g.newest, claim: state || undefined, some_state: someState || undefined,
       mt: g.items.every((i) => /m/.test(i.flags)) || undefined, conflict: g.items.find((i) => i.conflict)?.conflict };
@@ -114,7 +117,7 @@ export function buildRules(inp, R) {
     const k = events.findIndex((e, j) => j > 0 && groups[j] && Math.max(...groups[j].items.map((i) => i._s)) >= 3.5);
     if (k > 0) bluf.push({ text: `Also reported: ${say(events[k])}.`, refs: events[k].refs.slice(0, 4) });
   }
-  const watch = [];
+  const watch = [], wref = (i) => ref(i, MAX_REFS + MAX_WATCH_REFS);
   (inp.conflicts || []).forEach((c) => {
     const s = c.stats && c.stats.reports; if (!s) return;
     watch.push({ from: "conflict", text: `${c.name}: ${s.d1 || 0} report${s.d1 === 1 ? "" : "s"} in the last day, ${s.d7 || 0} in 7 days on the conflict tab.`, refs: [], tab: c.id });
@@ -123,18 +126,18 @@ export function buildRules(inp, R) {
   // line opens onto them and Print lists them as sources
   (inp.flashpoints || []).slice(0, 2).forEach((f) => watch.push({ from: "flashpoint", text: `${f.title}${f.where ? ", " + f.where : ""}. ${f.why || ""}`.trim(),
     refs: [...new Set((f._reports || []).slice().sort((x, y) => String(y.ts || "").localeCompare(String(x.ts || ""))).slice(0, 8)
-      .map((r) => r && /^https?:\/\//i.test(String(r.url || "")) ? ref({ title: r.title, outlet: String(r.source || "").replace(/\s*\(.*\)\s*$/, ""), url: r.url, date: String(r.ts || "").slice(0, 16), via: "flashpoint" }) : 0).filter(Boolean))], fp: f.title }));
+      .map((r) => r && /^https?:\/\//i.test(String(r.url || "")) ? wref({ title: r.title, outlet: String(r.source || "").replace(/\s*\(.*\)\s*$/, ""), url: r.url, date: String(r.ts || "").slice(0, 16), via: "flashpoint" }) : 0).filter(Boolean))], fp: f.title }));
   const W = (inp.warnings || []).filter((w) => w.date >= iso(from) && !/lifted|cancel|解除|ended|expired|no longer/i.test((w.title_en || w.title) + " " + (w.summary_en || w.summary || "")));
   if (W.length) {
     const seen = new Set(), top = W.filter((w) => { const k = fold(w.summary_en || w.title_en || w.title).slice(0, 60); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 2);
     const agencies = [...new Set(W.map((w) => w.agency).filter(Boolean))].slice(0, 3);
     watch.push({ from: "warning", text: `${W.length} official warning${W.length === 1 ? "" : "s"} issued in the window${agencies.length ? " by " + agencies.join(", ") : ""}` +
       (top.length ? ": " + top.map((w) => String(w.summary_en || w.title_en || w.title).replace(/\s+/g, " ").slice(0, 160)).join("; ") : "") + ". Official statements.",
-      refs: top.map((w) => ref({ title: w.title_en || w.title, orig: w.title_en ? w.title : "", outlet: w.agency, url: w.link, date: w.date, via: "warning", flags: "g" + (w.mt ? "m" : "") })).filter(Boolean) });
+      refs: top.map((w) => wref({ title: w.title_en || w.title, orig: w.title_en ? w.title : "", outlet: w.agency, url: w.link, date: w.date, via: "warning", flags: "g" + (w.mt ? "m" : "") })).filter(Boolean) });
   }
   const a = inp.advisory;
   if (a && a.level) watch.push({ from: "advisory", text: `U.S. State Department travel advisory: Level ${a.level}${a.level_text ? ", " + a.level_text : ""}${a.date ? " (issued " + a.date + ")" : ""}. A government statement.`,
-    refs: [ref({ title: a.title || "Travel advisory", outlet: "U.S. State Department", url: a.link || "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html", date: a.date || "", via: "advisory", flags: "g" })].filter(Boolean) });
+    refs: [wref({ title: a.title || "Travel advisory", outlet: "U.S. State Department", url: a.link || "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html", date: a.date || "", via: "advisory", flags: "g" })].filter(Boolean) });
   const b = inp.brief;
   // A country brief's watch points are an AI draft written on its as_of day: carried only while that is within BRIEF_MAX_DAYS of the
   // window's end, so a stale draft (all 160 briefs were dated 26 Sep 2026 on 19 Nov) is never shown as today's "What to watch".
