@@ -19,13 +19,14 @@ export function isPerson(name, about = "") {
   if (ORG.test(n)) return false;
   return /^[A-Za-z'\-. ]+,\s*[A-Za-z'\-. ]+$/.test(n);
 }
-// a name is shown only when it is plainly an organisation: an organisation word in the name, or a description that says what
-// kind of organisation it is. Anything else (a bare "JOHN DOE", whatever its description) stays unnamed.
-const ORGDESC = /\b(company|companies|corporation|firm|association|government|coalition|organi[sz]ation|manufacturer|industry|industries|trade|producer|provider|operator|business|non-?profit|charity|union|agency|bank|university|hospital|group|chamber|council|institute|foundation|federation|ministry|embassy|developer|exporter|importer|maker|supplier|airline|carrier)\b/i;
+// a name is shown only when the name itself is plainly an organisation or a government. A description does not count: lda.gov
+// probe 27 Nov had people described as an owner of "a company" or lobbying about "the Government of Thailand". A name that
+// carries a person inside it ("X f/b/o Y", "c/o", "on behalf of") stays unnamed even when the rest is an organisation.
 export function shown(name, about = "") {
   const n = String(name || "").trim();
   if (!n || isPerson(n, about)) return "an individual (name not shown)";
-  return ORG.test(n) || GOVT.test(n) || ORGDESC.test(about) ? n : "a client (name not shown)";
+  if (/\b(f\/b\/o|c\/o|fbo|on behalf of|for the benefit of)\b/i.test(n)) return "a client (name not shown)";
+  return ORG.test(n) || GOVT.test(n) ? n : "a client (name not shown)";
 }
 const title = (s) => String(s || "").toLowerCase().replace(/\b([a-z])/g, (m) => m.toUpperCase());
 
@@ -60,9 +61,11 @@ export function ldaItems(filings) {
     if (!fe.length && !clientAbroad && !GOVT.test(f.client.name || "")) continue;
     const ccs = [...new Set([clientAbroad ? ccFromA2(f.client.country) : null, ...fe.map((e) => ccFromA2(e.country))].filter(Boolean))];
     const issues = [...new Set((f.lobbying_activities || []).map((a) => a.general_issue_code_display).filter(Boolean))];
-    const what = ((f.lobbying_activities || []).find((a) => a.description) || {}).description || "";
-    const money = f.income ? "income $" + Math.round(+f.income).toLocaleString("en-US") : f.expenses ? "expenses $" + Math.round(+f.expenses).toLocaleString("en-US") : "";
     const client = shown(f.client.name, f.client.general_description || "");
+    // the filer's own words on the issue are kept only for a named organisation client: for an unnamed client they describe
+    // the person (one probe filing was about a named man's prison case)
+    const what = /name not shown/.test(client) ? "" : ((f.lobbying_activities || []).find((a) => a.description) || {}).description || "";
+    const money = f.income ? "income $" + Math.round(+f.income).toLocaleString("en-US") : f.expenses ? "expenses $" + Math.round(+f.expenses).toLocaleString("en-US") : "";
     out.push({
       title: "Lobbying filing with a foreign link: " + shown(f.registrant.name, f.registrant.description || "") + " for " + client,
       detail: (f.filing_type_display || "Filing") + " under the Lobbying Disclosure Act, posted " + String(f.dt_posted || "").slice(0, 10) + ". "
