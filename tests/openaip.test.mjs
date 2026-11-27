@@ -1,5 +1,5 @@
 // OpenAIP airspace builder (tools/refresh_openaip.mjs): only the restricted kinds, compact, nc-tagged, no contributor ids
-import { areasOf, limit, exportLinks, SOURCE } from "../tools/refresh_openaip.mjs";
+import { areasOf, limit, exportLinks, SOURCE, bboxOf } from "../tools/refresh_openaip.mjs";
 let bad = 0;
 const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) bad++; };
 const sq = [[21.1234, 52.1234], [21.2, 52.1234], [21.2, 52.2], [21.2, 52.2], [21.1234, 52.1234]];
@@ -17,5 +17,6 @@ ok(SOURCE.nc === true && /BY-NC/.test(SOURCE.lic), "every file is tagged non-com
 ok(limit({ value: 0, unit: 1, referenceDatum: 1 }) === "0 ft MSL" && limit(null) === "", "edge limits");
 const L = exportLinks('<a href="https://s3.openaip.net/openaip-system-exports/pl_asp.geojson?X-Amz-Algorithm=AWS4&amp;X-Amz-Signature=ab">x</a> <a href="https://s3.openaip.net/openaip-system-exports/pl_apt.geojson?a=b">');
 ok(Object.keys(L).join() === "pl" && L.pl === "https://s3.openaip.net/openaip-system-exports/pl_asp.geojson?X-Amz-Algorithm=AWS4&X-Amz-Signature=ab", "only airspace exports, links unescaped");
+ok(JSON.stringify(bboxOf(A)) === "[[52.123,21.123],[52.2,21.2]]" && bboxOf([]) === null, "bounding box for loading only what is in view");
 if (bad) { console.log(bad + " failed"); process.exit(1); }
 console.log("all passed");

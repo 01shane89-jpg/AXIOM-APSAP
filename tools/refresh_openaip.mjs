@@ -4,7 +4,7 @@
 //           export as a presigned download link (24 h) without one; this job reads that page and downloads the links it lists.
 //   Licence OpenAIP data is CC BY-NC 4.0: non-commercial, so every file written here is tagged nc (source.nc) and the sold
 //           version deletes the whole data/live/airspace folder (tools/nc_strip.mjs). Attribution "© OpenAIP, CC BY-NC 4.0".
-//   Output  data/live/airspace/index.json (countries, counts, as-of) and data/live/airspace/<cc>.json, one per country, with only
+//   Output  data/live/airspace/index.json (countries with their area count and bounding box, as-of) and data/live/airspace/<cc>.json, one per country, with only
 //           what the map needs: name, type, lower and upper limit, outline rounded to 3 decimals (about 100 m). OpenAIP's
 //           contributor ids are never copied. Runs at most once a day (the exports change slowly).
 // Run: node tools/refresh_openaip.mjs   (FORCE=1 ignores the once-a-day check)
@@ -41,6 +41,12 @@ export function areasOf(geo) {
   }
   return out;
 }
+// [[south, west], [north, east]] around every outline, so the map loads a country's file only when it is in view
+export function bboxOf(areas) {
+  let s = 90, w = 180, n = -90, e = -180;
+  for (const a of areas || []) for (const r of a.g) for (const [x, y] of r) { if (y < s) s = y; if (y > n) n = y; if (x < w) w = x; if (x > e) e = x; }
+  return n >= s ? [[s, w], [n, e]] : null;
+}
 export function exportLinks(html) {
   const links = {};
   for (const m of String(html || "").matchAll(/https:\/\/s3\.openaip\.net\/openaip-system-exports\/([a-z]{2})_asp\.geojson\?[^"'\s<>]+/g)) links[m[1]] = m[0].replace(/&amp;/g, "&");
@@ -64,10 +70,10 @@ if (import.meta.url === "file://" + process.argv[1]) {
   for (const [cc, url] of Object.entries(links).sort()) {
     try {
       const areas = areasOf(await get(url, "json", { timeout: 120000 }));
-      if (areas.length) { fs.writeFileSync(OUT + "/" + cc + ".json", JSON.stringify({ source: SOURCE, cc, asof, a: areas })); countries[cc] = areas.length; }
+      if (areas.length) { fs.writeFileSync(OUT + "/" + cc + ".json", JSON.stringify({ source: SOURCE, cc, asof, a: areas })); countries[cc] = { n: areas.length, b: bboxOf(areas) }; }
     } catch (e) { failed++; console.log("airspace " + cc + ": " + (e.message || e)); }
     await sleep(300);
   }
   fs.writeFileSync(OUT + "/index.json", JSON.stringify({ source: SOURCE, asof, types: TYPES, countries }));
-  console.log("airspace: " + Object.keys(countries).length + " countries, " + Object.values(countries).reduce((a, b) => a + b, 0) + " areas" + (failed ? ", " + failed + " downloads failed" : ""));
+  console.log("airspace: " + Object.keys(countries).length + " countries, " + Object.values(countries).reduce((a, c) => a + c.n, 0) + " areas" + (failed ? ", " + failed + " downloads failed" : ""));
 }
