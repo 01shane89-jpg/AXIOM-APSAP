@@ -462,7 +462,7 @@
     /* the news search keeps its own box: re-drawing the rest (every few seconds as records arrive) never wipes what is typed */
     if (!box.querySelector("#td-body")) {
       box.innerHTML = '<div class="tdwrap"><div id="td-head"></div><section id="td-news" class="tdcard tdq" aria-label="Search the news"></section><section id="td-seen" class="tdcard" aria-label="Seen it before?" hidden></section>' +
-        '<section id="td-daily" class="tdcard" aria-label="Daily summary" hidden></section><section id="td-ask" class="tdcard" aria-label="Ask about this country" hidden></section><section id="td-asia" class="tdcard" aria-label="Asia security" hidden></section><section id="td-spike" class="tdcard" aria-label="Reporting level" hidden></section><section id="td-cover" class="tdcard" aria-label="Story coverage" hidden></section>' +
+        '<section id="td-daily" class="tdcard" aria-label="Daily summary" hidden></section><section id="td-ask" class="tdcard" aria-label="Ask about this country" hidden></section><section id="td-asia" class="tdcard" aria-label="Asia security" hidden></section><section id="td-spike" class="tdcard" aria-label="Reporting level" hidden></section><section id="td-cover" class="tdcard" aria-label="Story coverage" hidden></section><section id="td-sky" class="tdcard" aria-label="Your sky" hidden></section>' +
         '<div id="td-body"></div></div>';
       if (window.OSAP_NEWSQ) window.OSAP_NEWSQ.mount(box.querySelector("#td-news"), CC, countryName()); else box.querySelector("#td-news").hidden = true;
       /* Seen it before? (assets/osap-seenit.js): check a photo from your feed against every news picture OSAP has read */
@@ -478,6 +478,8 @@
       if (window.OSAP_SPIKESQ) window.OSAP_SPIKESQ.mount(box.querySelector("#td-spike"), CC, countryName());
       /* Story coverage (assets/osap-coverage.js): which outlets carried each story, and the blindspots; its own box, like the summary */
       if (window.OSAP_COVERAGEQ) window.OSAP_COVERAGEQ.mount(box.querySelector("#td-cover"), CC, countryName());
+      /* Your sky (assets/osap-yoursky.js): the newest Sentinel-2 picture around you and the next passes; asks nothing until tapped */
+      if (window.OSAP_SKYQ) window.OSAP_SKYQ.mount(box.querySelector("#td-sky"), CC, countryName());
     }
     box.querySelector("#td-head").innerHTML = '<div class="tdtop"><img class="tdmark" src="assets/logo-cover.webp" alt="AXIOM OSAP" width="44" height="44"><div class="tdbrand"><b>Today</b><span class="tdsub">AXIOM OSAP · ' + esc(when(Date.now())) + "</span></div>" +
       (C.length ? '<label class="tdcc"><span class="tdvh">Country</span><select id="td-cc" aria-label="Country">' + C.map(function (c) {

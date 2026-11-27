@@ -75,6 +75,7 @@ tests/cf_match_smoke.mjs
 tests/cf_sensor_smoke.mjs
 # Check it from space and the Sensor picture button on Story coverage cards (assets/osap-space.js, rules space-v1)
 tests/space_smoke.mjs
+tests/yoursky_smoke.mjs
 tests/cf_layout_smoke.mjs
 tests/cf_history_range_smoke.mjs
 tests/cf_datasets_smoke.mjs
