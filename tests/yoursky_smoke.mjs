@@ -27,7 +27,9 @@ let fails = 0;
 function ok(c, m) { console.log((c ? "PASS " : "FAIL ") + m); if (!c) fails++; }
 
 const NOW = Date.now(), DAY = 864e5, H = (ms) => new Date(ms).toISOString().slice(0, 19) + "Z";
-const at = (d) => Math.floor((NOW + d * DAY) / DAY) * DAY + 3.9 * 36e5;   // 03:54Z on a day d days from now
+// d days from now, less an hour: whole-day ages ("5 days ago", "in about 2 days") whatever the time of day the test runs
+// (it once used 03:54Z on day d, which read "6 days ago" after midday UTC)
+const at = (d) => NOW + d * DAY - 36e5;
 const feat = (sat, t, cloud) => ({ id: "S2" + sat + "_47PPR_" + H(t).slice(0, 10).replace(/-/g, "") + "_0_L2A", properties: { platform: "sentinel-2" + sat.toLowerCase(), datetime: H(t), "eo:cloud_cover": cloud, "grid:code": "MGRS-47PPR" },
   assets: { visual: { href: "https://sentinel-cogs.example.org/47/P/PR/" + sat + H(t).slice(0, 10) + "/TCI.tif" } }, links: [{ rel: "self", href: "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/x" + sat }] });
 const ES = { type: "FeatureCollection", features: [feat("B", at(-2), 71.4), feat("C", at(-5), 12.1), feat("A", at(-8), 3), feat("C", at(-15), 9), feat("A", at(-18), 40)] };
