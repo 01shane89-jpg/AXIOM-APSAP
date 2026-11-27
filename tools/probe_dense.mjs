@@ -1,29 +1,13 @@
-// Probe 21 (27 Nov 2026): access and terms for Global Fishing Watch, OpenAIP, MITRE ATT&CK, EMM NewsBrief.
+// Probe 22 (27 Nov 2026): OpenAIP public data exports (airspace files) and EMM NewsBrief page.
 const { UA } = await import("./dense_lib.mjs");
-const U = [
-  "https://gateway.api.globalfishingwatch.org/v3/vessels/search?query=test&datasets[0]=public-global-vessel-identity:latest",
-  "https://globalfishingwatch.org/our-apis/documentation",
-  "https://globalfishingwatch.org/terms-of-use/",
-  "https://api.core.openaip.net/api/airspaces?country=PL&limit=1",
-  "https://www.openaip.net/terms",
-  "https://www.openaip.net/data/exports",
-  "https://docs.openaip.net/",
-  "https://emm.newsbrief.eu/rss/rss?type=rtn&language=en&duplicates=false",
-  "https://emm.newsbrief.eu/NewsBrief/clusteredition/en/latest.html",
-  "https://emm.newsbrief.eu/legal_notice.html",
-  "https://emm.newsbrief.eu/NewsBrief/disclaimer.html",
-];
-for (const u of U) {
-  try {
-    const r = await fetch(u, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(30000) });
-    const t = await r.text();
-    console.log("P ==", u, r.status, r.headers.get("content-type"), t.length);
-    const txt = t.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
-    for (const k of ["licen", "commercial", "token", "API key", "register", "reuse", "re-use", "copyright", "export", "storage.googleapis", "attribution"]) {
-      let i = -1, n = 0; while ((i = txt.toLowerCase().indexOf(k.toLowerCase(), i + 1)) >= 0 && n < 2) { console.log("P   ", k, "|", txt.slice(Math.max(0, i - 160), i + 200)); n++; i += 400; }
-    }
-    if (/rss|xml|json/.test(r.headers.get("content-type") || "")) console.log("P   HEAD", t.slice(0, 600).replace(/\s+/g, " "));
-    const links = [...t.matchAll(/href="([^"]*(export|storage|download|\.json|\.geojson|rss)[^"]*)"/gi)].map((m) => m[1]).slice(0, 12);
-    if (links.length) console.log("P   LINKS", links.join(" "));
-  } catch (e) { console.log("P ==", u, "ERR", e.message); }
-}
+const get = async (u) => { const r = await fetch(u, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(60000) }); return [r.status, r.headers.get("content-type"), await r.text()]; };
+let [s, ct, t] = await get("https://www.openaip.net/data/exports");
+const links = [...t.matchAll(/href="(https:\/\/s3\.openaip\.net\/[^"]+)"/g)].map((m) => m[1].replace(/&amp;/g, "&"));
+console.log("P exports", s, links.length, "links; names:", links.map((l) => l.split("?")[0].split("/").pop()).slice(0, 60).join(" "));
+console.log("P pager", [...t.matchAll(/href="([^"]*(page|offset|search|filter)[^"]*)"/gi)].map((m) => m[1]).slice(0, 10).join(" "));
+const nx = t.match(/__NEXT_DATA__[^>]*>([\s\S]{0,1500})/); if (nx) console.log("P next", nx[1].slice(0, 1500));
+for (const q of ["?search=pl_asp", "?q=pl_asp", "?page=2", "?type=airspace"]) { const [s2, , t2] = await get("https://www.openaip.net/data/exports" + q); console.log("P", q, s2, [...t2.matchAll(/openaip-system-exports\/([^"?]+)/g)].map((m) => m[1]).slice(0, 15).join(" ")); }
+const asp = links.find((l) => /_asp\.geojson/.test(l));
+if (asp) { const [s3, ct3, t3] = await get(asp); console.log("P asp", asp.split("?")[0], s3, ct3, t3.length, t3.slice(0, 700).replace(/\s+/g, " ")); }
+[s, ct, t] = await get("https://emm.newsbrief.eu/NewsBrief/clusteredition/en/latest.html");
+console.log("P emm", s, t.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 900));
