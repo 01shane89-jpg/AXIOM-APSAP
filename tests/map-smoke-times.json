@@ -183,5 +183,6 @@
 "tests/boolq_smoke.mjs": 10,
 "tests/grade_smoke.mjs": 21,
 "tests/neighbour_redraw_smoke.mjs": 145,
-"tests/vbase_sync_smoke.mjs": 25
+"tests/vbase_sync_smoke.mjs": 25,
+"tests/airspace_smoke.mjs": 40
 }
