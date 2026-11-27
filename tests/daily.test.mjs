@@ -55,6 +55,17 @@ t("lifted warnings are not counted; the advisory is a government statement with 
   const a = d.watch.find((x) => x.from === "advisory"); assert.match(a.text, /Level 3/); assert.match(a.text, /government statement/);
   assert.equal(d.refs[a.refs[0] - 1].url, "https://travel.state.gov/x");
 });
+t("on a busy day the events fill their 30 sources, and the warning and advisory keep their own links", () => {
+  const heads = ["Bomb kills three soldiers in Pattani market", "Floods force evacuation of Yala villages", "Police arrest drug smugglers on Mekong river",
+    "Earthquake shakes Chiang Rai province", "Gunmen attack checkpoint near Narathiwat", "Navy seizes fuel tanker off Songkhla", "Wildfire spreads across Tak forest"], items = [];
+  heads.forEach((h, k) => { for (let j = 0; j < 7; j++) items.push(row(h, `Outlet ${k}-${j}`, `https://n/${k}/${j}`)); });
+  const b = buildRules({ ...inp, items }, R);
+  assert.equal(b.refs.filter((r) => r.via !== "warning" && r.via !== "advisory").length, 30, "the events alone fill the 30 sources");
+  const w = b.watch.find((x) => x.from === "warning"), a = b.watch.find((x) => x.from === "advisory");
+  assert.equal(b.refs[w.refs[0] - 1].url, "https://met/1");
+  assert.equal(a.refs.length, 1); assert.equal(b.refs[a.refs[0] - 1].url, "https://travel.state.gov/x");
+  assert.equal(new Set(b.refs.map((r) => r.url)).size, b.refs.length);
+});
 t("a quiet country widens to 72 hours and says so", () => {
   const q = buildRules({ cc: "yy", name: "Quietland", end, items: [row("Protest in capital", "X", "https://x/1", "2026-09-26T08:00")] }, R);
   assert.equal(q.window.hours, 72); assert.ok(q.gaps.some((g) => /72 hours/.test(g)));
