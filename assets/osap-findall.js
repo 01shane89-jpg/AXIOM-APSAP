@@ -40,9 +40,11 @@
     wxbrief: "weather brief,forecast brief,weather report", compass: "bearing,heading,north,azimuth,direction", photo: "photo,picture,image,geolocate",
         lz: "landing zone,helicopter,hlz,lz,lz finder,find lz", satba: "satellite imagery,before and after,change detection,sentinel",
     areareport: "area report,print area", watch: "alert me,notify,monitor,geofence,notification",
+    yoursky: "my sky,satellite over me,satellite picture of my house,overhead,next satellite,sentinel,when is the next satellite",
     point: "pin,marker,waypoint,drop a point,mark", overlays: "layers,map layers,flooding,roads,aircraft",
     basemap: "background,satellite,streets,topographic,topo,imagery", weather: "rain,radar,wind,forecast,storm,cyclone",
     datasets: "topics,data,reporting", mine: "my work,saved,what's new", layout: "split,list", full: "fullscreen,full screen",
+    seenit: "seen,before,old photo,fake photo,recycled,reused,picture,image,viral,reverse image,check a photo,ai photo,content credentials",
     today: "home,start,dashboard", photocheck: "photo,video,image,picture,verify,geolocate,exif,chronolocate,shadow,sun,reverse image",
     reports: "brief,report,print,pdf", analyst: "entities,links",
     /* data sets */
@@ -92,6 +94,8 @@
       if (!t || !t.id || !t.label || t.id === "med") return;
       out.push({ k: "area", grp: "Tools", id: t.id, name: t.id === "lz" ? "LZ finder (landing zones)" : t.label, sub: "Area menu", words: syn(t.id), el: ab, need: ab.getAttribute("data-tier-need") || tier("tool", "area") });
     });
+    if (W.OSAP_SKYQ && W.OSAP_TODAY && W.OSAP_TODAY.show) out.push({ k: "fn", grp: "Tools", id: "yoursky", name: "Your sky", sub: "The newest satellite picture around you and when the next one is due", words: syn("yoursky"), run: function () {
+      W.OSAP_TODAY.show(); setTimeout(function () { var b = document.getElementById("td-sky"); if (b && b.scrollIntoView) b.scrollIntoView({ block: "start", behavior: "smooth" }); }, 200); } });
     /* the toolbar's Plans and View drop-downs (2026-11-01): Flight plan, Hospital assessment, Sea transit, Terrain analysis,
        Compass and the rest, each found by name; a tool already listed above (Med plan, the Area menu's LZ) is not repeated */
     var have = {}; out.forEach(function (x) { if (x.id) have[x.id] = 1; });
@@ -105,6 +109,7 @@
       if (names[String(r.name).toLowerCase()]) return;
       out.push({ k: "fn", grp: "Tools", id: "rep-" + r.id, name: r.name, sub: "Report" + (r.ready ? "" : " · " + r.hint), words: ["report"].concat(syn("rep-" + r.id)), run: function () { W.OSAP_REPORTS.run(r.id); }, weak: true });
     });
+    if (W.OSAP_SEENIT && W.OSAP_SEENIT.open) out.push({ k: "fn", grp: "Tools", id: "seenit", name: "Seen it before?", sub: "Has this photo run in the news before? Checked on this device", words: syn("seenit"), run: function () { W.OSAP_SEENIT.open(); } });
     if (W.OSAP_PHOTOCHECK && W.OSAP_PHOTOCHECK.open) out.push({ k: "fn", grp: "Tools", id: "photocheck", name: "Photo check", sub: "Where and when a photo or video was taken, on this device", words: syn("photocheck"), run: function () { W.OSAP_PHOTOCHECK.open(); } });
     return out;
   }

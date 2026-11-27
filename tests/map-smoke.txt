@@ -75,6 +75,7 @@ tests/cf_match_smoke.mjs
 tests/cf_sensor_smoke.mjs
 # Check it from space and the Sensor picture button on Story coverage cards (assets/osap-space.js, rules space-v1)
 tests/space_smoke.mjs
+tests/yoursky_smoke.mjs
 tests/cf_layout_smoke.mjs
 tests/cf_history_range_smoke.mjs
 tests/cf_datasets_smoke.mjs
@@ -103,6 +104,7 @@ tests/trail_smoke.mjs
 tests/trailmap_smoke.mjs
 # Claim ledger: a disputed story followed for up to 30 days, from Go deeper and Story coverage (assets/osap-ledger.js)
 tests/ledger_smoke.mjs
+tests/gap_smoke.mjs
 # Same story in other languages: AI proposals beside a claim ledger, never counted in it (assets/osap-ledger.js, data/live/ledger-x)
 tests/xlang_smoke.mjs
 tests/spikes_smoke.mjs
@@ -308,3 +310,5 @@ tests/daily_ground_smoke.mjs
 tests/split_map_full_smoke.mjs
 tests/brief_report_smoke.mjs
 tests/health_ops_smoke.mjs
+# Seen it before? (assets/osap-seenit.js): a photo checked against a made-up news picture archive, on Today, Photo check and a phone
+tests/seenit_smoke.mjs
