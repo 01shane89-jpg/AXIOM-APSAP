@@ -22,11 +22,11 @@ export function isPerson(name, about = "") {
 // a name is shown only when the name itself is plainly an organisation or a government. A description does not count: lda.gov
 // probe 27 Nov had people described as an owner of "a company" or lobbying about "the Government of Thailand". A name that
 // carries a person inside it ("X f/b/o Y", "c/o", "on behalf of") stays unnamed even when the rest is an organisation.
-export function shown(name, about = "") {
+export function shown(name, about = "", other = "a client") {
   const n = String(name || "").trim();
   if (!n || isPerson(n, about)) return "an individual (name not shown)";
-  if (/\b(f\/b\/o|c\/o|fbo|on behalf of|for the benefit of)\b/i.test(n)) return "a client (name not shown)";
-  return ORG.test(n) || GOVT.test(n) ? n : "a client (name not shown)";
+  if (/\b(f\/b\/o|c\/o|fbo|on behalf of|for the benefit of)\b/i.test(n)) return other + " (name not shown)";
+  return ORG.test(n) || GOVT.test(n) ? n : other + " (name not shown)";
 }
 const title = (s) => String(s || "").toLowerCase().replace(/\b([a-z])/g, (m) => m.toUpperCase());
 
@@ -42,7 +42,7 @@ export function faraItems(regs, principals, docs) {
     const fpText = named.map((p) => p.FP_NAME.trim() + (p.COUNTRY_NAME ? " (" + title(p.COUNTRY_NAME) + ")" : ""));
     if (people) fpText.push(people === 1 ? "one principal whose name is not shown" : people + " principals whose names are not shown");
     return {
-      title: "Foreign agent registration (FARA): " + shown(r.Name) + (fpText.length ? " for " + fpText[0] + (fpText.length > 1 ? " and " + (fpText.length - 1) + " more" : "") : ""),
+      title: "Foreign agent registration (FARA): " + shown(r.Name, "", "a registrant") + (fpText.length ? " for " + fpText[0] + (fpText.length > 1 ? " and " + (fpText.length - 1) + " more" : "") : ""),
       detail: "Registered with the U.S. Justice Department under the Foreign Agents Registration Act on " + (date || "an unstated date") + ", registration " + r.Registration_Number + ". "
         + (fpText.length ? "Foreign principal" + (fpText.length > 1 ? "s" : "") + ": " + fpText.join("; ") + ". " : "No foreign principal listed yet. ")
         + "A registration says who works for a foreign principal; it is not a finding of wrongdoing.",
@@ -67,7 +67,7 @@ export function ldaItems(filings) {
     const what = /name not shown/.test(client) ? "" : ((f.lobbying_activities || []).find((a) => a.description) || {}).description || "";
     const money = f.income ? "income $" + Math.round(+f.income).toLocaleString("en-US") : f.expenses ? "expenses $" + Math.round(+f.expenses).toLocaleString("en-US") : "";
     out.push({
-      title: "Lobbying filing with a foreign link: " + shown(f.registrant.name, f.registrant.description || "") + " for " + client,
+      title: "Lobbying filing with a foreign link: " + shown(f.registrant.name, f.registrant.description || "", "a registrant") + " for " + client,
       detail: (f.filing_type_display || "Filing") + " under the Lobbying Disclosure Act, posted " + String(f.dt_posted || "").slice(0, 10) + ". "
         + (clientAbroad ? "Client based in " + (f.client.country_display || f.client.country) + ". " : "")
         + (fe.length ? "Foreign entit" + (fe.length > 1 ? "ies" : "y") + ": " + fe.slice(0, 4).map((e) => (/name not shown/.test(shown(e.name)) ? "an entity (name not shown)" : String(e.name).trim()) + " (" + (e.country_display || e.country) + (+e.ownership_percentage ? ", " + +e.ownership_percentage + "% owner" : "") + ")").join("; ") + ". " : "")
@@ -86,15 +86,18 @@ run("fara-new", async (g) => {
   const R = ((await g("https://efile.fara.gov/api/v1/Registrants/json/Active", "json", { timeout: 60000 })).REGISTRANTS_ACTIVE || {}).ROW || [];
   const cut = Date.now() - 60 * 864e5;
   const recent = R.filter((r) => { const [m, d, y] = String(r.Registration_Date || "").split("/"); return Date.parse(y + "-" + m + "-" + d) >= cut; }).slice(0, 40);
-  const principals = {}, docs = {};
+  // the FARA API allows 5 requests in 10 seconds (probe 27 Nov: 400 ms spacing lost most principal lists), so calls are 2.2 s apart
+  const principals = {}, docs = {}, rows = (j) => { const row = (j.ROWSET || {}).ROW; return Array.isArray(row) ? row : row ? [row] : []; };
+  let missed = 0;
   for (const r of recent) {
     const n = r.Registration_Number;
-    try { const j = await g("https://efile.fara.gov/api/v1/ForeignPrincipals/json/Active/" + n, "json", { timeout: 30000 }); const row = (j.ROWSET || {}).ROW; principals[n] = Array.isArray(row) ? row : row ? [row] : []; } catch (e) {}
-    try { const j = await g("https://efile.fara.gov/api/v1/RegDocs/json/" + n, "json", { timeout: 30000 }); const row = (j.ROWSET || {}).ROW; docs[n] = Array.isArray(row) ? row : row ? [row] : []; } catch (e) {}
-    await sleep(400);
+    try { principals[n] = rows(await g("https://efile.fara.gov/api/v1/ForeignPrincipals/json/Active/" + n, "json", { timeout: 30000 })); } catch (e) { missed++; }
+    await sleep(2200);
+    try { docs[n] = rows(await g("https://efile.fara.gov/api/v1/RegDocs/json/" + n, "json", { timeout: 30000 })); } catch (e) { missed++; }
+    await sleep(2200);
   }
   const items = faraItems(recent, principals, docs);
-  return { items, note: R.length + " active registrants; " + items.length + " registered in the last 60 days" };
+  return { items, note: R.length + " active registrants; " + items.length + " registered in the last 60 days" + (missed ? "; " + missed + " principal or document lookups failed" : "") };
 });
 
 feed("lda-foreign", { name: "Lobbying filings with a foreign link (U.S. Lobbying Disclosure Act)", org: "U.S. Senate Office of Public Records and House Clerk (lda.gov)", cat: "Politics",
