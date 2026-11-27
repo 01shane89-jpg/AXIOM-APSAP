@@ -91,6 +91,8 @@ jobs:
       - run: node tests/dense_trade.test.mjs
       # public records around Army ammunition plants (tools/dense_records.mjs): USAspending, SAM.gov extract, ECHO, Federal Register, CourtListener
       - run: node tests/dense_records.test.mjs
+      # Google Fact Check feed (tools/dense_factcheck.mjs): off without a key, the outlet's rating only, claimant never named
+      - run: node tests/dense_factcheck.test.mjs
       - run: node tests/uk_sanctions.test.mjs
       # open-licence full text for the in-app reader (tools/fulltext_lib.mjs): which addresses, safe text, no script
       - run: node tests/fulltext.test.mjs
