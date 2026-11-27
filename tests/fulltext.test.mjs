@@ -1,7 +1,7 @@
 // Open-licence full text (tools/fulltext_lib.mjs): which addresses may be read, how a page becomes text, and that nothing
 // from the page can run or leak through. Run: node tests/fulltext.test.mjs
 import assert from "node:assert/strict";
-import { RULES, ruleFor, shardOf, fnv, decode, blocks, extract, innerAt, shardJs, SHARDS } from "../tools/fulltext_lib.mjs";
+import { RULES, ruleFor, shardOf, fnv, decode, blocks, extract, innerAt, shardJs, SHARDS, API_PREFIXES } from "../tools/fulltext_lib.mjs";
 let n = 0; const t = (name, f) => { f(); n++; console.log("ok " + name); };
 
 t("only listed publishers' article addresses, https, no credentials or odd ports", () => {
@@ -63,5 +63,27 @@ t("shard files cannot close the script tag or break on line separators", () => {
   const js = shardJs("0a", { u: { blocks: [{ k: "p", s: ["</script><script>alert(1)</script> x"] }] } });
   assert.ok(!js.includes("</script>")); assert.ok(!js.includes(" "));
   const w = {}; new Function("window", js)(w); assert.equal(w.OSAP_FT["0a"].u.blocks[0].s[0], "</script><script>alert(1)</script> x");
+});
+t("White House statements and remarks, and UK written ministerial statements through Parliament's API", () => {
+  assert.equal(ruleFor("https://www.whitehouse.gov/briefings-statements/2026/11/congressional-bills-h-r-1550-signed-into-law/").id, "whitehouse");
+  assert.equal(ruleFor("https://www.whitehouse.gov/remarks/2026/10/remarks-by-director-michael-kratsios-at-the-summit/").id, "whitehouse");
+  for (const u of ["https://www.whitehouse.gov/", "https://www.whitehouse.gov/briefings-statements/", "https://www.whitehouse.gov/copyright/", "http://www.whitehouse.gov/remarks/2026/10/x/",
+    "https://questions-statements.parliament.uk/written-questions/detail/2026-11-26/HL123", "https://questions-statements.parliament.uk/written-statements/detail/2026-11-26/../x"]) assert.equal(ruleFor(u), null, u);
+  const uk = ruleFor("https://questions-statements.parliament.uk/written-statements/detail/2026-11-26/hlws519");
+  assert.equal(uk.id, "ukparl-statements");
+  assert.equal(uk.api("https://questions-statements.parliament.uk/written-statements/detail/2026-11-26/hlws519"), "https://questions-statements-api.parliament.uk/api/writtenstatements/statements/2026-11-26/HLWS519?expandMember=true");
+  const text = "<p>My Honourable Friend the Minister has today made the following statement:</p><p>" + "Local government is at the heart of this Government's ambition. ".repeat(6) + "</p><script>alert(1)</script>";
+  const e = extract(uk, JSON.stringify({ value: { title: "Local Government Finance", text, dateMade: "2026-11-26T00:00:00", house: "Lords", memberRole: "Minister for Housing and Local Government",
+    member: { name: "Baroness Taylor of Stevenage" }, answeringBodyName: "Ministry of Housing, Communities and Local Government" } }), "https://questions-statements.parliament.uk/written-statements/detail/2026-11-26/HLWS519");
+  assert.equal(e.title, "Local Government Finance"); assert.equal(e.pub, "2026-11-26");
+  assert.deepEqual(e.by, [{ n: "Baroness Taylor of Stevenage", r: "Minister for Housing and Local Government" }, { n: "Ministry of Housing, Communities and Local Government", r: "House of Lords" }]);
+  assert.equal(e.blocks.length, 2); assert.ok(!JSON.stringify(e).includes("alert"));
+  assert.equal(extract(uk, "<html>Just a moment...</html>", "x").why, "not an API answer");
+  const wh = '<html><head><meta property="og:title" content="Congressional Bills Signed into Law"><meta property="article:published_time" content="2026-11-25T12:01:00+00:00"></head><body><nav><p>Menu</p></nav>' +
+    '<div class="entry-content wp-block-post-content has-global-padding"><div class="wp-block-whitehouse-topper"><h1 class="x">Congressional Bills Signed into Law</h1></div><p>' + "On Tuesday, the President signed into law the following bills. ".repeat(5) + '</p><figure><img src="a.jpg"><figcaption>Official photo</figcaption></figure></div><footer><p>Footer</p></footer></body></html>';
+  const w = extract(ruleFor("https://www.whitehouse.gov/briefings-statements/2026/11/bills/"), wh, "https://www.whitehouse.gov/briefings-statements/2026/11/bills/");
+  assert.equal(w.title, "Congressional Bills Signed into Law"); assert.equal(w.pub, "2026-11-25T12:01:00+00:00"); assert.deepEqual(w.by, [{ n: "The White House", r: "" }]);
+  assert.deepEqual(w.blocks.map((b) => b.k), ["h", "p"]); assert.ok(!/Menu|Footer|Official photo/.test(JSON.stringify(w)));
+  assert.ok(API_PREFIXES.every((p) => /^https:\/\/[^/]+\/api\//.test(p)));
 });
 console.log(`${n} fulltext checks passed`);

@@ -6,7 +6,7 @@
 // Entries no item links any more are dropped after KEEP_DAYS. Run: node tools/refresh_fulltext.mjs   (FT_MAX=n to change the cap)
 import fs from "node:fs";
 import { createHash } from "node:crypto";
-import { RULES, ruleFor, shardOf, extract, shardJs, EXTRACTOR, SHARDS } from "./fulltext_lib.mjs";
+import { RULES, ruleFor, shardOf, extract, shardJs, EXTRACTOR, SHARDS, API_PREFIXES } from "./fulltext_lib.mjs";
 
 const DIR = process.env.FT_DIR || "data/live/fulltext";
 const MAX_NEW = +(process.env.FT_MAX || 60), KEEP_DAYS = 30, MISS_DAYS = 2, MAX_BYTES = 3 * 1024 * 1024, UA = "AXIOM-OSAP open-licence reader (+https://osap.axiom-intelligence-systems.com)";
@@ -40,7 +40,7 @@ async function read(url) {
     const r = await fetch(url, { signal: ctl.signal, redirect: "follow", headers: { "user-agent": UA, accept: "text/html,application/json" } });
     if (!r.ok || !r.body) return { why: "HTTP " + r.status };
     // a redirect off the publisher's site is not that publisher's text
-    if (r.url && ruleFor(r.url) == null && !/^https:\/\/www\.gov\.uk\/api\/content\//.test(r.url)) return { why: "moved off the publisher's site" };
+    if (r.url && ruleFor(r.url) == null && !API_PREFIXES.some((p) => r.url.startsWith(p))) return { why: "moved off the publisher's site" };
     const rd = r.body.getReader(), parts = []; let n = 0;
     while (true) { const { done, value } = await rd.read(); if (done) break; n += value.length; if (n > MAX_BYTES) { try { await rd.cancel(); } catch (e) {} return { why: "page too large" }; } parts.push(value); }
     const buf = Buffer.concat(parts);

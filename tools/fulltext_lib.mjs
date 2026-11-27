@@ -30,8 +30,27 @@ export const RULES = [
     nd: false, path: /^\/(foreign-travel-advice\/[a-z-]+|government\/(news|speeches)\/[a-z0-9-]+)\/?$/i, refetchDays: 3,
     // GOV.UK's own Content API gives the whole guide (every part of a travel advice page) as published, under the same licence
     api: (u) => "https://www.gov.uk/api/content" + new URL(u).pathname.replace(/\/$/, ""), apiName: "GOV.UK Content API"
-  }
+  },
+  {
+    id: "whitehouse", hosts: ["whitehouse.gov"], name: "The White House",
+    lic: "U.S. Government work (public domain)", licUrl: "https://www.whitehouse.gov/copyright/",
+    terms: "https://www.whitehouse.gov/copyright/",
+    note: "Works of the U.S. Government are not copyright protected (whitehouse.gov copyright notice); third-party material on the site is under Creative Commons Attribution 3.0. Statements and remarks are the White House's own words, read as published. Images are left out.",
+    nd: false, path: /^\/(briefings-statements|remarks)\/\d{4}\/\d{2}\/[a-z0-9-]+\/?$/i, refetchDays: 0
+  },
+  {
+    id: "ukparl-statements", hosts: ["questions-statements.parliament.uk"], name: "UK Parliament written statements",
+    lic: "Open Parliament Licence v3.0", licUrl: "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/",
+    terms: "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/",
+    note: "Contains Parliamentary information licensed under the Open Parliament Licence v3.0. A written ministerial statement is the UK Government's own account, made to Parliament.",
+    nd: false, path: /^\/written-statements\/detail\/\d{4}-\d{2}-\d{2}\/[A-Z]{2,6}\d{1,6}\/?$/i, refetchDays: 0,
+    api: (u) => { const m = new URL(u).pathname.match(/^\/written-statements\/detail\/(\d{4}-\d{2}-\d{2})\/([A-Z]{2,6}\d{1,6})/i); return "https://questions-statements-api.parliament.uk/api/writtenstatements/statements/" + m[1] + "/" + m[2].toUpperCase() + "?expandMember=true"; },
+    apiName: "UK Parliament Written questions, answers and statements API"
+  },
 ];
+
+// where a rule's API answers from: a read that lands there has not moved off the publisher
+export const API_PREFIXES = ["https://www.gov.uk/api/content/", "https://questions-statements-api.parliament.uk/api/writtenstatements/statements/"];
 
 export function ruleFor(url) {
   let u; try { u = new URL(String(url)); } catch (e) { return null; }
@@ -139,6 +158,18 @@ export function extract(rule, html, url) {
     orgs.slice(0, 3).forEach((o) => { if (o && o.title) by.push({ n: clean(o.title), r: "" }); });
     pub = d.first_published_at || ""; mod = d.public_updated_at || "";
     return finish(clean(d.title || ""), by, pub, mod, body, url, de.change_description ? clean(de.change_description) : "");
+  } else if (rule.id === "whitehouse") {
+    const at = html.search(/<div[^>]+class=["'][^"']*\bentry-content\b/i);
+    body = at >= 0 ? innerAt(html, at) : "";
+    by.push({ n: "The White House", r: "" });
+    pub = meta(html, "article:published_time"); mod = meta(html, "article:modified_time");
+  } else if (rule.id === "ukparl-statements") {
+    // the API answer (JSON): the statement's own text, the minister who made it and the department
+    let d = null; try { d = JSON.parse(html); } catch (e) { return { why: "not an API answer" }; }
+    const v = (d && d.value) || d || {};
+    if (v.member && v.member.name) by.push({ n: clean(v.member.name), r: clean(v.memberRole || "") });
+    if (v.answeringBodyName) by.push({ n: clean(v.answeringBodyName), r: v.house ? "House of " + clean(v.house) : "" });
+    return finish(clean(v.title || ""), by, String(v.dateMade || "").slice(0, 10), "", typeof v.text === "string" ? v.text : "", url, "");
   }
   return finish(title, by, pub, mod, body, url, "");
 }
