@@ -75,6 +75,13 @@ try {
   const t = fs.readFileSync("data/live/x/us.js", "utf8"), k = 'OSAP_XC["us"]=', x = JSON.parse(t.slice(t.indexOf(k) + k.length).trim().replace(/;\s*$/, ""));
   for (const r of congressRows(x.items)) { add(r, ["us"]); cn++; }
 } catch (e) { console.error("Congress votes unreadable:", e.message); }
+// and the major steps of every bill in recent days (tools/refresh_congress.mjs, data/live/congress/<congress>/recent.json):
+// reported, passed a chamber by voice or consent, sent to the President, became law, vetoed. Outlet: the Library of Congress.
+try {
+  const cd = fs.readdirSync("data/live/congress").filter((d) => /^\d+$/.test(d)).sort((a, b) => b - a)[0];
+  const r = cd ? JSON.parse(fs.readFileSync("data/live/congress/" + cd + "/recent.json", "utf8")) : { rows: [] };
+  for (const x of r.rows || []) { add(x, ["us"]); cn++; }
+} catch (e) { console.error("bill steps unreadable:", e.message); }
 
 const clip = (s, n) => { s = String(s || "").replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; };
 const count = {}, left = new Set();   // left: links this run's relevance check left out
@@ -149,6 +156,6 @@ const out = { asof: stamp, days: days.map((d) => ({ d, n: byDay[d].length })), f
   relevance: { kept: (relN.strong || 0) + (relN.keep || 0) + (relN.unchecked || 0), left_out: (relN.drop || 0) + (relN.none || 0) } };
 fs.writeFileSync(OUT, "window.OSAP_NEWSIX=" + JSON.stringify(out).replace(/<\//g, "<\\/") + ";\n");
 const total = days.reduce((s, d) => s + fs.statSync(DIR + "/" + d + ".js").size, 0);
-console.log(`news index: ${rows.length} headlines from ${files} country histories, ${tn} data-set search results and ${cn} Congress floor votes, ${days.length} days, ` + (total / 1e6).toFixed(1) + " MB");
+console.log(`news index: ${rows.length} headlines from ${files} country histories, ${tn} data-set search results and ${cn} Congress floor votes and bill steps, ${days.length} days, ` + (total / 1e6).toFixed(1) + " MB");
 console.log("per data set:", out.topics.map((t) => t.id + " " + t.n).join(", "));
 console.log("per tab:", out.views.map((v) => v.id + " " + v.n).join(", "));
