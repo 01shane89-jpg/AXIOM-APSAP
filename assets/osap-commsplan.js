@@ -1014,10 +1014,21 @@
       var n = 0; (function wait() { if (W.OSAP_COMMSTAB && W.OSAP_COMMSTAB.evaluate && W.OSAP_RADIO) res(); else if (++n > 400) rej(new Error("The coverage check did not load")); else setTimeout(wait, 50); })();
     });
   }
+  /* IODA feed age: the job runs every 15 minutes; past IODA_STALE the feed has stopped (IODA unreachable on 2026-11-26/27 for over
+     a day), so "no signal" would only mean "no reading" and is never shown as a green all-clear */
+  var IODA_STALE = 6 * 60;
+  function iodaAge(I) {
+    var t = Date.parse(String((I && I.asof) || "").replace(" ", "T"));
+    if (!isFinite(t)) return null;
+    var m = Math.max(0, Math.round((Date.now() - t) / 6e4));
+    return { min: m, stale: m > IODA_STALE, txt: m < 2880 ? Math.round(m / 60) + " h" : Math.round(m / 1440) + " days" };
+  }
   function ioda(cc) {
-    var I = W.ASAP_IODA, o = I && I.items && cc ? I.items[cc === "oki" ? "jp" : cc] : null;
+    var I = W.ASAP_IODA, o = I && I.items && cc ? I.items[cc === "oki" ? "jp" : cc] : null, a = iodaAge(I);
     if (!I || !cc) return null;
-    return { kind: "reported", label: o ? "IODA: " + o.events + " internet outage signal" + (o.events === 1 ? "" : "s") + " in the country since " + (I.from || "the last week") : "IODA: no internet outage signal in the country since " + (I.from || "the last week"), time: I.asof || "", events: o ? o.events : 0 };
+    var label = o ? "IODA: " + o.events + " internet outage signal" + (o.events === 1 ? "" : "s") + " in the country since " + (I.from || "the last week") : "IODA: no internet outage signal in the country since " + (I.from || "the last week");
+    if (a && a.stale) label = (o ? label : "IODA: no reading") + " up to " + (I.asof || "?") + "; the feed is " + a.txt + " old, so nothing after that is known";
+    return { kind: "reported", label: label, time: I.asof || "", events: o ? o.events : 0, stale: !!(a && a.stale) };
   }
   function corridor(segments, opts) {
     opts = opts || {};
@@ -1368,12 +1379,14 @@
   /* ---------- Networks: internet outage signals for the country (IODA, loaded at start as window.ASAP_IODA) ---------- */
   var SRC = { bgp: "Routing (BGP)", "ping-slash24": "Active probing", "merit-nt": "Telescope traffic", gtr: "Google traffic" };
   function renderNetworks() {
-    var el = pane(), I = W.ASAP_IODA, cc = S.ctx.cc, o = I && I.items ? I.items[cc === "oki" ? "jp" : cc] : null, name = S.ctx.name || "";
+    var el = pane(), I = W.ASAP_IODA, cc = S.ctx.cc, o = I && I.items ? I.items[cc === "oki" ? "jp" : cc] : null, name = S.ctx.name || "", a = iodaAge(I);
     var h = '<div class="sec cpsec"><h3>Internet outages <span class="cptag">REPORTED</span></h3>';
     if (!I) h += '<p class="cpres" style="border-left:5px solid #6c757d"><b>UNKNOWN</b>: the outage feed has not loaded, so OSAP cannot say whether ' + E(name) + " has an outage.</p>";
+    else if (a && a.stale && !o) h += '<p class="cpres" data-cpstale="1" style="border-left:5px solid #e67700"><b>OUT OF DATE</b>: the outage feed last updated ' + E(I.asof || "?") + " (" + E(a.txt) + " ago). It had no signal for " + E(name) + " before then, but OSAP has no reading since, so it cannot say whether " + E(name) + " has an outage now.</p>";
     else if (!o) h += '<p class="cpres" style="border-left:5px solid #2b8a3e">No IODA outage signal for ' + E(name) + " since " + E(I.from || "the last week") + " (as of " + E(I.asof || "?") + "). No signal is not proof that every network works.</p>";
     else {
       h += '<p class="cpres" style="border-left:5px solid #c92a2a"><b>' + o.events + " outage signal" + (o.events === 1 ? "" : "s") + "</b> for " + E(name) + " since " + E(I.from || "") + " (as of " + E(I.asof || "?") + ").</p>" +
+        (a && a.stale ? '<p class="cpres" data-cpstale="1" style="border-left:5px solid #e67700"><b>OUT OF DATE</b>: the feed is ' + E(a.txt) + " old. Outages after " + E(I.asof || "?") + " are not shown.</p>" : "") +
         '<table class="rttab"><thead><tr><th>Started (UTC)</th><th>Lasted</th><th>Seen by</th><th>Area</th></tr></thead><tbody>' +
         (o.list || []).slice(-12).reverse().map(function (x) { var m = num(x.minutes, 0); return "<tr><td>" + E(String(x.start || "").replace("T", " ")) + "Z</td><td>" + (m >= 120 ? f(m / 60, 1) + " h" : f(m, 0) + " min") + "</td><td>" + E(SRC[x.source] || x.source) + "</td><td>" + E(x.region) + "</td></tr>"; }).join("") + "</tbody></table>";
     }

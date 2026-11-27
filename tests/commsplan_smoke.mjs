@@ -208,6 +208,26 @@ const pane = (p) => p.textContent("#cp-pane");
   const nt = await pane(p);
   ok(/Internet outages/.test(nt) && /REPORTED/.test(nt) && /IODA/.test(nt), "Networks: internet outages shown as a reported source");
   ok(await p.evaluate(() => document.querySelector("#com-ops").getClientRects().length > 0 && document.querySelector("#com-tg").getClientRects().length > 0), "Networks: mast and provider switches are here");
+  // a stopped outage feed (IODA unreachable 26-27 Nov 2026 for over a day) is never shown as a green "no signal"
+  const iodaCase = async (asofMin, withSignal) => {
+    await p.evaluate(([m, sig]) => {
+      if (!("__iodaReal" in window)) window.__iodaReal = window.ASAP_IODA;
+      const d = new Date(Date.now() - m * 60000), asof = d.toISOString().slice(0, 10) + " " + d.toISOString().slice(11, 16) + "Z";
+      const row = { score: 5, scores: {}, events: 1, list: [{ start: d.toISOString().slice(0, 16), minutes: 30, score: 5, source: "bgp", region: "X" }] };
+      window.ASAP_IODA = { asof, from: "2026-11-19", items: sig ? new Proxy({}, { get: () => row }) : {} };
+    }, [asofMin, withSignal]);
+    await tab(p, "coverage"); await tab(p, "networks");
+    return { text: await pane(p), stale: await p.evaluate(() => !!document.querySelector("#cp-pane [data-cpstale]")), green: await p.evaluate(() => /#2b8a3e|rgb\(43, 138, 62\)/.test(document.querySelector("#cp-pane .cpres").getAttribute("style"))) };
+  };
+  let ic = await iodaCase(27 * 60, false);
+  ok(ic.stale && !ic.green && /OUT OF DATE/.test(ic.text) && /cannot say/.test(ic.text) && !/No IODA outage signal/.test(ic.text), "Networks: a day-old outage feed with no signal says out of date, not green");
+  ic = await iodaCase(20, false);
+  ok(!ic.stale && ic.green && /No IODA outage signal/.test(ic.text), "Networks: a fresh feed with no signal stays green");
+  ic = await iodaCase(27 * 60, true);
+  ok(ic.stale && /1 outage signal/.test(ic.text) && /are not shown/.test(ic.text), "Networks: a day-old feed with signals lists them and says later ones are not shown");
+  const lab = await p.evaluate(async () => { window.ASAP_IODA.items = {}; const r = await window.OSAP_COMMSPLAN.corridor([{ id: "z", coords: [[13.75, 100.5], [13.76, 100.5]], km_from: 0, km_to: 1 }], { cc: "th" }); return (r[0].sources.find((s) => s.kind === "reported") || {}).label || ""; });
+  ok(/no reading up to/.test(lab) && /old, so nothing after that is known/.test(lab), "corridor API: a stopped outage feed is labelled as no reading, with its age: " + lab);
+  await p.evaluate(() => { window.ASAP_IODA = window.__iodaReal; delete window.__iodaReal; });
 
   // route comms corridor (Coverage)
   await tab(p, "coverage");
