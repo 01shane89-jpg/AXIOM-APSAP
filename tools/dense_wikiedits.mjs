@@ -1,6 +1,6 @@
 // Wikipedia edit surges on country articles, registered into the dense open-data run. Added 27 Nov 2026 from the OSINT
 // Framework comparison. For each country's English Wikipedia article, the MediaWiki API's revision timestamps over the last 31
-// days give edits per UTC day; yesterday counts as a surge with at least 15 edits and four times the 30-day median, an attention
+// days give edits per UTC day; yesterday counts as a surge with at least 8 edits and four times the 30-day median, an attention
 // signal that often follows (or leads) a fast-moving event. Only timestamps are requested (rvprop=timestamp): never editor
 // usernames, never article text. (Wikimedia's edit-metrics API was tried first; on 27 Nov its daily data ended a month back.)
 // One request per country, 150 ms apart, with dense_lib's descriptive User-Agent as Wikimedia asks.
@@ -10,7 +10,7 @@ import { COUNTRIES } from "./geo_cc.mjs";
 // English Wikipedia titles where the article is not at the country's OSAP name (redirects are followed too)
 export const TITLE = { ge: "Georgia (country)", cd: "Democratic Republic of the Congo", cg: "Republic of the Congo", tr: "Turkey", gm: "The Gambia", ie: "Republic of Ireland",
   ps: "State of Palestine", fm: "Federated States of Micronesia", bs: "The Bahamas", oki: "Okinawa Prefecture", ci: "Ivory Coast", cv: "Cape Verde", cz: "Czech Republic" };
-export const MIN_EDITS = 15, FACTOR = 4;
+export const MIN_EDITS = 8, FACTOR = 4;
 const median = (a) => { const s = [...a].sort((x, y) => x - y), n = s.length; return n ? (n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2) : 0; };
 
 // revision timestamps -> [{ timestamp, edits }] per UTC day from `from` to `to` (inclusive, "YYYY-MM-DD"), oldest first. When the
