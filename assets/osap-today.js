@@ -461,10 +461,12 @@
     var y = box.scrollTop, C = countries(), home = lsGet(HOME_KEY) === "map" ? "map" : "today";
     /* the news search keeps its own box: re-drawing the rest (every few seconds as records arrive) never wipes what is typed */
     if (!box.querySelector("#td-body")) {
-      box.innerHTML = '<div class="tdwrap"><div id="td-head"></div><section id="td-news" class="tdcard tdq" aria-label="Search the news"></section>' +
+      box.innerHTML = '<div class="tdwrap"><div id="td-head"></div><section id="td-news" class="tdcard tdq" aria-label="Search the news"></section><section id="td-seen" class="tdcard" aria-label="Seen it before?" hidden></section>' +
         '<section id="td-daily" class="tdcard" aria-label="Daily summary" hidden></section><section id="td-ask" class="tdcard" aria-label="Ask about this country" hidden></section><section id="td-asia" class="tdcard" aria-label="Asia security" hidden></section><section id="td-spike" class="tdcard" aria-label="Reporting level" hidden></section><section id="td-cover" class="tdcard" aria-label="Story coverage" hidden></section>' +
         '<div id="td-body"></div></div>';
       if (window.OSAP_NEWSQ) window.OSAP_NEWSQ.mount(box.querySelector("#td-news"), CC, countryName()); else box.querySelector("#td-news").hidden = true;
+      /* Seen it before? (assets/osap-seenit.js): check a photo from your feed against every news picture OSAP has read */
+      if (window.OSAP_SEENITQ) window.OSAP_SEENITQ.mount(box.querySelector("#td-seen"));
       /* the daily summary (assets/osap-daily.js) keeps its own box too, so a picked day survives the redraws */
       if (window.OSAP_DAILYQ) window.OSAP_DAILYQ.mount(box.querySelector("#td-daily"), CC, countryName());
       /* Ask about this country (assets/osap-ask.js): a cited AI draft from the summary's own sources, hidden until switched on */
