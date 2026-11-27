@@ -1,13 +1,17 @@
-// Probe 22 (27 Nov 2026): OpenAIP public data exports (airspace files) and EMM NewsBrief page.
-const { UA } = await import("./dense_lib.mjs");
-const get = async (u) => { const r = await fetch(u, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(60000) }); return [r.status, r.headers.get("content-type"), await r.text()]; };
-let [s, ct, t] = await get("https://www.openaip.net/data/exports");
-const links = [...t.matchAll(/href="(https:\/\/s3\.openaip\.net\/[^"]+)"/g)].map((m) => m[1].replace(/&amp;/g, "&"));
-console.log("P exports", s, links.length, "links; names:", links.map((l) => l.split("?")[0].split("/").pop()).slice(0, 60).join(" "));
-console.log("P pager", [...t.matchAll(/href="([^"]*(page|offset|search|filter)[^"]*)"/gi)].map((m) => m[1]).slice(0, 10).join(" "));
-const nx = t.match(/__NEXT_DATA__[^>]*>([\s\S]{0,1500})/); if (nx) console.log("P next", nx[1].slice(0, 1500));
-for (const q of ["?search=pl_asp", "?q=pl_asp", "?page=2", "?type=airspace"]) { const [s2, , t2] = await get("https://www.openaip.net/data/exports" + q); console.log("P", q, s2, [...t2.matchAll(/openaip-system-exports\/([^"?]+)/g)].map((m) => m[1]).slice(0, 15).join(" ")); }
-const asp = links.find((l) => /_asp\.geojson/.test(l));
-if (asp) { const [s3, ct3, t3] = await get(asp); console.log("P asp", asp.split("?")[0], s3, ct3, t3.length, t3.slice(0, 700).replace(/\s+/g, " ")); }
-[s, ct, t] = await get("https://emm.newsbrief.eu/NewsBrief/clusteredition/en/latest.html");
-console.log("P emm", s, t.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 900));
+// Probe 23 (27 Nov 2026): headline changes on real history pairs (25 -> 27 Nov) and the Wayback availability API from the runners.
+import fs from "node:fs";
+const { get } = await import("./dense_lib.mjs");
+const { editItems, waybackBefore } = await import("./dense_edits.mjs");
+const pairs = JSON.parse(fs.readFileSync("tools/probe_pairs.json", "utf8"));
+const items = editItems(pairs, Date.parse("2026-11-27T00:00Z"));
+console.log("P items", items.length, "sev2", items.filter((i) => i.sev === 2).length);
+let found = 0;
+for (const it of items.slice(0, 12)) {
+  try {
+    const j = await get("https://archive.org/wayback/available?url=" + encodeURIComponent(it.url) + "&timestamp=" + String(it._from).replace(/[^0-9]/g, "").slice(0, 12), "json", { timeout: 20000 });
+    const w = waybackBefore(j, it._by); if (w) found++;
+    console.log("P  wb", it.url.slice(0, 90), JSON.stringify(j.archived_snapshots?.closest || {}).slice(0, 160), w ? "BEFORE " + w.when : "none before");
+  } catch (e) { console.log("P  wb ERR", e.message); }
+}
+console.log("P found before", found);
+for (const it of items.slice(0, 6)) console.log("P  ", JSON.stringify({ t: it.title, x: it.detail }).slice(0, 700));
