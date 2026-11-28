@@ -1,1 +1,1 @@
-window.ASAP_STORMS={"asof":"2026-11-28 00:33Z","storms":[],"status":[{"source":"JMA","ok":true,"n":0},{"source":"JTWC","ok":true,"n":0},{"source":"GDACS","ok":true,"n":0}]};
+window.ASAP_STORMS={"asof":"2026-11-28 00:38Z","storms":[],"status":[{"source":"JMA","ok":true,"n":0},{"source":"JTWC","ok":true,"n":0},{"source":"GDACS","ok":true,"n":0}]};
