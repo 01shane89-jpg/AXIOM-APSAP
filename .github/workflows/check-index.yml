@@ -127,6 +127,8 @@ jobs:
       - run: node tests/places_areas.test.mjs
       - run: node tests/view_reports.test.mjs
       - run: node tests/sat.test.mjs
+      # planes in the air in a Sentinel-2 pass (assets/osap-planes-lib.js, rules s2planes-v1): real cut-outs and band geometry
+      - run: node tests/satplanes.test.mjs
       - run: node tests/ref_layers.test.mjs
       # daily summary rules (tools/daily_lib.mjs): grouping, AI output checks, citations dropped from inside sentences
       - run: node tests/daily.test.mjs

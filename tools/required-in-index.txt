@@ -178,6 +178,8 @@ data-ev-tlr="1"
 # Population density overlay in Map overlays (claude/population-density)
 <script src="assets/osap-pop.js"></script>
 <script src="assets/osap-sat.js"></script>
+<script src="assets/osap-planes-lib.js"></script>
+<script src="assets/osap-satplanes.js"></script>
 <script src="assets/osap-newimg.js"></script>
 <script src="assets/osap-plumes.js"></script>
 :not([data-pop])
