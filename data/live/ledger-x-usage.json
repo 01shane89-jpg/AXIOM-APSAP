@@ -16,7 +16,7 @@
   "items": 0
  },
  "usd_today": 0,
- "asof": "2026-11-28 06:15Z",
+ "asof": "2026-11-28 06:08Z",
  "state": "off",
  "why": "no VOYAGE_API_KEY secret"
 }
