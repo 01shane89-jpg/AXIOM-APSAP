@@ -50,6 +50,7 @@
 ["w130562472",-36.76981,-59.85887,"ar",{"name":"Hospital Municipal Dr. Ángel Pintos","amenity":"hospital","healthcare":"hospital","addr:housenumber":"270","addr:street":"Amado Diab","addr:city":"Azul","wikidata":"Q93822866"}],
 ["w1456325813",-36.77214,-59.10313,"ar",{"name":"Hospital Especializado en Geriatria Cardenal E. Pironio","amenity":"hospital","healthcare":"hospital"}],
 ["w1457502085",-37.31843,-59.1347,"ar",{"name":"Clínica Del Corazón","amenity":"clinic","healthcare":"clinic"}],
+["w1580312892",-37.33301,-59.12512,"ar",{"name":"Clínica Del Centro","amenity":"clinic","healthcare":"clinic"}],
 ["w261982577",-37.23701,-59.23751,"ar",{"aeroway":"helipad"}],
 ["w291375298",-36.00784,-59.11175,"ar",{"name":"Hospital Zonal General de Las Flores","amenity":"hospital","healthcare":"hospital"}],
 ["w301954737",-37.16363,-58.47207,"ar",{"name":"Aero Club Ayacucho","aeroway":"aerodrome"}],
