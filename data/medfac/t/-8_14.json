@@ -8,7 +8,7 @@
 ["w1327179697",-6.26156,14.24575,"ao",{"name":"Zaire Hospital","amenity":"hospital","healthcare":"hospital","addr:city":"M'banza Congo"}],
 ["w1327602946",-6.74476,15.88027,"ao",{"name":"Hospital Municipal de Buengas","amenity":"hospital","healthcare":"hospital"}],
 ["w1442866006",-7.35636,14.8473,"ao",{"name":"Hospital Municipal do Songo","amenity":"hospital","healthcare":"hospital"}],
-["w1443898231",-7.14645,14.24849,"ao",{"name":"Toto Airport","aeroway":"aerodrome","icao":"FNTO"}],
+["w1443898231",-7.14645,14.24849,"ao",{"name":"Xamindele Airport","aeroway":"aerodrome","icao":"FNTO","wikidata":"Q15040021"}],
 ["w421616615",-7.60308,15.02863,"ao",{"name":"Aeroporto Provincial do Uíge","name:en":"Uíge Provincial Airport","aeroway":"aerodrome","icao":"FNUG","iata":"UGO","wikidata":"Q198036"}],
 ["w791134909",-6.26919,14.24672,"ao",{"name":"Aeroporto Mbanza Congo","name:en":"Mbanza Congo Airport","aeroway":"aerodrome","icao":"FNBC","iata":"SSY","wikidata":"Q652459"}],
 ["w791137109",-6.02994,15.13576,"ao",{"name":"Aeroporto de Maquela do Zombo","name:en":"Maquela do Zombo Airport","aeroway":"aerodrome","icao":"FNMQ","wikidata":"Q197915"}]]

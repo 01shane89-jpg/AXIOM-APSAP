@@ -34,7 +34,7 @@
 ["n7577448985",33.36811,6.85016,"dz",{"name":"خلف منير","name:en":"Dr Mounir Khelrf","amenity":"hospital","healthcare":"hospital","phone":"032110738","addr:street":"حي المنظر الجميل بالقرب من نزل سي موسى"}],
 ["n9525443817",33.35122,6.85148,"dz",{"name":"Centre des Oasis d'Imagerie Médicale, مركز الواحات للتصوير الطبي","name:en":"Oasis Medical Imaging Center","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"radiology","phone":"+213 793 19 09 60","addr:city":"El Oued","addr:postcode":"39000"}],
 ["n9945586219",33.53099,6.9007,"dz",{"name":"عيادة بوزيان الطبية","amenity":"clinic"}],
-["r14524400",33.34121,6.85262,"dz",{"name":"المؤسسة العمومية الإستشفائية الجهوية لمعالجة مرض السرطان","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"cancer","addr:street":"بلدية الوادي","addr:city":"El Oued","addr:postcode":"39000"}],
+["r14524400",33.34121,6.85262,"dz",{"name":"المؤسسة العمومية الإستشفائية الجهوية لمعالجة مرض السرطان","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"oncology","addr:street":"بلدية الوادي","addr:city":"El Oued","addr:postcode":"39000"}],
 ["w1009297823",33.40533,6.85524,"dz",{"name":"عيادة متعددة الخدمات","healthcare":"hospital","healthcare:speciality":"general"}],
 ["w1025480454",32.36383,7.86235,"dz",{"aeroway":"helipad"}],
 ["w1025480455",32.36465,7.86109,"dz",{"aeroway":"helipad"}],

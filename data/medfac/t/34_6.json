@@ -123,7 +123,7 @@
 ["w783014705",35.79159,7.39088,"dz",{"name":"المستشفى القديم","amenity":"hospital","healthcare":"hospital"}],
 ["w783028970",35.68998,6.18462,"dz",{"name":"مستشفى سريانة","amenity":"hospital","healthcare":"hospital"}],
 ["w783037698",35.04017,7.00197,"dz",{"amenity":"hospital","healthcare":"hospital","addr:city":"ششار"}],
-["w783038602",35.54055,6.19046,"dz",{"name:en":"Police Hospital","amenity":"hospital","healthcare":"hospital","operator":"Algérie Police","operator:type":"government"}],
+["w783038602",35.54055,6.19046,"dz",{"name":"مستشفى الشرطة","name:en":"Police Hospital","amenity":"hospital","healthcare":"hospital","operator":"Algérie Police","operator:type":"government"}],
 ["w783044237",35.79081,7.40113,"dz",{"name":"عيادة رمزي صايم","amenity":"hospital","healthcare":"hospital"}],
 ["w783052505",35.4495,7.12394,"dz",{"amenity":"hospital","healthcare":"hospital","addr:city":"خنشلة"}],
 ["w783054336",35.48253,6.62625,"dz",{"name":"Polyclinique","amenity":"hospital","healthcare":"hospital"}],
