@@ -1,1 +1,1 @@
-window.ASAP_GDACS={"asof":"2026-11-28 17:57Z","src":"https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventtype=TC,FL,DR,VO,WF","events":[]};
+window.ASAP_GDACS={"asof":"2026-11-28 18:12Z","src":"https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventtype=TC,FL,DR,VO,WF","events":[]};
