@@ -839,7 +839,7 @@
     "#wk-print{display:none}" +
     "@media print{html.wk-printing body>*:not(#wk-print){display:none!important}html.wk-printing #wk-print{display:block;color:#000;background:#fff;font:10px/1.35 'IBM Plex Sans',Arial,sans-serif}" +
     "#wk-print h1{font-size:18px;margin:0 0 4px}#wk-print h2{font-size:13px;margin:12px 0 4px;break-after:avoid}#wk-print table{width:100%!important;border-collapse:collapse;table-layout:fixed}#wk-print th,#wk-print td{border:1px solid #999;padding:3px 4px;text-align:left;vertical-align:top;white-space:normal!important;background:none!important;color:#000;text-transform:none!important;letter-spacing:0!important;font-size:10px;font-family:inherit;overflow-wrap:anywhere}#wk-print th{font-weight:700}" +
-    "#wk-print tr{break-inside:avoid;background:none!important}#wk-print .wkpm{color:#333;margin:2px 0}#wk-print .wkps{color:#444;font-size:9px;overflow-wrap:anywhere}#wk-print .wkfp{font-family:monospace;font-size:8px}" +
+    "#wk-print table{border-collapse:separate!important;border-spacing:0;border-top:1px solid #999;border-left:1px solid #999}#wk-print th,#wk-print td{border-width:0 1px 1px 0!important}#wk-print tr{break-inside:avoid;background:none!important}#wk-print .wkpm{color:#333;margin:2px 0}#wk-print .wkps{color:#444;font-size:9px;overflow-wrap:anywhere}#wk-print .wkfp{font-family:monospace;font-size:8px}" +
     "#wk-print .wkpnote{border-left:2px dashed #000;padding-left:4px;margin-top:2px;white-space:pre-wrap}}";
 
   function start() {
