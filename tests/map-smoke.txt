@@ -136,6 +136,8 @@ tests/darkships_smoke.mjs
 tests/choke_smoke.mjs
 # military aircraft flying an orbit and emergency squawks (rules milpat-v1, tools/milpat_lib.mjs)
 tests/milpat_smoke.mjs
+# aircraft gone quiet mid-flight near hot spots (rules airdark-v1, tools/airdark_lib.mjs)
+tests/airdark_smoke.mjs
 # radiation near nuclear sites from Safecast sensors (assets/osap-radiation.js, rules rad-v1)
 tests/rad_smoke.mjs
 tests/guide_smoke.mjs

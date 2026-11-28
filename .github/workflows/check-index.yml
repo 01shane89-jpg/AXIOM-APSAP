@@ -111,6 +111,8 @@ jobs:
       - run: node tests/air_live.test.mjs
       # each aircraft's current flight and where it left from, kept by the air traffic sweep (tools/air_tracks.mjs)
       - run: node tests/air_tracks.test.mjs
+      # aircraft gone quiet mid-flight near hot spots (tools/airdark_lib.mjs, rules airdark-v1)
+      - run: node tests/airdark.test.mjs
       - run: node tests/osm_sources.test.mjs
       - run: node tests/avwx.test.mjs
       - run: node tests/claims.test.mjs

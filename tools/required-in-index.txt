@@ -69,6 +69,7 @@
 <script src="assets/osap-tools.js"></script>
 <script src="assets/osap-drones.js"></script>
 <script src="assets/osap-traffic.js"></script>
+<script src="assets/osap-airdark.js"></script>
 
 # loading cover and the per-country data loader
 <div id="osap-boot"
