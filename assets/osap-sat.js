@@ -293,6 +293,8 @@
     "#satba figcaption{padding:6px 8px;font-size:12px}#satba figcaption b{font-size:13px}#satba .sid{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;word-break:break-all}" +
     "#satba table{width:100%;border-collapse:collapse;font-size:12.5px}#satba th,#satba td{text-align:left;padding:3px 4px;border-bottom:1px solid var(--line,#e3e3e3);vertical-align:middle}" +
     "#satba td button{min-height:40px;min-width:64px;font-size:12px;padding:2px 8px}#satba .cl{display:inline-block;min-width:3.4em}#satba .lst{max-height:300px;overflow:auto;border:1px solid var(--line,#e3e3e3);border-radius:6px}" +
+    /* the planes list (assets/osap-satplanes.js) keeps to the panel width whatever the fonts: fixed columns, text wraps */
+    "#satpl table{table-layout:fixed}#satpl th,#satpl td{overflow-wrap:anywhere}#satpl th:first-child{width:1.8em}#satpl th:last-child{width:4.6em}#satpl td button{min-width:0;width:100%;padding:2px 4px}" +
     "#satba .attr{font-size:11.5px;color:var(--muted,#555);border-top:1px solid var(--line,#ddd);margin-top:10px;padding-top:6px}" +
     "#satba .tag{font-size:10.5px;border:1px solid var(--line,#bbb);border-radius:3px;padding:0 4px;color:var(--muted,#555);font-weight:400}" +
     "@media (max-width:700px){#satba{padding:6px}#satba button,#satba select,#satba input{font-size:16px}}" +

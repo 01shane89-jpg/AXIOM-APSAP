@@ -132,8 +132,8 @@ async function openWindow(p, area, zoom) {
   await p.click('#satba button[data-sat="planes"]');
   await p.waitForFunction(() => window.OSAP_SATPLANES.state().done, null, { timeout: 30000 });
   ok((await p.evaluate(() => window.OSAP_SATPLANES.state().found.length)) === 1, "phone: one possible aircraft found");
-  const fit = await p.evaluate(() => { const t = document.querySelector("#satpl table"); return t ? t.getBoundingClientRect().right <= window.innerWidth + 1 : false; });
-  ok(fit, "phone: the list fits the screen width");
+  const fit = await p.evaluate(() => { const t = document.querySelector("#satpl table"), l = document.querySelector("#satpl .lst"); return t && l ? { right: Math.round(t.getBoundingClientRect().right), scroll: l.scrollWidth - l.clientWidth, w: innerWidth } : null; });
+  ok(fit && fit.right <= fit.w + 1 && fit.scroll <= 1, "phone: the list fits the screen width " + JSON.stringify(fit));
   if (OUT) await p.screenshot({ path: OUT + "/satplanes-phone.png" });
   ok(errors.length === 0, "phone: no page errors " + JSON.stringify(errors));
   await ctx.close();
