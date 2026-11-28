@@ -27,6 +27,7 @@ import * as tracks from "./air_tracks.mjs";
 import { COMMERCIAL, usable } from "./nc_strip.mjs";
 import { FIELDS, row, str } from "./air_rows.mjs";
 import { EMERG, RULES as MILPAT } from "./milpat_lib.mjs";
+import * as airdark from "./airdark_lib.mjs";
 export { FIELDS, row };
 
 const OUT = process.argv[2] || "air-out";
@@ -160,11 +161,12 @@ async function main() {
 
   // carry on aircraft from the previous file whose circle was not asked this time, until their position is CARRY old
   let carried = 0;
-  const nowS = Date.now() / 1000;
+  const nowS = Date.now() / 1000, prevRows = new Map();
   try {
     for (const f of fs.readdirSync(path.join(PREV, "a"))) {
       let j; try { j = JSON.parse(fs.readFileSync(path.join(PREV, "a", f), "utf8")); } catch (e) { continue; }
       for (const x of j.ac || []) {
+        if (Array.isArray(x) && x[0]) prevRows.set(x[0], x);
         if (!Array.isArray(x) || seen.has(x[0]) || nowS - x[10] > CARRY) continue;
         if (asked.some((i) => nm(C[i][0], C[i][1], x[5], x[6]) <= R_NM)) continue; // asked this time and not heard: gone
         seen.set(x[0], x); carried++;
@@ -189,7 +191,15 @@ async function main() {
   // recent paths (tools/air_tracks.mjs): this sweep's position added to each aircraft's path from the previous sweep
   // AIRFIELDS: OurAirports airports.csv (public domain; the workflow downloads it once a run) for where each flight left from
   if (FIELDS_G === undefined) FIELDS_G = process.env.AIRFIELDS ? tracks.loadAirfields(process.env.AIRFIELDS) : null;
-  const TR = tracks.step(tracks.readTracks(PREV), [...seen.values()], nowS, FIELDS_G), trOut = tracks.writeTracks(OUT, TR, built);
+  const TP = tracks.readTracks(PREV);
+  const TR = tracks.step(TP, [...seen.values()], nowS, FIELDS_G), trOut = tracks.writeTracks(OUT, TR, built);
+  // aircraft gone quiet mid-flight near hot spots (tools/airdark_lib.mjs, rules airdark-v1): last sweep's aircraft that this
+  // sweep asked about and did not hear; carried-on aircraft count as heard, so only circles actually asked can flag one
+  let AD = null;
+  try { AD = JSON.parse(fs.readFileSync(path.join(PREV, "dark-state.json"), "utf8")); } catch (e) { AD = null; }
+  AD = airdark.step(AD, prevRows, seen, asked.map((i) => C[i]), TP.tr, nowS, FIELDS_G ? (la, lo) => tracks.airfieldNm(FIELDS_G, la, lo) : null, (i) => i < OI);
+  fs.writeFileSync(path.join(OUT, "dark-state.json"), JSON.stringify(AD));
+  fs.writeFileSync(path.join(OUT, "dark.json"), JSON.stringify(airdark.publish(AD, built, ALL.slice(0, OI).map((s) => ({ id: s.id, name: s.name, site: s.site, licence: s.licence, nc: s.nc, track: s.track })))));
   const total = seen.size, ages = [...seen.values()].map((x) => nowS - x[10]).sort((a, b) => a - b);
   const index = {
     schema: "osap-air-traffic/1", built, sweep, took_s: Math.round((Date.now() - t0) / 1000), cell: CELL, f: FIELDS,
@@ -213,6 +223,7 @@ async function main() {
     (gWrote.length ? ", wrote " + gWrote.join(" ") : ""));
   console.log(built.slice(11, 16) + "Z sweep " + sweep + ": " + total + " aircraft (" + carried + " carried on) in " + Object.keys(counts).length + " cells, median age " +
     index.age_p50_s + " s, " + index.took_s + " s, " + index.asked + "/" + C.length + " circles asked, paths " + JSON.stringify(trOut) + (FIELDS_G ? "" : " (no airfield list)") + (unasked ? ", " + unasked + " left for lack of time" : "") + " | " +
+    "gone quiet (airdark-v1): " + AD.events.filter((e) => e.t === nowS).length + " new, " + AD.events.length + " kept, " + Object.keys(AD.cand).length + " watched; " +
     stat.map((s) => s.src + " ok " + s.ok + (s.busy ? " busy " + s.busy : "") + (s.failed ? " failed " + s.failed + " (" + s.err + ")" : "")).join("; "));
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === new URL(import.meta.url).pathname) main().catch((e) => { console.error(e); process.exit(1); });

@@ -89,6 +89,16 @@ export function nearestAirfield(g, la, lo) {
   return best ? [best.a[2], best.a[3], +best.d.toFixed(1)] : null;
 }
 
+// distance in nm to the nearest airfield of any kept type (for tools/airdark_lib.mjs); Infinity when none within about 60 nm
+export function airfieldNm(g, la, lo) {
+  if (!g) return null;
+  let best = Infinity;
+  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
+    const lon = Math.floor(lo) + j, k = Math.floor(la) + i + "_" + (((lon + 180) % 360 + 360) % 360 - 180);
+    for (const a of g.get(k) || []) { const d = nm(la, lo, a[0], a[1]); if (d < best) best = d; }
+  }
+  return best;
+}
 // add this sweep's rows (air_rows.mjs format: [0] hex, [5] lat, [6] lon, [7] alt, [10] position time, [14] flags, 4 = ground)
 // to the kept flights. Only aircraft in this sweep are kept (one not heard again stops being written). -> { tr, dep }
 export function step(prev, rows, nowS, fields) {
