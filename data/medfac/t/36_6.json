@@ -249,7 +249,7 @@
 ["w354705492",36.88423,6.90415,"dz",{"amenity":"clinic","osap:withheld":"1"}],
 ["w354960057",36.65319,6.84006,"dz",{"name":"Polyclinique","amenity":"clinic"}],
 ["w357008304",36.8305,7.81382,"dz",{"name":"مطار عنابة رابح بيطاط ⴰⴼⴰⴳⵓⵔ ⵏ ⵄⵏⵏⴰⴱⴰ ⵔⴰⴱⵃ ⴱⵉⵟⴰⵟ","name:en":"Annaba Rabah Bitat Airport","operator":"مؤسسة تسيير مصالح مطارات الجزائر","aeroway":"aerodrome","icao":"DABB","iata":"AAE","aerodrome:type":"international","wikidata":"Q979270"}],
-["w359223377",36.1073,6.36516,"dz",{"name":"Aéroport de Teleghma","aeroway":"aerodrome","military":"airfield"}],
+["w359223377",36.10734,6.36516,"dz",{"name":"Aéroport de Teleghma","aeroway":"aerodrome","military":"airfield"}],
 ["w359241663",36.12433,6.36362,"dz",{"amenity":"hospital"}],
 ["w360397426",36.45565,7.41743,"dz",{"aeroway":"helipad"}],
 ["w366966976",36.34473,6.60361,"dz",{"amenity":"hospital","healthcare":"hospital","emergency":"no","operator":"AIT YAHIA","operator:type":"private"}],

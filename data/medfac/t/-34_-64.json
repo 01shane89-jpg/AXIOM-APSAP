@@ -1,5 +1,4 @@
 [["n10046089889",-33.15152,-62.85738,"ar",{"name":"Clinica Privada San Martín","amenity":"clinic","healthcare":"clinic","phone":"+54 3537 46 1080","addr:housenumber":"451","addr:street":"Lavalle","addr:city":"Laborde","addr:postcode":"X2657"}],
-["n10282894001",-33.38833,-63.30556,"ar",{"name":"Aeródromo Casajus","operator:type":"private","aeroway":"aerodrome","wikidata":"Q58821670"}],
 ["n1042021079",-33.1567,-62.8906,"ar",{"name":"Aeródromo Laborde","aeroway":"aerodrome"}],
 ["n1042021997",-32.48886,-62.67658,"ar",{"name":"Aeródromo La Zulema","operator:type":"private","aeroway":"aerodrome"}],
 ["n1042143590",-32.92121,-62.46559,"ar",{"name":"Abel Monteverde Heliport","aeroway":"helipad"}],
@@ -93,6 +92,7 @@
 ["w153270110",-32.61682,-62.7038,"ar",{"name":"Hospital Regional José A. Ceballos","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"1289","addr:street":"Gerónimo Del Barco","addr:city":"Bell Ville"}],
 ["w154354103",-33.69193,-62.06517,"ar",{"name":"Aeródromo La Siesta","operator:type":"private","aeroway":"aerodrome"}],
 ["w1551110960",-32.39733,-63.23476,"ar",{"name":"CORPUS SRL","emergency":"ambulance_station","addr:housenumber":"564","addr:street":"Intendente Maciel","addr:city":"Villa María"}],
+["w1577519222",-33.66781,-63.63557,"ar",{"amenity":"hospital","healthcare":"hospital"}],
 ["w158574518",-33.33913,-62.03683,"ar",{"name":"Aeroclub Chañar Ladeado","aeroway":"aerodrome"}],
 ["w179056498",-32.74556,-63.79574,"ar",{"name":"Aeródromo General Deheza","operator:type":"public","aeroway":"aerodrome","wikidata":"Q58821955"}],
 ["w221540487",-32.33627,-63.68505,"ar",{"name":"Aeroclub Hernando","aeroway":"aerodrome"}],
@@ -130,4 +130,4 @@
 ["w616311421",-32.2485,-63.64873,"ar",{"name":"Dispensario Santo Tomás","amenity":"clinic","healthcare":"clinic"}],
 ["w788024655",-32.66361,-62.29871,"ar",{"emergency":"ambulance_station","phone":"03472-15436932 / 15436933"}],
 ["w861212099",-33.78494,-62.12765,"ar",{"name":"Maggiolo / Samave","phone":"+54 3462 577192","aeroway":"aerodrome","aerodrome:type":"airfield"}],
-["w931230114",-33.38745,-63.30525,"ar",{"aeroway":"aerodrome","wikidata":"Q58821670"}]]
+["w931230114",-33.38745,-63.30525,"ar",{"name":"Aeródromo Casajus","operator:type":"private","aeroway":"aerodrome","wikidata":"Q58821670"}]]

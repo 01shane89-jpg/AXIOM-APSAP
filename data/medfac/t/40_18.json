@@ -45,6 +45,7 @@
 ["n14201595702",41.33764,19.83247,"al",{"name":"Family dental care","amenity":"hospital"}],
 ["n14201599401",41.3373,19.83172,"al",{"name":"Family dental care","amenity":"hospital"}],
 ["n14302289601",41.3363,19.79018,"al",{"name":"Aura Medical Clinic","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"plastic_surgery;dermatology;endocrinology;gynaecology;vascular_surgery","phone":"+355 69 216 0148","website":"https://auramedicalclinic.al","addr:city":"Tiranë","addr:postcode":"1001","opening_hours":"Mo-Sa 08:00-20:00"}],
+["n14396253569",41.37377,19.78471,"al",{"name":"5M Medical Clinic","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"general;gynaecology;cardiology;orthopaedics;radiology","phone":"+355 68 821 9554;+355 68 647 2722;+355 69 214 9714","addr:street":"Rruga Demokracia","addr:city":"Bathore","addr:postcode":"1024"}],
 ["n2290525516",41.92914,19.21931,"me",{"name":"D.Z. Budo Tomovic","amenity":"hospital","emergency":"yes"}],
 ["n2616676785",41.34155,19.83432,"al",{"name":"ORL","amenity":"clinic","healthcare":"clinic","phone":"+35542349588","website":"https://www.qsut.gov.al/index.php/sherbimet-mjekesore/sherbimi-orl/sherbimet-e-ofruara/"}],
 ["n2616679412",41.33992,19.83024,"al",{"name":"Spitali Onkologjik","amenity":"clinic","healthcare":"clinic","healthcare:speciality":"oncology","phone":"+35542349414","website":"https://www.qsut.gov.al/index.php/sherbimet-mjekesore/sherbimi-onkologjik/sherbimet-e-ofruara/"}],

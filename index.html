@@ -5630,6 +5630,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
       ['Flood history: &copy; EC JRC / Google, <a href="https://global-surface-water.appspot.com/">Global Surface Water</a> 1984 to 2021 (Pekel et al., Nature 2016), CC BY 4.0.'],
       ['Road closures: <a href="https://www.nzta.govt.nz/">NZ Transport Agency Waka Kotahi</a> (CC BY 4.0); <a href="https://www.bison-fute.gouv.fr/">Bison Futé</a> / DIR, Ministère de la Transition écologique (Licence Ouverte 2.0); <a href="https://www.mainroads.wa.gov.au/">Main Roads Western Australia</a> (CC BY 4.0); <a href="https://www.drivebc.ca/">DriveBC</a>, Province of British Columbia (Open Government Licence – British Columbia); <a href="https://www.digitraffic.fi/">Fintraffic Digitraffic</a> (CC BY 4.0). Shown as each agency published them.'],
       ['Satellite imagery, fire detections and flood extent: NASA <a href="https://www.earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">GIBS</a>, <a href="https://firms.modaps.eosdis.nasa.gov/">FIRMS</a> and LANCE MODIS flood product (MCDWD).'],
+      ['Restricted airspace (free version only): &copy; <a href="https://www.openaip.net/">OpenAIP</a>, <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> (non-commercial). Permanent areas from published aeronautical information, not NOTAMs; not for navigation.'],
       ['Map software: <a href="https://leafletjs.com/">Leaflet</a> &copy; Volodymyr Agafonkin and contributors (BSD-2-Clause).']]],
     ["Weather, hazards and forecasts", [
       ['Source: Japan Meteorological Agency website (<a href="https://www.jma.go.jp/">https://www.jma.go.jp/</a>): typhoon positions and forecast tracks, earthquakes and warnings. Shown as received; OSAP is not a Japanese Government product.'],
@@ -7303,7 +7304,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
   /* Map overlays in a fixed, sensible order whatever order the modules add their sections in (Shane 2026-10-01: organised so
      it is intuitive): infrastructure first (communications, power: Shane could not find them lower down), then terrain, roads and movement, aircraft, then your own marking (country sides,
      boundaries), then display options. Sections not named here stay where their module put them. */
-  var ML_ORDER = [["#ml-infra"], [null, /embass|evacuat/i], ["#ml-cams"], ["#ml-elev"], [null, /^Terrain/], ["#ml-pop"], ["#ml-sat"], ["#ml-ref"], ["#mob-sec", /^Ground movement/], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/], ["#ml-warn", /^Airspace and sea warnings/],
+  var ML_ORDER = [["#ml-infra"], [null, /embass|evacuat/i], ["#ml-cams"], ["#ml-elev"], [null, /^Terrain/], ["#ml-pop"], ["#ml-sat"], ["#ml-ref"], ["#mob-sec", /^Ground movement/], ["#ml-air", /^Live aircraft/], [null, /^Ships|^Shipping|^Live ships/], ["#ml-warn", /^Airspace and sea warnings/], ["#ml-asp", /^Restricted airspace/],
     [null, /boundar/i], ["#ml-sides", /^Country sides/], ["#ml-heat", /^Dense points/], ["#ml-disp", /^Map display/]];
   function mlArrange() {
     var pan = document.getElementById("ml-panel"), base = pan && pan.querySelector(".mlbase"), ex = document.getElementById("ml-extra");
@@ -10121,6 +10122,7 @@ window.OSAP_COUNTRY_FILES = {"layers":{"ae":{"border":8,"safety":1,"transport":3
 <script src="assets/osap-traffic.js"></script>
 <!-- Airspace and sea warnings drawn as shapes (Map overlays): NGA navigational warnings, FAA TFRs, EASA conflict zone bulletins -->
 <script src="assets/osap-warngeo.js"></script>
+<script src="assets/osap-airspace.js"></script>
 <script src="assets/osap-split.js"></script>
 <!-- side panels you can resize, dock left or right, or float (computer only; the edge grip of each panel) -->
 <script src="assets/osap-panels.js"></script>

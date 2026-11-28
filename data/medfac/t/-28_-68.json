@@ -17,9 +17,9 @@
 ["w1373543617",-27.14718,-66.94532,"ar",{"name":"Mini Hospital Corral Quemado","healthcare":"hospital","healthcare:speciality":"general","addr:street":"Av. Vicente Saadi","addr:city":"Corral Quemado","addr:postcode":"4751"}],
 ["w1416538956",-27.42192,-66.97184,"ar",{"name":"Centro Modular Sanitario 24","amenity":"hospital","healthcare":"hospital"}],
 ["w277594054",-27.07581,-66.59473,"ar",{"aeroway":"helipad"}],
-["w277598351",-27.07221,-66.58605,"ar",{"name":"Aeródromo Campo Arenal","operator":"Minera Alumbrera","operator:type":"private","aeroway":"aerodrome","icao":"SA11","wikidata":"Q3275120"}],
+["w277598351",-27.07221,-66.58605,"ar",{"name":"Aeródromo Campo Arenal","operator":"Minera Alumbrera","operator:type":"private","aeroway":"aerodrome","wikidata":"Q3275120"}],
 ["w353338652",-26.6972,-66.04644,"ar",{"name":"Hospital Sanitario Zonal De Santa Maria Dr. Luis Alberto Vargas","amenity":"hospital","healthcare":"hospital","emergency":"yes","operator:type":"public","phone":"+54 3838 420-6263","addr:full":"Avenida 1 de Mayo 269","addr:housenumber":"269","addr:street":"Avenida 1 de Mayo","addr:city":"Santa María","addr:postcode":"4139","wikidata":"Q94027165"}],
 ["w481141270",-26.0636,-67.38977,"ar",{"name":"Aeródromo de Antofagasta de la Sierra","name:en":"Antofagasta de la Sierra Aerodrome","aeroway":"aerodrome"}],
-["w481141271",-27.62826,-66.34175,"ar",{"name":"Aeródromo de Andalgala","name:en":"Andalgala Aerodrome","aeroway":"aerodrome","icao":"SA35","aerodrome:type":"airfield","wikidata":"Q21847797"}],
+["w481141271",-27.62826,-66.34175,"ar",{"name":"Aeródromo de Andalgala","name:en":"Andalgala Aerodrome","aeroway":"aerodrome","aerodrome:type":"airfield","wikidata":"Q21847797"}],
 ["w609350335",-27.6419,-67.62468,"ar",{"name":"Aeródromo de Fiambala","name:en":"Fiambala Aerodrome","aeroway":"aerodrome","icao":"SA46","wikidata":"Q12692700"}],
-["w609350336",-26.67378,-66.02485,"ar",{"name":"Aerodromo de Santa María","aeroway":"aerodrome","icao":"SA42","wikidata":"Q58821687"}]]
+["w609350336",-26.67378,-66.02485,"ar",{"name":"Aerodromo de Santa María","aeroway":"aerodrome","wikidata":"Q58821687"}]]

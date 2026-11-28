@@ -123,7 +123,7 @@
 ["w358717011",35.1442,3.68411,"dz",{"name":"المؤسّسة العمومية للصحة الجوارية","amenity":"clinic","healthcare":"clinic","addr:city":"مجدل"}],
 ["w359642546",34.66297,3.26435,"dz",{"name":"مستشفى الجلفة","name:en":"Hôpital Djelfa","amenity":"hospital"}],
 ["w363124669",35.63083,3.22751,"dz",{"name":"العيادة المتعددة الخدمات","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:city":"البيرين"}],
-["w363129199",35.64412,3.22711,"dz",{"name":"الإستعجالات الطبية الجراحية","name:en":"Emergency","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:city":"البيرين"}],
+["w363129199",35.6441,3.22711,"dz",{"name":"الإستعجالات الطبية الجراحية","name:en":"Emergency","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:city":"البيرين"}],
 ["w370590378",34.89588,3.73955,"dz",{"name":"Polyclinique","amenity":"clinic"}],
 ["w370613623",34.82118,3.76353,"dz",{"name":"Centre de Santé","amenity":"hospital"}],
 ["w375411408",34.65753,3.26204,"dz",{"name":"Hôpital Ophtalmologique Cubain Djelfa","amenity":"hospital","contact:phone":"+213 27 876027"}],
