@@ -99,6 +99,8 @@ jobs:
       - run: node tests/openaip.test.mjs
       # U.S. Congress floor votes (tools/dense_congress.mjs, tools/congress_rows.mjs): final votes only, bill named as it is now, news-search rows
       - run: node tests/dense_congress.test.mjs
+      # U.S. bill tracker (tools/congress_lib.mjs): bill status read without nested blocks, stage, steps, search rows, recent steps
+      - run: node tests/congress_bills.test.mjs
       - run: node tests/uk_sanctions.test.mjs
       # open-licence full text for the in-app reader (tools/fulltext_lib.mjs): which addresses, safe text, no script
       - run: node tests/fulltext.test.mjs
