@@ -5,6 +5,8 @@
 ["n7428951987",27.49395,-7.83305,"dz",{"name":"مستشفى دائرة بئرلحلو","amenity":"clinic"}],
 ["n7428951990",27.48871,-7.84587,"dz",{"name":"مستشفى دائرة أمهيريز","amenity":"hospital","healthcare":"hospital"}],
 ["n8039824641",27.49664,-7.82693,"dz",{"name":"عياة موسسة الشفاء","amenity":"clinic","healthcare":"clinic"}],
+["w1580368883",26.73431,-7.50627,"dz",{"aeroway":"helipad","surface":"asphalt"}],
+["w1580368884",26.73457,-7.50722,"dz",{"aeroway":"helipad","surface":"asphalt"}],
 ["w339760643",27.59134,-7.50014,"dz",{"name":"Base aérienne","aeroway":"aerodrome","military":"airfield"}],
 ["w363239153",26.88164,-7.16495,"dz",{"name":"Aéroport de Gara Djebilet","name:en":"Gara Djebilet Airport","aeroway":"aerodrome","military":"airfield","wikidata":"Q3274586"}],
 ["w420902110",27.61184,-7.8742,"dz",{"name":"مستشفى أوسرد","amenity":"hospital","healthcare":"hospital","addr:city":"مخيم أوسرد"}],

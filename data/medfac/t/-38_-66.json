@@ -1,7 +1,6 @@
 [["n13364238197",-36.61851,-64.26675,"ar",{"name":"Instituto Oftalmologico Cortina","amenity":"clinic","healthcare":"clinic"}],
 ["n13608580700",-36.59818,-64.29127,"ar",{"name":"Centro Emergente de Asistencia Respiratoria","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"intensive","emergency":"yes","operator":"Ministerio de Salud de La Pampa","operator:type":"government","addr:street":"Raúl B. Díaz","addr:city":"Santa Rosa","addr:postcode":"L6300"}],
 ["n13624725280",-36.61498,-64.29046,"ar",{"name":"POLYMEDIC","amenity":"clinic","healthcare":"clinic","addr:housenumber":"640","addr:street":"1 de Mayo","addr:city":"Santa Rosa","addr:postcode":"6300"}],
-["n13798643783",-36.58907,-64.27466,"ar",{"name":"AEROPUERTO SANTA ROSA","aeroway":"aerodrome","icao":"SAZR","iata":"RSA"}],
 ["n14136303101",-36.63526,-64.29995,"ar",{"name":"COIP Centro oncólogo integral pampeano","amenity":"clinic","addr:housenumber":"1639","addr:street":"Avenida Telén"}],
 ["n3341151140",-36.61413,-64.2809,"ar",{"name":"Servicio de Ambulancias SEM","emergency":"ambulance_station"}],
 ["n3586073893",-36.62864,-64.28509,"ar",{"name":"Enfermería CPE Héctor Vendramini","amenity":"hospital","healthcare":"hospital"}],
