@@ -7,6 +7,7 @@ import { loadRelevance, itemRelevance, kept } from "./topics_lib.mjs";
 import { dropSuspectMt } from "./mt_guard.mjs";
 import { fixBingDate } from "./news_date.mjs";
 import { stripOutletText, postOnly } from "./outlet_text.mjs";
+import { carryEdits } from "./headline_edits.mjs";
 // Bluesky and Telegram posts kept before 2026-10-17 still hold the post's words: judged once on them (the social relevance policy,
 // loaded only when such a post is met) and then reduced to who, when and the link (tools/outlet_text.mjs postOnly)
 let socialJudge = null;
@@ -105,6 +106,8 @@ export async function updateHistory(kind, items, stamp, caps) {
       if (!o.sum_rel) { const r = stripOutletText({ summary: i.summary, summary_en: i.summary_en }, R).sum_rel; if (r) o.sum_rel = r; }
       unCode(o);
       o.first_seen = (byLink.get(i.link) || {}).first_seen || stamp;
+      // news: a headline the outlet changed keeps the old one with its times (tools/headline_edits.mjs)
+      if (kind === "news") Object.assign(o, carryEdits(prev, o, stamp));
       byLink.set(i.link, o);
     }
     h[kind] = [...byLink.values()].filter((i) => (!i.date || i.date >= cutoff) && (!R || kept(itemRelevance(R, i)))).sort((a, b) => (b.date || "") > (a.date || "") ? 1 : -1).slice(0, Math.max(CAP[kind], (kind === "news" && caps && caps[cc]) || 0));
