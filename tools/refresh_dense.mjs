@@ -13,6 +13,7 @@ import "./dense_airmon.mjs";
 import "./dense_space.mjs";
 import "./dense_trade.mjs";
 import "./dense_records.mjs";
+import "./dense_factcheck.mjs";
 import "./dense_congress.mjs";
 import { ukSanctionsItems } from "./uk_sanctions.mjs";
 import { COUNTRIES, ccsAt, ccFromName, ccFromA2, ccFromA3, ccsInText, withOki } from "./geo_cc.mjs";

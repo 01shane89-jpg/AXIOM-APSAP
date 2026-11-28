@@ -360,6 +360,8 @@ jobs:
         env:
           # sold version: feeds tagged nc are not asked at all (tools/dense_lib.mjs), then nc_strip below sweeps the rest
           OSAP_COMMERCIAL: ${{ vars.OSAP_COMMERCIAL }}
+          # Google Fact Check Tools API key (tools/dense_factcheck.mjs); the feed is off while this secret is unset
+          GOOGLE_FACTCHECK_KEY: ${{ secrets.GOOGLE_FACTCHECK_KEY }}
         timeout-minutes: 14
         continue-on-error: true
       # Open-licence full text (tools/refresh_fulltext.mjs): articles whose publisher's licence allows republishing (The Conversation
