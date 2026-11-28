@@ -99,7 +99,7 @@
     return { v: +b.latest.v, m: b.latest.m, unit: b.unit || "$/barrel", prev: b.prev && +b.prev.v, chgPrev: isFinite(+b.chgPrev) ? +b.chgPrev : null, yago: b.yago && +b.yago.v, chgYago: isFinite(+b.chgYago) ? +b.chgYago : null };
   }
   function num(v, d) { return v == null || !isFinite(v) ? "?" : Number(v).toLocaleString("en-US", { maximumFractionDigits: d == null ? 1 : d }); }
-  function signed(v) { return v == null ? "?" : (v > 0 ? "+" : "") + num(v) + "%"; }
+  function signed(v) { return v == null || !isFinite(v) ? "no reading" : (v > 0 ? "+" : "") + num(v) + "%"; }
   function hm(m) { return m >= 90 ? num(m / 60) + " h" : Math.round(m) + " min"; }
   /* the instrument side of one pair, as plain parts { head, lines[], src, cov } (pure: data passed in) */
   function readingText(p, r, extra) {

@@ -87,6 +87,9 @@ const cards = (p) => p.evaluate(() => [...document.querySelectorAll("#ldv .gapse
   ok(/Oil minister says oil prices will stay high while Hormuz is shut/.test(oil.line) && /Brent crude averaged \$125 a barrel in 2026-10/.test(oil.read), "oil: the line beside Brent");
   ok(/2 internet outage signals within 48 hours of the line, longest 3 h/.test((C[1] || {}).read) && /bgp, ping-slash24/.test((C[1] || {}).read), "internet: IODA signals within 48 hours");
   ok(/1 US dollar = 1,950,037\.29 IRR/.test((C[2] || {}).read) && /-4\.8%/.test((C[2] || {}).read), "currency: the rate and its 30-day change");
+  ok(/1 year: no reading/.test((C[2] || {}).read) && !/\?/.test((C[2] || {}).read), "currency: a missing 1-year change reads 'no reading', never a bare '?'");
+  const desk = await p.evaluate(() => { const pp = document.querySelector("#ldv .ldp"), b = document.querySelector("#ldv .ldbody"); return { ldp: getComputedStyle(pp).overflowY, body: getComputedStyle(b).overflowY }; });
+  ok(desk.ldp === "visible" && desk.body === "auto", "desktop: the header stays put and the ledger body scrolls (" + JSON.stringify(desk) + ")");
   ok(C.every((c) => /May relate\. OSAP does not rule/.test(c.m)), "every card says may relate, and that OSAP does not rule");
   const sec = await p.evaluate(() => document.querySelector("#ldv .gapsec").textContent);
   ok(/not AI and not an analyst/.test(sec) && /gap-v1/.test(sec) && !/\b(false|lie|lying|debunk\w*|refuted)\b/i.test(sec.replace(/does not confirm or refute/, "")), "how pairs are made is said, and no verdict word appears");
@@ -115,6 +118,12 @@ const cards = (p) => p.evaluate(() => [...document.querySelectorAll("#ldv .gapse
   const lay = await p.evaluate(() => { const c = document.querySelector("#ldv .gapsec .gapc"), a = c.querySelector(".gapl").getBoundingClientRect(), b = c.querySelector(".gapr").getBoundingClientRect();
     return { stacked: b.top >= a.bottom - 1, wide: [...document.querySelectorAll("#ldv .gapsec *")].some((e) => e.getBoundingClientRect().right > window.innerWidth + 1) }; });
   ok(lay.stacked && !lay.wide, "390 px phone: the two sides stack, nothing runs off the side (" + JSON.stringify(lay) + ")");
+  const ph = await p.evaluate(async () => { const pp = document.querySelector("#ldv .ldp"), bar = document.querySelector("#ldv .ldbar"), top = document.querySelector("#ldv .ldtop");
+    const before = Math.round(top.getBoundingClientRect().height + bar.getBoundingClientRect().height); pp.scrollTop = 600; await new Promise((r) => setTimeout(r, 120));
+    const B = bar.getBoundingClientRect(); return { before, barTop: Math.round(B.top), barH: Math.round(B.height), topGone: top.getBoundingClientRect().bottom <= B.bottom, line: pp.classList.contains("ldscr"), scrolled: pp.scrollTop }; });
+  ok(ph.scrolled > 0 && ph.barTop === 0 && ph.barH <= 60 && ph.topGone && ph.line, "phone: the story's facts and claims note scroll away; only the Claim ledger bar with Close stays, a line under it (" + JSON.stringify(ph) + ")");
+  await p.click("#ldv .ldx");
+  ok(await p.evaluate(() => !(window.OSAP_LEDGERQ.isOpen())), "phone: Close still works after scrolling");
   if (OUT) await p.locator("#ldv .gapsec").screenshot({ path: OUT + "/gap-phone.png" });
   ok(!errors.length, "no page errors " + JSON.stringify(errors.slice(0, 3)));
   await ctx.close();
