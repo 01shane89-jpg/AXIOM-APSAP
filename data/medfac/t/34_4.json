@@ -226,7 +226,7 @@
 ["w783862893",35.85241,5.28242,"dz",{"name":"مستشفى بليليطة","amenity":"hospital","healthcare":"hospital","addr:city":"صالح باي","addr:postcode":"19013"}],
 ["w783867972",35.2371,4.15931,"dz",{"name":"الدكتور عبد اللطيف توفيق الامراض الباطنية وأمراض النساء","amenity":"hospital","healthcare":"hospital"}],
 ["w783868134",35.94571,4.68457,"dz",{"amenity":"hospital","healthcare":"hospital"}],
-["w783868283",35.1887,4.15601,"dz",{"name":"طبيب عام","amenity":"hospital","healthcare":"hospital"}],
+["w783868283",35.1887,4.15603,"dz",{"name":"طبيب عام","amenity":"hospital","healthcare":"hospital"}],
 ["w783869492",35.1907,4.15613,"dz",{"name":"القطاع الصحي سيدي سليمان","amenity":"hospital","healthcare":"hospital"}],
 ["w783894929",35.81735,5.51673,"dz",{"name":"عيادة شياد حمزة للعلاج الطبيعي","name:en":"Physiotherapist","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"physiotherapy","phone":"00213772779636","addr:city":"Aïn Azel","addr:postcode":"19007"}],
 ["w783899209",35.19722,4.15879,"dz",{"name":"عيادة القابلة منادي .س","name:en":"Cabinet de sage femme","amenity":"hospital","healthcare":"hospital","phone":"0667659105","addr:housenumber":"907/10","addr:street":"Cité Sidi Slimane","addr:postcode":"28002","opening_hours":"24/7"}],

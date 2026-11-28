@@ -1,4 +1,4 @@
-[["n1042037188",-8.44054,20.73208,"ao",{"name":"Aeroporto de Lucapa","name:en":"Lucapa Airport","aeroway":"aerodrome","icao":"FNLK","iata":"LBZ","wikidata":"Q6696032"}],
+[["n1042037188",-8.44054,20.73208,"ao",{"name":"Aeroporto de Lucapa","name:en":"Lucapa Airport","aeroway":"aerodrome","icao":"FNLK","iata":"LBZ","aerodrome:type":"public","wikidata":"Q6696032"}],
 ["w549592539",-9.21162,20.35761,"ao",{"aeroway":"helipad"}],
 ["w580149283",-9.68923,20.43147,"ao",{"name":"Aeroporto Deolinda Rodrigues","name:en":"Deolinda Rodrigues Airport","aeroway":"aerodrome","icao":"FNSA","iata":"VHC","wikidata":"Q81575"}],
 ["w656089725",-9.42747,20.31087,"ao",{"name":"Aeroporto de Saurimo Norte","name:en":"Saurimo Norte Airport","aeroway":"aerodrome"}],

@@ -97,6 +97,8 @@ jobs:
       - run: node tests/dense_records.test.mjs
       # UN Comtrade exports to Russia (tools/dense_comtrade.mjs): derived comparisons with the required attribution
       - run: node tests/dense_comtrade.test.mjs
+      # OpenAIP airspace builder (tools/refresh_openaip.mjs): restricted kinds only, compact, nc-tagged, no contributor ids
+      - run: node tests/openaip.test.mjs
       # U.S. Congress floor votes (tools/dense_congress.mjs, tools/congress_rows.mjs): final votes only, bill named as it is now, news-search rows
       - run: node tests/dense_congress.test.mjs
       - run: node tests/uk_sanctions.test.mjs
