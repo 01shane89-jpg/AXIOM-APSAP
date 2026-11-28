@@ -167,7 +167,7 @@
 ["w433029261",41.15155,21.40714,"mk",{"name":"Аеродром Српци","name:en":"Srpci Airfield","aeroway":"aerodrome"}],
 ["w435650628",41.27902,21.36392,"mk",{"emergency":"ambulance_station"}],
 ["w442242241",40.33728,20.68137,"al",{"name":"Poliklinika","amenity":"clinic","healthcare":"clinic","addr:street":"Rruga Dhori Qirjazi","addr:postcode":"7401"}],
-["w461136805",40.61129,20.78592,"al",{"name":"Spital Civil \"Teni Konomi\" Korçë","amenity":"hospital","addr:street":"Bulevardi Fan Noli","addr:postcode":"7301"}],
+["w461136805",40.61129,20.78592,"al",{"name":"Spital Civil \"Teni Konomi\" Korçë","amenity":"hospital","healthcare":"hospital","addr:street":"Bulevardi Fan Noli","addr:postcode":"7301"}],
 ["w489901367",41.33861,21.46214,"mk",{"name":"Викторија","name:en":"Viktorija","emergency":"ambulance_station","phone":"+38948472100"}],
 ["w501031353",40.36102,20.6711,"al",{"name":"Ambulanca Bejkovë","amenity":"clinic","addr:street":"Rruga e Bejkovës","addr:city":"Bejkovë","opening_hours":"Mo-Sa 08:00-20:00"}],
 ["w503395177",40.3718,21.76463,"gr",{"aeroway":"helipad"}],

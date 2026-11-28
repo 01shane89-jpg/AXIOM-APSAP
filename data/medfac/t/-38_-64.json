@@ -1,5 +1,4 @@
-[["n1042021102",-37.14573,-63.67926,"ar",{"name":"Aeródromo Macachin","aeroway":"aerodrome","wikidata":"Q58820068"}],
-["n1076132969",-37.17682,-62.74966,"ar",{"name":"Guardia","amenity":"clinic","healthcare":"clinic"}],
+[["n1076132969",-37.17682,-62.74966,"ar",{"name":"Guardia","amenity":"clinic","healthcare":"clinic"}],
 ["n1076132972",-37.17723,-62.74985,"ar",{"name":"Ingreso Internación","amenity":"clinic","healthcare":"clinic"}],
 ["n10767734387",-37.48563,-62.10662,"ar",{"amenity":"hospital","healthcare":"hospital"}],
 ["n12549700628",-37.46056,-63.58268,"ar",{"name":"Centro de Salud Municipal Lidia Novak","amenity":"clinic"}],
@@ -56,7 +55,7 @@
 ["w57403446",-36.28364,-62.54571,"ar",{"amenity":"hospital","healthcare":"hospital"}],
 ["w589543129",-36.1593,-63.5089,"ar",{"name":"Hospital Doctor José Ingenieros","amenity":"hospital","healthcare":"hospital","phone":"+54 2333 49 8032","addr:street":"San Martín","addr:city":"Miguel Cané","addr:postcode":"6331"}],
 ["w775154112",-37.13408,-63.66717,"ar",{"name":"Hospital Doctor Heraclio Luna","amenity":"hospital","healthcare":"hospital","addr:housenumber":"310","addr:street":"Jujuy","addr:city":"Macachin","addr:postcode":"6307"}],
-["w775155074",-37.14412,-63.67899,"ar",{"name":"Aeroclub de Macachín","aeroway":"aerodrome"}],
+["w775155074",-37.14412,-63.67899,"ar",{"name":"Aeroclub de Macachín","aeroway":"aerodrome","wikidata":"Q58820068"}],
 ["w809386527",-36.30435,-62.1983,"ar",{"name":"Hospital Municipal","amenity":"hospital","healthcare":"hospital","addr:street":"25 de Mayo","addr:city":"Salazar","addr:postcode":"6471"}],
 ["w813743693",-36.81197,-62.25396,"ar",{"name":"Hospital Municipal Adolfo Alsina","amenity":"hospital","healthcare":"hospital","phone":"+54 2929 493058","addr:housenumber":"37","addr:street":"Doctor Rómulo Cesar","addr:city":"Laguna Alsina","addr:postcode":"6439"}],
 ["w92794820",-37.177,-62.74935,"ar",{"name":"Hospital Municipal General José de San Martín","amenity":"hospital","healthcare":"hospital","addr:housenumber":"579","addr:street":"Boulevard Avellaneda","addr:city":"Carhué"}]]
