@@ -45,8 +45,12 @@ const entry = { r: "conversation", at: "2026-11-17T10:00Z", sha: SHA, read: A1, 
     { k: "li", s: ["First point"] }, { k: "li", s: ["Second point"] }, { k: "q", s: ["A quoted line."] }], chars: 400 };
 const store = {}; for (let i = 0; i < SHARDS; i++) store[i.toString(16).padStart(2, "0")] = {};
 store[shardOf(A1)][A1] = entry;
+// a Kremlin readout, read over plain http (Shane 27 Nov 2026: the Kremlin only)
+const K1 = "http://en.kremlin.ru/events/president/news/81350";
+store[shardOf(K1)][K1] = { r: "kremlin", at: "2026-11-27T04:00Z", sha: "cd".repeat(32), read: K1, bytes: 44686, x: EXTRACTOR, title: "Conversation with President of Kazakhstan Kassym-Jomart Tokayev", pub: "2026-11-25",
+  by: [{ n: "President of Russia", r: "Presidential Executive Office" }], blocks: [{ k: "p", s: ["Vladimir Putin had a telephone conversation with President of Kazakhstan Kassym-Jomart Tokayev."] }], chars: 300 };
 const ix = "window.OSAP_FTIX=" + JSON.stringify({ asof: "2026-11-17T10:00Z", extractor: EXTRACTOR, shards: SHARDS, n: 1,
-  rules: RULES.map((r) => ({ id: r.id, hosts: r.hosts, path: r.path.source, name: r.name, lic: r.lic, licUrl: r.licUrl, terms: r.terms, note: r.note, nd: r.nd, apiName: r.apiName || "" })) }) + ";\n";
+  rules: RULES.map((r) => ({ id: r.id, hosts: r.hosts, path: r.path.source, name: r.name, lic: r.lic, licUrl: r.licUrl, terms: r.terms, note: r.note, nd: r.nd, apiName: r.apiName || "", credit: r.credit || "", from: !!r.from, http: !!r.http })) }) + ";\n";
 
 const ctx = await browser.newContext({ serviceWorkers: "block", viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
 await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
@@ -112,6 +116,13 @@ const nr = await p.evaluate((a2) => { const R = document.getElementById("ft-read
 ok(nr.msg && nr.btn && !nr.text, "an article OSAP has not read shows the original's button only");
 await p.locator("#ft-reader .ftx").tap();
 ok(await p.evaluate(() => !document.getElementById("ft-reader")), "the close button closes the reader");
+const kc = await p.evaluate(() => [window.OSAP_READER.can("http://en.kremlin.ru/events/president/news/81350"), window.OSAP_READER.can("http://www.gov.uk/foreign-travel-advice/andorra"), window.OSAP_READER.can("http://en.kremlin.ru:8080/events/president/news/1")]);
+ok(JSON.stringify(kc) === "[true,false,false]", "plain http is read in OSAP for the Kremlin only (" + kc + ")");
+await p.evaluate((u) => window.OSAP_READER.open(u, { title: "Kremlin test" }), K1);
+await p.waitForFunction(() => document.querySelector("#ft-reader .fttext"), null, { timeout: 15000 }).catch(() => {});
+const kr = await p.evaluate(() => { const R = document.getElementById("ft-reader"); return R ? { lic: R.querySelector(".ftlic").textContent, by: R.querySelector(".ftby").textContent, prov: R.querySelector(".ftprov").textContent, btn: (R.querySelector("a.ftbtn") || {}).getAttribute && R.querySelector("a.ftbtn").getAttribute("href") } : null; });
+ok(kr && /Creative Commons Attribution 4\.0/.test(kr.lic) && /Original at President of Russia/.test(kr.lic) && /Read over plain http/.test(kr.prov) && kr.btn === K1 && /By President of Russia/.test(kr.by), "a Kremlin readout: its credit line, the plain-http note and its original (" + JSON.stringify(kr) + ")");
+await p.keyboard.press("Escape");
 ok(!errors.length, "no page errors" + (errors.length ? ": " + errors.join(" | ") : ""));
 await browser.close(); server.close();
 console.log(fails ? `${fails} check(s) failed` : "all checks passed");

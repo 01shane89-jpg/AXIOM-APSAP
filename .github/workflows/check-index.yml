@@ -95,6 +95,8 @@ jobs:
       - run: node tests/dense_trade.test.mjs
       # public records around Army ammunition plants (tools/dense_records.mjs): USAspending, SAM.gov extract, ECHO, Federal Register, CourtListener
       - run: node tests/dense_records.test.mjs
+      # UK written ministerial statements (tools/dense_statements.mjs)
+      - run: node tests/dense_statements.test.mjs
       # OpenAIP airspace builder (tools/refresh_openaip.mjs): restricted kinds only, compact, nc-tagged, no contributor ids
       - run: node tests/openaip.test.mjs
       # U.S. Congress floor votes (tools/dense_congress.mjs, tools/congress_rows.mjs): final votes only, bill named as it is now, news-search rows

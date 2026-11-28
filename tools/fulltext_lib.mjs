@@ -26,18 +26,52 @@ export const RULES = [
     id: "govuk", hosts: ["www.gov.uk"], name: "GOV.UK",
     lic: "Open Government Licence v3.0", licUrl: "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
     terms: "https://www.gov.uk/help/terms-conditions",
+    credit: "Contains public sector information licensed under the Open Government Licence v3.0.",
     note: "Crown copyright, reused under the Open Government Licence v3.0. Contains public sector information licensed under the Open Government Licence v3.0.",
     nd: false, path: /^\/(foreign-travel-advice\/[a-z-]+|government\/(news|speeches)\/[a-z0-9-]+)\/?$/i, refetchDays: 3,
     // GOV.UK's own Content API gives the whole guide (every part of a travel advice page) as published, under the same licence
     api: (u) => "https://www.gov.uk/api/content" + new URL(u).pathname.replace(/\/$/, ""), apiName: "GOV.UK Content API"
-  }
+  },
+  {
+    id: "whitehouse", hosts: ["whitehouse.gov"], name: "The White House",
+    lic: "U.S. Government work (public domain)", licUrl: "https://www.whitehouse.gov/copyright/",
+    terms: "https://www.whitehouse.gov/copyright/",
+    credit: "A work of the U.S. Government, not copyright protected.", from: true,
+    note: "Works of the U.S. Government are not copyright protected (whitehouse.gov copyright notice); third-party material on the site is under Creative Commons Attribution 3.0. Statements and remarks are the White House's own words, read as published. Images are left out.",
+    nd: false, path: /^\/(briefings-statements|remarks)\/\d{4}\/\d{2}\/[a-z0-9-]+\/?$/i, refetchDays: 0
+  },
+  {
+    id: "ukparl-statements", hosts: ["questions-statements.parliament.uk"], name: "UK Parliament written statements",
+    lic: "Open Parliament Licence v3.0", licUrl: "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/",
+    terms: "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/",
+    credit: "Contains Parliamentary information licensed under the Open Parliament Licence v3.0.",
+    note: "Contains Parliamentary information licensed under the Open Parliament Licence v3.0. A written ministerial statement is the UK Government's own account, made to Parliament.",
+    nd: false, path: /^\/written-statements\/detail\/\d{4}-\d{2}-\d{2}\/[A-Z]{2,6}\d{1,6}\/?$/i, refetchDays: 0,
+    api: (u) => { const m = new URL(u).pathname.match(/^\/written-statements\/detail\/(\d{4}-\d{2}-\d{2})\/([A-Z]{2,6}\d{1,6})/i); return "https://questions-statements-api.parliament.uk/api/writtenstatements/statements/" + m[1] + "/" + m[2].toUpperCase() + "?expandMember=true"; },
+    apiName: "UK Parliament Written questions, answers and statements API"
+  },
+  {
+    // Shane 27 Nov 2026 (decision card "Allow for the Kremlin only"): kremlin.ru's https site does not answer GitHub's runners,
+    // so this one publisher is read over plain http. The reader says so; the SHA-256 is of what arrived.
+    id: "kremlin", hosts: ["kremlin.ru", "en.kremlin.ru"], name: "President of Russia (kremlin.ru)", http: true,
+    lic: "Creative Commons Attribution 4.0 International", licUrl: "https://creativecommons.org/licenses/by/4.0/",
+    terms: "http://en.kremlin.ru/about/copyrights",
+    credit: "Material from the website of the President of Russia (kremlin.ru), under Creative Commons Attribution 4.0 International.",
+    note: "kremlin.ru licenses all its content under Creative Commons Attribution 4.0, except RIA Novosti and TASS photographs, which are left out with all images. A Kremlin readout or transcript is the Russian presidency's own account.",
+    nd: false, path: /^\/events\/president\/(news|transcripts)\/\d+\/?$/i, refetchDays: 0
+  },
 ];
 
+// where a rule's API answers from: a read that lands there has not moved off the publisher
+export const API_PREFIXES = ["https://www.gov.uk/api/content/", "https://questions-statements-api.parliament.uk/api/writtenstatements/statements/"];
+
+// https only, except a publisher marked http (its https site does not answer); no credentials, no other ports
 export function ruleFor(url) {
   let u; try { u = new URL(String(url)); } catch (e) { return null; }
-  if (u.protocol !== "https:" || u.username || u.password || (u.port && u.port !== "443")) return null;
+  if ((u.protocol !== "https:" && u.protocol !== "http:") || u.username || u.password || u.port) return null;
   const host = u.hostname.toLowerCase();
-  return RULES.find((r) => r.hosts.some((h) => h === host || "www." + h === host) && r.path.test(u.pathname)) || null;
+  const r = RULES.find((r) => r.hosts.some((h) => h === host || "www." + h === host) && r.path.test(u.pathname)) || null;
+  return r && (u.protocol === "https:" || r.http) ? r : null;
 }
 
 // FNV-1a over the address: the same shard in the browser (assets/osap-reader.js) without crypto.subtle
@@ -139,6 +173,28 @@ export function extract(rule, html, url) {
     orgs.slice(0, 3).forEach((o) => { if (o && o.title) by.push({ n: clean(o.title), r: "" }); });
     pub = d.first_published_at || ""; mod = d.public_updated_at || "";
     return finish(clean(d.title || ""), by, pub, mod, body, url, de.change_description ? clean(de.change_description) : "");
+  } else if (rule.id === "kremlin") {
+    const at = html.search(/<div[^>]+itemprop=["']articleBody["']/i);
+    body = at >= 0 ? innerAt(html, at) : "";
+    // a person's name links to a hidden pop-up card (photo, name again, title): the card is dropped, the name kept
+    for (let k = 0, i; k < 200 && (i = body.search(/<span[^>]+class=["'][^"']*\bread__tooltip\b/i)) >= 0; k++) {
+      const inner = innerAt(body, i), open = body.slice(i).match(/^<span\b[^>]*>/i)[0];
+      body = body.slice(0, i) + body.slice(i + open.length + inner.length + "</span>".length);
+    }
+    by.push({ n: "President of Russia", r: "Presidential Executive Office" });
+    pub = (html.match(/<time[^>]+class=["'][^"']*read__published[^"']*["'][^>]+datetime=["'](\d{4}-\d{2}-\d{2})["']/i) || [])[1] || "";
+  } else if (rule.id === "whitehouse") {
+    const at = html.search(/<div[^>]+class=["'][^"']*\bentry-content\b/i);
+    body = at >= 0 ? innerAt(html, at) : "";
+    by.push({ n: "The White House", r: "" });
+    pub = meta(html, "article:published_time"); mod = meta(html, "article:modified_time");
+  } else if (rule.id === "ukparl-statements") {
+    // the API answer (JSON): the statement's own text, the minister who made it and the department
+    let d = null; try { d = JSON.parse(html); } catch (e) { return { why: "not an API answer" }; }
+    const v = (d && d.value) || d || {};
+    if (v.member && v.member.name) by.push({ n: clean(v.member.name), r: clean(v.memberRole || "") });
+    if (v.answeringBodyName) by.push({ n: clean(v.answeringBodyName), r: v.house ? "House of " + clean(v.house) : "" });
+    return finish(clean(v.title || ""), by, String(v.dateMade || "").slice(0, 10), "", typeof v.text === "string" ? v.text : "", url, "");
   }
   return finish(title, by, pub, mod, body, url, "");
 }

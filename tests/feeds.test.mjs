@@ -53,6 +53,10 @@ assert.equal(pageDate("The May 2026 budget"), "");
   const E = parseList('<a href="/gambia-wins-case/">GAMBIA WINS GENOCIDE CASE AGAINST MYANMAR AT ICJ 20 November 2026</a><a href="/analysis/iran-update-november-22-2026">Iran Update, November 22, 2026</a>', "https://example.org/", "^/");
   assert.deepEqual(E.map((x) => [x.title, x.date]), [["GAMBIA WINS GENOCIDE CASE AGAINST MYANMAR AT ICJ", "2026-11-20"], ["Iran Update, November 22, 2026", "2026-11-22"]]);
 }
+{ // a date the headline ends on ("... Press Conference on November 26, 2026") stays: cutting it would leave "... on"
+  const M = parseList('<a href="./lxjzh/202611/t20261126_1.html">Foreign Ministry Spokesperson Guo Jiakun\u2019s Regular Press Conference on November 26, 2026</a>', "https://www.fmprc.gov.cn/eng/xw/fyrbt/", "^\\./[a-z]+/\\d{6}/t\\d{8}_\\d+\\.html$");
+  assert.deepEqual(M.map((x) => [x.title, x.date, x.link]), [["Foreign Ministry Spokesperson Guo Jiakun\u2019s Regular Press Conference on November 26, 2026", "2026-11-26", "https://www.fmprc.gov.cn/eng/xw/fyrbt/lxjzh/202611/t20261126_1.html"]]);
+}
 // a web-page list: one item per link, headline from the heading, date in the link or just after it
 const html = `<a href="/en/News/PLAAct/87845" class="news_list"><div class="date">2026.09.29</div><h2 class="title">PLA activities around Taiwan</h2><div>Click-Through Rate：197</div></a>
 <a href="/th/detail/iid/5" title="ผู้ว่าฯ สั่งอพยพชาวบ้านเข้าศูนย์พักพิง"><img></a><a href="/th/detail/iid/5">ผู้ว่าฯ สั่งอพยพชาวบ้านเข้าศูนย์พักพิง &ldquo;ด่วน&rdquo;</a><span>26 กันยายน 2569</span>

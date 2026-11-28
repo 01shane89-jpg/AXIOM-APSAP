@@ -87,7 +87,8 @@ export function parseList(html, base, match) {
     byHref.set(h.link, o);
   });
   return [...byHref.values()].map((o) => {
-    const title = o.texts.map((t) => t.replace(/\b20\d\d[.\-/]\d{1,2}[.\-/]\d{1,2}\b/g, "").replace(EN_DATE_G, "").replace(/\s+\d+\s+(?:minute|hour|day)s?(?:\s+ago)?\s*$/i, "").trim()).filter((t) => t.length >= 12 && !numDate(t) || t.length >= 40).sort((a, b) => b.length - a.length)[0] || "";
+    // a date that is part of the headline ("Press Conference on November 26, 2026") stays: cutting it would leave "... on"
+    const title = o.texts.map((t) => { const c = t.replace(/\b20\d\d[.\-/]\d{1,2}[.\-/]\d{1,2}\b/g, "").replace(EN_DATE_G, "").replace(/\s+\d+\s+(?:minute|hour|day)s?(?:\s+ago)?\s*$/i, "").trim(); return /\b(on|of|for|at|in|from|dated|since|until)$/i.test(c) ? t.replace(/\s+/g, " ").trim() : c; }).filter((t) => t.length >= 12 && !numDate(t) || t.length >= 40).sort((a, b) => b.length - a.length)[0] || "";
     return { title: title.slice(0, 300), summary: "", date: o.date, link: o.link, severity: "", source: "" };
   }).filter((i) => i.title);
 }
