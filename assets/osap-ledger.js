@@ -109,8 +109,8 @@
   /* ---------- the view ---------- */
   var CSS = "#ldv{position:fixed;inset:0;z-index:6001;display:flex;justify-content:center;background:rgba(0,0,0,.45)}" +
     "#ldv .ldp{position:relative;display:flex;flex-direction:column;width:min(100%,920px);height:100%;max-height:var(--app-h,100%);background:var(--surface,#fff);color:var(--ink,#111);box-shadow:0 0 30px rgba(0,0,0,.35)}" +
-    "#ldv .ldtop{flex:0 0 auto;padding:10px 14px 10px;border-bottom:1px solid var(--line,#ccc)}" +
-    "#ldv .ldbar{display:flex;align-items:center;gap:8px}#ldv .ldkick{flex:1 1 auto;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted,#555)}" +
+    "#ldv .ldtop{flex:0 0 auto;padding:0 14px 10px;border-bottom:1px solid var(--line,#ccc)}" +
+    "#ldv .ldbar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:10px 14px 0;background:var(--surface,#fff)}#ldv .ldkick{flex:1 1 auto;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted,#555)}" +
     "#ldv .ldx{flex:0 0 auto;min-width:40px;min-height:40px;font-size:22px;line-height:1;background:none;border:1px solid var(--line,#ccc);border-radius:6px;color:var(--ink,#111);cursor:pointer}" +
     "#ldv h2{margin:2px 0 4px;font-size:17px;line-height:1.3;overflow-wrap:anywhere}#ldv h2 a{color:inherit}" +
     "#ldv .ldm{font-size:12.5px;color:var(--muted,#555);margin:2px 0}" +
@@ -131,7 +131,12 @@
     "#ldv .ldmore{display:inline-flex;align-items:center;min-height:36px;margin:6px 0 0;padding:3px 12px;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line,#ccc);border-radius:6px;background:var(--surface,#fff);color:var(--ink,#111);cursor:pointer}" +
     "#ldv .ldfoot{margin-top:18px;padding-top:10px;border-top:1px solid var(--line,#ccc);font-size:12px;color:var(--muted,#555)}#ldv .ldfoot code{overflow-wrap:anywhere}" +
     "#ldv .ldpick li{padding-left:0}#ldv .ldpick li::before{display:none}" +
-    "@media (max-width:560px){#ldv .ldbarc{width:22%}#ldv .lddays .ldhide{display:none}#ldv .lddays th,#ldv .lddays td{padding:5px 4px}}";
+    "@media (max-width:560px){#ldv .ldbarc{width:22%}#ldv .lddays .ldhide{display:none}#ldv .lddays th,#ldv .lddays td{padding:5px 4px}}" +
+    /* phones and short windows: the story's facts and the claims note scroll away with the ledger; only the Claim ledger bar and
+       its close button stay put (a fixed header took 281 px, a third to two fifths of a phone screen) */
+    "@media (max-width:560px),(max-height:700px){#ldv .ldp{overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}" +
+    "#ldv .ldbody{flex:0 0 auto;overflow:visible}#ldv .ldbar{position:sticky;top:0;z-index:2;padding-bottom:6px;border-bottom:1px solid transparent}" +
+    "#ldv .ldp.ldscr .ldbar{border-bottom-color:var(--line,#ccc)}}";
 
   function rowHtml(r, cls) {
     /* [outlet, kind, outlet's country, date, link, headline, machine translated, roles] */
@@ -232,13 +237,13 @@
       var k = l.k || {}, u = safeUrl(l.u);
       top = "<h2>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(txt(l.t)) + "</a>" : esc(txt(l.t))) + "</h2>" +
         '<p class="ldm"><b>Followed ' + plural(l.dn, "day") + "</b> · " + plural(l.n, "outlet") + ", " + plural(l.r, "report") + " in " + plural(l.countries || 0, "country", "countries") + " · " + esc(cName(cur.cc)) + "</p>" +
-        '<p class="ldm">' + [k.state ? k.state + " state media" : "", k.public ? k.public + " public" : "", k.other ? k.other + " private or independent" : ""].filter(Boolean).join(", ") + " · " + esc(when(l.d0)) + " to " + esc(when(l.d)) + "</p>" +
+        '<p class="ldm">' + [k.state ? k.state + " state media" : "", k.public ? k.public + " public" : "", k.other ? k.other + " private or independent" : ""].filter(Boolean).join(", ").replace(/.$/, "$& · ") + esc(when(l.d0)) + " to " + esc(when(l.d)) + "</p>" +
         '<p class="ldwarn">Claims as reported, not verified. OSAP does not rate claims true or false. Officials\' lines and government figures are their claims.</p>' +
         (l.thread && W.OSAP_THREADSQ ? '<button type="button" class="ldbtn" data-ldgo="' + esc(l.thread) + '">Go deeper</button>' : '<p class="ldm">This story has left the 72-hour Story coverage window. OSAP keeps following it here.</p>') +
         (cur.list ? '<button type="button" class="ldbtn" data-ldlist>All ledgers</button>' : "");
       body = ledgerHtml(cur.cc, l, f);
     }
-    p.innerHTML = '<div class="ldtop"><div class="ldbar"><div class="ldkick">Claim ledger</div><button type="button" class="ldx" data-ldclose aria-label="Close">×</button></div>' + top + "</div>" +
+    p.innerHTML = '<div class="ldbar"><div class="ldkick">Claim ledger</div><button type="button" class="ldx" data-ldclose aria-label="Close">×</button></div><div class="ldtop">' + top + "</div>" +
       '<div class="ldbody">' + body + "</div>";
   }
   function loadSensors() {
@@ -249,7 +254,7 @@
   function show(cc, id, fromList) {
     cur = { cc: cc, id: id || "", list: !!fromList || !id }; allOpen = false;
     render();
-    var b = box.querySelector(".ldbody"); if (b) b.scrollTop = 0;
+    var b = box.querySelector(".ldbody"), pp = box.querySelector(".ldp"); if (b) b.scrollTop = 0; if (pp) { pp.scrollTop = 0; pp.classList.remove("ldscr"); }
     var l = id && find(cc, id); if (l && l.sensor && l.sensor.length && !W.OSAP_CF_SENSORS) loadSensors().then(function () { if (box && cur && cur.id === l.id) render(); });
   }
   function onClick(e) {
@@ -276,6 +281,7 @@
     if (!box) {
       box = D.createElement("div"); box.id = "ldv"; box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-label", "Claim ledger");
       box.innerHTML = '<div class="ldp"></div>'; box.addEventListener("click", onClick);
+      var lp = box.querySelector(".ldp"); lp.addEventListener("scroll", function () { lp.classList.toggle("ldscr", lp.scrollTop > 4); }, { passive: true });
       D.body.appendChild(box); D.addEventListener("keydown", onKey, true);
     }
     show(cc, id, !id);

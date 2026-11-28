@@ -77,7 +77,7 @@ ok(r.covered && r.n === 0, "a box across the date line works");
 // fx and oil
 r = t.fxReading({ fx: { cur: "irr", rate: 1950037.29, date: "2026-11-26", ch30: -4.8, ch365: null } });
 R = t.readingText({ pair: "fx" }, r);
-ok(/1 US dollar = 1,950,037\.29 IRR on 2026-11-26/.test(R.head) && /30 days: -4\.8%/.test(R.lines[0]) && /1 year: \?/.test(R.lines[0]) && /minus means weaker/.test(R.lines[0]), "currency rate, changes, missing year shown as ?");
+ok(/1 US dollar = 1,950,037\.29 IRR on 2026-11-26/.test(R.head) && /30 days: -4\.8%/.test(R.lines[0]) && /1 year: no reading/.test(R.lines[0]) && !/\?/.test(R.lines[0]) && /minus means weaker/.test(R.lines[0]), "currency rate, changes, missing year reads 'no reading'");
 ok(/street\) market/.test(R.cov), "reference-rate caveat");
 r = t.oilReading([{ id: "brent", unit: "$/barrel", latest: { m: "2026-10", v: 125 }, chgPrev: 7, chgYago: 93 }]);
 R = t.readingText({ pair: "oil" }, r);
