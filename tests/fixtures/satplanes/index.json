@@ -1,0 +1,62 @@
+[
+ {
+  "name": "dxb-sea",
+  "scene": "S2B_40RCN_20261128_0_L2A",
+  "w": 96,
+  "h": 96,
+  "off": 1000,
+  "planes": 1,
+  "x0": 478,
+  "y0": 0
+ },
+ {
+  "name": "dxb-city",
+  "scene": "S2B_40RCN_20261128_0_L2A",
+  "w": 96,
+  "h": 96,
+  "off": 1000,
+  "planes": 1,
+  "x0": 1949,
+  "y0": 50
+ },
+ {
+  "name": "ny-shore",
+  "scene": "S2A_18TXK_20261104_0_L2A",
+  "w": 96,
+  "h": 96,
+  "off": 1000,
+  "planes": 1,
+  "x0": 108,
+  "y0": 398
+ },
+ {
+  "name": "channel-sea",
+  "scene": "S2B_31UCS_20261113_0_L2A",
+  "w": 96,
+  "h": 96,
+  "off": 1000,
+  "planes": 1,
+  "x0": 196,
+  "y0": 3516
+ },
+ {
+  "name": "channel-town",
+  "scene": "S2B_31UCS_20261113_0_L2A",
+  "w": 96,
+  "h": 96,
+  "off": 1000,
+  "planes": 0,
+  "x0": 4888,
+  "y0": 4971
+ },
+ {
+  "name": "channel-roofs",
+  "scene": "S2B_31UCS_20261113_0_L2A",
+  "w": 96,
+  "h": 96,
+  "off": 1000,
+  "planes": 0,
+  "x0": 4844,
+  "y0": 4898
+ }
+]

@@ -22,8 +22,10 @@
    - Every scene shows its scene id(s), the pass time in Zulu and local time, the cloud % and a link to its STAC item.
    - Choices (view mode, cloud filter, NASA layer and date) are kept in this browser only (localStorage "osap-sat"); they are
      settings, not work, so they are not in workspaces.
+   - Planes in the air: a "Find planes in the After pass" button hands the pass to assets/osap-satplanes.js, which reads the
+     four 10 m bands itself and lists what it finds under the button (#satpl).
    API: window.OSAP_SAT { open(), close(), isOpen(), render(pass, bb, w, h, signal) (also used by assets/osap-newimg.js), state(), gibs(bool), setGibsDate(iso), setGibsLayer(id), pick(which, key),
-        mode("side"|"swipe"), _t: pure helpers for tests }  */
+        mode("side"|"swipe"), _t: pure helpers for tests, _io: { tif, utm, snap, dual, redraw } for assets/osap-satplanes.js }  */
 (function () {
   "use strict";
 
@@ -291,6 +293,8 @@
     "#satba figcaption{padding:6px 8px;font-size:12px}#satba figcaption b{font-size:13px}#satba .sid{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;word-break:break-all}" +
     "#satba table{width:100%;border-collapse:collapse;font-size:12.5px}#satba th,#satba td{text-align:left;padding:3px 4px;border-bottom:1px solid var(--line,#e3e3e3);vertical-align:middle}" +
     "#satba td button{min-height:40px;min-width:64px;font-size:12px;padding:2px 8px}#satba .cl{display:inline-block;min-width:3.4em}#satba .lst{max-height:300px;overflow:auto;border:1px solid var(--line,#e3e3e3);border-radius:6px}" +
+    /* the planes list (assets/osap-satplanes.js) keeps to the panel width whatever the fonts: fixed columns, text wraps */
+    "#satpl table{table-layout:fixed}#satpl th,#satpl td{overflow-wrap:anywhere}#satpl th:first-child{width:1.8em}#satpl th:last-child{width:4.6em}#satpl td button{min-width:0;width:100%;padding:2px 4px}" +
     "#satba .attr{font-size:11.5px;color:var(--muted,#555);border-top:1px solid var(--line,#ddd);margin-top:10px;padding-top:6px}" +
     "#satba .tag{font-size:10.5px;border:1px solid var(--line,#bbb);border-radius:3px;padding:0 4px;color:var(--muted,#555);font-weight:400}" +
     "@media (max-width:700px){#satba{padding:6px}#satba button,#satba select,#satba input{font-size:16px}}" +
@@ -359,6 +363,10 @@
         (S.src === "Map view" ? "The box follows the map as you pan and zoom." : "The box is the drawn area.") + " Sentinel-2 is 10 m per pixel, so zoomed in close it shows as squares.</p>" +
         '<p style="font-size:12px">' + scLine(b, "Before") + "</p><p style=\"font-size:12px\">" + scLine(a, "After") + "</p>" + (S.picErr.swipe ? '<p class="err">' + esc(S.picErr.swipe) + "</p>" : "");
     }
+    /* planes in the air in the after pass (assets/osap-satplanes.js fills #satpl) */
+    if (W.OSAP_SATPLANES) h += '<div class="row" style="border-top:1px solid var(--line,#ddd);padding-top:8px;margin-top:8px"><b>Planes in the air</b>' +
+      (a ? '<button type="button" data-sat="planes" title="Look for aircraft in flight in the After pass: Sentinel-2 takes its color bands a split second apart, so a moving plane shows up as a little rainbow">Find planes in the After pass</button>' : '<span class="mut">Pick an After pass first.</span>') +
+      '</div><div id="satpl"></div>';
     /* the passes */
     var L = S.passes.filter(function (p) { return P.maxc >= 100 || (p.cloud != null && p.cloud <= P.maxc) || p.key === S.before || p.key === S.after; });
     h += '<div class="row"><b>Passes over the area</b><label class="mut">Cloud <select data-sat="maxc" aria-label="Show passes with cloud">' + CLOUDS.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === P.maxc ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>" +
@@ -377,6 +385,7 @@
       '<p class="mut" style="font-size:12px;margin:2px 0">About 250 m, one picture per day stitched from that day\'s passes (good for big smoke, floods, burn scars and cloud; not for buildings).</p>';
     h += '<div class="attr">' + attrHtml() + "</div>";
     c.innerHTML = h;
+    if (W.OSAP_SATPLANES) W.OSAP_SATPLANES.into(c.querySelector("#satpl"));
   }
   function aspect() {
     var bb = S.area; if (!bb) return "1/1";
@@ -552,6 +561,7 @@
     if (k === "area") { open(); return; }
     if (k === "zoom") { if (S.area) map.fitBounds([[S.area[1], S.area[0]], [S.area[3], S.area[2]]], { padding: [20, 20] }); return; }
     if (k === "older") { load(true); return; }
+    if (k === "planes") { var pa = find(S.after); if (pa && W.OSAP_SATPLANES) W.OSAP_SATPLANES.run(pa, S.area, S.src); return; }
     if (k === "gafter") { var a = find(S.after); if (a) { P.gon = true; setGibsDate(isoDay(a.t)); } return; }
     var m = t.getAttribute("data-sat-mode"); if (m) { mode(m); return; }
     var pk = t.getAttribute("data-pick"); if (pk) pick(pk, t.getAttribute("data-key"));
@@ -598,5 +608,7 @@
   (W.OSAP_AREA_TOOLS = W.OSAP_AREA_TOOLS || []).push({ id: "satba", label: "Satellite before/after", run: function () { open(); } });
   W.OSAP_SAT = { open: open, close: close, isOpen: isOpen, render: render, gibs: gibs, setGibsDate: setGibsDate, setGibsLayer: setGibsLayer, pick: pick, mode: mode,
     state: function () { return { area: S.area, src: S.src, passes: S.passes.length, before: S.before, after: S.after, mode: P.mode, gibs: P.gon, gdate: gDate(), glayer: P.gl, err: S.err, busy: S.busy, bright: S.bright,
-      swipe: SW.bar ? { x: SW.x, box: !!SW.box, note: SW.bar.querySelector(".n").hidden ? "" : SW.bar.querySelector(".n").textContent } : null }; }, _t: T };
+      swipe: SW.bar ? { x: SW.x, box: !!SW.box, note: SW.bar.querySelector(".n").hidden ? "" : SW.bar.querySelector(".n").textContent } : null }; }, _t: T,
+    /* the band reader, for assets/osap-satplanes.js */
+    _io: { tif: tif, utm: utm, snap: snap, dual: dual, redraw: function () { draw(); } } };
 })();
