@@ -57,7 +57,7 @@
 ["w1415534818",-37.99511,-57.60098,"ar",{"aeroway":"helipad"}],
 ["w1419061622",-37.96098,-57.62142,"ar",{"amenity":"hospital","healthcare":"hospital"}],
 ["w1421656812",-37.98655,-57.61076,"ar",{"name":"CAPS Belisario Roldán","amenity":"clinic","healthcare":"clinic","website":"https://www.mardelplata.gob.ar/belisarioroldancaps"}],
-["w1473692056",-36.49545,-56.6967,"ar",{"name":"Unidad Sanitaria Las Toninas","amenity":"clinic","healthcare":"clinic"}],
+["w1473692056",-36.49545,-56.6967,"ar",{"name":"Unidad Sanitaria Las Toninas","amenity":"hospital","healthcare":"hospital"}],
 ["w1550586344",-36.31328,-57.67599,"ar",{"name":"Sinapsis Emergencias SA","emergency":"ambulance_station","addr:housenumber":"161","addr:street":"Pellegrini","addr:city":"Dolores"}],
 ["w1565042100",-36.51919,-57.32559,"ar",{"amenity":"clinic","healthcare":"clinic"}],
 ["w159130817",-36.54212,-56.72178,"ar",{"name":"Aeropuerto de Santa Teresita","name:en":"Santa Teresita Airport","aeroway":"aerodrome","icao":"SAZL","iata":"SST","wikidata":"Q7419964"}],
