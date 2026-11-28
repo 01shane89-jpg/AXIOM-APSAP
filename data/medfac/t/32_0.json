@@ -5,6 +5,7 @@
 ["n4483423790",33.68892,1.00775,"dz",{"name":"عيادة حي اللوز","amenity":"clinic","healthcare":"clinic","addr:city":"البيض"}],
 ["n5005421822",32.89533,0.55867,"dz",{"amenity":"clinic"}],
 ["n8861446614",32.89493,0.54788,"dz",{"name":"الاستعجلات","amenity":"clinic","healthcare":"clinic"}],
+["w1583927285",33.63058,1.01424,"dz",{"aeroway":"helipad","surface":"concrete"}],
 ["w240978978",32.89156,0.54349,"dz",{"name":"مركز صحي","amenity":"clinic"}],
 ["w240978993",32.89879,0.54587,"dz",{"amenity":"clinic","healthcare":"clinic","addr:city":"الأبيض سيدي الشيخ"}],
 ["w240979000",32.9086,0.54712,"dz",{"amenity":"clinic"}],

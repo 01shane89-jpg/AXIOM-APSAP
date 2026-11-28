@@ -59,7 +59,7 @@
 ["n3021419715",-32.95789,-68.84015,"ar",{"amenity":"hospital","healthcare":"hospital"}],
 ["n3034921982",-33.00773,-68.91002,"ar",{"name":"Centro Dia - Progresar","amenity":"clinic","healthcare":"clinic","addr:street":"Guardia Vieja"}],
 ["n3165121661",-32.89652,-68.85672,"ar",{"name":"Centro de Hipertensión Arterial","amenity":"clinic","healthcare":"clinic","operator":"Fundación Hector Nolly","addr:street":"Martínez de Rozas"}],
-["n3169086672",-33.57758,-69.01587,"ar",{"name":"MediUCO","amenity":"clinic","healthcare":"clinic"}],
+["n3169086672",-33.57765,-69.01581,"ar",{"name":"MediUCO","amenity":"clinic","healthcare":"clinic"}],
 ["n3269527479",-33.00227,-68.64438,"ar",{"name":"Hospital Dr. Alfredo Métraux","amenity":"hospital","healthcare":"hospital","operator":"Ministerio de Salud de la Provincia de Mendoza","operator:type":"public","phone":"+54 261 492 1000","addr:full":"Los Álamos Y Lateral Norte Del Acceso Este, Maipu","addr:housenumber":"162","addr:street":"España","addr:city":"Maipu (Maipu)","addr:postcode":"5531"}],
 ["n3392691419",-32.88954,-68.83047,"ar",{"name":"Clinica Sananes","amenity":"clinic","healthcare":"clinic","phone":"+54 261 425 7319","website":"https://www.clinicasananes.com/","addr:housenumber":"1260","addr:street":"Pedro B. Palacios","wikidata":"Q100998394"}],
 ["n3554430458",-32.88362,-68.84007,"ar",{"amenity":"clinic","healthcare":"clinic","addr:city":"Mendoza","addr:postcode":"5500","osap:withheld":"1"}],

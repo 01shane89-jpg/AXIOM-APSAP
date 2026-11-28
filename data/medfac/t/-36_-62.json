@@ -126,7 +126,7 @@
 ["w415672750",-34.65015,-60.4697,"ar",{"name":"Hospital Municipal del Carmen","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"216","addr:street":"Avenida Garay","addr:city":"Chacabuco","addr:postcode":"6740"}],
 ["w439628811",-35.2388,-60.82536,"ar",{"name":"CAPS Carlos Maria Naon","amenity":"hospital","healthcare":"hospital","addr:city":"Carlos María Naón"}],
 ["w447442351",-34.4826,-61.49319,"ar",{"name":"Aéro Club Vedia","contact:phone":"+54 236 435 0578","aeroway":"aerodrome","aerodrome:type":"public"}],
-["w447501172",-34.22239,-61.38617,"ar",{"name":"Aeroclub Arribeños","aeroway":"aerodrome"}],
+["w447501172",-34.22279,-61.38617,"ar",{"name":"Aeroclub Arribeños","aeroway":"aerodrome"}],
 ["w448839041",-34.65396,-60.45854,"ar",{"name":"Sanatorio Chacabuco","amenity":"hospital","healthcare":"hospital","addr:housenumber":"585","addr:street":"Italia","addr:city":"Chacabuco","addr:postcode":"6740"}],
 ["w48472339",-34.60679,-60.40939,"ar",{"name":"Aero Club Chacabuco","aeroway":"aerodrome"}],
 ["w555886690",-34.91178,-60.03703,"ar",{"name":"Hospital Municipal de Chivilcoy \"Dr. Santiago Fornos\"","amenity":"hospital","healthcare":"hospital","healthcare:speciality":"general;paediatrics;ophthalmology;intensive;vaccination;dentistry;gynaecology;surgery;cardiology;radiology;psychiatry;maternity","emergency":"yes","operator":"Muncipalidad de Chivilcoy","operator:type":"government","addr:housenumber":"31","addr:street":"Avenida Hijas de San José","addr:city":"Chivilcoy","addr:postcode":"6620"}],
