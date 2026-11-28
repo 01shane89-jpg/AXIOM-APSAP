@@ -38,6 +38,7 @@
 ["n13231703093",-24.78429,-65.42204,"ar",{"amenity":"clinic","healthcare":"clinic","addr:city":"Salta","addr:postcode":"4400","osap:withheld":"1"}],
 ["n13231703094",-24.78405,-65.42204,"ar",{"name":"MAC medicina de alta complejidad","amenity":"clinic","healthcare":"clinic"}],
 ["n14185933651",-24.39161,-65.26242,"ar",{"name":"Hospital Nuestra Señora Del Carmen","healthcare":"hospital","addr:street":"Bartolomé Mitre","addr:city":"El Carmen","addr:postcode":"Y4603"}],
+["n14325226862",-24.24038,-64.86239,"ar",{"name":"Sala de Primeros Auxilios","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:full":"Barrio Fellner","addr:street":"Alfonsín","addr:city":"San Pedro de Jujuy","addr:postcode":"4500"}],
 ["n1717160527",-25.89249,-65.92832,"ar",{"name":"Hospita San Carlos","amenity":"hospital","healthcare":"hospital","operator:type":"public","addr:full":"Gral. San Martín S/N°","addr:city":"San Carlos","addr:postcode":"4427"}],
 ["n1978230116",-24.20784,-65.28506,"ar",{"name":"CAPS Centro de Salud Coronel Arias","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:housenumber":"1699","addr:street":"Bernardo de Monteagudo","addr:city":"San Salvador de Jujuy","addr:postcode":"4600","wikidata":"Q95364061"}],
 ["n2025905845",-24.11938,-65.40153,"ar",{"name":"Sala de Primeros Auxilios","amenity":"hospital","healthcare":"hospital"}],
@@ -168,7 +169,6 @@
 ["w630388123",-24.80073,-65.39618,"ar",{"name":"Hospital de Salud Mental Miguel Ragone","amenity":"hospital","healthcare":"hospital","operator:type":"public","addr:full":"Gral. Richieri S/N°","addr:city":"Salta","addr:postcode":"4400"}],
 ["w630406501",-24.71879,-65.39746,"ar",{"name":"Centro de salud 55 barrio 17 de Octubre","official_name":"Centro de salud Nº 55 barrio 17 de Octubre","amenity":"hospital","healthcare":"hospital","addr:street":"Jaime Durán","addr:city":"Salta"}],
 ["w678833826",-24.84399,-65.48035,"ar",{"aeroway":"helipad"}],
-["w737420286",-24.24034,-64.86239,"ar",{"name":"Sala de Primeros Auxilios","amenity":"hospital","healthcare":"hospital","emergency":"yes","addr:full":"Barrio Fellner","addr:street":"Alfonsín","addr:city":"San Pedro de Jujuy","addr:postcode":"4500"}],
 ["w742834266",-24.22826,-64.83623,"ar",{"amenity":"hospital","healthcare":"hospital"}],
 ["w809584943",-24.73746,-65.40415,"ar",{"name":"Centro de Salud 49 Barrio General Belgrano","official_name":"Centro de Salud N° 49 Barrio General Belgrano","amenity":"hospital","healthcare":"hospital","phone":"+54 387 4250300","addr:street":"Jaime Durán","addr:city":"Salta","addr:postcode":"4400"}],
 ["w915023970",-24.37928,-65.11311,"ar",{"amenity":"clinic","healthcare":"clinic"}]]
