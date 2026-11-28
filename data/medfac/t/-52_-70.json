@@ -1,4 +1,5 @@
-[["n3751068658",-51.63705,-69.19541,"ar",{"name":"Dispensario Madre Teresa de Calcuta CENIN N°7","amenity":"hospital","healthcare":"hospital","addr:street":"Batalla de Puerto Argentino","addr:city":"Río Gallegos","addr:postcode":"9400"}],
+[["n14330151322",-51.64706,-69.2125,"ar",{"name":"Servicio de Atención Psicopedagógica","amenity":"clinic","operator":"UNPA-UARG"}],
+["n3751068658",-51.63705,-69.19541,"ar",{"name":"Dispensario Madre Teresa de Calcuta CENIN N°7","amenity":"hospital","healthcare":"hospital","addr:street":"Batalla de Puerto Argentino","addr:city":"Río Gallegos","addr:postcode":"9400"}],
 ["n4473457126",-51.60829,-69.24823,"ar",{"name":"salita de primeros auxilios Fenton","amenity":"hospital","healthcare":"hospital"}],
 ["n4654622189",-51.62726,-69.20927,"ar",{"name":"Medisur Clinica","amenity":"clinic","healthcare":"clinic"}],
 ["n4654622289",-51.61947,-69.21241,"ar",{"amenity":"clinic","healthcare":"clinic","osap:withheld":"1"}],
