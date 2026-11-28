@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run one step only (flood, feeds, warnings, warngeo, congress, news, topics, et, health-test, osm, deepsouth, social, more, transcripts, storms, roads, dense, fulltext, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt, probe-mt-conf, probe-mt-th); empty runs all"
+        description: "Run one step only (flood, feeds, warnings, warngeo, congress, openaip, news, topics, et, health-test, osm, deepsouth, social, more, transcripts, storms, roads, dense, fulltext, evsum, push, push-test, probe-models, probe, probe-roads, probe-dense, probe-news, probe-cap, probe-deepsouth, probe-placement, probe-refdata, probe-leads, probe-et, probe-mt, probe-mt-conf, probe-mt-th); empty runs all"
         required: false
         default: ""
       lane:
@@ -331,6 +331,15 @@ jobs:
         if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'congress' }}
         timeout-minutes: 10
         run: node tools/refresh_congress.mjs
+        continue-on-error: true
+      # Permanent restricted, danger and prohibited airspace from OpenAIP's public exports (tools/refresh_openaip.mjs), once a day,
+      # into data/live/airspace/. CC BY-NC 4.0: every file is tagged nc, so the sold version deletes the folder (tools/nc_strip.mjs).
+      - name: Pull restricted, danger and prohibited airspace (OpenAIP, non-commercial)
+        if: ${{ ((!inputs.only && inputs.lane != 'news') || inputs.only == 'openaip') && vars.OSAP_COMMERCIAL != 'true' }}
+        timeout-minutes: 8
+        run: node tools/refresh_openaip.mjs
+        env:
+          FORCE: ${{ inputs.only == 'openaip' && '1' || '' }}
         continue-on-error: true
       - name: Pull road closures and road events from open road-agency feeds (NZ, France, Western Australia, British Columbia, Finland)
         if: ${{ (!inputs.only && inputs.lane != 'news') || inputs.only == 'roads' }}

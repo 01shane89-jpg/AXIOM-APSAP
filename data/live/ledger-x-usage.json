@@ -10,13 +10,13 @@
   "run_tokens": 1000000
  },
  "usage": {
-  "day": "2026-11-27",
+  "day": "2026-11-28",
   "tokens": 0,
   "calls": 0,
   "items": 0
  },
  "usd_today": 0,
- "asof": "2026-11-27 11:09Z",
+ "asof": "2026-11-28 12:41Z",
  "state": "off",
  "why": "no VOYAGE_API_KEY secret"
 }
